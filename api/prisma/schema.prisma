@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,21 +8,200 @@ datasource db {
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String
-  role    Role     @default(USER)
-  profile Profile?
+  userId   Int      @id @default(autoincrement())
+  email    String   @unique
+  name     String
+  password String
+  type     UserType @default(USER)
+
+  occurrence Occurrence[]
 }
 
-model Profile {
-  id     Int    @id @default(autoincrement())
-  bio    String
-  user   User   @relation(fields: [userId], references: [id])
-  userId Int    @unique
+model Occurrence {
+  ocurrenceId Int      @id @default(autoincrement())
+  date        DateTime
+  description String
+  status      Status
+
+  user   User @relation(fields: [userId], references: [userId])
+  userId Int
 }
 
-enum Role {
+model Resident {
+  residentId     Int     @id @default(autoincrement())
+  name           String
+  rg             String
+  cpf            String
+  email          String
+  faceAccess     String?
+  tagAccess      String?
+  passwordAccess String?
+  address        String
+
+  addressType   AddressType @relation(fields: [addressTypeId], references: [addressTypeId])
+  addressTypeId Int
+
+  lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId])
+  lobbyId Int
+
+  scheduling Scheduling[]
+  telephone  Telephone[]
+  vehicle    Vehicle[]
+  access     Access[]
+}
+
+model Telephone {
+  number Int @id
+
+  resident   Resident @relation(fields: [residentId], references: [residentId])
+  residentId Int
+}
+
+model Vehicle {
+  vehicleId    Int     @id @default(autoincrement())
+  licensePlate String
+  brand        String
+  model        String
+  color        String
+  hexCode      String?
+
+  resident   Resident @relation(fields: [residentId], references: [residentId])
+  residentId Int
+}
+
+model AddressType {
+  addressTypeId Int    @id @default(autoincrement())
+  description   String
+
+  resident Resident[]
+}
+
+model Lobby {
+  lobbyId      Int     @id @default(autoincrement())
+  cnpj         String
+  responsible  String
+  telephone    String
+  schedules    String
+  procedures   String?
+  datasheet    String?
+  cep          String
+  state        String
+  city         String
+  neighborhood String
+  street       String
+  number       String
+  complement   String
+
+  resident      Resident[]
+  scheduling    Scheduling[]
+  access        Access[]
+  lobbyProblem  LobbyProblem[]
+  extension     Extension[]
+  lobbyCalendar LobbyCalendar[]
+}
+
+model Visitor {
+  visitorId Int     @id @default(autoincrement())
+  name      String
+  rg        String
+  cpf       String
+  company   String?
+
+  visitorType   VisitorType @relation(fields: [visitorTypeId], references: [visitorTypeId])
+  visitorTypeId Int
+
+  scheduling Scheduling[]
+  access Access[]
+}
+
+model VisitorType {
+  visitorTypeId Int    @id @default(autoincrement())
+  description   String
+
+  visitor Visitor[]
+}
+
+model Scheduling {
+  shcedulingId Int      @id @default(autoincrement())
+  reason       String
+  startDate    DateTime
+  endDate      DateTime
+
+  visitor   Visitor @relation(fields: [visitorId], references: [visitorId])
+  visitorId Int
+
+  lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId])
+  lobbyId Int
+
+  resident   Resident @relation(fields: [residentId], references: [residentId])
+  residentId Int
+}
+
+model Access {
+  accessId Int        @id @default(autoincrement())
+  date     DateTime
+  type     AccessType
+  action Action
+  local String?
+  reason String?
+
+  resident   Resident? @relation(fields: [residentId], references: [residentId])
+  residentId Int?
+
+  visitor   Visitor? @relation(fields: [visitorId], references: [visitorId])
+  visitorId Int?
+
+  lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId])
+  lobbyId Int
+}
+
+model LobbyProblem {
+  lobbyProblemId Int      @id @default(autoincrement())
+  description    String
+  date           DateTime
+  status         Status
+
+  lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId])
+  lobbyId Int
+}
+
+model Extension {
+  extensionId Int    @id @default(autoincrement())
+  number      String
+  description String
+  ip          String
+
+  lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId])
+  lobbyId Int
+}
+
+model LobbyCalendar {
+  lobbyCalendarId Int      @id @default(autoincrement())
+  date            DateTime
+  description     String
+
+  lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId])
+  lobbyId Int
+}
+
+enum AccessType {
+  FACE
+  TAG
+  PASSWORD
+  INTERN
+}
+
+enum Status {
+  RESOLVED
+  PENDING
+}
+
+enum UserType {
   USER
   ADMIN
+}
+
+enum Action {
+  INPUT
+  OUTPUT
 }

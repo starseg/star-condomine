@@ -27,18 +27,19 @@ app.get("/users/:id", async (request, response) => {
   const id = parseInt(request.params.id);
   const users = await prisma.user.findUniqueOrThrow({
     where: {
-      id: id,
+      userId: id,
     },
   });
   return response.json(users);
 });
 
-app.post("/users/new", async (request, response) => {
+app.post("/users", async (request, response) => {
   const body: any = request.body;
   const user = await prisma.user.create({
     data: {
       name: body.name,
       email: body.email,
+      password: body.password,
     },
   });
   return response.sendStatus(201);
@@ -48,7 +49,7 @@ app.delete("/users/:id", async (request, response) => {
   const id = parseInt(request.params.id);
   const users = await prisma.user.delete({
     where: {
-      id: id,
+      userId: id,
     },
   });
   return response.json(users);
@@ -59,11 +60,12 @@ app.put("/users/:id", async (request, response) => {
   const id = parseInt(request.params.id);
   const users = await prisma.user.update({
     where: {
-      id: id,
+      userId: id,
     },
     data: {
       name: body.name,
       email: body.email,
+      password: body.password,
     }
   });
   return response.json(users);
