@@ -33,9 +33,9 @@ export const createLobby = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { cnpj, responsible, telephone, schedules, procedures, datasheet, cep, state, city, neighborhood, street, number, complement } = req.body;
+    const { cnpj, name, responsible, telephone, schedules, procedures, datasheet, cep, state, city, neighborhood, street, number, complement } = req.body;
     const lobby = await prisma.lobby.create({
-      data: { cnpj, responsible, telephone, schedules, procedures, datasheet, cep, state, city, neighborhood, street, number, complement },
+      data: { cnpj, name, responsible, telephone, schedules, procedures, datasheet, cep, state, city, neighborhood, street, number, complement },
     });
     res.status(201).json(lobby);
   } catch (error) {
@@ -49,10 +49,10 @@ export const updateLobby = async (
 ): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
-    const { cnpj, responsible, telephone, schedules, procedures, datasheet, cep, state, city, neighborhood, street, number, complement } = req.body;
+    const { cnpj, name, responsible, telephone, schedules, procedures, datasheet, cep, state, city, neighborhood, street, number, complement } = req.body;
     const lobby = await prisma.lobby.update({
       where: { lobbyId: id },
-      data: { cnpj, responsible, telephone, schedules, procedures, datasheet, cep, state, city, neighborhood, street, number, complement },
+      data: { cnpj, name, responsible, telephone, schedules, procedures, datasheet, cep, state, city, neighborhood, street, number, complement },
     });
     res.json(lobby);
   } catch (error) {

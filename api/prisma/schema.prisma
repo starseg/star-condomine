@@ -79,6 +79,7 @@ model AddressType {
 model Lobby {
   lobbyId      Int     @id @default(autoincrement())
   cnpj         String  @unique
+  name         String
   responsible  String
   telephone    String
   schedules    String
