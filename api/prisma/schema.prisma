@@ -31,8 +31,8 @@ model Resident {
   residentId     Int     @id @default(autoincrement())
   name           String
   rg             String
-  cpf            String
-  email          String
+  cpf            String  @unique
+  email          String  @unique
   faceAccess     String?
   tagAccess      String?
   passwordAccess String?
@@ -59,11 +59,11 @@ model Telephone {
 
 model Vehicle {
   vehicleId    Int     @id @default(autoincrement())
-  licensePlate String
+  licensePlate String  @unique
   brand        String
   model        String
   color        String
-  hexCode      String?
+  hexCode      String? @unique
 
   resident   Resident @relation(fields: [residentId], references: [residentId])
   residentId Int
@@ -105,7 +105,7 @@ model Visitor {
   visitorId Int     @id @default(autoincrement())
   name      String
   rg        String
-  cpf       String @unique
+  cpf       String  @unique
   company   String?
 
   visitorType   VisitorType @relation(fields: [visitorTypeId], references: [visitorTypeId])
