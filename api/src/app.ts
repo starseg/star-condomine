@@ -1,6 +1,21 @@
 import express from "express";
 import cors from "cors";
-import { PrismaClient } from "@prisma/client";
+
+import {
+  createUser,
+  deleteUser,
+  getAllUsers,
+  getUser,
+  updateUser,
+} from "./controllers/user";
+
+import {
+  createLobby,
+  deleteLobby,
+  getAllLobbies,
+  getLobby,
+  updateLobby,
+} from "./controllers/lobby";
 
 const app = express();
 app.use(express.json());
@@ -8,69 +23,24 @@ app.use(cors());
 
 const port = 3000;
 
-const prisma = new PrismaClient({
-  log: ["query"],
-});
-
 app.get("/", (request, response) => {
-  response.json({ message: "Minha primeira API com Node.js e Express" });
+  response.json({ message: "API DO SISTEMA STAR CONDOMINE" });
 });
 
-// MANIPULAÇÃO DE USUÁRIOS
+// MANIPULAÇÃO DE USUÁRIOS (USERS)
+app.get("/users", getAllUsers);
+app.get("/users/:id", getUser);
+app.post("/users", createUser);
+app.put("/users/:id", updateUser);
+app.delete("/users/:id", deleteUser);
 
-app.get("/users", async (request, response) => {
-  const users = await prisma.user.findMany();
-  return response.json(users);
-});
-
-app.get("/users/:id", async (request, response) => {
-  const id = parseInt(request.params.id);
-  const users = await prisma.user.findUniqueOrThrow({
-    where: {
-      userId: id,
-    },
-  });
-  return response.json(users);
-});
-
-app.post("/users", async (request, response) => {
-  const body: any = request.body;
-  const user = await prisma.user.create({
-    data: {
-      name: body.name,
-      email: body.email,
-      password: body.password,
-    },
-  });
-  return response.sendStatus(201);
-});
-
-app.delete("/users/:id", async (request, response) => {
-  const id = parseInt(request.params.id);
-  const users = await prisma.user.delete({
-    where: {
-      userId: id,
-    },
-  });
-  return response.json(users);
-});
-
-app.put("/users/:id", async (request, response) => {
-  const body: any = request.body;
-  const id = parseInt(request.params.id);
-  const users = await prisma.user.update({
-    where: {
-      userId: id,
-    },
-    data: {
-      name: body.name,
-      email: body.email,
-      password: body.password,
-    }
-  });
-  return response.json(users);
-});
+// MANIPULAÇÃO DE PORTARIAS (LOBBIES)
+app.get("/lobbies", getAllLobbies);
+app.get("/lobbies/:id", getLobby);
+app.post("/lobbies", createLobby);
+app.put("/lobbies/:id", updateLobby);
+app.delete("/lobbies/:id", deleteLobby);
 
 app.listen(port, () => {
-  console.log(`Servidor rodando na porta ${port}`);
+  console.log(`✨ Servidor rodando na porta ${port} ✨`);
 });

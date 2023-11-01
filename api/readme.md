@@ -1,26 +1,26 @@
 # API Star Seg
 
 ## Requisitos
-01. cadastrar usuarios
-02. fazer login
-03. cadastrar dispositivo
-04. cadastrar portarias
-05. cadastrar moradores
-    - dados pessoais
-    - foto
+- CRUD nas tabelas:
+    - usuarios
+    - moradores
+        - telefones
+        - veiculos
+    - portarias
+        - ramais
+    - visitantes
+    - acessos
+    - agendamentos
+    - ocorrencias
+    - problemas_portaria
+    - calendarios_portaria
+    - dispositivos
+- login
+- gerar relatórios
+- abrir porta
     - senha
-06. cadastrar visitantes
-    - dados pessoais
-07. cadastrar prestadores de serviço
-08. abrir porta
-    - por reconhecimento facial
-    - por senha
-    - por portaria
-09. agendar liberações
-10. registrar problemas na portaria
-11. registrar acessos
-12. gerar relatórios
-13. registrar ocorrências
+    - tag
+    - facial
 
 ## Entidades
 - usuarios (User)
@@ -29,7 +29,7 @@
 - visitantes (Visitor)
 - acessos (Access)
 - agendamentos (Schedule)
-- teletfones (Telephone)
+- telefones (Telephone)
 - veiculos (Vehicle)
 - tipos_endereco (AddressType)
 - tipos_visitante (VisitorType)
@@ -37,6 +37,9 @@
 - problemas_portaria (LobbyProblem)
 - calendarios_portaria (LobbyCalendar)
 - ramais (Extension)
+- dispositivos (Device)
+- modelos_dispositivo (DeviceModel)
+
 ## Enum
 - tipos_usuario (UserType)
 - tipos_acesso (AccessType)
