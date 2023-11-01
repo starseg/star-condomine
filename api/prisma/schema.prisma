@@ -78,7 +78,7 @@ model AddressType {
 
 model Lobby {
   lobbyId      Int     @id @default(autoincrement())
-  cnpj         String
+  cnpj         String  @unique
   responsible  String
   telephone    String
   schedules    String
@@ -90,7 +90,7 @@ model Lobby {
   neighborhood String
   street       String
   number       String
-  complement   String
+  complement   String?
 
   resident      Resident[]
   scheduling    Scheduling[]
@@ -98,20 +98,21 @@ model Lobby {
   lobbyProblem  LobbyProblem[]
   extension     Extension[]
   lobbyCalendar LobbyCalendar[]
+  device        Device[]
 }
 
 model Visitor {
   visitorId Int     @id @default(autoincrement())
   name      String
   rg        String
-  cpf       String
+  cpf       String @unique
   company   String?
 
   visitorType   VisitorType @relation(fields: [visitorTypeId], references: [visitorTypeId])
   visitorTypeId Int
 
   scheduling Scheduling[]
-  access Access[]
+  access     Access[]
 }
 
 model VisitorType {
@@ -141,9 +142,9 @@ model Access {
   accessId Int        @id @default(autoincrement())
   date     DateTime
   type     AccessType
-  action Action
-  local String?
-  reason String?
+  action   Action
+  local    String?
+  reason   String?
 
   resident   Resident? @relation(fields: [residentId], references: [residentId])
   residentId Int?
@@ -182,6 +183,26 @@ model LobbyCalendar {
 
   lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId])
   lobbyId Int
+}
+
+model Device {
+  deviceId Int    @id @default(autoincrement())
+  name     String
+  ip       String
+
+  deviceModel   DeviceModel @relation(fields: [deviceModelId], references: [deviceModelId])
+  deviceModelId Int
+
+  lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId])
+  lobbyId Int
+}
+
+model DeviceModel {
+  deviceModelId Int    @id @default(autoincrement())
+  model         String
+  brand         String
+
+  device Device[]
 }
 
 enum AccessType {
