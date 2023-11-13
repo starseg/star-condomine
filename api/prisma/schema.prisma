@@ -199,6 +199,7 @@ model Access {
   endTime   DateTime?
   local     String?
   reason    String?
+  comments  String?
   status    Status    @default(ACTIVE)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -206,8 +207,8 @@ model Access {
   member   Member? @relation(fields: [memberId], references: [memberId])
   memberId Int?
 
-  visitor   Visitor? @relation(fields: [visitorId], references: [visitorId])
-  visitorId Int?
+  visitor   Visitor @relation(fields: [visitorId], references: [visitorId])
+  visitorId Int
 
   lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId])
   lobbyId Int
@@ -222,8 +223,8 @@ model LobbyProblem {
   description    String
   date           DateTime
   status         Status
-  createdAt DateTime @default(now()) 
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId])
   lobbyId Int
