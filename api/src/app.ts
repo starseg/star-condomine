@@ -2,12 +2,20 @@ import express from "express";
 import cors from "cors";
 
 import {
-  createUser,
-  deleteUser,
-  getAllUsers,
-  getUser,
-  updateUser,
-} from "./controllers/user";
+  createOperator,
+  getAllOperators,
+  getOperator,
+  updateOperator,
+  deleteOperator
+} from "./controllers/operator";
+
+import {
+  createMember,
+  deleteMember,
+  getAllMembers,
+  getMember,
+  updateMember,
+} from "./controllers/member";
 
 import {
   createLobby,
@@ -27,12 +35,19 @@ app.get("/", (request, response) => {
   response.json({ message: "API DO SISTEMA STAR CONDOMINE" });
 });
 
-// MANIPULAÇÃO DE USUÁRIOS (USERS)
-app.get("/users", getAllUsers);
-app.get("/users/:id", getUser);
-app.post("/users", createUser);
-app.put("/users/:id", updateUser);
-app.delete("/users/:id", deleteUser);
+// MANIPULAÇÃO DE OPERADORES DO SISTEMA (OPERATORS)
+app.get("/operator", getAllOperators);
+app.get("/operators/:id", getOperator);
+app.post("/operators", createOperator);
+app.put("/operators/:id", updateOperator);
+app.delete("/operators/:id", deleteOperator);
+
+// MANIPULAÇÃO DE MEMBROS (MEMBERS)
+app.get("/members", getAllMembers);
+app.get("/members/:id", getMember);
+app.post("/members", createMember);
+app.put("/members/:id", updateMember);
+app.delete("/members/:id", deleteMember);
 
 // MANIPULAÇÃO DE PORTARIAS (LOBBIES)
 app.get("/lobbies", getAllLobbies);

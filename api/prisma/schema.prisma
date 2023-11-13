@@ -7,78 +7,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  userId   Int      @id @default(autoincrement())
-  email    String   @unique
-  name     String
-  password String
-  type     UserType @default(USER)
+model Operator {
+  operatorId Int      @id @default(autoincrement())
+  username   String   @unique
+  name       String
+  password   String
+  type       UserType @default(USER)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  occurrence Occurrence[]
-}
-
-model Occurrence {
-  ocurrenceId Int      @id @default(autoincrement())
-  date        DateTime
-  description String
-  status      Status
-
-  user   User @relation(fields: [userId], references: [userId])
-  userId Int
-}
-
-model Resident {
-  residentId     Int     @id @default(autoincrement())
-  name           String
-  rg             String
-  cpf            String  @unique
-  email          String  @unique
-  faceAccess     String?
-  tagAccess      String?
-  passwordAccess String?
-  address        String
-
-  addressType   AddressType @relation(fields: [addressTypeId], references: [addressTypeId])
-  addressTypeId Int
-
-  lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId])
-  lobbyId Int
-
-  scheduling Scheduling[]
-  telephone  Telephone[]
-  vehicle    Vehicle[]
-  access     Access[]
-}
-
-model Telephone {
-  number Int @id
-
-  resident   Resident @relation(fields: [residentId], references: [residentId])
-  residentId Int
-}
-
-model Vehicle {
-  vehicleId    Int     @id @default(autoincrement())
-  licensePlate String  @unique
-  brand        String
-  model        String
-  color        String
-  hexCode      String? @unique
-
-  resident   Resident @relation(fields: [residentId], references: [residentId])
-  residentId Int
-}
-
-model AddressType {
-  addressTypeId Int    @id @default(autoincrement())
-  description   String
-
-  resident Resident[]
+  access       Access[]
+  scheduling   Scheduling[]
+  lobbyProblem LobbyProblem[]
 }
 
 model Lobby {
-  lobbyId      Int     @id @default(autoincrement())
-  cnpj         String  @unique
+  lobbyId      Int       @id @default(autoincrement())
+  cnpj         String    @unique
   name         String
   responsible  String
   telephone    String
@@ -92,28 +37,107 @@ model Lobby {
   street       String
   number       String
   complement   String?
+  type         LobbyType
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
-  resident      Resident[]
+  member        Member[]
   scheduling    Scheduling[]
   access        Access[]
   lobbyProblem  LobbyProblem[]
-  extension     Extension[]
   lobbyCalendar LobbyCalendar[]
   device        Device[]
 }
 
-model Visitor {
-  visitorId Int     @id @default(autoincrement())
-  name      String
-  rg        String
-  cpf       String  @unique
-  company   String?
+model Member {
+  memberId            Int          @id @default(autoincrement())
+  type                MemberType
+  profileUrl          String?
+  name                String
+  rg                  String
+  cpf                 String       @unique
+  email               String?
+  comments            String?
+  status              Status       @default(ACTIVE)
+  // ACCESS
+  faceAccess          String?
+  biometricAccess     String?
+  remoteControlAccess String?
+  passwordAccess      String?
+  // RESIDENT
+  address             String?
+  addressType         AddressType? @relation(fields: [addressTypeId], references: [addressTypeId])
+  addressTypeId       Int?
+  // EMPLOYEE
+  accessPeriod        String?
+  position            String?
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+  // WHERE IS THE MEMBER
+  lobby               Lobby        @relation(fields: [lobbyId], references: [lobbyId])
+  lobbyId             Int
 
-  visitorType   VisitorType @relation(fields: [visitorTypeId], references: [visitorTypeId])
-  visitorTypeId Int
-
+  tag        Tag[]
   scheduling Scheduling[]
+  telephone  Telephone[]
+  vehicle    Vehicle[]
   access     Access[]
+}
+
+model Telephone {
+  number Int @id
+
+  member   Member @relation(fields: [memberId], references: [memberId])
+  memberId Int
+}
+
+model TagType {
+  tagTypeId   Int    @id @default(autoincrement())
+  description String
+  // tag normal, veicular, cartao
+
+  tag Tag[]
+}
+
+model Tag {
+  tagId Int    @id @default(autoincrement())
+  value String
+
+  type      TagType @relation(fields: [tagTypeId], references: [tagTypeId])
+  tagTypeId Int
+
+  member   Member @relation(fields: [memberId], references: [memberId])
+  memberId Int
+}
+
+model VehicleType {
+  vehicleTypeId Int    @id @default(autoincrement())
+  description   String
+
+  vehicle Vehicle[]
+}
+
+model Vehicle {
+  vehicleId    Int     @id @default(autoincrement())
+  licensePlate String  @unique
+  brand        String?
+  model        String?
+  color        String?
+  tag          String? @unique
+  comments     String?
+
+  vehicleType   VehicleType @relation(fields: [vehicleTypeId], references: [vehicleTypeId])
+  vehicleTypeId Int
+
+  member   Member @relation(fields: [memberId], references: [memberId])
+  memberId Int
+}
+
+model AddressType {
+  addressTypeId Int    @id @default(autoincrement())
+  description   String
+
+  member Member[]
 }
 
 model VisitorType {
@@ -123,11 +147,38 @@ model VisitorType {
   visitor Visitor[]
 }
 
+model Visitor {
+  visitorId  Int       @id @default(autoincrement())
+  profileUrl String?
+  name       String
+  rg         String
+  cpf        String    @unique
+  phone      String
+  startDate  DateTime?
+  endDate    DateTime?
+  status     Status    @default(ACTIVE)
+  // DE ACORDO COM O TIPO DE VISITANTE
+  company    String?
+  relation   String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  visitorType   VisitorType @relation(fields: [visitorTypeId], references: [visitorTypeId])
+  visitorTypeId Int
+
+  scheduling Scheduling[]
+  access     Access[]
+}
+
 model Scheduling {
   shcedulingId Int      @id @default(autoincrement())
   reason       String
+  location     String
   startDate    DateTime
   endDate      DateTime
+  status       Status   @default(ACTIVE)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   visitor   Visitor @relation(fields: [visitorId], references: [visitorId])
   visitorId Int
@@ -135,46 +186,50 @@ model Scheduling {
   lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId])
   lobbyId Int
 
-  resident   Resident @relation(fields: [residentId], references: [residentId])
-  residentId Int
+  member   Member? @relation(fields: [memberId], references: [memberId])
+  memberId Int?
+
+  operator   Operator @relation(fields: [operatorId], references: [operatorId])
+  operatorId Int
 }
 
 model Access {
-  accessId Int        @id @default(autoincrement())
-  date     DateTime
-  type     AccessType
-  action   Action
-  local    String?
-  reason   String?
+  accessId  Int       @id @default(autoincrement())
+  startTime DateTime
+  endTime   DateTime?
+  local     String?
+  reason    String?
+  status    Status    @default(ACTIVE)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
-  resident   Resident? @relation(fields: [residentId], references: [residentId])
-  residentId Int?
+  member   Member? @relation(fields: [memberId], references: [memberId])
+  memberId Int?
 
   visitor   Visitor? @relation(fields: [visitorId], references: [visitorId])
   visitorId Int?
 
   lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId])
   lobbyId Int
+
+  operator   Operator @relation(fields: [operatorId], references: [operatorId])
+  operatorId Int
 }
 
 model LobbyProblem {
   lobbyProblemId Int      @id @default(autoincrement())
+  title          String
   description    String
   date           DateTime
   status         Status
+  createdAt DateTime @default(now()) 
+  updatedAt DateTime @updatedAt
 
   lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId])
   lobbyId Int
-}
 
-model Extension {
-  extensionId Int    @id @default(autoincrement())
-  number      String
-  description String
-  ip          String
-
-  lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId])
-  lobbyId Int
+  operator   Operator @relation(fields: [operatorId], references: [operatorId])
+  operatorId Int
 }
 
 model LobbyCalendar {
@@ -186,10 +241,21 @@ model LobbyCalendar {
   lobbyId Int
 }
 
+model DeviceModel {
+  deviceModelId Int    @id @default(autoincrement())
+  model         String
+  brand         String
+  description   String
+
+  device Device[]
+}
+
 model Device {
-  deviceId Int    @id @default(autoincrement())
-  name     String
-  ip       String
+  deviceId    Int    @id @default(autoincrement())
+  name        String
+  ip          String
+  ramal       Int
+  description String
 
   deviceModel   DeviceModel @relation(fields: [deviceModelId], references: [deviceModelId])
   deviceModelId Int
@@ -198,28 +264,9 @@ model Device {
   lobbyId Int
 }
 
-model DeviceModel {
-  deviceModelId Int    @id @default(autoincrement())
-  model         String
-  brand         String
-
-  device Device[]
-}
-
-enum AccessType {
-  CARD
-  REMOTE_CONTROL
-  DIGITAL
-  FACE
-  TAG
-  TAG_UHF
-  PASSWORD
-  INTERN
-}
-
 enum Status {
-  RESOLVED
-  PENDING
+  ACTIVE
+  INACTIVE
 }
 
 enum UserType {
@@ -227,7 +274,12 @@ enum UserType {
   ADMIN
 }
 
-enum Action {
-  INPUT
-  OUTPUT
+enum LobbyType {
+  CONDOMINIUM
+  COMPANY
+}
+
+enum MemberType {
+  RESIDENT
+  EMPLOYEE
 }
