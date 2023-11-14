@@ -85,7 +85,8 @@ model Member {
 }
 
 model Telephone {
-  number Int @id
+  telephoneId Int @id @default(autoincrement())
+  number String
 
   member   Member @relation(fields: [memberId], references: [memberId])
   memberId Int
@@ -171,7 +172,7 @@ model Visitor {
 }
 
 model Scheduling {
-  shcedulingId Int      @id @default(autoincrement())
+  schedulingId Int      @id @default(autoincrement())
   reason       String
   location     String
   startDate    DateTime
@@ -222,7 +223,7 @@ model LobbyProblem {
   title          String
   description    String
   date           DateTime
-  status         Status
+  status         Status @default(ACTIVE)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
