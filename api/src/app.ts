@@ -1,61 +1,45 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
-
-import {
-  createOperator,
-  getAllOperators,
-  getOperator,
-  updateOperator,
-  deleteOperator
-} from "./controllers/operator";
-
-import {
-  createMember,
-  deleteMember,
-  getAllMembers,
-  getMember,
-  updateMember,
-} from "./controllers/member";
-
-import {
-  createLobby,
-  deleteLobby,
-  getAllLobbies,
-  getLobby,
-  updateLobby,
-} from "./controllers/lobby";
+import accessRouter from "./routes/accessRouter";
+import deviceRouter from "./routes/deviceRouter";
+import lobbyCalendarRouter from "./routes/lobbyCalendarRouter";
+import lobbyProblemRouter from "./routes/lobbyProblemRouter";
+import lobbyRouter from "./routes/lobbyRouter";
+import memberRouter from "./routes/memberRouter";
+import operatorRouter from "./routes/operatorRouter";
+import schedulingRouter from "./routes/schedulingRouter";
+import tagRouter from "./routes/tagRouter";
+import telephoneRouter from "./routes/telephoneRouter";
+import vehicleRouter from "./routes/vehicleRouter";
+import visitorRouter from "./routes/visitorRouter";
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.get("/", (request, response) => {
+app.get("/", (request: Request, response: Response) => {
   response.json({ message: "API DO SISTEMA STAR CONDOMINE" });
 });
 
-// === MANIPULAÇÃO DE OPERADORES (OPERATORS) === \\
-app.get("/operator", getAllOperators);
-app.get("/operators/:id", getOperator);
-app.post("/operators", createOperator);
-app.put("/operators/:id", updateOperator);
-app.delete("/operators/:id", deleteOperator);
+app.use("/access", accessRouter);
+app.use("/device", deviceRouter);
+app.use("/lobbyCalendar", lobbyCalendarRouter);
+app.use("/lobbyProblem", lobbyProblemRouter);
+app.use("/lobbies", lobbyRouter);
+app.use("/members", memberRouter);
+app.use("/operators", operatorRouter);
+app.use("/scheduling", schedulingRouter);
+app.use("/tag", tagRouter);
+app.use("/telephone", telephoneRouter);
+app.use("/vehicle", vehicleRouter);
+app.use("/visitor", visitorRouter);
 
-// === MANIPULAÇÃO DE MEMBROS (MEMBERS) === \\
-app.get("/members", getAllMembers);
-app.get("/members/:id", getMember);
-app.post("/members", createMember);
-app.put("/members/:id", updateMember);
-app.delete("/members/:id", deleteMember);
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error(err.stack);
+    res.status(500).json({ error: 'Algo deu errado!', details: err.message });
+});
 
-// === MANIPULAÇÃO DE PORTARIAS (LOBBIES) === \\
-app.get("/lobbies", getAllLobbies);
-app.get("/lobbies/:id", getLobby);
-app.post("/lobbies", createLobby);
-app.put("/lobbies/:id", updateLobby);
-app.delete("/lobbies/:id", deleteLobby);
-
-
-const port = 3000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`✨ Servidor rodando na porta ${port} ✨`);
 });

@@ -34,7 +34,7 @@ export const getVehicle = async (
   }
 };
 
-export const createvehicle = async (
+export const createVehicle = async (
   req: Request,
   res: Response
 ): Promise<void> => {

@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const getAllschedules = async (
+export const getAllSchedules = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -15,7 +15,7 @@ export const getAllschedules = async (
   }
 };
 
-export const getscheduling = async (
+export const getScheduling = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -34,7 +34,7 @@ export const getscheduling = async (
   }
 };
 
-export const createscheduling = async (
+export const createScheduling = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -49,7 +49,7 @@ export const createscheduling = async (
   }
 };
 
-export const updatescheduling = async (
+export const updateScheduling = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -66,7 +66,7 @@ export const updatescheduling = async (
   }
 };
 
-export const deletescheduling = async (
+export const deleteScheduling = async (
   req: Request,
   res: Response
 ): Promise<void> => {
