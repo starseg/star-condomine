@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -40,8 +41,11 @@ export const createOperator = async (
 ): Promise<void> => {
   try {
     const { username, name, password, type } = req.body;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const operator = await prisma.operator.create({
-      data: { username, name, password, type },
+      data: { username, name, password: hashedPassword, type },
     });
     res.status(201).json(operator);
   } catch (error) {
