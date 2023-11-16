@@ -47,6 +47,7 @@ model Lobby {
   lobbyProblem  LobbyProblem[]
   lobbyCalendar LobbyCalendar[]
   device        Device[]
+  visitor       Visitor[]
 }
 
 model Member {
@@ -85,8 +86,8 @@ model Member {
 }
 
 model Telephone {
-  telephoneId Int @id @default(autoincrement())
-  number String
+  telephoneId Int    @id @default(autoincrement())
+  number      String
 
   member   Member @relation(fields: [memberId], references: [memberId])
   memberId Int
@@ -167,8 +168,11 @@ model Visitor {
   visitorType   VisitorType @relation(fields: [visitorTypeId], references: [visitorTypeId])
   visitorTypeId Int
 
-  scheduling Scheduling[]
-  access     Access[]
+  Lobby        Lobby?       @relation(fields: [lobbyLobbyId], references: [lobbyId])
+  lobbyLobbyId Int?
+
+  scheduling   Scheduling[]
+  access       Access[]
 }
 
 model Scheduling {
@@ -223,7 +227,7 @@ model LobbyProblem {
   title          String
   description    String
   date           DateTime
-  status         Status @default(ACTIVE)
+  status         Status   @default(ACTIVE)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 

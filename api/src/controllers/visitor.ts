@@ -39,9 +39,31 @@ export const createVisitor = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { profileUrl, name, rg, cpf, phone, startDate, endDate, company, relation, visitorTypeId } = req.body;
+    const {
+      profileUrl,
+      name,
+      rg,
+      cpf,
+      phone,
+      startDate,
+      endDate,
+      company,
+      relation,
+      visitorTypeId,
+    } = req.body;
     const visitor = await prisma.visitor.create({
-      data: { profileUrl, name, rg, cpf, phone, startDate, endDate, company, relation, visitorTypeId },
+      data: {
+        profileUrl,
+        name,
+        rg,
+        cpf,
+        phone,
+        startDate,
+        endDate,
+        company,
+        relation,
+        visitorTypeId,
+      },
     });
     res.status(201).json(visitor);
   } catch (error) {
@@ -55,10 +77,32 @@ export const updateVisitor = async (
 ): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
-    const { profileUrl, name, rg, cpf, phone, startDate, endDate, company, relation, visitorTypeId } = req.body;
+    const {
+      profileUrl,
+      name,
+      rg,
+      cpf,
+      phone,
+      startDate,
+      endDate,
+      company,
+      relation,
+      visitorTypeId,
+    } = req.body;
     const visitor = await prisma.visitor.update({
       where: { visitorId: id },
-      data: { profileUrl, name, rg, cpf, phone, startDate, endDate, company, relation, visitorTypeId },
+      data: {
+        profileUrl,
+        name,
+        rg,
+        cpf,
+        phone,
+        startDate,
+        endDate,
+        company,
+        relation,
+        visitorTypeId,
+      },
     });
     res.status(201).json(visitor);
   } catch (error) {
