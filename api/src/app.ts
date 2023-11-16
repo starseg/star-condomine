@@ -1,6 +1,8 @@
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
-import authRouter from "./routes/authRouter";
+import { logging } from "./middlewares/logging";
+import { verifyToken } from "./middlewares/verifyToken";
+import { authenticateOperator } from "./middlewares/auth";
 import accessRouter from "./routes/accessRouter";
 import deviceRouter from "./routes/deviceRouter";
 import lobbyCalendarRouter from "./routes/lobbyCalendarRouter";
@@ -13,8 +15,6 @@ import tagRouter from "./routes/tagRouter";
 import telephoneRouter from "./routes/telephoneRouter";
 import vehicleRouter from "./routes/vehicleRouter";
 import visitorRouter from "./routes/visitorRouter";
-import { logging } from "./middleware/logging";
-import { verifyToken } from "./middleware/verifyToken";
 
 const app = express();
 app.use(express.json());
@@ -26,7 +26,7 @@ app.get("/", (request: Request, response: Response) => {
   response.json({ message: "API DO SISTEMA STAR CONDOMINE" });
 });
 
-app.use("/auth", authRouter);
+app.post("/auth", authenticateOperator);
 
 app.use(verifyToken);
 

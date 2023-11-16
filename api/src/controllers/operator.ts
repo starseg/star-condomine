@@ -60,9 +60,10 @@ export const updateOperator = async (
   try {
     const id = parseInt(req.params.id, 10);
     const { username, name, password, type } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
     const operator = await prisma.operator.update({
       where: { operatorId: id },
-      data: { username, name, password, type },
+      data: { username, name, password: hashedPassword, type },
     });
     res.status(201).json(operator);
   } catch (error) {
