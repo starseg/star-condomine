@@ -60,7 +60,7 @@ export const updateDevice = async (
       where: { deviceId: id },
       data: { name, ip, ramal, description, deviceModelId, lobbyId },
     });
-    res.status(201).json(device);
+    res.status(200).json(device);
   } catch (error) {
     res.status(500).json({ error: "Erro ao atualizar o dispositivo" });
   }

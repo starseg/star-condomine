@@ -34,9 +34,9 @@ app.use(verifyToken);
 
 app.use("/access", accessRouter);
 app.use("/device", deviceRouter);
+app.use("/lobby", lobbyRouter);
 app.use("/lobbyCalendar", lobbyCalendarRouter);
 app.use("/lobbyProblem", lobbyProblemRouter);
-app.use("/lobby", lobbyRouter);
 app.use("/member", memberRouter);
 app.use("/operator", operatorRouter);
 app.use("/scheduling", schedulingRouter);

@@ -60,7 +60,7 @@ export const updateLobbyCalendar = async (
       where: { lobbyCalendarId: id },
       data: { description, date, lobbyId },
     });
-    res.status(201).json(lobbyCalendar);
+    res.status(200).json(lobbyCalendar);
   } catch (error) {
     res.status(500).json({ error: "Erro ao atualizar a data" });
   }

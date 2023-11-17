@@ -54,7 +54,7 @@ export const updateLobby = async (
       where: { lobbyId: id },
       data: { cnpj, name, responsible, telephone, schedules, procedures, datasheet, cep, state, city, neighborhood, street, number, complement, type },
     });
-    res.json(lobby);
+    res.status(200).json(lobby);
   } catch (error) {
     res.status(500).json({ error: "Erro ao atualizar a portaria" });
   }

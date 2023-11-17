@@ -39,9 +39,27 @@ export const createScheduling = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { reason, location, startDate, endDate, visitorId, lobbyId, memberId, operatorId } = req.body;
+    const {
+      reason,
+      location,
+      startDate,
+      endDate,
+      visitorId,
+      lobbyId,
+      memberId,
+      operatorId,
+    } = req.body;
     const scheduling = await prisma.scheduling.create({
-      data: { reason, location, startDate, endDate, visitorId, lobbyId, memberId, operatorId },
+      data: {
+        reason,
+        location,
+        startDate,
+        endDate,
+        visitorId,
+        lobbyId,
+        memberId,
+        operatorId,
+      },
     });
     res.status(201).json(scheduling);
   } catch (error) {
@@ -55,12 +73,32 @@ export const updateScheduling = async (
 ): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
-    const { reason, location, startDate, endDate, visitorId, lobbyId, memberId, operatorId } = req.body;
+    const {
+      reason,
+      location,
+      startDate,
+      endDate,
+      status,
+      visitorId,
+      lobbyId,
+      memberId,
+      operatorId,
+    } = req.body;
     const scheduling = await prisma.scheduling.update({
       where: { schedulingId: id },
-      data: { reason, location, startDate, endDate, visitorId, lobbyId, memberId, operatorId },
+      data: {
+        reason,
+        location,
+        startDate,
+        endDate,
+        status,
+        visitorId,
+        lobbyId,
+        memberId,
+        operatorId,
+      },
     });
-    res.status(201).json(scheduling);
+    res.status(200).json(scheduling);
   } catch (error) {
     res.status(500).json({ error: "Erro ao atualizar o agendamento" });
   }

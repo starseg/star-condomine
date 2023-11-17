@@ -52,12 +52,12 @@ export const updateAccess = async (
 ): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
-    const { startTime, endTime, local, reason, comments, memberId, lobbyId, visitorId, operatorId } = req.body;
+    const { startTime, endTime, local, reason, comments, status, memberId, lobbyId, visitorId, operatorId } = req.body;
     const access = await prisma.access.update({
       where: { accessId: id },
-      data: { startTime, endTime, local, reason, comments, memberId, lobbyId, visitorId, operatorId },
+      data: { startTime, endTime, local, reason, comments, status, memberId, lobbyId, visitorId, operatorId },
     });
-    res.status(201).json(access);
+    res.status(200).json(access);
   } catch (error) {
     res.status(500).json({ error: "Erro ao atualizar o acesso" });
   }

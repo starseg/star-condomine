@@ -41,9 +41,7 @@ export const createOperator = async (
 ): Promise<void> => {
   try {
     const { username, name, password, type } = req.body;
-
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const operator = await prisma.operator.create({
       data: { username, name, password: hashedPassword, type },
     });
@@ -60,14 +58,22 @@ export const updateOperator = async (
   try {
     const id = parseInt(req.params.id, 10);
     const { username, name, password, type } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
+    let hashedPassword: string | undefined;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
     const operator = await prisma.operator.update({
       where: { operatorId: id },
-      data: { username, name, password: hashedPassword, type },
+      data: {
+        username,
+        name,
+        password: hashedPassword || undefined,
+        type,
+      },
     });
-    res.status(201).json(operator);
+    res.status(200).json(operator);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao atualizar o operador" });
+    res.status(500).json({ error: `Erro ao atualizar o operador ${error}` });
   }
 };
 

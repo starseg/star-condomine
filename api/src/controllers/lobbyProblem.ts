@@ -55,12 +55,12 @@ export const updateLobbyProblem = async (
 ): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
-    const { title, description, date, lobbyId, operatorId } = req.body;
+    const { title, description, date, status, lobbyId, operatorId } = req.body;
     const lobbyProblem = await prisma.lobbyProblem.update({
       where: { lobbyProblemId: id },
-      data: { title, description, date, lobbyId, operatorId },
+      data: { title, description, date, status, lobbyId, operatorId },
     });
-    res.status(201).json(lobbyProblem);
+    res.status(200).json(lobbyProblem);
   } catch (error) {
     res.status(500).json({ error: "Erro ao atualizar o problema" });
   }

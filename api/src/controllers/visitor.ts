@@ -87,6 +87,7 @@ export const updateVisitor = async (
       endDate,
       company,
       relation,
+      status,
       visitorTypeId,
     } = req.body;
     const visitor = await prisma.visitor.update({
@@ -101,10 +102,11 @@ export const updateVisitor = async (
         endDate,
         company,
         relation,
+        status,
         visitorTypeId,
       },
     });
-    res.status(201).json(visitor);
+    res.status(200).json(visitor);
   } catch (error) {
     res.status(500).json({ error: "Erro ao atualizar o visitante" });
   }

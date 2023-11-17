@@ -60,7 +60,7 @@ export const updateVehicle = async (
       where: { vehicleId: id },
       data: { licensePlate, brand, model, color, tag, comments, vehicleTypeId, memberId },
     });
-    res.status(201).json(vehicle);
+    res.status(200).json(vehicle);
   } catch (error) {
     res.status(500).json({ error: "Erro ao atualizar o veículo" });
   }

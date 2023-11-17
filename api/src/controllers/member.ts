@@ -94,6 +94,7 @@ export const updateMember = async (
       cpf,
       email,
       comments,
+      status,
       faceAccess,
       biometricAccess,
       remoteControlAccess,
@@ -114,6 +115,7 @@ export const updateMember = async (
         cpf,
         email,
         comments,
+        status,
         faceAccess,
         biometricAccess,
         remoteControlAccess,
@@ -125,7 +127,7 @@ export const updateMember = async (
         lobbyId,
       },
     });
-    res.json(member);
+    res.status(200).json(member);
   } catch (error) {
     res.status(500).json({ error: "Erro ao atualizar o membro" });
   }
