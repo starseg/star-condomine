@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { logging } from "./middlewares/logging";
-import { verifyToken } from "./middlewares/verifyToken";
+import { verifyToken } from "./middlewares/permissions";
 import { authenticateOperator } from "./middlewares/auth";
 import accessRouter from "./routes/accessRouter";
 import deviceRouter from "./routes/deviceRouter";

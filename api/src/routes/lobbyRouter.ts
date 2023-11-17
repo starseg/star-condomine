@@ -6,13 +6,14 @@ import {
   updateLobby,
   deleteLobby
 } from "../controllers/lobby";
+import { checkAdminPermission } from "../middlewares/permissions";
 
 const lobbyRouter = express.Router();
 
 lobbyRouter.get("/", getAllLobbies);
 lobbyRouter.get("/:id", getLobby);
-lobbyRouter.post("/", createLobby);
-lobbyRouter.put("/:id", updateLobby);
-lobbyRouter.delete("/:id", deleteLobby);
+lobbyRouter.post("/", checkAdminPermission, createLobby);
+lobbyRouter.put("/:id", checkAdminPermission, updateLobby);
+lobbyRouter.delete("/:id", checkAdminPermission, deleteLobby);
 
 export default lobbyRouter;

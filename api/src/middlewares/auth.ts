@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 
 const prisma = new PrismaClient();
@@ -29,9 +29,13 @@ export const authenticateOperator = async (
 
       const secretKey = process.env.SECRET_KEY || "Star512$$*810_LxTae#";
 
-      const token = jwt.sign({ username: operator.username }, secretKey, {
-        expiresIn: "24h",
-      });
+      const token = jwt.sign(
+        { operatorId: operator.operatorId, type: operator.type },
+        secretKey,
+        {
+          expiresIn: "24h",
+        }
+      );
 
       res.status(200).json({ token });
     }

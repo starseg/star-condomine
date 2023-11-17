@@ -25,3 +25,19 @@ export const verifyToken = (
     });
   }
 };
+
+export const checkAdminPermission = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const type = req.operator.type;
+  console.log("TIPO DO USUÁRIO: ", type);
+  if (type === "ADMIN") {
+    next();
+  } else {
+    res
+      .status(403)
+      .json({ error: "Acesso negado. Permissões de ADMIN necessárias." });
+  }
+};
