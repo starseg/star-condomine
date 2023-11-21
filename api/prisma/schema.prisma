@@ -19,6 +19,7 @@ model Operator {
   access       Access[]
   scheduling   Scheduling[]
   lobbyProblem LobbyProblem[]
+  logging      Logging[]
 }
 
 model Lobby {
@@ -168,11 +169,11 @@ model Visitor {
   visitorType   VisitorType @relation(fields: [visitorTypeId], references: [visitorTypeId])
   visitorTypeId Int
 
-  Lobby        Lobby?       @relation(fields: [lobbyLobbyId], references: [lobbyId])
+  Lobby        Lobby? @relation(fields: [lobbyLobbyId], references: [lobbyId])
   lobbyLobbyId Int?
 
-  scheduling   Scheduling[]
-  access       Access[]
+  scheduling Scheduling[]
+  access     Access[]
 }
 
 model Scheduling {
@@ -268,6 +269,17 @@ model Device {
 
   lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId])
   lobbyId Int
+}
+
+model Logging {
+  logId     Int      @id @default(autoincrement())
+  date      DateTime @default(now())
+  method    String
+  url       String
+  userAgent String
+
+  operator   Operator @relation(fields: [operatorId], references: [operatorId])
+  operatorId Int
 }
 
 enum Status {

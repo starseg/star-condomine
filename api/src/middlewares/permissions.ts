@@ -19,9 +19,10 @@ export const verifyToken = (
       if (err) {
         console.error("Erro na verificação do token:", err.message);
         res.status(401).json({ error: "Token inválido" });
+      } else {
+        req.operator = decoded;
+        next();
       }
-      req.operator = decoded;
-      next();
     });
   }
 };

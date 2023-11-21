@@ -22,7 +22,6 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.use(logging);
 
 app.get("/", (request: Request, response: Response) => {
   response.json({ message: "API DO SISTEMA STAR CONDOMINE" });
@@ -31,6 +30,7 @@ app.get("/", (request: Request, response: Response) => {
 app.post("/auth", authenticateOperator);
 
 app.use(verifyToken);
+app.use(logging);
 
 app.use("/access", accessRouter);
 app.use("/device", deviceRouter);

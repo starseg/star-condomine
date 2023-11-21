@@ -30,7 +30,10 @@ export const authenticateOperator = async (
       const secretKey = process.env.SECRET_KEY || "Star512$$*810_LxTae#";
 
       const token = jwt.sign(
-        { operatorId: operator.operatorId, type: operator.type },
+        {
+          operatorId: operator.operatorId,
+          type: operator.type,
+        },
         secretKey,
         {
           expiresIn: "24h",
