@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import api from "@/lib/axios";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,7 +14,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import router from "next/router";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const FormSchema = z.object({
   username: z
@@ -41,24 +41,18 @@ export function InputForm() {
     },
   });
 
+  const router = useRouter();
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    try {
-      const response = await api.post('/auth', data);
-
-      if (response.status === 200) {
-        // router.push('/dashboard');
-        console.log("Usuário logado!");
-        console.log(`Token: ${response.data.token}`)
-      } else {
-        // Lidar com erro de autenticação
-        const errorData = response.data;
-        // Exibir mensagem de erro ou fazer outra ação desejada
-        console.error('Erro de autenticação:', errorData.message);
-      }
-    } catch (error) {
-      // Lidar com erros de rede ou outros erros
-      console.error("Erro ao chamar a API:", error);
+    const result = await signIn("credentials", {
+      username: data.username,
+      password: data.password,
+      redirect: false,
+    });
+    if (result?.error) {
+      console.log(result);
+      return;
     }
+    router.replace("/dashboard");
   };
 
   return (
