@@ -20,11 +20,13 @@ export const authenticateOperator = async (
 
     if (!operator) {
       res.status(401).json({ error: "Nome de usuário não encontrado" });
+      return;
     } else {
       const passwordMatch = await bcrypt.compare(password, operator.password);
 
       if (!passwordMatch) {
         res.status(401).json({ error: "Senha incorreta" });
+        return;
       }
 
       const secretKey = process.env.SECRET_KEY || "Star512$$*810_LxTae#";
@@ -45,7 +47,5 @@ export const authenticateOperator = async (
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Erro ao autenticar o usuário" });
-  } finally {
-    await prisma.$disconnect();
   }
 };
