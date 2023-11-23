@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const FormSchema = z.object({
   username: z
@@ -32,7 +33,7 @@ const FormSchema = z.object({
     .max(24),
 });
 
-export function InputForm() {
+export function LoginForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -42,6 +43,7 @@ export function InputForm() {
   });
 
   const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     const result = await signIn("credentials", {
       username: data.username,
@@ -49,7 +51,11 @@ export function InputForm() {
       redirect: false,
     });
     if (result?.error) {
-      console.log(result);
+      if (result.error == "CredentialsSignin") {
+        setError("Login incorreto");
+      } else {
+        console.log(result.error);
+      }
       return;
     }
     router.replace("/dashboard");
@@ -95,9 +101,15 @@ export function InputForm() {
             </FormItem>
           )}
         />
+
         <Button type="submit" className="w-full">
           Entrar
         </Button>
+        {error && (
+          <div className="w-full border border-red-500 text-red-500 p-2 rounded-md text-center text-sm">
+            {error}
+          </div>
+        )}
       </form>
     </Form>
   );

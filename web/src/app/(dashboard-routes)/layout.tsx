@@ -5,7 +5,7 @@ import { nextAuthOptions } from "../api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Login",
+  title: "Início",
 };
 
 export default async function Layout({
@@ -14,8 +14,8 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession(nextAuthOptions);
-  if (session) {
-    redirect("/dashboard");
+  if (!session) {
+    redirect("/");
   }
   return (
     <>

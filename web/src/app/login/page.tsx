@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { InputForm } from "@/components/loginForm";
+import { LoginForm } from "@/components/loginForm";
 
 
 export default function Login() {
@@ -14,7 +14,7 @@ export default function Login() {
         priority={true}
         className="pb-8"
       />
-      <InputForm />
+      <LoginForm />
     </section>
   );
 }

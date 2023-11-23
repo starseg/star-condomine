@@ -2,8 +2,9 @@ import api from "@/lib/axios";
 import { NextAuthOptions } from "next-auth";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { jwtDecode } from "jwt-decode";
 
-export const nextAuthOptions: NextAuthOptions = {
+const nextAuthOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       // The name to display on the sign in form (e.g. 'Sign in with...')
@@ -15,7 +16,7 @@ export const nextAuthOptions: NextAuthOptions = {
       async authorize(credentials, req) {
         const res = await api.post("/auth", credentials, {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
           },
           validateStatus: (status) => status >= 200 && status < 500,
         });
@@ -33,8 +34,20 @@ export const nextAuthOptions: NextAuthOptions = {
   pages: {
     signIn: "/login",
   },
+  callbacks: {
+    async jwt({ token, user }) {
+      user && (token.user = user);
+      return token;
+    },
+    async session({ session, token }) {
+      const t = JSON.stringify(token)
+      const payload = jwtDecode(t);
+      session = payload as any;
+      return session;
+    },
+  },
 };
 
 const handler = NextAuth(nextAuthOptions);
 
-export { handler as GET, handler as POST };
+export { handler as GET, handler as POST, nextAuthOptions };
