@@ -33,8 +33,12 @@ export const authenticateOperator = async (
 
       const token = jwt.sign(
         {
-          operatorId: operator.operatorId,
-          type: operator.type,
+          user: {
+            id: operator.operatorId,
+            name: operator.name,
+            username: operator.username,
+            type: operator.type,
+          },
         },
         secretKey,
         {
