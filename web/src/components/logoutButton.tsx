@@ -1,7 +1,6 @@
 "use client";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 
 export default function LogoutButton() {
@@ -14,8 +13,8 @@ export default function LogoutButton() {
   }
 
   return (
-    <Button onClick={logout}>
+    <button onClick={logout} className="flex items-center justify-center gap-2">
       <LogOut /> Sair
-    </Button>
+    </button>
   );
 }

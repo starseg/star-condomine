@@ -3,6 +3,7 @@ import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { nextAuthOptions } from "../api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
+import { Menu } from "@/components/menu";
 
 export const metadata: Metadata = {
   title: "Início",
@@ -19,9 +20,7 @@ export default async function Layout({
   }
   return (
     <>
-      <header>
-        <BackButton url="/" />
-      </header>
+      <Menu />
       <main>{children}</main>
     </>
   );

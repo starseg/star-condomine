@@ -1,17 +1,17 @@
-import Link from 'next/link';
+"use client";
 import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
+import { useRouter } from "next/navigation";
 
-interface BackButtonProps {
-  url: String
-}
-
-const BackButton: React.FC<BackButtonProps> = (props) => {
-
+const BackButton = () => {
+  const router = useRouter();
+  function goBack() {
+    router.back();
+  }
   return (
-    <Link href={`${props.url}`} className="absolute top-8 left-8 hover:scale-110 transition ease-in">
-          <ArrowLeft size={"3rem"} />
-        </Link>
+    <button className="hover:scale-110 transition ease-in" onClick={goBack}>
+      <ArrowLeft size={"2.5rem"} />
+    </button>
   );
-}
+};
 
 export default BackButton;
