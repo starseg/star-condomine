@@ -1,4 +1,4 @@
-import LobbyCard from "@/components/lobbyCard";
+import LobbyCard from "@/components/lobby/lobbyCard";
 import Search from "@/components/search";
 import {
   DoorOpen,

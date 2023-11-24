@@ -31,7 +31,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
         }}
         defaultValue={searchParams.get("query")?.toString()}
       />
-      <MagnifyingGlass size={32} />
+      {/* <MagnifyingGlass size={32} /> */}
     </div>
   );
 }

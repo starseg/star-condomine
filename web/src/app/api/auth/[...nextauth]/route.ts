@@ -42,7 +42,7 @@ const nextAuthOptions: NextAuthOptions = {
     async session({ session, token }) {
       const t = JSON.stringify(token)
       const payload = jwtDecode(t);
-      session = payload as any;
+      session = {payload, token} as any;
       return session;
     },
   },

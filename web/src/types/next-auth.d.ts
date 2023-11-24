@@ -8,5 +8,6 @@ declare module "next-auth" {
       username: String;
       type: String;
     };
+    token: String;
   }
 }
