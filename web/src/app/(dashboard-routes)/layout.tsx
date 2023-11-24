@@ -15,6 +15,7 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession(nextAuthOptions);
+  // como usar dados da session: {session?.user?.name}
   if (!session) {
     redirect("/");
   }

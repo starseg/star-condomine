@@ -17,6 +17,10 @@ module.exports = {
     },
     extend: {
       colors: {
+        stone: {
+          "850": "#161414",
+          "900": "#100E0D",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

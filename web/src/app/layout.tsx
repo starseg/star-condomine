@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import NextAuthSessionProvider from "@/providers/sessionProvider";
+import { Nunito } from "next/font/google";
 
-const inter = Inter({ subsets: ["latin"] });
+const nunito = Nunito({
+  weight: '400',
+  subsets: ['latin'],
+});
 
 export const metadata: Metadata = {
   title: {
@@ -24,7 +27,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="favicon.ico" sizes="any" />
       </head>
-      <body className={cn(inter.className, "dark")}>
+      <body className={cn(nunito.className, "dark")}>
         <NextAuthSessionProvider>{children}</NextAuthSessionProvider>
       </body>
     </html>

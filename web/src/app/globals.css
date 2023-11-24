@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -26,7 +25,7 @@
     --ring: 20 14.3% 4.1%;
     --radius: 0.5rem;
   }
- 
+
   .dark {
     --background: 20 14.3% 4.1%;
     --foreground: 60 9.1% 97.8%;
@@ -52,6 +51,19 @@
   ::selection {
     color: #fff;
     background: #e3ae12;
+  }
+
+  /* Estilizando a barra de rolagem */
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #161414;
+    border-radius: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: #00000000;
   }
 }
 @layer base {
