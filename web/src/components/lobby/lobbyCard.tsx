@@ -16,7 +16,7 @@ export default function LobbyCard(props: LobbyCardProps) {
     <Link
       href={`${props.href}`}
       className={clsx(
-        "p-4 border rounded-md w-[30%] h-[170px] flex flex-col justify-between hover:bg-stone-850 transition-colors",
+        "p-4 border rounded-md lg:w-[30%] md:w-[45%] w-full h-[170px] flex flex-col justify-between hover:bg-stone-850 transition-colors",
         {
           "border-green-500" : props.status === 0,
         },
@@ -30,7 +30,7 @@ export default function LobbyCard(props: LobbyCardProps) {
     >
       <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-3xl">{props.title}</h2>
+          <h2 className="text-2xl">{props.title}</h2>
           <p>{props.type}</p>
         </div>
         <p>

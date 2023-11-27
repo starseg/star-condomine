@@ -3,12 +3,47 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const getAllLobbies = async (req: Request, res: Response): Promise<void> => {
+export const getAllLobbies = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const lobby = await prisma.lobby.findMany();
     res.json(lobby);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar as portarias" });
+  }
+};
+
+export const getFilteredLobbies = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { query } = req.query;
+
+    const whereCondition = query
+  ? {
+      OR: [
+        { name: { contains: query as string } },
+        { city: { contains: query as string } },
+        { state: { contains: query as string } },
+      ],
+    }
+  : {};
+
+    const lobbies = await prisma.lobby.findMany({
+      where: whereCondition,
+      include: {
+        device: true,
+        lobbyProblem: true,
+      },
+    });
+
+    res.json(lobbies);
+  } catch (error) {
+    console.error("Erro na busca da portaria:", error);
+    res.status(500).json({ error: "Erro na busca da portaria" });
   }
 };
 
@@ -33,9 +68,41 @@ export const createLobby = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { cnpj, name, responsible, telephone, schedules, procedures, datasheet, cep, state, city, neighborhood, street, number, complement, type } = req.body;
+    const {
+      cnpj,
+      name,
+      responsible,
+      telephone,
+      schedules,
+      procedures,
+      datasheet,
+      cep,
+      state,
+      city,
+      neighborhood,
+      street,
+      number,
+      complement,
+      type,
+    } = req.body;
     const lobby = await prisma.lobby.create({
-      data: { cnpj, name, responsible, telephone, schedules, procedures, datasheet, cep, state, city, neighborhood, street, number, complement, type },
+      data: {
+        cnpj,
+        name,
+        responsible,
+        telephone,
+        schedules,
+        procedures,
+        datasheet,
+        cep,
+        state,
+        city,
+        neighborhood,
+        street,
+        number,
+        complement,
+        type,
+      },
     });
     res.status(201).json(lobby);
   } catch (error) {
@@ -49,10 +116,42 @@ export const updateLobby = async (
 ): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
-    const { cnpj, name, responsible, telephone, schedules, procedures, datasheet, cep, state, city, neighborhood, street, number, complement, type } = req.body;
+    const {
+      cnpj,
+      name,
+      responsible,
+      telephone,
+      schedules,
+      procedures,
+      datasheet,
+      cep,
+      state,
+      city,
+      neighborhood,
+      street,
+      number,
+      complement,
+      type,
+    } = req.body;
     const lobby = await prisma.lobby.update({
       where: { lobbyId: id },
-      data: { cnpj, name, responsible, telephone, schedules, procedures, datasheet, cep, state, city, neighborhood, street, number, complement, type },
+      data: {
+        cnpj,
+        name,
+        responsible,
+        telephone,
+        schedules,
+        procedures,
+        datasheet,
+        cep,
+        state,
+        city,
+        neighborhood,
+        street,
+        number,
+        complement,
+        type,
+      },
     });
     res.status(200).json(lobby);
   } catch (error) {

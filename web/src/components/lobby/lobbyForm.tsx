@@ -68,7 +68,7 @@ export function LobbyForm() {
     try {
       const response = await api.post("lobby", data, {
         headers: {
-          Authorization: `Bearer ${session?.token}`,
+          Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
       console.log(response.data);

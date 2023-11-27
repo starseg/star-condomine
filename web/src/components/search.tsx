@@ -1,6 +1,5 @@
 "use client";
 
-import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import { Input } from "./ui/input";
@@ -13,7 +12,6 @@ export default function Search({ placeholder }: { placeholder: string }) {
     // console.log(`Searching... ${term}`);
 
     const params = new URLSearchParams(searchParams);
-    params.set("page", "1");
     if (term) {
       params.set("query", term);
     } else {
@@ -31,7 +29,6 @@ export default function Search({ placeholder }: { placeholder: string }) {
         }}
         defaultValue={searchParams.get("query")?.toString()}
       />
-      {/* <MagnifyingGlass size={32} /> */}
     </div>
   );
 }
