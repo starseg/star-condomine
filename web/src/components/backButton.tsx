@@ -1,17 +1,29 @@
 "use client";
 import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
+import React from "react";
 
-const BackButton = () => {
-  const router = useRouter();
-  function goBack() {
-    router.back();
+interface ButtonProps extends React.InputHTMLAttributes<HTMLButtonElement> {}
+
+const BackButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className }) => {
+    const router = useRouter();
+    function goBack() {
+      router.back();
+    }
+    return (
+      <button
+        className={cn(
+          "hover:scale-110 transition ease-in text-stone-50",
+          className
+        )}
+        onClick={goBack}
+      >
+        <ArrowLeft size={"2.5rem"} />
+      </button>
+    );
   }
-  return (
-    <button className="hover:scale-110 transition ease-in" onClick={goBack}>
-      <ArrowLeft size={"2.5rem"} />
-    </button>
-  );
-};
+);
 
 export default BackButton;

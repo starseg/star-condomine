@@ -20,9 +20,13 @@ import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 import api from "@/lib/axios";
 import { useSession } from "next-auth/react";
+import { searchCEP } from "@/lib/utils";
+import { useState } from "react";
+import Swal from "sweetalert2";
+import { MaskedInput } from "../maskedInput";
 
 const FormSchema = z.object({
-  type: z.enum(["CONDOMINIUM", "COMPANY"]),
+  type: z.string(),
   cnpj: z.string(),
   name: z.string(),
   responsible: z.string(),
@@ -31,7 +35,7 @@ const FormSchema = z.object({
   procedures: z?.string(),
   datasheet: z?.unknown(),
   cep: z.string(),
-  state: z.string(),
+  state: z.string().max(2),
   city: z.string(),
   neighborhood: z.string(),
   street: z.string(),
@@ -42,29 +46,41 @@ const FormSchema = z.object({
 export function LobbyForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      type: "CONDOMINIUM",
-      cnpj: "",
-      name: "",
-      responsible: "",
-      telephone: "",
-      schedules: "",
-      procedures: "",
-      datasheet: "",
-      cep: "",
-      state: "",
-      city: "",
-      neighborhood: "",
-      street: "",
-      number: "",
-      complement: "",
-    },
   });
 
-  const { data: session } = useSession();
+  const [cep, setCep] = useState("");
 
+  const [uf, setUf] = useState("");
+  const [city, setCity] = useState("");
+  const [neighborhood, setNeighborhood] = useState("");
+  const [street, setStreet] = useState("");
+
+  const handleBlur = async () => {
+    const validacep = /^\d{5}-\d{3}$/;
+    if (validacep.test(cep)) {
+      const address = await searchCEP(cep);
+      console.log(address);
+
+      if (!address.erro) {
+        if (address.uf != "") setUf(address.uf);
+        if (address.localidade != "") setCity(address.localidade);
+        if (address.bairro != "") setNeighborhood(address.bairro);
+        if (address.logradouro != "") setStreet(address.logradouro);
+      } else {
+        Swal.fire({
+          title: "CEP inválido",
+          text: "O CEP informado não existe",
+          icon: "warning",
+        });
+      }
+    }
+  };
+
+  const { data: session } = useSession();
   const router = useRouter();
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    console.log(data);
+    return;
     try {
       const response = await api.post("lobby", data, {
         headers: {
@@ -94,11 +110,11 @@ export function LobbyForm() {
               <FormControl>
                 <RadioGroup defaultValue="CONDOMINIUM">
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="CONDOMINIUM" id="CONDOMINIUM" />
+                    <RadioGroupItem {...field} value="CONDOMINIUM" id="CONDOMINIUM" />
                     <Label htmlFor="CONDOMINIUM">Condomínio</Label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="COMPANY" id="COMPANY" />
+                    <RadioGroupItem {...field} value="COMPANY" id="COMPANY" />
                     <Label htmlFor="COMPANY">Empresa</Label>
                   </div>
                 </RadioGroup>
@@ -114,7 +130,8 @@ export function LobbyForm() {
             <FormItem>
               <FormLabel>CNPJ</FormLabel>
               <FormControl>
-                <Input
+                <MaskedInput
+                  mask="99.999.999/9999-99"
                   placeholder="Digite o CNPJ da empresa"
                   autoComplete="off"
                   {...field}
@@ -166,7 +183,8 @@ export function LobbyForm() {
             <FormItem>
               <FormLabel>Telefone</FormLabel>
               <FormControl>
-                <Input
+                <MaskedInput
+                  mask="(99) 99999-9999"
                   type="text"
                   placeholder="Digite o telefone da empresa"
                   {...field}
@@ -230,10 +248,14 @@ export function LobbyForm() {
             <FormItem>
               <FormLabel>CEP</FormLabel>
               <FormControl>
-                <Input
+                <MaskedInput
+                  mask="99999-999"
                   type="text"
                   placeholder="Digite o CEP da portaria"
                   {...field}
+                  value={cep}
+                  onChange={(e) => setCep(e.target.value)}
+                  onBlur={handleBlur}
                 />
               </FormControl>
               <FormMessage />
@@ -251,6 +273,8 @@ export function LobbyForm() {
                   type="text"
                   placeholder="Digite o Estado da portaria"
                   {...field}
+                  onChange={(e) => setUf(e.target.value)}
+                  value={uf}
                 />
               </FormControl>
               <FormMessage />
@@ -269,6 +293,8 @@ export function LobbyForm() {
                   type="text"
                   placeholder="Digite a cidade da portaria"
                   {...field}
+                  onChange={(e) => setCity(e.target.value)}
+                  value={city}
                 />
               </FormControl>
               <FormMessage />
@@ -287,6 +313,8 @@ export function LobbyForm() {
                   type="text"
                   placeholder="Digite o bairro da portaria"
                   {...field}
+                  onChange={(e) => setNeighborhood(e.target.value)}
+                  value={neighborhood}
                 />
               </FormControl>
               <FormMessage />
@@ -305,6 +333,8 @@ export function LobbyForm() {
                   type="text"
                   placeholder="Digite a rua da portaria"
                   {...field}
+                  onChange={(e) => setStreet(e.target.value)}
+                  value={street}
                 />
               </FormControl>
               <FormMessage />
@@ -320,7 +350,7 @@ export function LobbyForm() {
               <FormLabel>Número</FormLabel>
               <FormControl>
                 <Input
-                  type="text"
+                  type="number"
                   placeholder="Digite o número da portaria"
                   {...field}
                 />
