@@ -34,15 +34,18 @@ const nextAuthOptions: NextAuthOptions = {
   pages: {
     signIn: "/login",
   },
+  session: {
+    maxAge: 24 * 60 * 60,
+  },
   callbacks: {
     async jwt({ token, user }) {
       user && (token.user = user);
       return token;
     },
     async session({ session, token }) {
-      const t = JSON.stringify(token)
+      const t = JSON.stringify(token);
       const payload = jwtDecode(t);
-      session = {payload, token} as any;
+      session = { payload, token } as any;
       return session;
     },
   },

@@ -20,7 +20,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
     replace(`${pathname}?${params.toString()}`);
   }, 300);
   return (
-    <div className="flex items-center gap-2 w-4/12">
+    <div className="flex items-center gap-2 w-full md:w-1/2 lg:w-4/12">
       <Input
         type="search"
         placeholder={placeholder}

@@ -1,11 +1,9 @@
 import List from "@/components/lobby/list";
-import LobbyCard from "@/components/lobby/lobbyCard";
 import Search from "@/components/search";
 import {
   DoorOpen,
   FilePlus,
   Smiley,
-  SmileyMeh,
   SmileySad,
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
@@ -13,7 +11,7 @@ import Link from "next/link";
 export default async function Dashboard() {
   return (
     <section className="max-w-5xl mx-auto mb-12">
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-2 flex-wrap flex-col md:flex-row w-[90%] ml-[5%]">
         <h1 className="flex gap-2 items-center text-stone-50 text-4xl pb-4">
           <DoorOpen /> Portarias
         </h1>

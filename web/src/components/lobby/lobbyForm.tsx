@@ -1,10 +1,12 @@
 "use client";
 
+import * as z from "zod";
+import Swal from "sweetalert2";
+import api from "@/lib/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
-
-import { Button } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import {
   Form,
   FormControl,
@@ -13,59 +15,53 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useRouter } from "next/navigation";
-import { Label } from "../ui/label";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
-import api from "@/lib/axios";
-import { useSession } from "next-auth/react";
 import { searchCEP } from "@/lib/utils";
-import { useState } from "react";
-import Swal from "sweetalert2";
 import { MaskedInput } from "../maskedInput";
 
 const FormSchema = z.object({
-  type: z.string(),
+  type: z.enum(["CONDOMINIUM", "COMPANY"]),
   cnpj: z.string(),
   name: z.string(),
   responsible: z.string(),
   telephone: z.string(),
   schedules: z.string(),
-  procedures: z?.string(),
-  datasheet: z?.unknown(),
+  procedures: z.string(),
+  datasheet: z.unknown(),
   cep: z.string(),
   state: z.string().max(2),
   city: z.string(),
   neighborhood: z.string(),
   street: z.string(),
   number: z.string(),
-  complement: z?.string(),
+  complement: z.string(),
 });
 
 export function LobbyForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      procedures: "",
+      datasheet: "",
+      complement: "",
+    },
   });
 
-  const [cep, setCep] = useState("");
-
-  const [uf, setUf] = useState("");
-  const [city, setCity] = useState("");
-  const [neighborhood, setNeighborhood] = useState("");
-  const [street, setStreet] = useState("");
-
-  const handleBlur = async () => {
+  const handleBlur = async (cep: string) => {
     const validacep = /^\d{5}-\d{3}$/;
     if (validacep.test(cep)) {
       const address = await searchCEP(cep);
       console.log(address);
 
       if (!address.erro) {
-        if (address.uf != "") setUf(address.uf);
-        if (address.localidade != "") setCity(address.localidade);
-        if (address.bairro != "") setNeighborhood(address.bairro);
-        if (address.logradouro != "") setStreet(address.logradouro);
+        if (address.uf != "") form.setValue("state", address.uf);
+        if (address.localidade != "") form.setValue("city", address.localidade);
+        if (address.bairro != "") form.setValue("neighborhood", address.bairro);
+        if (address.logradouro != "")
+          form.setValue("street", address.logradouro);
       } else {
         Swal.fire({
           title: "CEP inválido",
@@ -80,7 +76,7 @@ export function LobbyForm() {
   const router = useRouter();
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     console.log(data);
-    return;
+    // return;
     try {
       const response = await api.post("lobby", data, {
         headers: {
@@ -108,15 +104,23 @@ export function LobbyForm() {
             <FormItem>
               <FormLabel>Tipo de portaria</FormLabel>
               <FormControl>
-                <RadioGroup defaultValue="CONDOMINIUM">
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem {...field} value="CONDOMINIUM" id="CONDOMINIUM" />
-                    <Label htmlFor="CONDOMINIUM">Condomínio</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem {...field} value="COMPANY" id="COMPANY" />
-                    <Label htmlFor="COMPANY">Empresa</Label>
-                  </div>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex flex-col space-y-1"
+                >
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="CONDOMINIUM" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Condomínio</FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="COMPANY" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Empresa</FormLabel>
+                  </FormItem>
                 </RadioGroup>
               </FormControl>
               <FormMessage />
@@ -253,9 +257,7 @@ export function LobbyForm() {
                   type="text"
                   placeholder="Digite o CEP da portaria"
                   {...field}
-                  value={cep}
-                  onChange={(e) => setCep(e.target.value)}
-                  onBlur={handleBlur}
+                  onBlur={() => handleBlur(field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -273,8 +275,6 @@ export function LobbyForm() {
                   type="text"
                   placeholder="Digite o Estado da portaria"
                   {...field}
-                  onChange={(e) => setUf(e.target.value)}
-                  value={uf}
                 />
               </FormControl>
               <FormMessage />
@@ -293,8 +293,6 @@ export function LobbyForm() {
                   type="text"
                   placeholder="Digite a cidade da portaria"
                   {...field}
-                  onChange={(e) => setCity(e.target.value)}
-                  value={city}
                 />
               </FormControl>
               <FormMessage />
@@ -313,8 +311,6 @@ export function LobbyForm() {
                   type="text"
                   placeholder="Digite o bairro da portaria"
                   {...field}
-                  onChange={(e) => setNeighborhood(e.target.value)}
-                  value={neighborhood}
                 />
               </FormControl>
               <FormMessage />
@@ -333,8 +329,6 @@ export function LobbyForm() {
                   type="text"
                   placeholder="Digite a rua da portaria"
                   {...field}
-                  onChange={(e) => setStreet(e.target.value)}
-                  value={street}
                 />
               </FormControl>
               <FormMessage />
