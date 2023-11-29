@@ -36,10 +36,10 @@ export default function List() {
       const params = new URLSearchParams(searchParams);
       try {
         let path;
-        if(params.size == 0) {
-          path = "lobby/filtered"
+        if (params.size == 0) {
+          path = "lobby/filtered";
         } else {
-          path = "lobby/filtered?query=" + params.get("query")
+          path = "lobby/filtered?query=" + params.get("query");
         }
         const response = await api.get(path, {
           headers: {
@@ -70,7 +70,7 @@ export default function List() {
         return (
           <LobbyCard
             key={lobby.lobbyId}
-            href=""
+            href={"dashboard/actions?id=" + lobby.lobbyId}
             title={lobby.name}
             type={lobby.schedules}
             status={status}
