@@ -30,7 +30,7 @@ export function Menu() {
         width={453}
         height={74}
         priority={true}
-        className="text-white max-w-[80%]"
+        className="max-w-[80%]"
       />
       <DropdownMenu>
         <DropdownMenuTrigger>
