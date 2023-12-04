@@ -36,7 +36,7 @@ interface LobbyProps {
   type: string;
 }
 
-export default function NewLobby() {
+export default function LobbyDetails() {
   const [lobby, setLobby] = useState<LobbyProps | null>(null);
   const { data: session } = useSession();
   const searchParams = useSearchParams();

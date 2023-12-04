@@ -75,8 +75,7 @@ export function LobbyForm() {
   const { data: session } = useSession();
   const router = useRouter();
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    console.log(data);
-    // return;
+    // console.log(data);
     try {
       const response = await api.post("lobby", data, {
         headers: {
@@ -155,6 +154,7 @@ export function LobbyForm() {
                 <Input
                   type="text"
                   placeholder="Digite o nome da empresa"
+                  autoComplete="off"
                   {...field}
                 />
               </FormControl>
@@ -172,6 +172,7 @@ export function LobbyForm() {
                 <Input
                   type="text"
                   placeholder="Digite o nome do responsável da empresa"
+                  autoComplete="off"
                   {...field}
                 />
               </FormControl>
@@ -191,6 +192,7 @@ export function LobbyForm() {
                   mask="(99) 99999-9999"
                   type="text"
                   placeholder="Digite o telefone da empresa"
+                  autoComplete="off"
                   {...field}
                 />
               </FormControl>
@@ -208,6 +210,7 @@ export function LobbyForm() {
                 <Input
                   type="text"
                   placeholder="Quais são os horários do monitoramento?"
+                  autoComplete="off"
                   {...field}
                 />
               </FormControl>
@@ -256,6 +259,7 @@ export function LobbyForm() {
                   mask="99999-999"
                   type="text"
                   placeholder="Digite o CEP da portaria"
+                  autoComplete="off"
                   {...field}
                   onBlur={() => handleBlur(field.value)}
                 />
@@ -274,6 +278,7 @@ export function LobbyForm() {
                 <Input
                   type="text"
                   placeholder="Digite o Estado da portaria"
+                  autoComplete="off"
                   {...field}
                 />
               </FormControl>
@@ -292,6 +297,7 @@ export function LobbyForm() {
                 <Input
                   type="text"
                   placeholder="Digite a cidade da portaria"
+                  autoComplete="off"
                   {...field}
                 />
               </FormControl>
@@ -310,6 +316,7 @@ export function LobbyForm() {
                 <Input
                   type="text"
                   placeholder="Digite o bairro da portaria"
+                  autoComplete="off"
                   {...field}
                 />
               </FormControl>
@@ -328,6 +335,7 @@ export function LobbyForm() {
                 <Input
                   type="text"
                   placeholder="Digite a rua da portaria"
+                  autoComplete="off"
                   {...field}
                 />
               </FormControl>
@@ -346,6 +354,7 @@ export function LobbyForm() {
                 <Input
                   type="number"
                   placeholder="Digite o número da portaria"
+                  autoComplete="off"
                   {...field}
                 />
               </FormControl>
@@ -364,6 +373,7 @@ export function LobbyForm() {
                 <Input
                   type="text"
                   placeholder="Alguma informação adicional do endereço"
+                  autoComplete="off"
                   {...field}
                 />
               </FormControl>

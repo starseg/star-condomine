@@ -80,3 +80,15 @@ export const deleteDevice = async (
     res.status(500).json({ error: "Erro ao excluir o dispositivo" });
   }
 };
+
+export const getDeviceModels = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const device = await prisma.deviceModel.findMany();
+    res.json(device);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os modelos" });
+  }
+};

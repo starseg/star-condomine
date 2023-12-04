@@ -4,16 +4,18 @@ import {
   getAllDevices,
   getDevice,
   updateDevice,
-  deleteDevice
+  deleteDevice,
+  getDeviceModels
 } from "../controllers/device";
 import { checkAdminPermission } from "../middlewares/permissions";
 
 const deviceRouter = express.Router();
 
 deviceRouter.get("/", getAllDevices);
-deviceRouter.get("/:id", getDevice);
+deviceRouter.get("/find/:id", getDevice);
 deviceRouter.post("/", createDevice);
 deviceRouter.put("/:id", updateDevice);
 deviceRouter.delete("/:id",checkAdminPermission, deleteDevice);
+deviceRouter.get("/models", getDeviceModels);
 
 export default deviceRouter;
