@@ -15,10 +15,7 @@ export const getAllDevices = async (
   }
 };
 
-export const getDevice = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const getDevice = async (req: Request, res: Response): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
     const device = await prisma.device.findUniqueOrThrow({
@@ -90,5 +87,25 @@ export const getDeviceModels = async (
     res.json(device);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar os modelos" });
+  }
+};
+
+export const getDeviceByLobby = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const device = await prisma.device.findMany({
+      where: { lobbyId: lobby },
+      include: { deviceModel: true },
+    });
+    if (!device) {
+      res.status(404).json({ error: "Dispositivos não encontrados" });
+      return;
+    }
+    res.json(device);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os dispositivos" });
   }
 };

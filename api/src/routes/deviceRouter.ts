@@ -5,7 +5,8 @@ import {
   getDevice,
   updateDevice,
   deleteDevice,
-  getDeviceModels
+  getDeviceModels,
+  getDeviceByLobby
 } from "../controllers/device";
 import { checkAdminPermission } from "../middlewares/permissions";
 
@@ -17,5 +18,6 @@ deviceRouter.post("/", createDevice);
 deviceRouter.put("/:id", updateDevice);
 deviceRouter.delete("/:id",checkAdminPermission, deleteDevice);
 deviceRouter.get("/models", getDeviceModels);
+deviceRouter.get("/lobby/:lobby", getDeviceByLobby);
 
 export default deviceRouter;

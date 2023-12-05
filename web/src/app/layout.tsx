@@ -5,7 +5,7 @@ import NextAuthSessionProvider from "@/providers/sessionProvider";
 import { Nunito } from "next/font/google";
 
 const nunito = Nunito({
-  weight: '400',
+  weight: ['400', '600', '700'],
   subsets: ['latin'],
 });
 

@@ -44,12 +44,12 @@ export default function LobbyCard(props: LobbyCardProps) {
         </p>
       </div>
       <div className="flex justify-between items-end">
-        <p>
+        <p className="w-1/2">
           Ramais:
           <br />
           {props.ramais}
         </p>
-        <p>{props.location}</p>
+        <p className="w-1/2 text-right">{props.location}</p>
       </div>
     </Link>
   );

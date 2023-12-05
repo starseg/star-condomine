@@ -1,88 +1,135 @@
+"use client";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableFooter,
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
+import api from "@/lib/axios";
+import { PencilLine, Trash } from "@phosphor-icons/react/dist/ssr";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 
-const invoices = [
-  {
-    invoice: "INV001",
-    paymentStatus: "Paid",
-    totalAmount: "$250.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV002",
-    paymentStatus: "Pending",
-    totalAmount: "$150.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV003",
-    paymentStatus: "Unpaid",
-    totalAmount: "$350.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV004",
-    paymentStatus: "Paid",
-    totalAmount: "$450.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV005",
-    paymentStatus: "Paid",
-    totalAmount: "$550.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV006",
-    paymentStatus: "Pending",
-    totalAmount: "$200.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV007",
-    paymentStatus: "Unpaid",
-    totalAmount: "$300.00",
-    paymentMethod: "Credit Card",
-  },
-]
+interface Device {
+  deviceId: number;
+  name: string;
+  ip: string;
+  ramal: number;
+  description: string;
+  deviceModelId: number;
+  lobbyId: number;
+  deviceModel: {
+    model: string;
+  };
+}
 
-export function DeviceTable() {
+export default function DeviceTable({ lobby }: { lobby: string }) {
+  const router = useRouter();
+  const [devices, setDevices] = useState<Device[]>([]);
+  const { data: session } = useSession();
+  const fetchData = async () => {
+    try {
+      const response = await api.get("device/lobby/" + lobby, {
+        headers: {
+          Authorization: `Bearer ${session?.token.user.token}`,
+        },
+      });
+      setDevices(response.data);
+    } catch (error) {
+      console.error("Erro ao obter dados:", error);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, [session]);
+
+  // console.log(devices);
+
+  const deleteAction = async (id: number) => {
+    console.log("device/" + id);
+    try {
+      await api.delete("device/" + id, {
+        headers: {
+          Authorization: `Bearer ${session?.token.user.token}`,
+        },
+      });
+      fetchData();
+      Swal.fire({
+        title: "Excluído!",
+        text: "Esse dispositivo acabou de ser apagado.",
+        icon: "success",
+      });
+    } catch (error) {
+      console.error("Erro excluir dado:", error);
+    }
+  };
+
+  const deleteDevice = async (id: number) => {
+    Swal.fire({
+      title: "Excluir dispositivo?",
+      text: "Essa ação não poderá ser revertida!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#43C04F",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sim, excluir!",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteAction(id);
+      }
+    });
+  };
+
   return (
-    <Table className="border border-stone-800 rouded-lg">
-      <TableHeader>
+    <Table className="border border-stone-800 rouded-lg max-w-[90%] mx-auto">
+      <TableHeader className="bg-stone-800 font-semibold">
         <TableRow>
           <TableHead>Nome</TableHead>
           <TableHead>IP</TableHead>
           <TableHead>Ramal</TableHead>
           <TableHead>Descrição</TableHead>
           <TableHead>Modelo</TableHead>
+          <TableHead>Ações</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {invoices.map((invoice) => (
-          <TableRow key={invoice.invoice}>
-            <TableCell>{invoice.invoice}</TableCell>
-            <TableCell>{invoice.paymentStatus}</TableCell>
-            <TableCell>{invoice.paymentMethod}</TableCell>
-            <TableCell>{invoice.totalAmount}</TableCell>
-            <TableCell>{invoice.totalAmount}</TableCell>
+        {devices.map((device) => (
+          <TableRow key={device.deviceId}>
+            <TableCell>{device.name}</TableCell>
+            <TableCell>{device.ip}</TableCell>
+            <TableCell>{device.ramal}</TableCell>
+            <TableCell>{device.description}</TableCell>
+            <TableCell>{device.deviceModel.model}</TableCell>
+            <TableCell className="flex gap-4 text-2xl">
+              <Link
+                href={`device/update?lobby=${device.lobbyId}&id=${device.deviceId}`}
+              >
+                <PencilLine />
+              </Link>
+              <button
+                onClick={() => deleteDevice(device.deviceId)}
+                title="Excluir"
+              >
+                <Trash />
+              </button>
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
       <TableFooter>
         <TableRow>
-          <TableCell colSpan={4}>Total de registros</TableCell>
-          <TableCell>$2,500.00</TableCell>
+          <TableCell className="text-right" colSpan={6}>
+            Total de registros: {devices.length}
+          </TableCell>
         </TableRow>
       </TableFooter>
     </Table>
-  )
+  );
 }
