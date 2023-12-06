@@ -3,6 +3,9 @@
 import * as z from "zod";
 import Swal from "sweetalert2";
 import api from "@/lib/axios";
+import { initializeApp } from "firebase/app";
+import { firebaseConfig } from "@/firebase";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
@@ -24,30 +27,42 @@ import { MaskedInput } from "../maskedInput";
 
 const FormSchema = z.object({
   type: z.enum(["CONDOMINIUM", "COMPANY"]),
-  cnpj: z.string(),
-  name: z.string(),
-  responsible: z.string(),
-  telephone: z.string(),
-  schedules: z.string(),
-  procedures: z.string(),
-  datasheet: z.unknown(),
-  cep: z.string(),
-  state: z.string().max(2),
-  city: z.string(),
-  neighborhood: z.string(),
-  street: z.string(),
-  number: z.string(),
-  complement: z.string(),
+  cnpj: z.string().min(18),
+  name: z.string().min(5),
+  responsible: z.string().min(5),
+  telephone: z.string().min(10),
+  schedules: z.string().min(3),
+  procedures: z.string().optional(),
+  cep: z.string().min(9),
+  state: z.string().min(2).max(2),
+  city: z.string().min(2),
+  neighborhood: z.string().min(2),
+  street: z.string().min(2),
+  number: z.string().min(1),
+  complement: z.string().optional(),
+  datasheet: z.instanceof(File).optional(),
 });
 
 export function LobbyForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
+      type: "CONDOMINIUM",
+      cnpj: "",
+      name: "",
+      responsible: "",
+      telephone: "",
+      schedules: "",
       procedures: "",
-      datasheet: "",
+      cep: "",
+      state: "",
+      city: "",
+      neighborhood: "",
+      street: "",
+      number: "",
       complement: "",
-    },
+      datasheet: new File([], ""),
+    }
   });
 
   const handleBlur = async (cep: string) => {
@@ -72,12 +87,67 @@ export function LobbyForm() {
     }
   };
 
+  type UploadFunction = (file: File) => Promise<string>;
+
+  // Função para fazer upload de um arquivo para o Firebase Storage
+  const uploadFile: UploadFunction = async (file) => {
+    initializeApp(firebaseConfig);
+    const storage = getStorage();
+
+    const timestamp = new Date().toISOString();
+    const fileName = `portarias/ficha-tecnica-${timestamp}.pdf`;
+
+    const fileRef = ref(storage, fileName);
+
+    try {
+      await uploadBytes(fileRef, file).then((snapshot) => {
+        console.log("Uploaded file!");
+      });
+      const downloadURL = await getDownloadURL(fileRef);
+      console.log("Arquivo enviado com sucesso. URL de download:", downloadURL);
+
+      return downloadURL;
+    } catch (error) {
+      console.error("Erro ao enviar o arquivo:", error);
+      throw error;
+    }
+  };
+
+  const handleFileUpload = async (file: File) => {
+    try {
+      const url = await uploadFile(file);
+      console.log("URL do arquivo:", url);
+      return url;
+    } catch (error) {
+      console.error("Erro durante o upload:", error);
+    }
+  };
+
   const { data: session } = useSession();
   const router = useRouter();
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    // console.log(data);
+    let file;
+    if (data.datasheet) file = await handleFileUpload(data.datasheet);
+    else file = "";
     try {
-      const response = await api.post("lobby", data, {
+      const info = {
+        type: data.type,
+        cnpj: data.cnpj,
+        name: data.name,
+        responsible: data.responsible,
+        telephone: data.telephone,
+        schedules: data.schedules,
+        procedures: data.procedures,
+        cep: data.cep,
+        state: data.state,
+        city: data.city,
+        neighborhood: data.neighborhood,
+        street: data.street,
+        number: data.number,
+        complement: data.complement,
+        datasheet: file,
+      };
+      const response = await api.post("lobby", info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
@@ -242,7 +312,13 @@ export function LobbyForm() {
             <FormItem>
               <FormLabel>Ficha técnica</FormLabel>
               <FormControl>
-                <Input type="file" />
+                <Input 
+                type="file" 
+                accept=".pdf"
+                onChange={(e) =>
+                  field.onChange(e.target.files ? e.target.files[0] : null)
+                } 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
