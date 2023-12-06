@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { format } from 'date-fns';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -37,3 +38,8 @@ export const searchCEP = async (valor: string) => {
     console.log("CEP sem valor.");
   }
 };
+
+export const formatDate = (date: string) => {
+  const data = new Date(date);
+  return format(data, 'dd/MM/yyyy - HH:mm');
+}
