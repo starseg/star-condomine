@@ -167,6 +167,7 @@ export function DeviceUpdateForm() {
                   placeholder="Identificação do dispositivo"
                   autoComplete="off"
                   {...field}
+                  onBlur={() => form.setValue("name", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -185,6 +186,7 @@ export function DeviceUpdateForm() {
                   placeholder="Digite o IP do dispositivo. Ex: 192.168.0.1"
                   autoComplete="off"
                   {...field}
+                  onBlur={() => form.setValue("ip", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -203,6 +205,7 @@ export function DeviceUpdateForm() {
                   placeholder="Digite o número do ramal"
                   autoComplete="off"
                   {...field}
+                  onBlur={() => form.setValue("ramal", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -221,6 +224,7 @@ export function DeviceUpdateForm() {
                   placeholder="Digite a descrição do dispositivo"
                   autoComplete="off"
                   {...field}
+                  onBlur={() => form.setValue("description", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -287,7 +291,7 @@ export function DeviceUpdateForm() {
         />
 
         <Button type="submit" className="w-full text-lg">
-          Registrar
+          Atualizar
         </Button>
       </form>
     </Form>

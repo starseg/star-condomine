@@ -1,7 +1,6 @@
 "use client";
 
 import * as z from "zod";
-import Swal from "sweetalert2";
 import api from "@/lib/axios";
 import { initializeApp } from "firebase/app";
 import { firebaseConfig } from "@/firebase";
@@ -9,10 +8,11 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -22,8 +22,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
-import { searchCEP } from "@/lib/utils";
 import { MaskedInput } from "../maskedInput";
+import { useEffect, useState } from "react";
+import LoadingIcon from "../loadingIcon";
 
 const FormSchema = z.object({
   type: z.enum(["CONDOMINIUM", "COMPANY"]),
@@ -43,7 +44,7 @@ const FormSchema = z.object({
   datasheet: z.instanceof(File).optional(),
 });
 
-export function LobbyForm() {
+export function LobbyUpdateForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -64,28 +65,6 @@ export function LobbyForm() {
       datasheet: new File([], ""),
     },
   });
-
-  const handleBlur = async (cep: string) => {
-    const validacep = /^\d{5}-\d{3}$/;
-    if (validacep.test(cep)) {
-      const address = await searchCEP(cep);
-      console.log(address);
-
-      if (!address.erro) {
-        if (address.uf != "") form.setValue("state", address.uf);
-        if (address.localidade != "") form.setValue("city", address.localidade);
-        if (address.bairro != "") form.setValue("neighborhood", address.bairro);
-        if (address.logradouro != "")
-          form.setValue("street", address.logradouro);
-      } else {
-        Swal.fire({
-          title: "CEP inválido",
-          text: "O CEP informado não existe",
-          icon: "warning",
-        });
-      }
-    }
-  };
 
   type UploadFunction = (file: File) => Promise<string>;
 
@@ -123,13 +102,73 @@ export function LobbyForm() {
     }
   };
 
+  interface Lobby {
+    lobbyId: number;
+    cnpj: string;
+    name: string;
+    responsible: string;
+    telephone: string;
+    schedules: string;
+    procedures: string;
+    datasheet: string;
+    cep: string;
+    state: string;
+    city: string;
+    neighborhood: string;
+    street: string;
+    number: string;
+    complement: string;
+    type: string;
+    createdAt: string;
+    updatedAt: string;
+  }
+
   const { data: session } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const id = params.get("id");
+  const [details, setDetails] = useState<Lobby>();
+
+  const fetchData = async () => {
+    try {
+      const response = await api.get("lobby/find/" + id, {
+        headers: {
+          Authorization: `Bearer ${session?.token.user.token}`,
+        },
+      });
+      setDetails(response.data);
+    } catch (error) {
+      console.error("Erro ao obter dados:", error);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, [session]);
+
+  if (details) {
+    form.setValue("cnpj", details.cnpj);
+    form.setValue("name", details.name);
+    form.setValue("responsible", details.responsible);
+    form.setValue("telephone", details.telephone);
+    form.setValue("schedules", details.schedules);
+    form.setValue("procedures", details.procedures);
+    form.setValue("cep", details.cep);
+    form.setValue("state", details.state);
+    form.setValue("city", details.city);
+    form.setValue("neighborhood", details.neighborhood);
+    form.setValue("street", details.street);
+    form.setValue("number", details.number);
+    form.setValue("complement", details.complement);
+  }
+
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     let file;
     if (data.datasheet instanceof File && data.datasheet.size > 0)
       file = await handleFileUpload(data.datasheet);
+    else if (details?.datasheet) file = details.datasheet;
     else file = "";
+
     try {
       const info = {
         type: data.type,
@@ -148,13 +187,13 @@ export function LobbyForm() {
         complement: data.complement,
         datasheet: file,
       };
-      const response = await api.post("lobby", info, {
+      const response = await api.put("lobby/" + id, info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
       console.log(response.data);
-      router.push("/dashboard");
+      router.push("/dashboard/actions/details?lobby=" + id);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
@@ -163,11 +202,13 @@ export function LobbyForm() {
 
   return (
     <Form {...form}>
-      <form
+      {details ? (
+        <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-3/4 lg:w-1/3 space-y-6"
       >
-        <FormField
+        {details?.type != undefined ? (
+          <FormField
           control={form.control}
           name="type"
           render={({ field }) => (
@@ -176,7 +217,9 @@ export function LobbyForm() {
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  defaultValue={
+                    details?.type != undefined ? details.type : field.value
+                  }
                   className="flex flex-col space-y-1"
                 >
                   <FormItem className="flex items-center space-x-3 space-y-0">
@@ -197,6 +240,8 @@ export function LobbyForm() {
             </FormItem>
           )}
         />
+        ) : "carregando dados..."}
+        
         <FormField
           control={form.control}
           name="cnpj"
@@ -209,6 +254,7 @@ export function LobbyForm() {
                   placeholder="Digite o CNPJ da empresa"
                   autoComplete="off"
                   {...field}
+                  onBlur={() => form.setValue("cnpj", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -227,6 +273,7 @@ export function LobbyForm() {
                   placeholder="Digite o nome da empresa"
                   autoComplete="off"
                   {...field}
+                  onBlur={() => form.setValue("name", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -245,6 +292,7 @@ export function LobbyForm() {
                   placeholder="Digite o nome do responsável da empresa"
                   autoComplete="off"
                   {...field}
+                  onBlur={() => form.setValue("responsible", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -265,6 +313,7 @@ export function LobbyForm() {
                   placeholder="Digite o telefone da empresa"
                   autoComplete="off"
                   {...field}
+                  onBlur={() => form.setValue("telephone", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -283,6 +332,7 @@ export function LobbyForm() {
                   placeholder="Quais são os horários do monitoramento?"
                   autoComplete="off"
                   {...field}
+                  onBlur={() => form.setValue("schedules", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -299,6 +349,7 @@ export function LobbyForm() {
                 <Textarea
                   placeholder="Quais são os procedimentos a seguir com essa portaria?"
                   {...field}
+                  onBlur={() => form.setValue("procedures", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -321,6 +372,9 @@ export function LobbyForm() {
                   }
                 />
               </FormControl>
+              <FormDescription>
+                Não preencha esse campo se quiser manter o arquivo anterior
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -338,7 +392,7 @@ export function LobbyForm() {
                   placeholder="Digite o CEP da portaria"
                   autoComplete="off"
                   {...field}
-                  onBlur={() => handleBlur(field.value)}
+                  onBlur={() => form.setValue("cep", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -357,6 +411,7 @@ export function LobbyForm() {
                   placeholder="Digite o Estado da portaria"
                   autoComplete="off"
                   {...field}
+                  onBlur={() => form.setValue("state", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -376,6 +431,7 @@ export function LobbyForm() {
                   placeholder="Digite a cidade da portaria"
                   autoComplete="off"
                   {...field}
+                  onBlur={() => form.setValue("city", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -395,6 +451,7 @@ export function LobbyForm() {
                   placeholder="Digite o bairro da portaria"
                   autoComplete="off"
                   {...field}
+                  onBlur={() => form.setValue("neighborhood", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -414,6 +471,7 @@ export function LobbyForm() {
                   placeholder="Digite a rua da portaria"
                   autoComplete="off"
                   {...field}
+                  onBlur={() => form.setValue("street", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -433,6 +491,7 @@ export function LobbyForm() {
                   placeholder="Digite o número da portaria"
                   autoComplete="off"
                   {...field}
+                  onBlur={() => form.setValue("number", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -452,6 +511,7 @@ export function LobbyForm() {
                   placeholder="Alguma informação adicional do endereço"
                   autoComplete="off"
                   {...field}
+                  onBlur={() => form.setValue("complement", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -459,9 +519,10 @@ export function LobbyForm() {
           )}
         />
         <Button type="submit" className="w-full text-lg">
-          Registrar
+          Atualizar
         </Button>
       </form>
+      ) : <LoadingIcon/>}
     </Form>
   );
 }

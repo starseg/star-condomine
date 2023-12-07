@@ -8,6 +8,8 @@ import Swal from "sweetalert2";
 import DetailItem from "./detailItem";
 import { Button } from "../ui/button";
 import { formatDate } from "@/lib/utils";
+import LoadingIcon from "../loadingIcon";
+import { useRouter } from "next/navigation";
 
 interface Lobby {
   lobbyId: number;
@@ -31,6 +33,7 @@ interface Lobby {
 }
 
 export default function LobbyDetails({ lobby }: { lobby: string }) {
+  const router = useRouter();
   const [details, setDetails] = useState<Lobby>();
   const { data: session } = useSession();
   const fetchData = async () => {
@@ -80,6 +83,7 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
     }).then((result) => {
       if (result.isConfirmed) {
         deleteAction(id);
+        router.push("/dashboard");
       }
     });
   };
@@ -87,53 +91,74 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
   return (
     <div>
       {details ? (
-        <div className="max-w-2xl mx-auto border border-primary py-4 px-12 rounded-md">
-          <DetailItem label="Nome" content={details.name} />
-          <DetailItem
-            label="Tipo"
-            content={details.type === "CONDOMINIUM" ? "Condomínio" : "Empresa"}
-          />
-          <DetailItem label="CNPJ" content={details.cnpj} />
-          <DetailItem label="Responsável" content={details.responsible} />
-          <DetailItem label="Telefone" content={details.telephone} />
-          <DetailItem label="Horários" content={details.schedules} />
-          <DetailItem
-            label="Procedimentos gerais"
-            content={
-              details.procedures ? details.procedures : "Não especificados"
-            }
-          />
-          <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
-          <DetailItem label="CEP" content={details.cep} />
-          <DetailItem label="Estado" content={details.state} />
-          <DetailItem label="Cidade" content={details.city} />
-          <DetailItem label="Bairro" content={details.neighborhood} />
-          <DetailItem label="Rua" content={details.street} />
-          <DetailItem label="Número" content={details.number} />
-          <DetailItem
-            label="Complemento"
-            content={details.complement ? details.complement : "Não há"}
-          />
-          <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
-          <DetailItem
-            label="Data do registro"
-            content={formatDate(details.createdAt)}
-          />
-          <DetailItem
-            label="Última atualização"
-            content={formatDate(details.updatedAt)}
-          />
+        <>
+          <div className="max-w-2xl mx-auto border border-primary py-4 px-12 rounded-md">
+            <DetailItem label="Nome" content={details.name} />
+            <DetailItem
+              label="Tipo"
+              content={
+                details.type === "CONDOMINIUM" ? "Condomínio" : "Empresa"
+              }
+            />
+            <DetailItem label="CNPJ" content={details.cnpj} />
+            <DetailItem label="Responsável" content={details.responsible} />
+            <DetailItem label="Telefone" content={details.telephone} />
+            <DetailItem label="Horários" content={details.schedules} />
+            <DetailItem
+              label="Procedimentos gerais"
+              content={
+                details.procedures ? details.procedures : "Não especificados"
+              }
+            />
+            <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
+            <DetailItem label="CEP" content={details.cep} />
+            <DetailItem label="Estado" content={details.state} />
+            <DetailItem label="Cidade" content={details.city} />
+            <DetailItem label="Bairro" content={details.neighborhood} />
+            <DetailItem label="Rua" content={details.street} />
+            <DetailItem label="Número" content={details.number} />
+            <DetailItem
+              label="Complemento"
+              content={details.complement ? details.complement : "Não há"}
+            />
+            <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
+            <DetailItem
+              label="Data do registro"
+              content={formatDate(details.createdAt)}
+            />
+            <DetailItem
+              label="Última atualização"
+              content={formatDate(details.updatedAt)}
+            />
 
-          {details.datasheet ? (
-            <Link target="_blank" href={`${details.datasheet}`}>
-              <Button className="text-lg">Ficha técnica</Button>
+            {details.datasheet ? (
+              <Link target="_blank" href={`${details.datasheet}`}>
+                <Button className="text-lg">Ficha técnica</Button>
+              </Link>
+            ) : (
+              <p>Essa portaria não tem uma ficha técnica</p>
+            )}
+          </div>
+          <div className="max-w-2xl mx-auto py-4 flex justify-end gap-6">
+            <Link href={`/dashboard/update?id=${details.lobbyId}`}>
+              <Button className="text-lg w-32 bg-blue-700 hover:bg-blue-500 text-stone-50">
+                <PencilLine className="mr-2" />
+                Editar
+              </Button>
             </Link>
-          ) : (
-            <p>Essa portaria não tem uma ficha técnica</p>
-          )}
-        </div>
+            <Button
+              className="text-lg w-32 bg-destructive hover:bg-red-400 text-destructive-foreground"
+              onClick={() => deleteLobby(details.lobbyId)}
+            >
+              <Trash className="mr-2" />
+              Excluir
+            </Button>
+          </div>
+        </>
       ) : (
-        ""
+        <div className="w-full flex items-center justify-center">
+          <LoadingIcon />
+        </div>
       )}
     </div>
   );
