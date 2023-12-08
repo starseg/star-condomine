@@ -147,3 +147,15 @@ export const deleteMember = async (
     res.status(500).json({ error: "Erro ao excluir o membro" });
   }
 };
+
+export const getAddressTypes = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const address = await prisma.addressType.findMany();
+    res.json(address);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os tipos de endereço" });
+  }
+};

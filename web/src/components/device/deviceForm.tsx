@@ -106,7 +106,7 @@ export function DeviceForm() {
         },
       });
       console.log(response.data);
-      router.push("/dashboard");
+      router.push("/dashboard/actions?id=" + lobby);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;

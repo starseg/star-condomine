@@ -4,16 +4,18 @@ import {
   getAllMembers,
   getMember,
   updateMember,
-  deleteMember
+  deleteMember,
+  getAddressTypes
 } from "../controllers/member";
 import { checkAdminPermission } from "../middlewares/permissions";
 
 const memberRouter = express.Router();
 
 memberRouter.get("/", getAllMembers);
-memberRouter.get("/:id", getMember);
+memberRouter.get("/find/:id", getMember);
 memberRouter.post("/", createMember);
 memberRouter.put("/:id", updateMember);
 memberRouter.delete("/:id", checkAdminPermission, deleteMember);
+memberRouter.get("/address", getAddressTypes);
 
 export default memberRouter;

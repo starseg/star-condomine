@@ -63,3 +63,19 @@ export const deleteTag = async (
     res.status(500).json({ error: "Erro ao excluir a tag" });
   }
 };
+
+export const getTagTypes = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const tag = await prisma.tagType.findMany();
+    if (!tag) {
+      res.status(404).json({ error: "Tipos não encontrados" });
+      return;
+    }
+    res.json(tag);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os tipos" });
+  }
+};
