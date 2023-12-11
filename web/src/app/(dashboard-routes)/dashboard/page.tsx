@@ -15,9 +15,9 @@ export default async function Dashboard() {
         <h1 className="flex gap-2 items-center text-stone-50 text-4xl pb-4">
           <DoorOpen /> Portarias
         </h1>
-        <Search placeholder="Buscar..." />
+        <Search placeholder="Buscar..." pagination={false} />
       </div>
-        <List />
+      <List />
       <div className="flex items-start justify-between flex-wrap gap-4">
         <Link
           href={"dashboard/new"}

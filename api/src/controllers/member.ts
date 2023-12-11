@@ -15,11 +15,38 @@ export const getAllMembers = async (
   }
 };
 
+export const getMembersByLobby = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const member = await prisma.member.findMany({
+      where: { lobbyId: lobby },
+      include: {
+        addressType: true,
+        telephone: true,
+      },
+    });
+    if (!member) {
+      res.status(404).json({ error: "Nenhum membro não encontrado" });
+      return;
+    }
+    res.json(member);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os membros" });
+  }
+};
+
 export const getMember = async (req: Request, res: Response): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
     const member = await prisma.member.findUniqueOrThrow({
       where: { memberId: id },
+      include: {
+        addressType: true,
+        telephone: true,
+      },
     });
     if (!member) {
       res.status(404).json({ error: "Membro não encontrado" });
@@ -157,5 +184,64 @@ export const getAddressTypes = async (
     res.json(address);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar os tipos de endereço" });
+  }
+};
+
+export const getFilteredMembers = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const { query } = req.query;
+
+    const whereCondition = query
+      ? {
+          OR: [
+            { cpf: { contains: query as string } },
+            { name: { contains: query as string } },
+            { address: { contains: query as string } },
+          ],
+          AND: { lobbyId: lobby },
+        }
+      : {};
+    const member = await prisma.member.findMany({
+      where: whereCondition,
+    });
+    if (!member) {
+      res.status(404).json({ error: "Nenhum membro não encontrado" });
+      return;
+    }
+    res.json(member);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os membros" });
+  }
+};
+
+export const countMembers = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const { query } = req.query;
+
+    const whereCondition = query
+      ? {
+          OR: [
+            { cpf: { contains: query as string } },
+            { name: { contains: query as string } },
+            { address: { contains: query as string } },
+          ],
+          AND: { lobbyId: lobby },
+        }
+      : {};
+    const member = await prisma.member.count({
+      where: whereCondition,
+    });
+
+    res.json(member);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os membros" });
   }
 };

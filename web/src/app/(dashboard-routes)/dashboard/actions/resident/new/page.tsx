@@ -1,11 +1,15 @@
 import { ResidentForm } from "@/components/member/residentForm";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Registrar morador",
+};
 
 export default function NewResident() {
   return (
     <section className="flex flex-col justify-center items-center mb-12">
       <h1 className="text-4xl mt-2 mb-4">Registrar morador</h1>
-      <ResidentForm/>
+      <ResidentForm />
     </section>
-  )
+  );
 }

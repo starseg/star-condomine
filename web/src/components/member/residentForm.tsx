@@ -172,12 +172,13 @@ export function ResidentForm() {
       console.error("Erro ao obter dados:", error);
     }
   };
+  fetchTagTypes();
   // RETORNA O ID DO TIPO DA TAG
   let tag = 0;
   let card = 0;
   tagTypes.forEach((type) => {
     if (type.description === "Tag") tag = type.tagTypeId;
-    if (type.description === "Card") card = type.tagTypeId;
+    if (type.description === "Cartão") card = type.tagTypeId;
   });
 
   const [phoneNumber, setPhoneNumber] = useState<string[]>([]);

@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import DetailItem from "./detailItem";
+import DetailItem from "../detailItem";
 import { Button } from "../ui/button";
 import { formatDate } from "@/lib/utils";
 import LoadingIcon from "../loadingIcon";
