@@ -19,7 +19,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
-import { type } from "os";
 
 interface Member {
   memberId: number;
@@ -73,7 +72,6 @@ export default function MemberTable({ lobby }: { lobby: string }) {
   // console.log(members);
 
   const deleteAction = async (id: number) => {
-    console.log("member/" + id);
     try {
       await api.delete("member/" + id, {
         headers: {
@@ -157,7 +155,9 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                 <Link href={`${type}/details?id=${member.memberId}`}>
                   <MagnifyingGlass />
                 </Link>
-                <Link href={`${type}/update?id=${member.memberId}`}>
+                <Link
+                  href={`${type}/update?id=${member.memberId}&lobby=${lobby}`}
+                >
                   <PencilLine />
                 </Link>
                 <button

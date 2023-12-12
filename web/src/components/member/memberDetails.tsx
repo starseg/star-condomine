@@ -6,6 +6,9 @@ import { useEffect, useState } from "react";
 import LoadingIcon from "../loadingIcon";
 import DetailItem from "../detailItem";
 import { formatDate } from "@/lib/utils";
+import { Button } from "../ui/button";
+import Link from "next/link";
+import { PencilLine } from "@phosphor-icons/react/dist/ssr";
 
 interface Member {
   memberId: number;
@@ -60,84 +63,104 @@ export default function memberDetails({ id }: { id: number }) {
   return (
     <div>
       {member ? (
-        <div className="max-w-2xl mx-auto border border-primary py-4 px-12 rounded-md">
-          <DetailItem label="Nome" content={member.name} />
-          <DetailItem label="CPF" content={member.cpf} />
-          <DetailItem label="RG" content={member.rg} />
-          <DetailItem label="email" content={member.email} />
-          <div className="flex flex-col justify-center gap-2 mb-4">
-            <label className="text-lg">Telefone:</label>
+        <>
+          <div className="max-w-2xl mx-auto border border-primary py-4 px-12 rounded-md">
+            {member.profileUrl.length > 0 ? (
+              <img
+                src={member.profileUrl}
+                width="150px"
+                alt="Foto de perfil"
+                className="mx-auto"
+              />
+            ) : (
+              ""
+            )}
+            <DetailItem label="Nome" content={member.name} />
+            <DetailItem
+              label="Status"
+              content={member.status === "ACTIVE" ? "✅ Ativo" : "❌ Inativo"}
+            />
+            <DetailItem label="CPF" content={member.cpf} />
+            <DetailItem label="RG" content={member.rg} />
+            <DetailItem label="email" content={member.email} />
+            <div className="flex flex-col justify-center gap-2 mb-4">
+              <label className="text-lg">Telefone:</label>
 
-            {member.telephone
-              ? member.telephone.length > 0
-                ? member.telephone.map((telephone) => (
-                    <p className="bg-muted text-muted-foreground rounded-md px-4 py-1">
-                      {telephone.number}
-                    </p>
-                  ))
-                : "Nenhum telefone cadastrado"
-              : "Sem telefone"}
+              {member.telephone
+                ? member.telephone.length > 0
+                  ? member.telephone.map((telephone) => (
+                      <p className="bg-muted text-muted-foreground rounded-md px-4 py-1">
+                        {telephone.number}
+                      </p>
+                    ))
+                  : "Nenhum telefone cadastrado"
+                : "Sem telefone"}
+            </div>
+            <DetailItem
+              label="Endereço"
+              content={
+                member.address
+                  ? member.addressType.description + " " + member.address
+                  : "Endereço não cadastrado"
+              }
+            />
+            <DetailItem
+              label="Comentários"
+              content={member.comments ? member.comments : "Nenhum comentário"}
+            />
+
+            <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
+            <div className="flex flex-col justify-center gap-2 mb-4">
+              <label className="text-lg">Formas de acesso:</label>
+              {member.faceAccess === "true" ? (
+                <p className="bg-muted text-muted-foreground rounded-md px-4 py-1">
+                  Facial
+                </p>
+              ) : (
+                ""
+              )}
+              {member.biometricAccess === "true" ? (
+                <p className="bg-muted text-muted-foreground rounded-md px-4 py-1">
+                  Biometria
+                </p>
+              ) : (
+                ""
+              )}
+              {member.remoteControlAccess === "true" ? (
+                <p className="bg-muted text-muted-foreground rounded-md px-4 py-1">
+                  Controle remoto
+                </p>
+              ) : (
+                ""
+              )}
+              {member.passwordAccess ? (
+                <p className="bg-muted text-muted-foreground rounded-md px-4 py-1">
+                  Senha: {member.passwordAccess}
+                </p>
+              ) : (
+                ""
+              )}
+            </div>
+
+            <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
+            <DetailItem
+              label="Data do registro"
+              content={formatDate(member.createdAt)}
+            />
+            <DetailItem
+              label="Última atualização"
+              content={formatDate(member.updatedAt)}
+            />
           </div>
-          <DetailItem
-            label="Endereço"
-            content={
-              member.address
-                ? member.addressType.description + " " + member.address
-                : "Endereço não cadastrado"
-            }
-          />
-          <DetailItem
-            label="Comentários"
-            content={member.comments ? member.comments : "Nenhum comentário"}
-          />
-          <DetailItem
-            label="Status"
-            content={member.status === "ACTIVE" ? "Ativo" : "Inativo"}
-          />
-
-          <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
-          <div className="flex flex-col justify-center gap-2 mb-4">
-            <label className="text-lg">Formas de acesso:</label>
-            {member.faceAccess === "true" ? (
-              <p className="bg-muted text-muted-foreground rounded-md px-4 py-1">
-                Facial
-              </p>
-            ) : (
-              ""
-            )}
-            {member.biometricAccess === "true" ? (
-              <p className="bg-muted text-muted-foreground rounded-md px-4 py-1">
-                Biometria
-              </p>
-            ) : (
-              ""
-            )}
-            {member.remoteControlAccess === "true" ? (
-              <p className="bg-muted text-muted-foreground rounded-md px-4 py-1">
-                Controle remoto
-              </p>
-            ) : (
-              ""
-            )}
-            {member.passwordAccess ? (
-              <p className="bg-muted text-muted-foreground rounded-md px-4 py-1">
-                Senha: {member.passwordAccess}
-              </p>
-            ) : (
-              ""
-            )}
-          </div>
-
-          <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
-          <DetailItem
-            label="Data do registro"
-            content={formatDate(member.createdAt)}
-          />
-          <DetailItem
-            label="Última atualização"
-            content={formatDate(member.updatedAt)}
-          />
-        </div>
+          <Link
+            className="max-w-2xl mx-auto py-4 flex justify-end"
+            href={`update?id=${member.memberId}`}
+          >
+            <Button className="flex gap-2 text-lg w-32 bg-blue-700 hover:bg-blue-500 text-stone-50 transition-colors">
+              <PencilLine /> Editar
+            </Button>
+          </Link>
+        </>
       ) : (
         <div className="w-full flex items-center justify-center">
           <LoadingIcon />
