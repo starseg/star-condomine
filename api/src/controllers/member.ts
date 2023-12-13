@@ -207,6 +207,10 @@ export const getFilteredMembers = async (
       : {};
     const member = await prisma.member.findMany({
       where: whereCondition,
+      include: {
+        addressType: true,
+        telephone: true,
+      },
     });
     if (!member) {
       res.status(404).json({ error: "Nenhum membro não encontrado" });

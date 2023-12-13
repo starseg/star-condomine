@@ -6,9 +6,6 @@ import { useEffect, useState } from "react";
 import LoadingIcon from "../loadingIcon";
 import DetailItem from "../detailItem";
 import { formatDate } from "@/lib/utils";
-import { Button } from "../ui/button";
-import Link from "next/link";
-import { PencilLine } from "@phosphor-icons/react/dist/ssr";
 
 interface Member {
   memberId: number;
@@ -152,14 +149,6 @@ export default function memberDetails({ id }: { id: number }) {
               content={formatDate(member.updatedAt)}
             />
           </div>
-          <Link
-            className="max-w-2xl mx-auto py-4 flex justify-end"
-            href={`update?id=${member.memberId}`}
-          >
-            <Button className="flex gap-2 text-lg w-32 bg-blue-700 hover:bg-blue-500 text-stone-50 transition-colors">
-              <PencilLine /> Editar
-            </Button>
-          </Link>
         </>
       ) : (
         <div className="w-full flex items-center justify-center">

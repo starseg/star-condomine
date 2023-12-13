@@ -18,7 +18,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface Member {
   memberId: number;
@@ -50,12 +50,21 @@ interface Member {
 }
 
 export default function MemberTable({ lobby }: { lobby: string }) {
-  const router = useRouter();
   const [members, setMembers] = useState<Member[]>([]);
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
   const fetchData = async () => {
+    const params = new URLSearchParams(searchParams);
     try {
-      const response = await api.get("member/lobby/" + lobby, {
+      let path;
+      if (!params.get("query")) {
+        path = "member/lobby/" + lobby;
+        console.log(path);
+      } else {
+        path = `member/filtered/${lobby}?query=${params.get("query")}`;
+        console.log(path);
+      }
+      const response = await api.get(path, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
@@ -67,9 +76,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
   };
   useEffect(() => {
     fetchData();
-  }, [session]);
-
-  // console.log(members);
+  }, [session, searchParams]);
 
   const deleteAction = async (id: number) => {
     try {

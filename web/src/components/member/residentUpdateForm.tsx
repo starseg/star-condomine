@@ -51,37 +51,30 @@ const FormSchema = z.object({
   remoteControlAccess: z.boolean().default(false),
 });
 
-export function ResidentUpdateForm() {
-  interface Member {
-    memberId: number;
-    type: string;
-    profileUrl: string;
-    name: string;
-    rg: string;
-    cpf: string;
-    email: string;
-    comments: string;
-    status: string;
-    faceAccess: string;
-    biometricAccess: string;
-    remoteControlAccess: string;
-    passwordAccess: string;
-    addressTypeId: number;
-    addressType: {
-      addressTypeId: number;
-      description: string;
-    };
-    address: string;
-    accessPeriod: Date;
-    telephone: {
-      telephoneId: number;
-      number: string;
-    }[];
-    position: string;
-    createdAt: string;
-    updatedAt: string;
-    lobbyId: number;
-  }
+interface Values {
+  profileUrl: File;
+  name: string;
+  cpf: string;
+  rg: string;
+  email: string;
+  addressType: number;
+  address: string;
+  comments: string;
+  faceAccess: boolean;
+  biometricAccess: boolean;
+  remoteControlAccess: boolean;
+  telephone: string;
+}
+
+export function ResidentUpdateForm({
+  preloadedValues,
+}: {
+  preloadedValues: Values;
+}) {
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: preloadedValues,
+  });
   interface Telephone {
     telephoneId: number;
     number: string;
@@ -101,25 +94,9 @@ export function ResidentUpdateForm() {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
 
-  const [loading, setLoading] = useState(true);
-  const [member, setMember] = useState<Member | null>(null);
   const [addressType, setAddressType] = useState([]);
   const [phoneNumber, setPhoneNumber] = useState<string[]>([]);
 
-  const fetchData = async () => {
-    try {
-      const response = await api.get("member/find/" + params.get("id"), {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setMember(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
   const fetchTelephoneData = async () => {
     try {
       const response = await api.get("telephone/member/" + params.get("id"), {
@@ -153,33 +130,6 @@ export function ResidentUpdateForm() {
     fetchAddressData();
     fetchTelephoneData();
   }, [session]);
-
-  function bool(value: string | undefined) {
-    return value === "true";
-  }
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      profileUrl: new File([], ""),
-      name: member?.name || "",
-      cpf: member?.cpf || "",
-      rg: member?.rg || "",
-      email: member?.email || "",
-      addressType: member?.addressTypeId || 0,
-      address: member?.address || "",
-      faceAccess: bool(member?.faceAccess) || false,
-      biometricAccess: bool(member?.biometricAccess) || false,
-      remoteControlAccess: bool(member?.remoteControlAccess) || false,
-      comments: member?.comments || "",
-      telephone: "",
-    },
-  });
-
-  const {
-    formState: { isLoading },
-  } = useForm({
-    defaultValues: async () => await fetchData(),
-  });
 
   type UploadFunction = (file: File) => Promise<string>;
   const uploadFile: UploadFunction = async (file) => {
@@ -222,9 +172,11 @@ export function ResidentUpdateForm() {
     })
   );
 
+  const [newPhones, setNewPhones] = useState<string[]>([]);
   const addTelephone = (value: string) => {
     if (!phoneNumber.includes(value)) {
       setPhoneNumber([...phoneNumber, value]);
+      setNewPhones([...newPhones, value]);
     }
     form.setValue("telephone", "");
   };
@@ -238,7 +190,7 @@ export function ResidentUpdateForm() {
     let file;
     if (data.profileUrl instanceof File && data.profileUrl.size > 0)
       file = await handleFileUpload(data.profileUrl);
-    else if (member?.profileUrl) file = member.profileUrl;
+    // else if (member?.profileUrl) file = member.profileUrl;
     else file = "";
 
     // REGISTRA O MORADOR
@@ -256,7 +208,7 @@ export function ResidentUpdateForm() {
         remoteControlAccess: data.remoteControlAccess.toString(),
         comments: data.comments,
       };
-      const response = await api.put("member" + params.get("id"), info, {
+      const response = await api.put("member/" + params.get("id"), info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
@@ -264,13 +216,13 @@ export function ResidentUpdateForm() {
       console.log(response.data);
 
       // REGISTRA OS NÚMEROS DE TELEFONE
-      if (phoneNumber[0] != "") {
+      if (newPhones[0] != "") {
         try {
-          for (let i = 0; i < phoneNumber.length; i++) {
+          for (let i = 0; i < newPhones.length; i++) {
             await api.post(
               "telephone",
               {
-                number: phoneNumber[i],
+                number: newPhones[i],
                 memberId: response.data.memberId,
               },
               {
@@ -286,16 +238,12 @@ export function ResidentUpdateForm() {
         }
       }
 
-      router.push("/dashboard/actions?id=" + lobby);
+      router.push("/dashboard/actions/resident?lobby=" + lobby);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
     }
   };
-
-  if (loading) {
-    return <p>Carregando...</p>;
-  }
 
   return (
     <Form {...form}>
