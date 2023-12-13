@@ -11,14 +11,11 @@ export const getAllTags = async (
     const tag = await prisma.tag.findMany();
     res.json(tag);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao buscar os telefones" });
+    res.status(500).json({ error: "Erro ao buscar as tags" });
   }
 };
 
-export const getTag = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const getTag = async (req: Request, res: Response): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
     const tag = await prisma.tag.findUniqueOrThrow({
@@ -34,10 +31,7 @@ export const getTag = async (
   }
 };
 
-export const createTag = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const createTag = async (req: Request, res: Response): Promise<void> => {
   try {
     const { value, tagTypeId, memberId } = req.body;
     const tag = await prisma.tag.create({
@@ -49,10 +43,7 @@ export const createTag = async (
   }
 };
 
-export const deleteTag = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const deleteTag = async (req: Request, res: Response): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
     await prisma.tag.delete({
@@ -77,5 +68,23 @@ export const getTagTypes = async (
     res.json(tag);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar os tipos" });
+  }
+};
+
+export const getTagsByMember = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const tag = await prisma.tag.findMany({
+      where: { memberId: id },
+      include: {
+        member: true,
+      },
+    });
+    res.json(tag);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar as tags" });
   }
 };
