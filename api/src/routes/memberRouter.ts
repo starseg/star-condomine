@@ -9,6 +9,7 @@ import {
   getAddressTypes,
   getFilteredMembers,
   countMembers,
+  getTagsByMember,
 } from "../controllers/member";
 import { checkAdminPermission } from "../middlewares/permissions";
 
@@ -19,6 +20,7 @@ memberRouter.get("/find/:id", getMember);
 memberRouter.get("/filtered/:lobby", getFilteredMembers);
 memberRouter.get("/count/:lobby", countMembers);
 memberRouter.get("/lobby/:lobby", getMembersByLobby);
+memberRouter.get("/tags/:id", getTagsByMember);
 memberRouter.get("/address", getAddressTypes);
 memberRouter.post("/", createMember);
 memberRouter.put("/:id", updateMember);

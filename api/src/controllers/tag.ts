@@ -71,20 +71,17 @@ export const getTagTypes = async (
   }
 };
 
-export const getTagsByMember = async (
+export const deleteTagsByMember = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
-    const tag = await prisma.tag.findMany({
+    await prisma.tag.deleteMany({
       where: { memberId: id },
-      include: {
-        member: true,
-      },
     });
-    res.json(tag);
+    res.json({ message: "Tags excluídas com sucesso" });
   } catch (error) {
-    res.status(500).json({ error: "Erro ao buscar as tags" });
+    res.status(500).json({ error: "Erro ao excluir as tags" });
   }
 };

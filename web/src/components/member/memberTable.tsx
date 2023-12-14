@@ -152,7 +152,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                   Veículos
                 </Link>
                 <Link
-                  href={`${type}/credentials?id=${member.memberId}`}
+                  href={`${type}/credentials?id=${member.memberId}&lobby=${lobby}`}
                   className="px-3 py-1 border rounded-md hover:border-stone-50 transition-all"
                 >
                   Credenciais

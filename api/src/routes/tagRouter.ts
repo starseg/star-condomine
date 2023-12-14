@@ -5,7 +5,7 @@ import {
   getTag,
   deleteTag,
   getTagTypes,
-  getTagsByMember,
+  deleteTagsByMember,
 } from "../controllers/tag";
 import { checkAdminPermission } from "../middlewares/permissions";
 
@@ -13,9 +13,9 @@ const tagRouter = express.Router();
 
 tagRouter.get("/", getAllTags);
 tagRouter.get("/find/:id", getTag);
-tagRouter.get("/member/:id", getTagsByMember);
 tagRouter.get("/types", getTagTypes);
 tagRouter.post("/", createTag);
-tagRouter.delete("/:id", checkAdminPermission, deleteTag);
+tagRouter.delete("/id/:id", checkAdminPermission, deleteTag);
+tagRouter.delete("/member/:id", checkAdminPermission, deleteTagsByMember);
 
 export default tagRouter;

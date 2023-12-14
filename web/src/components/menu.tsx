@@ -22,35 +22,35 @@ import { GearSix, List, UsersThree } from "@phosphor-icons/react/dist/ssr";
 
 export function Menu() {
   return (
-    <header className="flex flex-row w-full justify-around items-center p-2">
+    <header className="flex flex-row w-full justify-around items-center p-4">
       <BackButton />
       <Image
         src="/logo.png"
         alt="Logo Star Condomine"
-        width={453}
-        height={74}
+        width={419}
+        height={68}
         priority={true}
         className="max-w-[80%]"
       />
       <DropdownMenu>
         <DropdownMenuTrigger>
-          <List size={"2.5rem"}/>
+          <List size={"2.5rem"} />
         </DropdownMenuTrigger>
         <DropdownMenuContent className="px-4">
           <DropdownMenuLabel>Menu</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <Link href={""} className="flex justify-center items-center gap-2">
-              <UsersThree size={"24px"}/> Operadores
+              <UsersThree size={"24px"} /> Operadores
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Link href={""} className="flex justify-center items-center gap-2">
-              <GearSix size={"24px"}/> Configurar portarias
+              <GearSix size={"24px"} /> Configurar portarias
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <LogoutButton/>
+            <LogoutButton />
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

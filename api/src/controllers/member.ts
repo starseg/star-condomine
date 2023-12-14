@@ -249,3 +249,21 @@ export const countMembers = async (
     res.status(500).json({ error: "Erro ao buscar os membros" });
   }
 };
+
+export const getTagsByMember = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const member = await prisma.member.findUniqueOrThrow({
+      where: { memberId: id },
+      include: {
+        tag: true,
+      },
+    });
+    res.json(member);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar as tags" });
+  }
+};

@@ -1,38 +1,54 @@
 "use client";
+import LoadingIcon from "@/components/loadingIcon";
 import api from "@/lib/axios";
 import { useSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import MemberCredentialsForm from "@/components/member/memberCredentialsForm";
 
+interface Member {
+  memberId: number;
+  type: string;
+  name: string;
+  passwordAccess: string;
+  lobbyId: number;
+  tag: {
+    tagId: number;
+    value: string;
+    tagTypeId: number;
+    memberId: number;
+  }[];
+}
+
+interface ITagTypes {
+  tagTypeId: number;
+  description: string;
+}
+
+interface Values {
+  password: string;
+  tag: string;
+  card: string;
+}
 export default function residentCredentials() {
   const { data: session } = useSession();
-  const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
 
-  useEffect(() => {
-    fetchTagTypes();
-    fetchTagData();
-  }, [session]);
-
+  const [data, setData] = useState<Member | null>(null);
   const fetchTagData = async () => {
     try {
-      const types = await api.get("tag/member/" + params.get("id"), {
+      const response = await api.get("member/tags/" + params.get("id"), {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      setTagTypes(types.data);
+      setData(response.data);
     } catch (error) {
       console.error("Erro ao obter dados:", error);
     }
   };
 
-  // BUSCA OS TIPOS DE TAG
-  interface ITagTypes {
-    tagTypeId: number;
-    description: string;
-  }
   const [tagTypes, setTagTypes] = useState<ITagTypes[]>([]);
   const fetchTagTypes = async () => {
     try {
@@ -47,6 +63,22 @@ export default function residentCredentials() {
     }
   };
 
+  useEffect(() => {
+    fetchTagTypes();
+    fetchTagData();
+  }, [session]);
+
+  const [values, setValues] = useState<Values>();
+  useEffect(() => {
+    if (data) {
+      setValues({
+        password: data?.passwordAccess || "",
+        tag: "",
+        card: "",
+      });
+    }
+  }, [data]);
+
   // RETORNA O ID DO TIPO DA TAG
   let tag = 0;
   let card = 0;
@@ -56,9 +88,23 @@ export default function residentCredentials() {
   });
 
   return (
-    <section className="max-w-5xl mx-auto mb-24">
-      <h1 className="text-4xl mt-2 mb-4 text-center">Credenciais</h1>
-      <div className="max-h-[60vh] overflow-x-auto"></div>
+    <section className="max-w-5xl mx-auto mb-24 px-4">
+      {data && values ? (
+        <>
+          <h1 className="text-4xl mt-2">Credenciais</h1>
+          <h2 className="text-3xl mb-4 text-primary">{data.name}</h2>
+          <MemberCredentialsForm
+            memberData={data}
+            preloadedValues={values}
+            tagId={tag}
+            cardId={card}
+          />
+        </>
+      ) : (
+        <div className="w-full flex items-center justify-center">
+          <LoadingIcon />
+        </div>
+      )}
     </section>
   );
 }
