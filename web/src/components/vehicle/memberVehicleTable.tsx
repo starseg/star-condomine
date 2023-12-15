@@ -15,20 +15,46 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
-interface Vehicle {
-  vehicleId: number;
-  lecensePlate: string;
-  brand: string;
-  model: string;
-  color: string;
-  tag: string;
-  comments: string;
-  vehicleTypeId: number;
+interface Member {
   memberId: number;
+  type: string;
+  profileUrl: string;
+  name: string;
+  rg: string;
+  cpf: string;
+  comments: string;
+  status: string;
+  faceAccess: string;
+  biometricAccess: string;
+  remoteControlAccess: string;
+  passwordAccess: string;
+  addressType: {
+    addressTypeId: number;
+    description: string;
+  };
+  address: string;
+  accessPeriod: Date;
+  telephone: {
+    telephoneId: number;
+    number: string;
+  }[];
+  position: string;
+  createdAt: Date;
+  updatedAt: Date;
+  lobbyId: number;
 }
 
-export default function VehicleTable({ lobby }: { lobby: string }) {
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+export default function MemberVehicleTable({
+  searchParams,
+}: {
+  searchParams?: {
+    id?: string;
+    lobby?: string;
+  };
+}) {
+  const id = searchParams?.id || "";
+  const lobby = searchParams?.lobby || "";
+  const [members, setMembers] = useState<Member[]>([]);
   const { data: session } = useSession();
   const fetchData = async () => {
     try {
@@ -38,14 +64,14 @@ export default function VehicleTable({ lobby }: { lobby: string }) {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      setVehicles(response.data);
+      setMembers(response.data);
     } catch (error) {
       console.error("Erro ao obter dados:", error);
     }
   };
   useEffect(() => {
     fetchData();
-  }, [session]);
+  }, [session, searchParams]);
 
   const deleteAction = async (id: number) => {
     try {
@@ -97,22 +123,25 @@ export default function VehicleTable({ lobby }: { lobby: string }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {vehicles.map((vehicle) => {
+        {members.map((member) => {
+          let type = "";
+          if (member.type === "RESIDENT") type = "resident";
+          else type = "employee";
           return (
-            <TableRow key={vehicle.vehicleId}>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
+            <TableRow key={member.memberId}>
+              <TableCell>{member.cpf}</TableCell>
+              <TableCell>{member.name}</TableCell>
               <TableCell></TableCell>
               <TableCell></TableCell>
               <TableCell></TableCell>
               <TableCell className="flex gap-4 text-2xl">
                 <Link
-                  href={`vehicle/update?id=${vehicle.vehicleId}&lobby=${lobby}`}
+                  href={`${type}/update?id=${member.memberId}&lobby=${lobby}`}
                 >
                   <PencilLine />
                 </Link>
                 <button
-                  onClick={() => deleteVehicle(vehicle.vehicleId)}
+                  onClick={() => deleteVehicle(member.memberId)}
                   title="Excluir"
                 >
                   <Trash />
@@ -125,7 +154,7 @@ export default function VehicleTable({ lobby }: { lobby: string }) {
       <TableFooter>
         <TableRow>
           <TableCell className="text-right" colSpan={8}>
-            Total de registros: {vehicles.length}
+            Total de registros: {members.length}
           </TableCell>
         </TableRow>
       </TableFooter>

@@ -14,7 +14,6 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import { useRouter } from "next/navigation";
 
 interface Device {
   deviceId: number;
@@ -30,7 +29,6 @@ interface Device {
 }
 
 export default function DeviceTable({ lobby }: { lobby: string }) {
-  const router = useRouter();
   const [devices, setDevices] = useState<Device[]>([]);
   const { data: session } = useSession();
   const fetchData = async () => {

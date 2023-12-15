@@ -8,7 +8,12 @@ export const getAllVehicles = async (
   res: Response
 ): Promise<void> => {
   try {
-    const vehicle = await prisma.vehicle.findMany();
+    const vehicle = await prisma.vehicle.findMany({
+      include: {
+        member: true,
+        vehicleType: true,
+      },
+    });
     res.json(vehicle);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar os veículos" });
