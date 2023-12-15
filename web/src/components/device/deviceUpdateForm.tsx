@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -38,23 +37,23 @@ const FormSchema = z.object({
   model: z.number(),
 });
 
-export function DeviceUpdateForm() {
+interface Values {
+  name: string;
+  ip: string;
+  ramal: string;
+  description: string;
+  deviceModelId: number;
+}
+
+export function DeviceUpdateForm({
+  preloadedValues,
+}: {
+  preloadedValues: Values;
+}) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: preloadedValues,
   });
-
-  interface Device {
-    deviceId: number;
-    name: string;
-    ip: string;
-    ramal: number;
-    description: string;
-    deviceModelId: number;
-    lobbyId: number;
-    deviceModel: {
-      model: string;
-    };
-  }
 
   interface deviceModel {
     deviceModelId: number;
@@ -68,22 +67,9 @@ export function DeviceUpdateForm() {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
 
-  const [device, setDevice] = useState<Device | null>(null);
   const [deviceModel, setDeviceModel] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await api.get("device/find/" + params.get("id"), {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
-        setDevice(response.data);
-      } catch (error) {
-        console.error("Erro ao obter dados:", error);
-      }
-    };
     const fetchModels = async () => {
       try {
         const response = await api.get("device/models", {
@@ -97,17 +83,8 @@ export function DeviceUpdateForm() {
       }
     };
 
-    fetchData();
     fetchModels();
   }, [session]);
-
-  if (device) {
-    form.setValue("name", device.name);
-    form.setValue("ip", device.ip);
-    form.setValue("ramal", device.ramal.toString());
-    form.setValue("description", device.description);
-    form.setValue("model", device.deviceModelId);
-  }
 
   interface item {
     value: number;
@@ -167,7 +144,6 @@ export function DeviceUpdateForm() {
                   placeholder="Identificação do dispositivo"
                   autoComplete="off"
                   {...field}
-                  onBlur={() => form.setValue("name", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -186,7 +162,6 @@ export function DeviceUpdateForm() {
                   placeholder="Digite o IP do dispositivo. Ex: 192.168.0.1"
                   autoComplete="off"
                   {...field}
-                  onBlur={() => form.setValue("ip", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -205,7 +180,6 @@ export function DeviceUpdateForm() {
                   placeholder="Digite o número do ramal"
                   autoComplete="off"
                   {...field}
-                  onBlur={() => form.setValue("ramal", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -224,7 +198,6 @@ export function DeviceUpdateForm() {
                   placeholder="Digite a descrição do dispositivo"
                   autoComplete="off"
                   {...field}
-                  onBlur={() => form.setValue("description", field.value)}
                 />
               </FormControl>
               <FormMessage />

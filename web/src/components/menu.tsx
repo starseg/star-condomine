@@ -25,7 +25,7 @@ export function Menu() {
     <header className="flex flex-row w-full justify-around items-center p-4">
       <BackButton />
       <Image
-        src="/logo.png"
+        src="/logo.svg"
         alt="Logo Star Condomine"
         width={419}
         height={68}

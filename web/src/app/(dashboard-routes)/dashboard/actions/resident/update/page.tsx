@@ -1,4 +1,5 @@
 "use client";
+import LoadingIcon from "@/components/loadingIcon";
 import { ResidentUpdateForm } from "@/components/member/residentUpdateForm";
 import api from "@/lib/axios";
 import { useSession } from "next-auth/react";
@@ -101,10 +102,10 @@ export default function UpdateResident() {
   return (
     <section className="flex flex-col justify-center items-center mb-12">
       <h1 className="text-4xl mt-2 mb-4">Atualizar Morador</h1>
-      {data ? (
-        <ResidentUpdateForm preloadedValues={data} />
+      {member && data ? (
+        <ResidentUpdateForm preloadedValues={data} member={member} />
       ) : (
-        <p>Carregando...</p>
+        <LoadingIcon />
       )}
     </section>
   );

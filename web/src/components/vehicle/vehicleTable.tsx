@@ -9,16 +9,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import api from "@/lib/axios";
-import {
-  MagnifyingGlass,
-  PencilLine,
-  Trash,
-} from "@phosphor-icons/react/dist/ssr";
+import { PencilLine, Trash } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import { useRouter, useSearchParams } from "next/navigation";
 
 interface Member {
   memberId: number;
@@ -49,21 +44,21 @@ interface Member {
   lobbyId: number;
 }
 
-export default function MemberTable({ lobby }: { lobby: string }) {
+export default function VehicleTable({
+  searchParams,
+}: {
+  searchParams?: {
+    id?: string;
+    lobby?: string;
+  };
+}) {
+  const id = searchParams?.id || "";
+  const lobby = searchParams?.lobby || "";
   const [members, setMembers] = useState<Member[]>([]);
   const { data: session } = useSession();
-  const searchParams = useSearchParams();
   const fetchData = async () => {
-    const params = new URLSearchParams(searchParams);
     try {
-      let path;
-      if (!params.get("query")) {
-        path = "member/lobby/" + lobby;
-        console.log(path);
-      } else {
-        path = `member/filtered/${lobby}?query=${params.get("query")}`;
-        console.log(path);
-      }
+      let path = "member/lobby/" + lobby;
       const response = await api.get(path, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
@@ -96,7 +91,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
     }
   };
 
-  const deleteMember = async (id: number) => {
+  const deleteVehicle = async (id: number) => {
     Swal.fire({
       title: "Excluir membro?",
       text: "Essa ação não poderá ser revertida!",
@@ -117,11 +112,13 @@ export default function MemberTable({ lobby }: { lobby: string }) {
     <Table className="border border-stone-800 rouded-lg">
       <TableHeader className="bg-stone-800 font-semibold">
         <TableRow>
-          <TableHead>CPF</TableHead>
-          <TableHead>Nome</TableHead>
-          <TableHead>Endereço</TableHead>
-          <TableHead>Telefone</TableHead>
-          <TableHead>Propriedades</TableHead>
+          <TableHead>Tipo de veículo</TableHead>
+          <TableHead>Placa</TableHead>
+          <TableHead>Tag do veículo</TableHead>
+          <TableHead>Marca</TableHead>
+          <TableHead>Modelo</TableHead>
+          <TableHead>Cor</TableHead>
+          <TableHead>Observação</TableHead>
           <TableHead>Ações</TableHead>
         </TableRow>
       </TableHeader>
@@ -134,41 +131,17 @@ export default function MemberTable({ lobby }: { lobby: string }) {
             <TableRow key={member.memberId}>
               <TableCell>{member.cpf}</TableCell>
               <TableCell>{member.name}</TableCell>
-              <TableCell>
-                {member.address
-                  ? member.addressType.description + " " + member.address
-                  : "Endereço não cadastrado"}
-              </TableCell>
-              <TableCell>
-                {member.telephone.length > 0
-                  ? member.telephone[0].number
-                  : "Nenhum telefone cadastrado"}
-              </TableCell>
-              <TableCell className="space-x-4">
-                <Link
-                  href={`${type}/vehicles?id=${member.memberId}&lobby=${lobby}`}
-                  className="px-3 py-1 border rounded-md hover:border-stone-50 transition-all"
-                >
-                  Veículos
-                </Link>
-                <Link
-                  href={`${type}/credentials?id=${member.memberId}&lobby=${lobby}`}
-                  className="px-3 py-1 border rounded-md hover:border-stone-50 transition-all"
-                >
-                  Credenciais
-                </Link>
-              </TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
               <TableCell className="flex gap-4 text-2xl">
-                <Link href={`${type}/details?id=${member.memberId}`}>
-                  <MagnifyingGlass />
-                </Link>
                 <Link
                   href={`${type}/update?id=${member.memberId}&lobby=${lobby}`}
                 >
                   <PencilLine />
                 </Link>
                 <button
-                  onClick={() => deleteMember(member.memberId)}
+                  onClick={() => deleteVehicle(member.memberId)}
                   title="Excluir"
                 >
                   <Trash />
@@ -180,7 +153,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
       </TableBody>
       <TableFooter>
         <TableRow>
-          <TableCell className="text-right" colSpan={6}>
+          <TableCell className="text-right" colSpan={8}>
             Total de registros: {members.length}
           </TableCell>
         </TableRow>

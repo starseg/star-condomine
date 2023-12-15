@@ -41,6 +41,13 @@ const FormSchema = z.object({
 export function DeviceForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      name: "",
+      ip: "",
+      ramal: "",
+      description: "",
+      model: 0,
+    },
   });
 
   interface deviceModel {
@@ -106,7 +113,7 @@ export function DeviceForm() {
         },
       });
       console.log(response.data);
-      router.push("/dashboard/actions?id=" + lobby);
+      router.push("/dashboard/actions/device?lobby=" + lobby);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;

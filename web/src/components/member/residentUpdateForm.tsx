@@ -12,6 +12,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -51,6 +52,36 @@ const FormSchema = z.object({
   remoteControlAccess: z.boolean().default(false),
 });
 
+interface Member {
+  memberId: number;
+  type: string;
+  profileUrl: string;
+  name: string;
+  rg: string;
+  cpf: string;
+  email: string;
+  comments: string;
+  status: string;
+  faceAccess: string;
+  biometricAccess: string;
+  remoteControlAccess: string;
+  passwordAccess: string;
+  addressTypeId: number;
+  addressType: {
+    addressTypeId: number;
+    description: string;
+  };
+  address: string;
+  accessPeriod: Date;
+  telephone: {
+    telephoneId: number;
+    number: string;
+  }[];
+  position: string;
+  createdAt: string;
+  updatedAt: string;
+  lobbyId: number;
+}
 interface Values {
   profileUrl: File;
   name: string;
@@ -68,8 +99,10 @@ interface Values {
 
 export function ResidentUpdateForm({
   preloadedValues,
+  member,
 }: {
   preloadedValues: Values;
+  member: Member;
 }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -190,7 +223,7 @@ export function ResidentUpdateForm({
     let file;
     if (data.profileUrl instanceof File && data.profileUrl.size > 0)
       file = await handleFileUpload(data.profileUrl);
-    // else if (member?.profileUrl) file = member.profileUrl;
+    else if (member?.profileUrl) file = member.profileUrl;
     else file = "";
 
     // REGISTRA O MORADOR
@@ -266,6 +299,9 @@ export function ResidentUpdateForm({
                   }
                 />
               </FormControl>
+              <FormDescription>
+                Não preencha esse campo se quiser manter o arquivo anterior
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

@@ -44,26 +44,54 @@ const FormSchema = z.object({
   datasheet: z.instanceof(File).optional(),
 });
 
-export function LobbyUpdateForm() {
+interface Lobby {
+  lobbyId: number;
+  cnpj: string;
+  name: string;
+  responsible: string;
+  telephone: string;
+  schedules: string;
+  procedures: string;
+  datasheet: string;
+  cep: string;
+  state: string;
+  city: string;
+  neighborhood: string;
+  street: string;
+  number: string;
+  complement: string;
+  createdAt: string;
+  updatedAt: string;
+  type: "CONDOMINIUM" | "COMPANY" | undefined;
+}
+interface Values {
+  type: "CONDOMINIUM" | "COMPANY" | undefined;
+  cnpj: string;
+  name: string;
+  responsible: string;
+  telephone: string;
+  schedules: string;
+  procedures: string;
+  cep: string;
+  state: string;
+  city: string;
+  neighborhood: string;
+  street: string;
+  number: string;
+  complement: string;
+  datasheet: File;
+}
+
+export function LobbyUpdateForm({
+  preloadedValues,
+  lobby,
+}: {
+  preloadedValues: Values;
+  lobby: Lobby;
+}) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      type: "CONDOMINIUM",
-      cnpj: "",
-      name: "",
-      responsible: "",
-      telephone: "",
-      schedules: "",
-      procedures: "",
-      cep: "",
-      state: "",
-      city: "",
-      neighborhood: "",
-      street: "",
-      number: "",
-      complement: "",
-      datasheet: new File([], ""),
-    },
+    defaultValues: preloadedValues,
   });
 
   type UploadFunction = (file: File) => Promise<string>;
@@ -102,71 +130,17 @@ export function LobbyUpdateForm() {
     }
   };
 
-  interface Lobby {
-    lobbyId: number;
-    cnpj: string;
-    name: string;
-    responsible: string;
-    telephone: string;
-    schedules: string;
-    procedures: string;
-    datasheet: string;
-    cep: string;
-    state: string;
-    city: string;
-    neighborhood: string;
-    street: string;
-    number: string;
-    complement: string;
-    type: string;
-    createdAt: string;
-    updatedAt: string;
-  }
-
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const id = params.get("id");
-  const [details, setDetails] = useState<Lobby>();
-
-  const fetchData = async () => {
-    try {
-      const response = await api.get("lobby/find/" + id, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setDetails(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
-  };
-  useEffect(() => {
-    fetchData();
-  }, [session]);
-
-  if (details) {
-    form.setValue("cnpj", details.cnpj);
-    form.setValue("name", details.name);
-    form.setValue("responsible", details.responsible);
-    form.setValue("telephone", details.telephone);
-    form.setValue("schedules", details.schedules);
-    form.setValue("procedures", details.procedures);
-    form.setValue("cep", details.cep);
-    form.setValue("state", details.state);
-    form.setValue("city", details.city);
-    form.setValue("neighborhood", details.neighborhood);
-    form.setValue("street", details.street);
-    form.setValue("number", details.number);
-    form.setValue("complement", details.complement);
-  }
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     let file;
     if (data.datasheet instanceof File && data.datasheet.size > 0)
       file = await handleFileUpload(data.datasheet);
-    else if (details?.datasheet) file = details.datasheet;
+    else if (lobby?.datasheet) file = lobby.datasheet;
     else file = "";
 
     try {
@@ -202,13 +176,11 @@ export function LobbyUpdateForm() {
 
   return (
     <Form {...form}>
-      {details ? (
-        <form
+      <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-3/4 lg:w-1/3 space-y-6"
       >
-        {details?.type != undefined ? (
-          <FormField
+        <FormField
           control={form.control}
           name="type"
           render={({ field }) => (
@@ -217,9 +189,7 @@ export function LobbyUpdateForm() {
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
-                  defaultValue={
-                    details?.type != undefined ? details.type : field.value
-                  }
+                  defaultValue={field.value}
                   className="flex flex-col space-y-1"
                 >
                   <FormItem className="flex items-center space-x-3 space-y-0">
@@ -240,8 +210,7 @@ export function LobbyUpdateForm() {
             </FormItem>
           )}
         />
-        ) : "carregando dados..."}
-        
+
         <FormField
           control={form.control}
           name="cnpj"
@@ -254,7 +223,6 @@ export function LobbyUpdateForm() {
                   placeholder="Digite o CNPJ da empresa"
                   autoComplete="off"
                   {...field}
-                  onBlur={() => form.setValue("cnpj", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -273,7 +241,6 @@ export function LobbyUpdateForm() {
                   placeholder="Digite o nome da empresa"
                   autoComplete="off"
                   {...field}
-                  onBlur={() => form.setValue("name", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -292,7 +259,6 @@ export function LobbyUpdateForm() {
                   placeholder="Digite o nome do responsável da empresa"
                   autoComplete="off"
                   {...field}
-                  onBlur={() => form.setValue("responsible", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -313,7 +279,6 @@ export function LobbyUpdateForm() {
                   placeholder="Digite o telefone da empresa"
                   autoComplete="off"
                   {...field}
-                  onBlur={() => form.setValue("telephone", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -332,7 +297,6 @@ export function LobbyUpdateForm() {
                   placeholder="Quais são os horários do monitoramento?"
                   autoComplete="off"
                   {...field}
-                  onBlur={() => form.setValue("schedules", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -349,7 +313,6 @@ export function LobbyUpdateForm() {
                 <Textarea
                   placeholder="Quais são os procedimentos a seguir com essa portaria?"
                   {...field}
-                  onBlur={() => form.setValue("procedures", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -392,7 +355,6 @@ export function LobbyUpdateForm() {
                   placeholder="Digite o CEP da portaria"
                   autoComplete="off"
                   {...field}
-                  onBlur={() => form.setValue("cep", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -411,7 +373,6 @@ export function LobbyUpdateForm() {
                   placeholder="Digite o Estado da portaria"
                   autoComplete="off"
                   {...field}
-                  onBlur={() => form.setValue("state", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -431,7 +392,6 @@ export function LobbyUpdateForm() {
                   placeholder="Digite a cidade da portaria"
                   autoComplete="off"
                   {...field}
-                  onBlur={() => form.setValue("city", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -451,7 +411,6 @@ export function LobbyUpdateForm() {
                   placeholder="Digite o bairro da portaria"
                   autoComplete="off"
                   {...field}
-                  onBlur={() => form.setValue("neighborhood", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -471,7 +430,6 @@ export function LobbyUpdateForm() {
                   placeholder="Digite a rua da portaria"
                   autoComplete="off"
                   {...field}
-                  onBlur={() => form.setValue("street", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -491,7 +449,6 @@ export function LobbyUpdateForm() {
                   placeholder="Digite o número da portaria"
                   autoComplete="off"
                   {...field}
-                  onBlur={() => form.setValue("number", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -511,7 +468,6 @@ export function LobbyUpdateForm() {
                   placeholder="Alguma informação adicional do endereço"
                   autoComplete="off"
                   {...field}
-                  onBlur={() => form.setValue("complement", field.value)}
                 />
               </FormControl>
               <FormMessage />
@@ -522,7 +478,6 @@ export function LobbyUpdateForm() {
           Atualizar
         </Button>
       </form>
-      ) : <LoadingIcon/>}
     </Form>
   );
 }
