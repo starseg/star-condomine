@@ -1,36 +1,43 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import BackButton from "./backButton";
 import Image from "next/image";
 import LogoutButton from "./logoutButton";
 import Link from "next/link";
-import { GearSix, List, UsersThree } from "@phosphor-icons/react/dist/ssr";
+import {
+  ArrowLeft,
+  GearSix,
+  List,
+  UsersThree,
+} from "@phosphor-icons/react/dist/ssr";
+import Clock from "./clock";
 
-export function Menu() {
+export function Menu({ url = "" }: { url?: string }) {
   return (
-    <header className="flex flex-row w-full justify-around items-center p-4">
-      <BackButton />
+    <header className="flex flex-row w-full justify-between md:justify-around items-center p-4">
+      {url === "" ? (
+        <BackButton />
+      ) : url === "x" ? (
+        <div></div>
+      ) : (
+        <Link href={`${url}`}>
+          <ArrowLeft size={"2.5rem"} />
+        </Link>
+      )}
       <Image
         src="/logo.svg"
         alt="Logo Star Condomine"
         width={419}
         height={68}
         priority={true}
-        className="max-w-[80%]"
+        className="max-w-[80%] hidden md:block"
       />
       <DropdownMenu>
         <DropdownMenuTrigger>

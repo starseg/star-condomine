@@ -12,14 +12,17 @@ export default function NotFound() {
     <div className="w-full h-screen flex flex-col items-center justify-center">
       <h1 className="text-[8rem] text-primary">404</h1>
       <Image
-        src="/logo.png"
+        src="/logo.svg"
         alt="Logo Star Condomine"
         width={453}
         height={74}
         priority={true}
+        className="mt-2 mb-4"
       />
       <p className="text-xl mb-8">Ops! a página requisitada não existe</p>
-      <Button onClick={goBack}>Voltar</Button>
+      <Button className="text-lg" onClick={goBack}>
+        Voltar
+      </Button>
     </div>
   );
 }

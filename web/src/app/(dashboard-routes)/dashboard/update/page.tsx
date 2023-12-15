@@ -2,6 +2,7 @@
 import LoadingIcon from "@/components/loadingIcon";
 import { LobbyUpdateForm } from "@/components/lobby/lobbyUpdateForm";
 import api from "@/lib/axios";
+import { Menu } from "@/components/menu";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -93,13 +94,16 @@ export default function UpdateDevice() {
   }, [lobby]);
 
   return (
-    <section className="flex flex-col justify-center items-center mb-12">
-      <h1 className="text-4xl mt-2 mb-4">Atualizar portaria</h1>
-      {lobby && data ? (
-        <LobbyUpdateForm preloadedValues={data} lobby={lobby} />
-      ) : (
-        <LoadingIcon />
-      )}
-    </section>
+    <>
+      <Menu />
+      <section className="flex flex-col justify-center items-center mb-12">
+        <h1 className="text-4xl mt-2 mb-4">Atualizar portaria</h1>
+        {lobby && data ? (
+          <LobbyUpdateForm preloadedValues={data} lobby={lobby} />
+        ) : (
+          <LoadingIcon />
+        )}
+      </section>
+    </>
   );
 }

@@ -1,4 +1,5 @@
 import LobbyDetails from "@/components/lobby/lobbyDetails";
+import { Menu } from "@/components/menu";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -12,12 +13,14 @@ export default async function Device({
     lobby?: string;
   };
 }) {
-  
   const lobby = searchParams?.lobby || "";
   return (
-    <section className="max-w-5xl mx-auto mb-24">
-      <h1 className="text-4xl mt-2 mb-4 text-center">Detalhes da portaria</h1>
-      <LobbyDetails lobby={lobby}/>
-    </section>
+    <>
+      <Menu url={`/dashboard/actions?id=${lobby}`} />
+      <section className="max-w-5xl mx-auto mb-24">
+        <h1 className="text-4xl mt-2 mb-4 text-center">Detalhes da portaria</h1>
+        <LobbyDetails lobby={lobby} />
+      </section>
+    </>
   );
 }

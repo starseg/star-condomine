@@ -1,15 +1,23 @@
 import { ResidentForm } from "@/components/member/residentForm";
+import { Menu } from "@/components/menu";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Registrar morador",
 };
 
-export default function NewResident() {
+export default function NewResident({
+  searchParams,
+}: {
+  searchParams?: { lobby: string };
+}) {
   return (
-    <section className="flex flex-col justify-center items-center mb-12">
-      <h1 className="text-4xl mt-2 mb-4">Registrar morador</h1>
-      <ResidentForm />
-    </section>
+    <>
+      <Menu url={`/dashboard/actions?id=${searchParams?.lobby}`} />
+      <section className="flex flex-col justify-center items-center mb-12">
+        <h1 className="text-4xl mt-2 mb-4">Registrar morador</h1>
+        <ResidentForm />
+      </section>
+    </>
   );
 }

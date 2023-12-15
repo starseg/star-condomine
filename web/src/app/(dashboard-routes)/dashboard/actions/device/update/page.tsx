@@ -1,6 +1,7 @@
 "use client";
 import { DeviceUpdateForm } from "@/components/device/deviceUpdateForm";
 import LoadingIcon from "@/components/loadingIcon";
+import { Menu } from "@/components/menu";
 import api from "@/lib/axios";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
@@ -63,9 +64,12 @@ export default function UpdateDevice() {
   }, [device]);
 
   return (
-    <section className="flex flex-col justify-center items-center mb-12">
-      <h1 className="text-4xl mt-2 mb-4">Atualizar Dispositivo</h1>
-      {data ? <DeviceUpdateForm preloadedValues={data} /> : <LoadingIcon />}
-    </section>
+    <>
+      <Menu />
+      <section className="flex flex-col justify-center items-center mb-12">
+        <h1 className="text-4xl mt-2 mb-4">Atualizar Dispositivo</h1>
+        {data ? <DeviceUpdateForm preloadedValues={data} /> : <LoadingIcon />}
+      </section>
+    </>
   );
 }

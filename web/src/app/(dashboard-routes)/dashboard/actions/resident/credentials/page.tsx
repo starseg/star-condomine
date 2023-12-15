@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import MemberCredentialsForm from "@/components/member/memberCredentialsForm";
+import { Menu } from "@/components/menu";
 
 interface Member {
   memberId: number;
@@ -88,23 +89,26 @@ export default function residentCredentials() {
   });
 
   return (
-    <section className="max-w-5xl mx-auto mb-24 px-4">
-      {data && values ? (
-        <>
-          <h1 className="text-4xl mt-2">Credenciais</h1>
-          <h2 className="text-3xl mb-4 text-primary">{data.name}</h2>
-          <MemberCredentialsForm
-            memberData={data}
-            preloadedValues={values}
-            tagId={tag}
-            cardId={card}
-          />
-        </>
-      ) : (
-        <div className="w-full flex items-center justify-center">
-          <LoadingIcon />
-        </div>
-      )}
-    </section>
+    <>
+      <Menu />
+      <section className="max-w-5xl mx-auto mb-24 px-4">
+        {data && values ? (
+          <>
+            <h1 className="text-4xl mt-2">Credenciais</h1>
+            <h2 className="text-3xl mb-4 text-primary">{data.name}</h2>
+            <MemberCredentialsForm
+              memberData={data}
+              preloadedValues={values}
+              tagId={tag}
+              cardId={card}
+            />
+          </>
+        ) : (
+          <div className="w-full flex items-center justify-center">
+            <LoadingIcon />
+          </div>
+        )}
+      </section>
+    </>
   );
 }
