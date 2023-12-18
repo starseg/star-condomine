@@ -117,10 +117,22 @@ export default function MemberTable({ lobby }: { lobby: string }) {
     <Table className="border border-stone-800 rouded-lg">
       <TableHeader className="bg-stone-800 font-semibold">
         <TableRow>
-          <TableHead>CPF</TableHead>
           <TableHead>Nome</TableHead>
-          <TableHead>Endereço</TableHead>
-          <TableHead>Telefone</TableHead>
+          <TableHead>CPF</TableHead>
+          <TableHead>
+            {members[0]
+              ? members[0].type === "RESIDENT"
+                ? "Endereço"
+                : "RG"
+              : ""}
+          </TableHead>
+          <TableHead>
+            {members[0]
+              ? members[0].type === "RESIDENT"
+                ? "Telefone"
+                : "Cargo"
+              : ""}
+          </TableHead>
           <TableHead>Propriedades</TableHead>
           <TableHead>Ações</TableHead>
         </TableRow>
@@ -132,17 +144,23 @@ export default function MemberTable({ lobby }: { lobby: string }) {
           else type = "employee";
           return (
             <TableRow key={member.memberId}>
-              <TableCell>{member.cpf}</TableCell>
               <TableCell>{member.name}</TableCell>
+              <TableCell>{member.cpf}</TableCell>
               <TableCell>
-                {member.address
-                  ? member.addressType.description + " " + member.address
-                  : "Endereço não cadastrado"}
+                {type === "resident"
+                  ? member.address
+                    ? member.addressType.description + " " + member.address
+                    : "Endereço não cadastrado"
+                  : member.rg}
               </TableCell>
               <TableCell>
-                {member.telephone.length > 0
-                  ? member.telephone[0].number
-                  : "Nenhum telefone cadastrado"}
+                {type === "resident"
+                  ? member.telephone.length > 0
+                    ? member.telephone[0].number
+                    : "Nenhum telefone cadastrado"
+                  : member.position
+                  ? member.position
+                  : "Cargo não cadastrado"}
               </TableCell>
               <TableCell className="space-x-4">
                 <Link

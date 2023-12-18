@@ -8,12 +8,11 @@ export const logging = async (
 ): Promise<void> => {
   // Obtém informações relevantes da requisição
   try {
-    const { method, url, operator } = req;
-    const operatorId = parseInt(operator.operatorId, 10) || 0;
+    const { method, url } = req;
 
     // Registra as informações no banco de dados
     // await createLogging(method, url, userAgent, operatorId);
-    console.log(method, url, operatorId);
+    console.log(method, url);
     // Continue para a próxima middleware ou rota
     next();
   } catch (error) {

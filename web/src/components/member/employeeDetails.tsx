@@ -26,7 +26,7 @@ interface Member {
     description: string;
   };
   address: string;
-  accessPeriod: Date;
+  accessPeriod: string;
   telephone: {
     telephoneId: number;
     number: string;
@@ -37,7 +37,7 @@ interface Member {
   lobbyId: number;
 }
 
-export default function memberDetails({ id }: { id: number }) {
+export default function EmployeeDetails({ id }: { id: number }) {
   const router = useRouter();
   const [member, setMember] = useState<Member>();
   const { data: session } = useSession();
@@ -79,27 +79,10 @@ export default function memberDetails({ id }: { id: number }) {
             />
             <DetailItem label="CPF" content={member.cpf} />
             <DetailItem label="RG" content={member.rg} />
-            <DetailItem label="email" content={member.email} />
-            <div className="flex flex-col justify-center gap-2 mb-4">
-              <label className="text-lg">Telefone:</label>
-
-              {member.telephone
-                ? member.telephone.length > 0
-                  ? member.telephone.map((telephone) => (
-                      <p className="bg-muted text-muted-foreground rounded-md px-4 py-1">
-                        {telephone.number}
-                      </p>
-                    ))
-                  : "Nenhum telefone cadastrado"
-                : "Sem telefone"}
-            </div>
+            <DetailItem label="Cargo" content={member.position} />
             <DetailItem
-              label="Endereço"
-              content={
-                member.address
-                  ? member.addressType.description + " " + member.address
-                  : "Endereço não cadastrado"
-              }
+              label="Período de acesso"
+              content={member.accessPeriod}
             />
             <DetailItem
               label="Comentários"

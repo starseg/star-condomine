@@ -3,7 +3,7 @@ import MemberVehicleTable from "@/components/vehicle/memberVehicleTable";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Veículos do morador",
+  title: "Veículos do funcionário",
 };
 
 export default async function Vehicles({
@@ -20,7 +20,9 @@ export default async function Vehicles({
     <>
       <Menu />
       <section className="max-w-5xl mx-auto mb-24">
-        <h1 className="text-4xl mt-2 mb-4 text-center">Veículos do morador</h1>
+        <h1 className="text-4xl mt-2 mb-4 text-center">
+          Veículos do funcionário
+        </h1>
         <div className="max-h-[60vh] overflow-x-auto">
           <MemberVehicleTable lobby={lobby} member={id} />
         </div>

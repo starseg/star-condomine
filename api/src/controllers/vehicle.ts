@@ -130,8 +130,22 @@ export const getVehiclesByOwner = async (
     const id = parseInt(req.params.id, 10);
     const vehicle = await prisma.vehicle.findMany({
       where: { memberId: id },
+      include: {
+        vehicleType: true,
+      },
     });
     res.json(vehicle);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os veículos" });
+  }
+};
+export const getVehicleTypes = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const vehicleType = await prisma.vehicleType.findMany();
+    res.json(vehicleType);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar os veículos" });
   }
