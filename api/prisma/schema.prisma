@@ -227,7 +227,7 @@ model Access {
 model LobbyProblem {
   lobbyProblemId Int      @id @default(autoincrement())
   title          String
-  description    String
+  description    String   @db.VarChar(1000)
   date           DateTime
   status         Status   @default(ACTIVE)
   createdAt      DateTime @default(now())

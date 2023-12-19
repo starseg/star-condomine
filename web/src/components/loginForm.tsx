@@ -53,6 +53,8 @@ export function LoginForm() {
     if (result?.error) {
       if (result.error == "CredentialsSignin") {
         setError("Login incorreto");
+      } else if (result.error == "Request failed with status code 500") {
+        setError("Usuário não encontrado ou inativo");
       } else {
         console.log(result.error);
       }

@@ -14,8 +14,11 @@ export const authenticateOperator = async (
   const { username, password } = req.body;
 
   try {
-    const operator = await prisma.operator.findUnique({
-      where: { username },
+    const operator = await prisma.operator.findUniqueOrThrow({
+      where: {
+        username: username,
+        status: "ACTIVE",
+      },
     });
 
     if (!operator) {

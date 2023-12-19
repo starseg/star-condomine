@@ -80,3 +80,20 @@ export const deleteLobbyProblem = async (
     res.status(500).json({ error: "Erro ao excluir o problema" });
   }
 };
+
+export const getProblemsByLobby = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const lobbyProblem = await prisma.lobbyProblem.findMany({
+      where: { lobbyId: lobby },
+      include: { operator: true },
+      orderBy: [{ status: "desc" }, { date: "asc" }],
+    });
+    res.json(lobbyProblem);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os problemas" });
+  }
+};

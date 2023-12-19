@@ -55,11 +55,6 @@ export function Menu({ url = "" }: { url?: string }) {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link href={""} className="flex justify-center items-center gap-2">
-              <GearSix size={"24px"} /> Configurar portarias
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
             <LogoutButton />
           </DropdownMenuItem>
         </DropdownMenuContent>

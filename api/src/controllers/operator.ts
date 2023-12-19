@@ -57,7 +57,7 @@ export const updateOperator = async (
 ): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
-    const { username, name, password, type } = req.body;
+    const { username, name, password, type, status } = req.body;
     let hashedPassword: string | undefined;
     if (password) {
       hashedPassword = await bcrypt.hash(password, 10);
@@ -69,6 +69,7 @@ export const updateOperator = async (
         name,
         password: hashedPassword || undefined,
         type,
+        status,
       },
     });
     res.status(200).json(operator);
