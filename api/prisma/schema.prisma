@@ -13,6 +13,7 @@ model Operator {
   name       String
   password   String
   type       UserType @default(USER)
+  status     Status   @default(ACTIVE)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 

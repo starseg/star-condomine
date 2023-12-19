@@ -47,7 +47,10 @@ export function Menu({ url = "" }: { url?: string }) {
           <DropdownMenuLabel>Menu</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
-            <Link href={""} className="flex justify-center items-center gap-2">
+            <Link
+              href={"operators"}
+              className="flex justify-center items-center gap-2"
+            >
               <UsersThree size={"24px"} /> Operadores
             </Link>
           </DropdownMenuItem>

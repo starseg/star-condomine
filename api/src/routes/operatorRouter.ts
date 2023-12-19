@@ -4,7 +4,7 @@ import {
   getAllOperators,
   getOperator,
   updateOperator,
-  deleteOperator
+  deleteOperator,
 } from "../controllers/operator";
 import { checkAdminPermission } from "../middlewares/permissions";
 
@@ -12,7 +12,7 @@ const operatorRouter = express.Router();
 
 operatorRouter.use(checkAdminPermission);
 operatorRouter.get("/", getAllOperators);
-operatorRouter.get("/:id", getOperator);
+operatorRouter.get("/find/:id", getOperator);
 operatorRouter.post("/", createOperator);
 operatorRouter.put("/:id", updateOperator);
 operatorRouter.delete("/:id", deleteOperator);
