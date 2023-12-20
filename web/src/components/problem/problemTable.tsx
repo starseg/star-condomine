@@ -8,6 +8,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import api from "@/lib/axios";
 import { formatDate } from "@/lib/utils";
 import { PencilLine, Trash } from "@phosphor-icons/react/dist/ssr";
@@ -54,9 +60,8 @@ export default function ProblemTable({ lobby }: { lobby: string }) {
   // console.log(devices);
 
   const deleteAction = async (id: number) => {
-    console.log("problem/" + id);
     try {
-      await api.delete("problem/" + id, {
+      await api.delete("lobbyProblem/" + id, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
@@ -105,15 +110,26 @@ export default function ProblemTable({ lobby }: { lobby: string }) {
         {problems.map((problem) => (
           <TableRow key={problem.lobbyProblemId}>
             <TableCell>{problem.title}</TableCell>
-            <TableCell className="max-w-[20ch] break-words">
-              {problem.description}
+            <TableCell>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button className="max-w-[15ch] text-ellipsis overflow-hidden whitespace-nowrap">
+                      {problem.description}
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-[300px] border-primary bg-stone-800 p-4 break-words">
+                    <p>{problem.description}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </TableCell>
             <TableCell>{formatDate(problem.date)}</TableCell>
             <TableCell>
               {problem.status === "ACTIVE" ? (
-                <p className="text-green-400">Ativo</p>
+                <p className="text-red-400">Ativo</p>
               ) : (
-                <p className="text-red-400">Inativo</p>
+                <p className="text-green-400">Resolvido</p>
               )}
             </TableCell>
             <TableCell>{problem.operator.name}</TableCell>

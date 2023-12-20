@@ -90,7 +90,7 @@ export const getProblemsByLobby = async (
     const lobbyProblem = await prisma.lobbyProblem.findMany({
       where: { lobbyId: lobby },
       include: { operator: true },
-      orderBy: [{ status: "desc" }, { date: "asc" }],
+      orderBy: [{ status: "asc" }, { date: "desc" }],
     });
     res.json(lobbyProblem);
   } catch (error) {

@@ -80,3 +80,18 @@ export const deleteLobbyCalendar = async (
     res.status(500).json({ error: "Erro ao excluir a data" });
   }
 };
+
+export const getCalendarByLobby = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const lobbyCalendar = await prisma.lobbyCalendar.findMany({
+      where: { lobbyId: lobby },
+    });
+    res.json(lobbyCalendar);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar o calendário" });
+  }
+};
