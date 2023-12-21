@@ -4,14 +4,18 @@ import {
   getAllVisitors,
   getVisitor,
   updateVisitor,
-  deleteVisitor
+  deleteVisitor,
+  getVisitorTypes,
+  getVisitorsByLobby,
 } from "../controllers/visitor";
 import { checkAdminPermission } from "../middlewares/permissions";
 
 const visitorRouter = express.Router();
 
 visitorRouter.get("/", getAllVisitors);
-visitorRouter.get("/:id", getVisitor);
+visitorRouter.get("/find/:id", getVisitor);
+visitorRouter.get("/types", getVisitorTypes);
+visitorRouter.get("/lobby/:lobby", getVisitorsByLobby);
 visitorRouter.post("/", createVisitor);
 visitorRouter.put("/:id", updateVisitor);
 visitorRouter.delete("/:id", checkAdminPermission, deleteVisitor);

@@ -44,6 +44,11 @@ export const formatDate = (date: string) => {
   return format(data, "dd/MM/yyyy - HH:mm");
 };
 
+export const simpleDateFormat = (value: string) => {
+  const date = new Date(value);
+  return format(date, "dd/MM/yyyy");
+};
+
 export const generatePagination = (currentPage: number, totalPages: number) => {
   // If the total number of pages is 7 or less,
   // display all pages without any ellipsis.

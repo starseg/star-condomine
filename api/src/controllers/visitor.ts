@@ -47,9 +47,9 @@ export const createVisitor = async (
       phone,
       startDate,
       endDate,
-      company,
       relation,
       visitorTypeId,
+      lobbyId,
     } = req.body;
     const visitor = await prisma.visitor.create({
       data: {
@@ -60,9 +60,9 @@ export const createVisitor = async (
         phone,
         startDate,
         endDate,
-        company,
         relation,
         visitorTypeId,
+        lobbyId,
       },
     });
     res.status(201).json(visitor);
@@ -85,7 +85,6 @@ export const updateVisitor = async (
       phone,
       startDate,
       endDate,
-      company,
       relation,
       status,
       visitorTypeId,
@@ -100,7 +99,6 @@ export const updateVisitor = async (
         phone,
         startDate,
         endDate,
-        company,
         relation,
         status,
         visitorTypeId,
@@ -124,5 +122,33 @@ export const deleteVisitor = async (
     res.json({ message: "Visitante excluído com sucesso" });
   } catch (error) {
     res.status(500).json({ error: "Erro ao excluir o visitante" });
+  }
+};
+
+export const getVisitorTypes = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const types = await prisma.visitorType.findMany();
+    res.json(types);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os tipos" });
+  }
+};
+
+export const getVisitorsByLobby = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const visitor = await prisma.visitor.findMany({
+      where: { lobbyId: lobby },
+      include: { visitorType: true },
+    });
+    res.json(visitor);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os visitantes" });
   }
 };

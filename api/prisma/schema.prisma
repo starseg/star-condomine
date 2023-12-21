@@ -161,8 +161,6 @@ model Visitor {
   startDate  DateTime?
   endDate    DateTime?
   status     Status    @default(ACTIVE)
-  // DE ACORDO COM O TIPO DE VISITANTE
-  company    String?
   relation   String?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
@@ -170,8 +168,8 @@ model Visitor {
   visitorType   VisitorType @relation(fields: [visitorTypeId], references: [visitorTypeId])
   visitorTypeId Int
 
-  Lobby        Lobby? @relation(fields: [lobbyLobbyId], references: [lobbyId])
-  lobbyLobbyId Int?
+  lobby   Lobby? @relation(fields: [lobbyId], references: [lobbyId])
+  lobbyId Int?
 
   scheduling Scheduling[]
   access     Access[]
