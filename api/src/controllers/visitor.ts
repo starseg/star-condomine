@@ -23,6 +23,7 @@ export const getVisitor = async (
     const id = parseInt(req.params.id, 10);
     const visitor = await prisma.visitor.findUniqueOrThrow({
       where: { visitorId: id },
+      include: { visitorType: true },
     });
     if (!visitor) {
       res.status(404).json({ error: "Visitante não encontrado" });
@@ -146,7 +147,40 @@ export const getVisitorsByLobby = async (
     const visitor = await prisma.visitor.findMany({
       where: { lobbyId: lobby },
       include: { visitorType: true },
+      orderBy: [{ status: "asc" }, { name: "asc" }],
     });
+    res.json(visitor);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os visitantes" });
+  }
+};
+
+export const getFilteredVisitors = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const { query } = req.query;
+
+    const whereCondition = query
+      ? {
+          OR: [
+            { cpf: { contains: query as string } },
+            { name: { contains: query as string } },
+          ],
+          AND: { lobbyId: lobby },
+        }
+      : {};
+    const visitor = await prisma.visitor.findMany({
+      where: whereCondition,
+      include: { visitorType: true },
+      orderBy: [{ status: "asc" }, { name: "asc" }],
+    });
+    if (!visitor) {
+      res.status(404).json({ error: "Nenhum visitante encontrado" });
+      return;
+    }
     res.json(visitor);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar os visitantes" });

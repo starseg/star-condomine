@@ -12,26 +12,19 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MaskedInput } from "../maskedInput";
 import { useEffect, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
-import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "../ui/command";
+import { CalendarIcon } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { addDays, format } from "date-fns";
 import { Calendar } from "../ui/calendar";
@@ -54,26 +47,51 @@ const FormSchema = z.object({
   relation: z.string(),
   startDate: z.date(),
   endDate: z.date(),
-  isAccessing: z.boolean(),
-  host: z.number().optional(),
+  status: z.enum(["ACTIVE", "INACTIVE"]),
 });
 
-export function VisitorForm() {
+interface Visitor {
+  visitorId: number;
+  profileUrl: string;
+  name: string;
+  rg: string;
+  cpf: string;
+  phone: string;
+  startDate: string;
+  endDate: string;
+  status: "ACTIVE" | "INACTIVE" | undefined;
+  relation: string;
+  createdAt: string;
+  updatedAt: string;
+  visitorTypeId: number;
+  visitorType: {
+    visitorTypeId: number;
+    description: string;
+  };
+}
+interface Values {
+  profileUrl: File;
+  name: string;
+  rg: string;
+  cpf: string;
+  phone: string;
+  startDate: Date | undefined;
+  endDate: Date | undefined;
+  status: "ACTIVE" | "INACTIVE" | undefined;
+  relation: string;
+  type: string;
+}
+
+export function VisitorUpdateForm({
+  preloadedValues,
+  visitor,
+}: {
+  preloadedValues: Values;
+  visitor: Visitor;
+}) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      profileUrl: new File([], ""),
-      name: "",
-      cpf: "",
-      rg: "",
-      phone: "",
-      type: "1",
-      relation: "",
-      startDate: undefined,
-      endDate: undefined,
-      isAccessing: false,
-      host: 0,
-    },
+    defaultValues: preloadedValues,
   });
 
   type UploadFunction = (file: File) => Promise<string>;
@@ -112,17 +130,10 @@ export function VisitorForm() {
     }
   };
 
-  interface Member {
-    memberId: number;
-    name: string;
-    type: string;
-  }
-
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const lobby = params.get("lobby");
 
   interface VisitorTypes {
     visitorTypeId: number;
@@ -142,39 +153,10 @@ export function VisitorForm() {
       console.error("Erro ao obter dados:", error);
     }
   };
-  const [members, setMembers] = useState<Member[]>([]);
-  const fetchMembers = async () => {
-    try {
-      const response = await api.get("member/lobby/" + lobby, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setMembers(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
-  };
 
   useEffect(() => {
     fetchVisitorTypes();
-    fetchMembers();
   }, [session]);
-
-  interface item {
-    value: number;
-    label: string;
-  }
-  let items: item[] = [];
-
-  members.map((member: Member) => {
-    items.push({
-      value: member.memberId,
-      label: member.name,
-    });
-  });
-
-  const [isAccessing, setIsAccessing] = useState(false);
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     // PEGA O ID DA PORTARIA
@@ -185,6 +167,7 @@ export function VisitorForm() {
     let file;
     if (data.profileUrl instanceof File && data.profileUrl.size > 0)
       file = await handleFileUpload(data.profileUrl);
+    else if (visitor?.profileUrl) file = visitor.profileUrl;
     else file = "";
 
     // REGISTRA O visitante
@@ -199,9 +182,9 @@ export function VisitorForm() {
         relation: data.relation,
         startDate: data.startDate,
         endDate: data.endDate,
-        lobbyId: Number(lobby),
+        status: data.status,
       };
-      const response = await api.post("visitor", info, {
+      const response = await api.put("visitor/" + visitor.visitorId, info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
@@ -236,6 +219,9 @@ export function VisitorForm() {
                   }
                 />
               </FormControl>
+              <FormDescription>
+                Não preencha esse campo se quiser manter o arquivo anterior
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -470,88 +456,38 @@ export function VisitorForm() {
             )}
           />
         </div>
-
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="terms"
-            onClick={() => {
-              setIsAccessing(!isAccessing);
-            }}
-          />
-          <label
-            htmlFor="terms"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            A pessoa já está acessando a portaria?
-          </label>
-        </div>
-
-        <div>
-          {isAccessing && (
-            <FormField
-              control={form.control}
-              name="host"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Visitado</FormLabel>
-                  <FormControl>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            className={cn(
-                              "justify-between",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value
-                              ? items.find((item) => item.value === field.value)
-                                  ?.label
-                              : "Selecione o tipo do endereço"}
-                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="p-0">
-                        <Command className="w-full">
-                          <CommandInput placeholder="Buscar tipo..." />
-                          <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
-                          <CommandGroup>
-                            {items.map((item) => (
-                              <CommandItem
-                                value={item.label}
-                                key={item.value}
-                                onSelect={() => {
-                                  form.setValue("host", item.value);
-                                }}
-                              >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4",
-                                    item.value === field.value
-                                      ? "opacity-100"
-                                      : "opacity-0"
-                                  )}
-                                />
-                                {item.label}
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        <FormField
+          control={form.control}
+          name="status"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Status</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex flex-col space-y-1"
+                >
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="ACTIVE" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Ativo</FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="INACTIVE" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Inativo</FormLabel>
+                  </FormItem>
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
-        </div>
-
+        />
         <Button type="submit" className="w-full text-lg">
-          Registrar
+          Atualizar
         </Button>
       </form>
     </Form>

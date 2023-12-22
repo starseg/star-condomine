@@ -4,14 +4,16 @@ import {
   getAllAccess,
   getAccess,
   updateAccess,
-  deleteAccess
+  deleteAccess,
+  getAccessByLobby,
 } from "../controllers/access";
 import { checkAdminPermission } from "../middlewares/permissions";
 
 const accessRouter = express.Router();
 
 accessRouter.get("/", getAllAccess);
-accessRouter.get("/:id", getAccess);
+accessRouter.get("/find/:id", getAccess);
+accessRouter.get("/lobby/:lobby", getAccessByLobby);
 accessRouter.post("/", createAccess);
 accessRouter.put("/:id", updateAccess);
 accessRouter.delete("/:id", checkAdminPermission, deleteAccess);

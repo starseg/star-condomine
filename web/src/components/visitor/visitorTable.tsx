@@ -10,9 +10,14 @@ import {
 } from "@/components/ui/table";
 import api from "@/lib/axios";
 import { simpleDateFormat } from "@/lib/utils";
-import { PencilLine, Trash } from "@phosphor-icons/react/dist/ssr";
+import {
+  MagnifyingGlass,
+  PencilLine,
+  Trash,
+} from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
@@ -38,9 +43,18 @@ interface Visitor {
 export default function VisitorTable({ lobby }: { lobby: string }) {
   const [visitors, setVisitors] = useState<Visitor[]>([]);
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
   const fetchData = async () => {
     try {
-      const response = await api.get("visitor/lobby/" + lobby, {
+      let path;
+      if (!params.get("query")) {
+        path = "visitor/lobby/" + lobby;
+        console.log(path);
+      } else {
+        path = `visitor/filtered/${lobby}?query=${params.get("query")}`;
+      }
+      const response = await api.get(path, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
@@ -52,7 +66,7 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
   };
   useEffect(() => {
     fetchData();
-  }, [session]);
+  }, [session, searchParams]);
 
   const deleteAction = async (id: number) => {
     try {
@@ -88,9 +102,10 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
       }
     });
   };
+  let currentDate = new Date().toJSON();
 
   return (
-    <Table className="border border-stone-800 rouded-lg max-w-[90%] mx-auto">
+    <Table className="border border-stone-800 rouded-lg">
       <TableHeader className="bg-stone-800 font-semibold">
         <TableRow>
           <TableHead>CPF</TableHead>
@@ -108,9 +123,19 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
             <TableCell>{visitor.name}</TableCell>
             <TableCell>{visitor.visitorType.description}</TableCell>
             <TableCell>
-              {simpleDateFormat(visitor.startDate) +
-                " - " +
-                simpleDateFormat(visitor.endDate)}
+              {visitor.endDate > currentDate ? (
+                <p className="text-green-500">
+                  {simpleDateFormat(visitor.startDate) +
+                    " - " +
+                    simpleDateFormat(visitor.endDate)}
+                </p>
+              ) : (
+                <p className="text-red-500">
+                  {simpleDateFormat(visitor.startDate) +
+                    " - " +
+                    simpleDateFormat(visitor.endDate)}
+                </p>
+              )}
             </TableCell>
             <TableCell>
               {visitor.status === "ACTIVE" ? (
@@ -120,7 +145,12 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
               )}
             </TableCell>
             <TableCell className="flex gap-4 text-2xl">
-              <Link href={`visitors/update?id=${visitor.visitorId}`}>
+              <Link href={`visitor/details?id=${visitor.visitorId}`}>
+                <MagnifyingGlass />
+              </Link>
+              <Link
+                href={`visitor/update?id=${visitor.visitorId}&lobby=${lobby}`}
+              >
                 <PencilLine />
               </Link>
               <button

@@ -7,6 +7,7 @@ import {
   deleteVisitor,
   getVisitorTypes,
   getVisitorsByLobby,
+  getFilteredVisitors,
 } from "../controllers/visitor";
 import { checkAdminPermission } from "../middlewares/permissions";
 
@@ -16,6 +17,7 @@ visitorRouter.get("/", getAllVisitors);
 visitorRouter.get("/find/:id", getVisitor);
 visitorRouter.get("/types", getVisitorTypes);
 visitorRouter.get("/lobby/:lobby", getVisitorsByLobby);
+visitorRouter.get("/filtered/:lobby", getFilteredVisitors);
 visitorRouter.post("/", createVisitor);
 visitorRouter.put("/:id", updateVisitor);
 visitorRouter.delete("/:id", checkAdminPermission, deleteVisitor);

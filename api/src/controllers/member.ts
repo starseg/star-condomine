@@ -213,7 +213,7 @@ export const getFilteredMembers = async (
       },
     });
     if (!member) {
-      res.status(404).json({ error: "Nenhum membro não encontrado" });
+      res.status(404).json({ error: "Nenhum membro encontrado" });
       return;
     }
     res.json(member);
