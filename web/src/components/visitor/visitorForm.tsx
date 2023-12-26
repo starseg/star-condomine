@@ -43,6 +43,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { Textarea } from "../ui/textarea";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -54,8 +55,12 @@ const FormSchema = z.object({
   relation: z.string(),
   startDate: z.date(),
   endDate: z.date(),
+
   isAccessing: z.boolean(),
   host: z.number().optional(),
+  reason: z.string().optional(),
+  local: z.string().optional(),
+  comments: z.string().optional(),
 });
 
 export function VisitorForm() {
@@ -73,6 +78,9 @@ export function VisitorForm() {
       endDate: undefined,
       isAccessing: false,
       host: 0,
+      reason: "",
+      local: "",
+      comments: "",
     },
   });
 
@@ -207,6 +215,31 @@ export function VisitorForm() {
         },
       });
       console.log(response.data);
+
+      if (isAccessing) {
+        try {
+          const operator = session?.payload.user.id || null;
+          const access = {
+            memberId: Number(data.host),
+            visitorId: Number(response.data.visitorId),
+            startTime: new Date().toISOString(),
+            local: data.local,
+            reason: data.reason,
+            comments: data.comments,
+            operatorId: Number(operator),
+            lobbyId: Number(lobby),
+          };
+          const res = await api.post("access", access, {
+            headers: {
+              Authorization: `Bearer ${session?.token.user.token}`,
+            },
+          });
+          console.log(res.data);
+        } catch (error) {
+          console.error("Erro ao enviar dados para a API:", error);
+          throw error;
+        }
+      }
 
       router.push("/dashboard/actions/visitor?lobby=" + lobby);
     } catch (error) {
@@ -488,65 +521,121 @@ export function VisitorForm() {
 
         <div>
           {isAccessing && (
-            <FormField
-              control={form.control}
-              name="host"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Visitado</FormLabel>
-                  <FormControl>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            className={cn(
-                              "justify-between",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value
-                              ? items.find((item) => item.value === field.value)
-                                  ?.label
-                              : "Selecione o tipo do endereço"}
-                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="p-0">
-                        <Command className="w-full">
-                          <CommandInput placeholder="Buscar tipo..." />
-                          <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
-                          <CommandGroup>
-                            {items.map((item) => (
-                              <CommandItem
-                                value={item.label}
-                                key={item.value}
-                                onSelect={() => {
-                                  form.setValue("host", item.value);
-                                }}
-                              >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4",
-                                    item.value === field.value
-                                      ? "opacity-100"
-                                      : "opacity-0"
-                                  )}
-                                />
-                                {item.label}
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="space-y-6">
+              <FormField
+                control={form.control}
+                name="host"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Visitado</FormLabel>
+                    <FormControl>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                "justify-between",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value
+                                ? items.find(
+                                    (item) => item.value === field.value
+                                  )?.label
+                                : "Selecione a pessoa visitada"}
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="p-0">
+                          <Command className="w-full">
+                            <CommandInput placeholder="Buscar pessoa..." />
+                            <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
+                            <CommandGroup>
+                              {items.map((item) => (
+                                <CommandItem
+                                  value={item.label}
+                                  key={item.value}
+                                  onSelect={() => {
+                                    form.setValue("host", item.value);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      item.value === field.value
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                  {item.label}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="reason"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Motivo</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="Por que está sendo feita essa visita?"
+                        autoComplete="off"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="local"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Local da visita</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="Para onde está indo? Casa, Salão de Festas..."
+                        autoComplete="off"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="comments"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Observações</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Alguma informação adicional..."
+                        autoComplete="off"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           )}
         </div>
 

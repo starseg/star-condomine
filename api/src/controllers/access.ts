@@ -20,6 +20,25 @@ export const getAccess = async (req: Request, res: Response): Promise<void> => {
     const id = parseInt(req.params.id, 10);
     const access = await prisma.access.findUniqueOrThrow({
       where: { accessId: id },
+      include: {
+        visitor: {
+          select: {
+            name: true,
+            cpf: true,
+          },
+        },
+        member: {
+          select: {
+            name: true,
+            cpf: true,
+          },
+        },
+        operator: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
     if (!access) {
       res.status(404).json({ error: "Acesso não encontrado" });
@@ -119,6 +138,7 @@ export const deleteAccess = async (
     res.status(500).json({ error: "Erro ao excluir o acesso" });
   }
 };
+
 export const getAccessByLobby = async (
   req: Request,
   res: Response
@@ -141,8 +161,54 @@ export const getAccessByLobby = async (
           },
         },
       },
+      orderBy: [{ status: "asc" }, { endTime: "asc" }, { startTime: "desc" }],
     });
     res.json(access);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os acessos" });
+  }
+};
+
+export const getFilteredAccess = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const { query } = req.query;
+
+    const whereCondition = query
+      ? {
+          OR: [
+            { visitor: { name: { contains: query as string } } },
+            { member: { name: { contains: query as string } } },
+          ],
+          AND: { lobbyId: lobby },
+        }
+      : {};
+    const visitor = await prisma.access.findMany({
+      where: whereCondition,
+      include: {
+        visitor: {
+          select: {
+            name: true,
+            cpf: true,
+          },
+        },
+        member: {
+          select: {
+            name: true,
+            cpf: true,
+          },
+        },
+      },
+      orderBy: [{ status: "asc" }, { endTime: "asc" }, { startTime: "desc" }],
+    });
+    if (!visitor) {
+      res.status(404).json({ error: "Nenhum acesso encontrado" });
+      return;
+    }
+    res.json(visitor);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar os acessos" });
   }

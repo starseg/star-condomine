@@ -8,12 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import api from "@/lib/axios";
 import { formatDate } from "@/lib/utils";
 import {
@@ -24,6 +18,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
@@ -52,9 +47,18 @@ interface Access {
 export default function AccessTable({ lobby }: { lobby: string }) {
   const [access, setAccess] = useState<Access[]>([]);
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
   const fetchData = async () => {
     try {
-      const response = await api.get("access/lobby/" + lobby, {
+      let path;
+      if (!params.get("query")) {
+        path = "access/lobby/" + lobby;
+        console.log(path);
+      } else {
+        path = `access/filtered/${lobby}?query=${params.get("query")}`;
+      }
+      const response = await api.get(path, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
@@ -66,7 +70,7 @@ export default function AccessTable({ lobby }: { lobby: string }) {
   };
   useEffect(() => {
     fetchData();
-  }, [session]);
+  }, [session, searchParams]);
 
   const deleteAction = async (id: number) => {
     try {
@@ -109,6 +113,7 @@ export default function AccessTable({ lobby }: { lobby: string }) {
         "access/" + id,
         {
           endTime: new Date().toJSON(),
+          status: "INACTIVE",
         },
         {
           headers: {
@@ -127,7 +132,7 @@ export default function AccessTable({ lobby }: { lobby: string }) {
   };
 
   return (
-    <Table className="border border-stone-800 rouded-lg max-w-[90%] mx-auto">
+    <Table className="border border-stone-800 rouded-lg">
       <TableHeader className="bg-stone-800 font-semibold">
         <TableRow>
           <TableHead>Visitante</TableHead>
@@ -142,12 +147,12 @@ export default function AccessTable({ lobby }: { lobby: string }) {
           return (
             <TableRow key={item.accessId}>
               <TableCell>
-                <p className="max-w-[15ch] text-ellipsis overflow-hidden whitespace-nowrap">
+                <p className="max-w-[20ch] text-ellipsis overflow-hidden whitespace-nowrap hover:overflow-auto hover:max-w-full">
                   {item.visitor.name}
                 </p>
               </TableCell>
               <TableCell>
-                <p className="max-w-[15ch] text-ellipsis overflow-hidden whitespace-nowrap">
+                <p className="max-w-[20ch] text-ellipsis overflow-hidden whitespace-nowrap hover:overflow-auto hover:max-w-full">
                   {item.member.name}
                 </p>
               </TableCell>
