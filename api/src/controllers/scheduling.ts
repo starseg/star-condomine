@@ -118,3 +118,77 @@ export const deleteScheduling = async (
     res.status(500).json({ error: "Erro ao excluir o agendamento" });
   }
 };
+export const getSchedulingsByLobby = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const scheduling = await prisma.scheduling.findMany({
+      where: { lobbyId: lobby },
+      include: {
+        visitor: {
+          select: {
+            name: true,
+            cpf: true,
+          },
+        },
+        member: {
+          select: {
+            name: true,
+            cpf: true,
+          },
+        },
+      },
+      orderBy: [{ status: "asc" }, { endDate: "asc" }, { startDate: "desc" }],
+    });
+    res.json(scheduling);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os acessos" });
+  }
+};
+
+export const getFilteredSchedulings = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const { query } = req.query;
+
+    const whereCondition = query
+      ? {
+          OR: [
+            { visitor: { name: { contains: query as string } } },
+            { member: { name: { contains: query as string } } },
+          ],
+          AND: { lobbyId: lobby },
+        }
+      : {};
+    const scheduling = await prisma.scheduling.findMany({
+      where: whereCondition,
+      include: {
+        visitor: {
+          select: {
+            name: true,
+            cpf: true,
+          },
+        },
+        member: {
+          select: {
+            name: true,
+            cpf: true,
+          },
+        },
+      },
+      orderBy: [{ status: "asc" }, { endDate: "asc" }, { startDate: "desc" }],
+    });
+    if (!scheduling) {
+      res.status(404).json({ error: "Nenhum acesso encontrado" });
+      return;
+    }
+    res.json(scheduling);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os acessos" });
+  }
+};

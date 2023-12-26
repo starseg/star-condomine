@@ -186,7 +186,7 @@ export const getFilteredAccess = async (
           AND: { lobbyId: lobby },
         }
       : {};
-    const visitor = await prisma.access.findMany({
+    const access = await prisma.access.findMany({
       where: whereCondition,
       include: {
         visitor: {
@@ -204,11 +204,11 @@ export const getFilteredAccess = async (
       },
       orderBy: [{ status: "asc" }, { endTime: "asc" }, { startTime: "desc" }],
     });
-    if (!visitor) {
+    if (!access) {
       res.status(404).json({ error: "Nenhum acesso encontrado" });
       return;
     }
-    res.json(visitor);
+    res.json(access);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar os acessos" });
   }

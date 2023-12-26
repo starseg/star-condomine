@@ -10,7 +10,7 @@ interface lobbyProps {
   name: String;
   state: String;
   city: String;
-  schedules: String;
+  scheduling: String;
   device: [
     {
       deviceId: number;
@@ -72,7 +72,7 @@ export default function List() {
             key={lobby.lobbyId}
             href={"dashboard/actions?id=" + lobby.lobbyId}
             title={lobby.name}
-            type={lobby.schedules}
+            type={lobby.scheduling}
             status={status}
             ramais={ramais}
             location={lobby.city + " - " + lobby.state}

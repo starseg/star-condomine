@@ -31,7 +31,7 @@ interface LobbyProps {
   neighborhood: string;
   number: string;
   procedures: string;
-  schedules: string;
+  scheduling: string;
   state: string;
   street: string;
   type: string;
@@ -90,8 +90,8 @@ export default function LobbyDetails() {
                 Agendamentos
               </h2>
               <ActionSet
-                register={`actions/schedules/new?lobby=${id}`}
-                list={`actions/schedules?lobby=${id}`}
+                register={`actions/scheduling/new?lobby=${id}`}
+                list={`actions/scheduling?lobby=${id}`}
               />
             </div>
             <div>
