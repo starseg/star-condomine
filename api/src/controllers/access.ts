@@ -213,3 +213,88 @@ export const getFilteredAccess = async (
     res.status(500).json({ error: "Erro ao buscar os acessos" });
   }
 };
+
+export const generateReport = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const { from, to } = req.query;
+
+    if (!from || !to) {
+      const resultWithoutDate = await prisma.access.findMany({
+        where: {
+          lobbyId: lobby,
+        },
+        include: {
+          visitor: {
+            select: {
+              name: true,
+            },
+          },
+          member: {
+            select: {
+              name: true,
+            },
+          },
+          operator: {
+            select: {
+              name: true,
+            },
+          },
+        },
+        orderBy: [{ status: "asc" }, { endTime: "asc" }, { startTime: "desc" }],
+      });
+      res.json(resultWithoutDate);
+      return;
+    }
+
+    const fromObj = from ? new Date(from as string) : undefined;
+    const toObj = to ? new Date(to as string) : undefined;
+
+    // Certifique-se de que as datas são válidas, se fornecidas
+    if (
+      (fromObj && isNaN(fromObj.getTime())) ||
+      (toObj && isNaN(toObj.getTime()))
+    ) {
+      res.status(400).json({ error: "As datas fornecidas não são válidas" });
+      return;
+    }
+
+    const access = await prisma.access.findMany({
+      where: {
+        lobbyId: lobby,
+        ...(fromObj && toObj
+          ? {
+              startTime: {
+                gte: fromObj,
+                lte: toObj,
+              },
+            }
+          : {}),
+      },
+      include: {
+        visitor: {
+          select: {
+            name: true,
+          },
+        },
+        member: {
+          select: {
+            name: true,
+          },
+        },
+        operator: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: [{ status: "asc" }, { endTime: "asc" }, { startTime: "desc" }],
+    });
+    res.json(access);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os acessos" });
+  }
+};

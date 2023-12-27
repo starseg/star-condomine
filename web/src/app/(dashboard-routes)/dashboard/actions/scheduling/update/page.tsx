@@ -8,14 +8,13 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function UpdateProblem() {
+export default function UpdateScheduling() {
   interface Scheduling {
     SchedulingId: number;
-    startTime: string;
-    endTime: string;
-    local: string;
+    startDate: string;
+    endDate: string;
+    location: string;
     reason: string;
-    comments: string;
     status: "ACTIVE" | "INACTIVE" | undefined;
     createdAt: string;
     updatedAt: string;
@@ -25,19 +24,16 @@ export default function UpdateProblem() {
     operatorId: number;
     visitor: {
       name: string;
-      cpf: string;
     };
     member: {
       name: string;
-      cpf: string;
     };
   }
   interface Values {
-    startTime: string;
-    endTime: string;
-    local: string;
+    startDate: string;
+    endDate: string;
+    location: string;
     reason: string;
-    comments: string;
     status: "ACTIVE" | "INACTIVE" | undefined;
     member: number;
     visitor: number;
@@ -64,14 +60,14 @@ export default function UpdateProblem() {
     fetchData();
   }, [session]);
 
-  const dateTimeFormat = (date: string | undefined) => {
+  const dateFormat = (date: string | undefined) => {
     if (date) {
       const parsedDate = parse(
         date,
         "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
         new Date()
       );
-      return format(parsedDate, "yyyy-MM-dd'T'HH:mm");
+      return format(parsedDate, "yyyy-MM-dd");
     } else {
       return "";
     }
@@ -80,17 +76,14 @@ export default function UpdateProblem() {
   useEffect(() => {
     if (scheduling) {
       setData({
-        startTime: dateTimeFormat(scheduling?.startTime),
-        endTime: dateTimeFormat(scheduling?.endTime),
-        local: scheduling?.local || "",
+        startDate: dateFormat(scheduling?.startDate),
+        endDate: dateFormat(scheduling?.endDate),
+        location: scheduling?.location || "",
         reason: scheduling?.reason || "",
-        comments: scheduling?.comments || "",
         status: scheduling?.status || "ACTIVE",
         member: scheduling?.memberId || 0,
         visitor: scheduling?.visitorId || 0,
       });
-      console.log("data:");
-      console.log(data);
     }
   }, [scheduling]);
 
@@ -98,7 +91,7 @@ export default function UpdateProblem() {
     <>
       <Menu />
       <section className="flex flex-col justify-center items-center mb-12">
-        <h1 className="text-4xl mt-2 mb-4">Atualizar Data</h1>
+        <h1 className="text-4xl mt-2 mb-4">Atualizar Agendamento</h1>
         {data ? (
           <SchedulingUpdateForm preloadedValues={data} />
         ) : (

@@ -7,6 +7,7 @@ import {
   deleteAccess,
   getAccessByLobby,
   getFilteredAccess,
+  generateReport,
 } from "../controllers/access";
 import { checkAdminPermission } from "../middlewares/permissions";
 
@@ -16,6 +17,7 @@ accessRouter.get("/", getAllAccess);
 accessRouter.get("/find/:id", getAccess);
 accessRouter.get("/lobby/:lobby", getAccessByLobby);
 accessRouter.get("/filtered/:lobby", getFilteredAccess);
+accessRouter.get("/report/:lobby", generateReport);
 accessRouter.post("/", createAccess);
 accessRouter.put("/:id", updateAccess);
 accessRouter.delete("/:id", checkAdminPermission, deleteAccess);

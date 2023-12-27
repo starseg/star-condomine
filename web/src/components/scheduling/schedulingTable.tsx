@@ -135,7 +135,7 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
               </TableCell>
               <TableCell>
                 {item.endDate > currentDate ? (
-                  <p className="text-green-500">
+                  <p className="text-green-400">
                     {simpleDateFormat(item.startDate) +
                       " - " +
                       simpleDateFormat(item.endDate)}
@@ -150,7 +150,7 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
               </TableCell>
               <TableCell>
                 {item.status === "ACTIVE" ? (
-                  <p className="text-green-500">ATIVO</p>
+                  <p className="text-green-400">ATIVO</p>
                 ) : (
                   <p className="text-red-400">INATIVO</p>
                 )}

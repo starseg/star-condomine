@@ -179,11 +179,11 @@ export default function LobbyDetails() {
                 Relatórios
               </h2>
               <div className="flex gap-4">
-                <ActionButton
+                {/* <ActionButton
                   url={`actions/report/new?lobby=${id}`}
                   type="+"
                   text="Gerar"
-                />
+                /> */}
                 <ActionButton
                   url={`actions/report?lobby=${id}`}
                   type="-"

@@ -6,13 +6,12 @@ import LoadingIcon from "../loadingIcon";
 import DetailItem from "../detailItem";
 import { formatDate, simpleDateFormat } from "@/lib/utils";
 
-interface Access {
-  accessId: number;
-  startTime: string;
-  endTime: string;
-  local: string;
+interface Scheduling {
+  schedulingId: number;
+  startDate: string;
+  endDate: string;
+  location: string;
   reason: string;
-  comments: string;
   createdAt: string;
   updatedAt: string;
   lobbyId: number;
@@ -32,16 +31,16 @@ interface Access {
 }
 
 export default function SchedulingDetails({ id }: { id: number }) {
-  const [access, setAccess] = useState<Access>();
+  const [scheduling, setScheduling] = useState<Scheduling>();
   const { data: session } = useSession();
   const fetchData = async () => {
     try {
-      const response = await api.get("access/find/" + id, {
+      const response = await api.get("scheduling/find/" + id, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      setAccess(response.data);
+      setScheduling(response.data);
     } catch (error) {
       console.error("Erro ao obter dados:", error);
     }
@@ -52,39 +51,38 @@ export default function SchedulingDetails({ id }: { id: number }) {
 
   return (
     <div>
-      {access ? (
+      {scheduling ? (
         <>
           <div className="max-w-2xl mx-auto border border-primary py-4 px-12 rounded-md">
-            <DetailItem label="Visitante" content={access.visitor.name} />
-            <DetailItem label="Visitado" content={access.member.name} />
+            <DetailItem label="Visitante" content={scheduling.visitor.name} />
+            <DetailItem label="Visitado" content={scheduling.member.name} />
             <DetailItem
               label="Status"
-              content={access.status === "ACTIVE" ? "✅ Ativo" : "❌ Inativo"}
-            />
-            <DetailItem
-              label="Data de entrada"
-              content={simpleDateFormat(access.startTime)}
-            />
-            <DetailItem
-              label="Data de saída"
               content={
-                access.endTime ? simpleDateFormat(access.endTime) : "Não saiu"
+                scheduling.status === "ACTIVE" ? "✅ Ativo" : "❌ Inativo"
               }
             />
-            <DetailItem label="Local" content={access.local} />
-            <DetailItem label="Motivo" content={access.reason} />
-            <DetailItem label="Observações" content={access.comments} />
+            <DetailItem
+              label="Validade do acesso"
+              content={
+                simpleDateFormat(scheduling.startDate) +
+                " - " +
+                simpleDateFormat(scheduling.endDate)
+              }
+            />
+            <DetailItem label="Local" content={scheduling.location} />
+            <DetailItem label="Motivo" content={scheduling.reason} />
 
             <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
             <DetailItem
               label="Data do registro"
-              content={formatDate(access.createdAt)}
+              content={formatDate(scheduling.createdAt)}
             />
             <DetailItem
               label="Última atualização"
-              content={formatDate(access.updatedAt)}
+              content={formatDate(scheduling.updatedAt)}
             />
-            <DetailItem label="Operador" content={access.operator.name} />
+            <DetailItem label="Operador" content={scheduling.operator.name} />
           </div>
         </>
       ) : (

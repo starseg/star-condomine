@@ -29,26 +29,23 @@ import {
   CommandItem,
 } from "../ui/command";
 import { useSearchParams } from "next/navigation";
-import { Textarea } from "../ui/textarea";
 import { format } from "date-fns";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-
 const FormSchema = z.object({
   visitor: z.number(),
   member: z.number(),
   reason: z.string(),
-  local: z.string(),
-  startTime: z.string(),
-  endTime: z.string(),
-  comments: z.string(),
+  location: z.string(),
+  startDate: z.string(),
+  endDate: z.string(),
+  status: z.enum(["ACTIVE", "INACTIVE"]),
 });
 
 interface Values {
-  startTime: string;
-  endTime: string;
-  local: string;
+  startDate: string;
+  endDate: string;
+  location: string;
   reason: string;
-  comments: string;
   status: "ACTIVE" | "INACTIVE" | undefined;
   member: number;
   visitor: number;
@@ -147,16 +144,12 @@ export function SchedulingUpdateForm({
     const operator = session?.payload.user.id || null;
     const id = params.get("id");
 
-    let accessStatus = "ACTIVE";
-    if (data.endTime !== "") accessStatus = "INACTIVE";
-
     const info = {
-      startTime: setStringDate(data.startTime),
-      endTime: setStringDate(data.endTime),
-      status: accessStatus,
-      local: data.local,
+      startTime: setStringDate(data.startDate),
+      endTime: setStringDate(data.endDate),
+      status: data.status,
+      location: data.location,
       reason: data.reason,
-      comments: data.comments,
       memberId: data.member,
       visitorId: data.visitor,
       operatorId: operator,
@@ -164,13 +157,13 @@ export function SchedulingUpdateForm({
     };
     console.log(info);
     try {
-      const response = await api.put("access/" + id, info, {
+      const response = await api.put("scheduling/" + id, info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
       console.log(response.data);
-      router.push("/dashboard/actions/access?lobby=" + lobby);
+      router.push("/dashboard/actions/scheduling?lobby=" + lobby);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
@@ -319,7 +312,7 @@ export function SchedulingUpdateForm({
         />
         <FormField
           control={form.control}
-          name="local"
+          name="location"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Local da visita</FormLabel>
@@ -337,13 +330,13 @@ export function SchedulingUpdateForm({
         />
         <FormField
           control={form.control}
-          name="startTime"
+          name="startDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Data e hora do acesso</FormLabel>
+              <FormLabel>Data de início</FormLabel>
               <FormControl>
                 <Input
-                  type="datetime-local"
+                  type="date"
                   placeholder="Data e hora"
                   autoComplete="off"
                   {...field}
@@ -355,13 +348,13 @@ export function SchedulingUpdateForm({
         />
         <FormField
           control={form.control}
-          name="endTime"
+          name="endDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Data e hora da saída</FormLabel>
+              <FormLabel>Data de fim</FormLabel>
               <FormControl>
                 <Input
-                  type="datetime-local"
+                  type="date"
                   placeholder="Data e hora"
                   autoComplete="off"
                   {...field}
@@ -373,16 +366,29 @@ export function SchedulingUpdateForm({
         />
         <FormField
           control={form.control}
-          name="comments"
+          name="status"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Observações</FormLabel>
+              <FormLabel>Status</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder="Alguma informação adicional..."
-                  autoComplete="off"
-                  {...field}
-                />
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex flex-col space-y-1"
+                >
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="ACTIVE" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Ativo</FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="INACTIVE" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Inativo</FormLabel>
+                  </FormItem>
+                </RadioGroup>
               </FormControl>
               <FormMessage />
             </FormItem>
