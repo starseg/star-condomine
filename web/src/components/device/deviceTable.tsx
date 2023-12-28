@@ -69,20 +69,28 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
   };
 
   const deleteDevice = async (id: number) => {
-    Swal.fire({
-      title: "Excluir dispositivo?",
-      text: "Essa ação não poderá ser revertida!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#43C04F",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sim, excluir!",
-      cancelButtonText: "Cancelar",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        deleteAction(id);
-      }
-    });
+    if (session?.payload.user.type === "USER") {
+      Swal.fire({
+        title: "Operação não permitida",
+        text: "Sua permissão de usuário não permite exclusões",
+        icon: "warning",
+      });
+    } else {
+      Swal.fire({
+        title: "Excluir dispositivo?",
+        text: "Essa ação não poderá ser revertida!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#43C04F",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sim, excluir!",
+        cancelButtonText: "Cancelar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          deleteAction(id);
+        }
+      });
+    }
   };
 
   return (

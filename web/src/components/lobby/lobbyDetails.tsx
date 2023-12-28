@@ -70,22 +70,38 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
     }
   };
 
-  const deleteLobby = async (id: number) => {
+  const showPermissionError = () => {
     Swal.fire({
-      title: "Excluir portaria?",
-      text: "Essa ação não poderá ser revertida!",
+      title: "Operação não permitida",
+      text: "Sua permissão de usuário não realizar essa ação.",
       icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#43C04F",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sim, excluir!",
-      cancelButtonText: "Cancelar",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        deleteAction(id);
-        router.push("/dashboard");
-      }
     });
+  };
+
+  const deleteLobby = async (id: number) => {
+    if (session?.payload.user.type === "USER") {
+      Swal.fire({
+        title: "Operação não permitida",
+        text: "Sua permissão de usuário não permite exclusões",
+        icon: "warning",
+      });
+    } else {
+      Swal.fire({
+        title: "Excluir portaria?",
+        text: "Essa ação não poderá ser revertida!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#43C04F",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sim, excluir!",
+        cancelButtonText: "Cancelar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          deleteAction(id);
+          router.push("/dashboard");
+        }
+      });
+    }
   };
 
   return (
@@ -140,12 +156,22 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
             )}
           </div>
           <div className="max-w-2xl mx-auto py-4 flex justify-end gap-6">
-            <Link href={`/dashboard/update?id=${details.lobbyId}`}>
-              <Button className="text-lg w-32 bg-blue-700 hover:bg-blue-500 text-stone-50">
+            {session?.payload.user.type === "USER" ? (
+              <Button
+                className="text-lg w-32 bg-blue-700 hover:bg-blue-500 text-stone-50"
+                onClick={showPermissionError}
+              >
                 <PencilLine className="mr-2" />
                 Editar
               </Button>
-            </Link>
+            ) : (
+              <Link href={`/dashboard/update?id=${details.lobbyId}`}>
+                <Button className="text-lg w-32 bg-blue-700 hover:bg-blue-500 text-stone-50">
+                  <PencilLine className="mr-2" />
+                  Editar
+                </Button>
+              </Link>
+            )}
             <Button
               className="text-lg w-32 bg-destructive hover:bg-red-400 text-destructive-foreground"
               onClick={() => deleteLobby(details.lobbyId)}

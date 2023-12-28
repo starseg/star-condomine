@@ -87,20 +87,28 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
   };
 
   const deleteVisitor = async (id: number) => {
-    Swal.fire({
-      title: "Excluir visitante?",
-      text: "Isso não é recomendado, o ideal seria inativar o visitante apenas. Ele não pode ser excluído se tiver algum acesso registrado no sistema.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#43C04F",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sim, excluir!",
-      cancelButtonText: "Cancelar",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        deleteAction(id);
-      }
-    });
+    if (session?.payload.user.type === "USER") {
+      Swal.fire({
+        title: "Operação não permitida",
+        text: "Sua permissão de usuário não permite exclusões",
+        icon: "warning",
+      });
+    } else {
+      Swal.fire({
+        title: "Excluir visitante?",
+        text: "Isso não é recomendado, o ideal seria inativar o visitante apenas. Ele não pode ser excluído se tiver algum acesso registrado no sistema.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#43C04F",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sim, excluir!",
+        cancelButtonText: "Cancelar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          deleteAction(id);
+        }
+      });
+    }
   };
   let currentDate = new Date().toJSON();
 

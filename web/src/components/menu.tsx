@@ -11,15 +11,20 @@ import BackButton from "./backButton";
 import Image from "next/image";
 import LogoutButton from "./logoutButton";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  GearSix,
-  List,
-  UsersThree,
-} from "@phosphor-icons/react/dist/ssr";
-import Clock from "./clock";
+import { ArrowLeft, List, UsersThree } from "@phosphor-icons/react/dist/ssr";
+import Swal from "sweetalert2";
+import { useSession } from "next-auth/react";
+
+const showPermissionError = () => {
+  Swal.fire({
+    title: "Operação não permitida",
+    text: "Sua permissão de usuário não realizar essa ação.",
+    icon: "warning",
+  });
+};
 
 export function Menu({ url = "" }: { url?: string }) {
+  const { data: session } = useSession();
   return (
     <header className="flex flex-row w-full justify-between md:justify-around items-center p-4">
       {url === "" ? (
@@ -47,12 +52,21 @@ export function Menu({ url = "" }: { url?: string }) {
           <DropdownMenuLabel>Menu</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
-            <Link
-              href={"operators"}
-              className="flex justify-center items-center gap-2"
-            >
-              <UsersThree size={"24px"} /> Operadores
-            </Link>
+            {session?.payload.user.type === "USER" ? (
+              <button
+                className="flex justify-center items-center gap-2"
+                onClick={showPermissionError}
+              >
+                <UsersThree size={"24px"} /> Operadores
+              </button>
+            ) : (
+              <Link
+                href={"operators"}
+                className="flex justify-center items-center gap-2"
+              >
+                <UsersThree size={"24px"} /> Operadores
+              </Link>
+            )}
           </DropdownMenuItem>
           <DropdownMenuItem>
             <LogoutButton />

@@ -8,6 +8,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { Menu } from "@/components/menu";
+import NewLobbyButton from "@/components/lobby/newLobbyButton";
 
 export default async function Dashboard() {
   return (
@@ -22,12 +23,7 @@ export default async function Dashboard() {
         </div>
         <List />
         <div className="flex items-start justify-between flex-wrap gap-4">
-          <Link
-            href={"dashboard/new"}
-            className="flex items-center justify-center gap-2 rounded-md text-xl py-4 px-4 bg-stone-900 hover:bg-stone-800 transition-colors"
-          >
-            <FilePlus size={32} /> <p>Registrar nova</p>
-          </Link>
+          <NewLobbyButton />
           <div className="bg-stone-900 px-4 py-2 rounded-md flex items-center justify-center gap-4">
             <Smiley weight="fill" size={32} className="text-green-500" />
             <p>Funcionando</p>
