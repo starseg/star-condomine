@@ -290,6 +290,11 @@ export const generateReport = async (
             name: true,
           },
         },
+        lobby: {
+          select: {
+            name: true,
+          },
+        },
       },
       orderBy: [{ status: "asc" }, { endTime: "asc" }, { startTime: "desc" }],
     });
