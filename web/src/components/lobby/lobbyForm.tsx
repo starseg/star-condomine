@@ -31,7 +31,7 @@ const FormSchema = z.object({
   name: z.string().min(5),
   responsible: z.string().min(5),
   telephone: z.string().min(10),
-  scheduling: z.string().min(3),
+  schedules: z.string().min(3),
   procedures: z.string().optional(),
   cep: z.string().min(9),
   state: z.string().min(2).max(2),
@@ -52,7 +52,7 @@ export function LobbyForm() {
       name: "",
       responsible: "",
       telephone: "",
-      scheduling: "",
+      schedules: "",
       procedures: "",
       cep: "",
       state: "",
@@ -137,7 +137,7 @@ export function LobbyForm() {
         name: data.name,
         responsible: data.responsible,
         telephone: data.telephone,
-        scheduling: data.scheduling,
+        schedules: data.schedules,
         procedures: data.procedures,
         cep: data.cep,
         state: data.state,
@@ -273,7 +273,7 @@ export function LobbyForm() {
         />
         <FormField
           control={form.control}
-          name="scheduling"
+          name="schedules"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Horários</FormLabel>

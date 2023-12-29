@@ -24,7 +24,7 @@ export const getAllLoggings = async (
           },
         },
       },
-      orderBy: [{ date: "asc" }],
+      orderBy: [{ date: "desc" }],
     });
     res.json(logging);
   } catch (error) {
