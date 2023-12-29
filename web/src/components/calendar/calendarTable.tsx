@@ -93,7 +93,7 @@ export default function CalendarTable({ lobby }: { lobby: string }) {
   };
 
   return (
-    <Table className="border border-stone-800 rouded-lg max-w-[90%] mx-auto">
+    <Table className="border border-stone-800 rouded-lg">
       <TableHeader className="bg-stone-800 font-semibold">
         <TableRow>
           <TableHead>Data</TableHead>

@@ -23,8 +23,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
 import { MaskedInput } from "../maskedInput";
-import { useEffect, useState } from "react";
-import LoadingIcon from "../loadingIcon";
 
 const FormSchema = z.object({
   type: z.enum(["CONDOMINIUM", "COMPANY"]),
@@ -32,7 +30,7 @@ const FormSchema = z.object({
   name: z.string().min(5),
   responsible: z.string().min(5),
   telephone: z.string().min(10),
-  scheduling: z.string().min(3),
+  schedules: z.string().min(3),
   procedures: z.string().optional(),
   cep: z.string().min(9),
   state: z.string().min(2).max(2),
@@ -50,7 +48,7 @@ interface Lobby {
   name: string;
   responsible: string;
   telephone: string;
-  scheduling: string;
+  schedules: string;
   procedures: string;
   datasheet: string;
   cep: string;
@@ -70,7 +68,7 @@ interface Values {
   name: string;
   responsible: string;
   telephone: string;
-  scheduling: string;
+  schedules: string;
   procedures: string;
   cep: string;
   state: string;
@@ -150,7 +148,7 @@ export function LobbyUpdateForm({
         name: data.name,
         responsible: data.responsible,
         telephone: data.telephone,
-        scheduling: data.scheduling,
+        schedules: data.schedules,
         procedures: data.procedures,
         cep: data.cep,
         state: data.state,
@@ -287,7 +285,7 @@ export function LobbyUpdateForm({
         />
         <FormField
           control={form.control}
-          name="scheduling"
+          name="schedules"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Horários</FormLabel>

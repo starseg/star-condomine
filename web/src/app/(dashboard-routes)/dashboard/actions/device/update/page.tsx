@@ -25,7 +25,7 @@ export default function UpdateDevice() {
     ip: string;
     ramal: string;
     description: string;
-    deviceModelId: number;
+    model: number;
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
@@ -56,7 +56,7 @@ export default function UpdateDevice() {
         ip: device?.ip || "",
         ramal: device?.ramal || "",
         description: device?.description || "",
-        deviceModelId: device?.deviceModelId || 0,
+        model: device?.deviceModelId || 0,
       });
       console.log("data:");
       console.log(data);

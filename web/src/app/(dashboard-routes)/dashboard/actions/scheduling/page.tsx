@@ -23,7 +23,9 @@ export default async function Scheduling({
         <div className="flex justify-end mb-4">
           <Search placeholder="Buscar..." pagination={false} />
         </div>
-        <SchedulingTable lobby={lobby} />
+        <div className="max-h-[60vh] overflow-x-auto">
+          <SchedulingTable lobby={lobby} />
+        </div>
       </section>
     </>
   );

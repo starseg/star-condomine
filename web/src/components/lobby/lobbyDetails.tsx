@@ -17,7 +17,7 @@ interface Lobby {
   name: string;
   responsible: string;
   telephone: string;
-  scheduling: string;
+  schedules: string;
   procedures: string;
   datasheet: string;
   cep: string;
@@ -119,7 +119,7 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
             <DetailItem label="CNPJ" content={details.cnpj} />
             <DetailItem label="Responsável" content={details.responsible} />
             <DetailItem label="Telefone" content={details.telephone} />
-            <DetailItem label="Horários" content={details.scheduling} />
+            <DetailItem label="Horários" content={details.schedules} />
             <DetailItem
               label="Procedimentos gerais"
               content={

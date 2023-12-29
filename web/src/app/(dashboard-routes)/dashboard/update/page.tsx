@@ -14,7 +14,7 @@ export default function UpdateDevice() {
     name: string;
     responsible: string;
     telephone: string;
-    scheduling: string;
+    schedules: string;
     procedures: string;
     datasheet: string;
     cep: string;
@@ -34,7 +34,7 @@ export default function UpdateDevice() {
     name: string;
     responsible: string;
     telephone: string;
-    scheduling: string;
+    schedules: string;
     procedures: string;
     cep: string;
     state: string;
@@ -77,7 +77,7 @@ export default function UpdateDevice() {
         name: lobby?.name || "",
         responsible: lobby?.responsible || "",
         telephone: lobby?.telephone || "",
-        scheduling: lobby?.scheduling || "",
+        schedules: lobby?.schedules || "",
         procedures: lobby?.procedures || "",
         cep: lobby?.cep || "",
         state: lobby?.state || "",

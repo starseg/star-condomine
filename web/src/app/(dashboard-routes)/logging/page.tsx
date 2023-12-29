@@ -14,7 +14,9 @@ export default function Logging() {
         <h1 className="text-4xl mt-2 mb-4 text-center">
           Monitoramento de operadores
         </h1>
-        <LoggingTable />
+        <div className="max-h-[60vh] overflow-x-auto">
+          <LoggingTable />
+        </div>
       </section>
     </>
   );

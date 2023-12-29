@@ -37,7 +37,7 @@ const FormSchema = z.object({
   faceAccess: z.boolean().default(false),
   biometricAccess: z.boolean().default(false),
   remoteControlAccess: z.boolean().default(false),
-  passwordAccess: z.string().min(2),
+  passwordAccess: z.string(),
 
   tag: z.string(),
   card: z.string(),

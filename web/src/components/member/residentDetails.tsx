@@ -79,7 +79,7 @@ export default function residentDetails({ id }: { id: number }) {
             />
             <DetailItem label="CPF" content={member.cpf} />
             <DetailItem label="RG" content={member.rg} />
-            <DetailItem label="email" content={member.email} />
+            <DetailItem label="E-mail" content={member.email} />
             <div className="flex flex-col justify-center gap-2 mb-4">
               <label className="text-lg">Telefone:</label>
 

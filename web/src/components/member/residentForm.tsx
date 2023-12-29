@@ -48,7 +48,7 @@ const FormSchema = z.object({
   faceAccess: z.boolean().default(false),
   biometricAccess: z.boolean().default(false),
   remoteControlAccess: z.boolean().default(false),
-  passwordAccess: z.string().min(2),
+  passwordAccess: z.string(),
 
   telephone: z.string(),
   tag: z.string(),
@@ -306,7 +306,7 @@ export function ResidentForm() {
         }
       }
 
-      router.push("/dashboard/actions?id=" + lobby);
+      router.push("/dashboard/actions/resident?lobby=" + lobby);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;

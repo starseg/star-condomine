@@ -73,7 +73,10 @@ export default function AccessDetails({ id }: { id: number }) {
             />
             <DetailItem label="Local" content={access.local} />
             <DetailItem label="Motivo" content={access.reason} />
-            <DetailItem label="Observações" content={access.comments} />
+            <DetailItem
+              label="Observações"
+              content={access.comments ? access.comments : "Sem observações"}
+            />
 
             <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
             <DetailItem

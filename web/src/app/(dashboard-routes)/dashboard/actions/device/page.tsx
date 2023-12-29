@@ -19,7 +19,9 @@ export default async function Device({
       <Menu url={`/dashboard/actions?id=${lobby}`} />
       <section className="max-w-5xl mx-auto mb-24">
         <h1 className="text-4xl mt-2 mb-4 text-center">Dispositivos</h1>
-        <DeviceTable lobby={lobby} />
+        <div className="max-h-[60vh] overflow-x-auto">
+          <DeviceTable lobby={lobby} />
+        </div>
       </section>
     </>
   );

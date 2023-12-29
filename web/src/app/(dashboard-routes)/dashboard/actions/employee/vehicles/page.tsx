@@ -1,3 +1,4 @@
+import ActionButton from "@/components/actionButton";
 import { Menu } from "@/components/menu";
 import MemberVehicleTable from "@/components/vehicle/memberVehicleTable";
 import { Metadata } from "next";
@@ -23,9 +24,14 @@ export default async function Vehicles({
         <h1 className="text-4xl mt-2 mb-4 text-center">
           Veículos do funcionário
         </h1>
-        <div className="max-h-[60vh] overflow-x-auto">
+        <div className="max-h-[60vh] overflow-x-auto mb-4">
           <MemberVehicleTable lobby={lobby} member={id} />
         </div>
+        <ActionButton
+          url={`/dashboard/actions/vehicle/new?lobby=${lobby}`}
+          type="+"
+          text="Registrar"
+        />
       </section>
     </>
   );

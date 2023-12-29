@@ -21,7 +21,9 @@ export default async function Problems({
         <h1 className="text-4xl mt-2 mb-4 text-center">
           Problemas da portaria
         </h1>
-        <ProblemTable lobby={lobby} />
+        <div className="max-h-[60vh] overflow-x-auto">
+          <ProblemTable lobby={lobby} />
+        </div>
       </section>
     </>
   );

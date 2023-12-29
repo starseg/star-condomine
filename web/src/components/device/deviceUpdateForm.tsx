@@ -42,7 +42,7 @@ interface Values {
   ip: string;
   ramal: string;
   description: string;
-  deviceModelId: number;
+  model: number;
 }
 
 export function DeviceUpdateForm({

@@ -23,7 +23,9 @@ export default async function Access({
         <div className="flex justify-end mb-4">
           <Search placeholder="Buscar..." pagination={false} />
         </div>
-        <AccessTable lobby={lobby} />
+        <div className="max-h-[60vh] overflow-x-auto">
+          <AccessTable lobby={lobby} />
+        </div>
       </section>
     </>
   );

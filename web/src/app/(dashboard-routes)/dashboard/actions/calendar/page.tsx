@@ -21,7 +21,9 @@ export default async function Calendar({
         <h1 className="text-4xl mt-2 mb-4 text-center">
           Calendário de feriados
         </h1>
-        <CalendarTable lobby={lobby} />
+        <div className="max-h-[60vh] overflow-x-auto">
+          <CalendarTable lobby={lobby} />
+        </div>
       </section>
     </>
   );
