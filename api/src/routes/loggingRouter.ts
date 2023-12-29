@@ -11,7 +11,7 @@ const loggingRouter = express.Router();
 
 loggingRouter.get("/", getAllLoggings);
 // loggingRouter.get("/:id", getLogging);
-// // loggingRouter.post("/", createLogging);
-// loggingRouter.delete("/:id", checkAdminPermission, deleteLogging);
+// loggingRouter.post("/", createLogging);
+loggingRouter.delete("/:id", checkAdminPermission, deleteLogging);
 
 export default loggingRouter;

@@ -8,7 +8,7 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function UpdateProblem() {
+export default function UpdateAccess() {
   interface Access {
     accessId: number;
     startTime: string;
@@ -98,7 +98,7 @@ export default function UpdateProblem() {
     <>
       <Menu />
       <section className="flex flex-col justify-center items-center mb-12">
-        <h1 className="text-4xl mt-2 mb-4">Atualizar Data</h1>
+        <h1 className="text-4xl mt-2 mb-4">Atualizar Acesso</h1>
         {data ? <AccessUpdateForm preloadedValues={data} /> : <LoadingIcon />}
       </section>
     </>

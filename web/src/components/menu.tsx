@@ -11,7 +11,12 @@ import BackButton from "./backButton";
 import Image from "next/image";
 import LogoutButton from "./logoutButton";
 import Link from "next/link";
-import { ArrowLeft, List, UsersThree } from "@phosphor-icons/react/dist/ssr";
+import {
+  ArrowLeft,
+  Eye,
+  List,
+  UsersThree,
+} from "@phosphor-icons/react/dist/ssr";
 import Swal from "sweetalert2";
 import { useSession } from "next-auth/react";
 
@@ -65,6 +70,23 @@ export function Menu({ url = "" }: { url?: string }) {
                 className="flex justify-center items-center gap-2"
               >
                 <UsersThree size={"24px"} /> Operadores
+              </Link>
+            )}
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            {session?.payload.user.type === "USER" ? (
+              <button
+                className="flex justify-center items-center gap-2"
+                onClick={showPermissionError}
+              >
+                <Eye size={"24px"} /> Monitoramento
+              </button>
+            ) : (
+              <Link
+                href={"logging"}
+                className="flex justify-center items-center gap-2"
+              >
+                <Eye size={"24px"} /> Monitoramento
               </Link>
             )}
           </DropdownMenuItem>

@@ -6,13 +6,16 @@ export const logging = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  // Obtém informações relevantes da requisição
   try {
-    const { method, url } = req;
+    const { method, url, headers, operator } = req;
+    const userAgent = headers["user-agent"] || "Desconhecido";
+    const operatorId = operator.user.id;
 
     // Registra as informações no banco de dados
-    // await createLogging(method, url, userAgent, operatorId);
-    console.log(method, url);
+    if (method !== "GET" && !url.startsWith("/log"))
+      await createLogging(method, url, userAgent, operatorId);
+    console.log(method, url, operatorId);
+
     // Continue para a próxima middleware ou rota
     next();
   } catch (error) {

@@ -15,6 +15,7 @@ import tagRouter from "./routes/tagRouter";
 import telephoneRouter from "./routes/telephoneRouter";
 import vehicleRouter from "./routes/vehicleRouter";
 import visitorRouter from "./routes/visitorRouter";
+import loggingRouter from "./routes/loggingRouter";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -28,8 +29,8 @@ app.get("/", (request: Request, response: Response) => {
 
 app.post("/auth", authenticateOperator);
 
-app.use(verifyToken);
-app.use(logging);
+app.use(verifyToken, logging);
+// app.use();
 
 app.use("/operator", operatorRouter);
 app.use("/access", accessRouter);
@@ -37,6 +38,7 @@ app.use("/device", deviceRouter);
 app.use("/lobby", lobbyRouter);
 app.use("/lobbyCalendar", lobbyCalendarRouter);
 app.use("/lobbyProblem", lobbyProblemRouter);
+app.use("/log", loggingRouter);
 app.use("/member", memberRouter);
 app.use("/scheduling", schedulingRouter);
 app.use("/tag", tagRouter);

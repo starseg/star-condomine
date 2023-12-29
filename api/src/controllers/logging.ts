@@ -8,7 +8,24 @@ export const getAllLoggings = async (
   res: Response
 ): Promise<void> => {
   try {
-    const logging = await prisma.logging.findMany();
+    const date = new Date();
+    date.setDate(date.getDate() - 7);
+    const formattedDate = date.toISOString();
+    const logging = await prisma.logging.findMany({
+      where: {
+        date: {
+          gte: formattedDate,
+        },
+      },
+      include: {
+        operator: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: [{ date: "asc" }],
+    });
     res.json(logging);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar os registros" });
@@ -50,6 +67,7 @@ export const createLogging = async (
     throw error; // Propaga o erro para o chamador, se necessário
   }
 };
+
 export const deleteLogging = async (
   req: Request,
   res: Response
