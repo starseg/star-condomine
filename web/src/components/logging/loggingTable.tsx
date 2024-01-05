@@ -39,7 +39,7 @@ export default function LoggingTable() {
         },
       });
       setLogs(response.data);
-      console.log(response.data);
+      // console.log(response.data);
     } catch (error) {
       console.error("Erro ao obter dados:", error);
     }

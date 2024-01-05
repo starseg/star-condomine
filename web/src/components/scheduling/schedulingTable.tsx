@@ -53,7 +53,7 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
       let path;
       if (!params.get("query")) {
         path = "scheduling/lobby/" + lobby;
-        console.log(path);
+        // console.log(path);
       } else {
         path = `scheduling/filtered/${lobby}?query=${params.get("query")}`;
       }

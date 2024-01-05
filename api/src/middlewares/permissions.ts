@@ -33,7 +33,7 @@ export const checkAdminPermission = (
   next: NextFunction
 ) => {
   const type = req.operator.user.type;
-  console.log("TIPO DO USUÁRIO: ", type);
+  // console.log("TIPO DO USUÁRIO: ", type);
   if (type === "ADMIN") {
     next();
   } else {

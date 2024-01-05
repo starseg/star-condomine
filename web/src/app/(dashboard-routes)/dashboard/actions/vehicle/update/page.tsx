@@ -64,8 +64,8 @@ export default function UpdateVehicle() {
         color: vehicle.color || "",
         comments: vehicle.comments || "",
       });
-      console.log("data:");
-      console.log(data);
+      // console.log("data:");
+      // console.log(data);
     }
   }, [vehicle]);
 

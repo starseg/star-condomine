@@ -47,10 +47,10 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
     fetchData();
   }, [session]);
 
-  // console.log(devices);
+  // // console.log(devices);
 
   const deleteAction = async (id: number) => {
-    console.log("device/" + id);
+    // console.log("device/" + id);
     try {
       await api.delete("device/" + id, {
         headers: {

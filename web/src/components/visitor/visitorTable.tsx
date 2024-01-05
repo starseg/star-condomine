@@ -50,7 +50,7 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
       let path;
       if (!params.get("query")) {
         path = "visitor/lobby/" + lobby;
-        console.log(path);
+        // console.log(path);
       } else {
         path = `visitor/filtered/${lobby}?query=${params.get("query")}`;
       }

@@ -16,10 +16,10 @@ const callbackCEP = async (conteudo: any) => {
       return data;
     } catch (error) {
       console.error("Erro ao buscar dados do CEP:", error);
-      console.log("Erro ao buscar dados do CEP.");
+      // console.log("Erro ao buscar dados do CEP.");
     }
   } else {
-    console.log("CEP não encontrado.");
+    // console.log("CEP não encontrado.");
   }
 };
 
@@ -32,10 +32,10 @@ export const searchCEP = async (valor: string) => {
     if (validacep.test(cep)) {
       return callbackCEP({ cep });
     } else {
-      console.log("Formato de CEP inválido.");
+      // console.log("Formato de CEP inválido.");
     }
   } else {
-    console.log("CEP sem valor.");
+    // console.log("CEP sem valor.");
   }
 };
 

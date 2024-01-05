@@ -105,14 +105,14 @@ export function DeviceForm() {
       deviceModelId: data.model,
       lobbyId: lobby,
     };
-    console.log(info);
+    // console.log(info);
     try {
       const response = await api.post("device", info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      console.log(response.data);
+      // console.log(response.data);
       router.push("/dashboard/actions/device?lobby=" + lobby);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

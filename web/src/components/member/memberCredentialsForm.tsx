@@ -70,7 +70,7 @@ export default function MemberCredentialsForm({
   let tags: string[] = [];
   let cards: string[] = [];
   useEffect(() => {
-    console.log(memberData.tag);
+    // console.log(memberData.tag);
     memberData.tag.forEach((tag) => {
       if (tag.tagTypeId === tagId) {
         if (!tags.includes(tag.value)) {
@@ -215,7 +215,7 @@ export default function MemberCredentialsForm({
                 </FormControl>
                 <div className="flex flex-col">
                   {tagNumber.map((num, index) => {
-                    // console.log("TAG NUMBER: ", tagNumber);
+                    // // console.log("TAG NUMBER: ", tagNumber);
                     return (
                       <div
                         key={index}

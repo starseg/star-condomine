@@ -145,14 +145,14 @@ export function SchedulingForm() {
       operatorId: operator,
       lobbyId: lobby,
     };
-    console.log(info);
+    // console.log(info);
     try {
       const response = await api.post("scheduling", info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      console.log(response.data);
+      // console.log(response.data);
       router.push("/dashboard/actions/scheduling?lobby=" + lobby);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

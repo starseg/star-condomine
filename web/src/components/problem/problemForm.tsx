@@ -55,7 +55,7 @@ export function ProblemForm() {
       realDate = format(dateObject, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     }
     if (data.currentDate) realDate = new Date().toISOString();
-    console.log(realDate);
+    // console.log(realDate);
 
     const info = {
       title: data.title,
@@ -70,7 +70,7 @@ export function ProblemForm() {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      console.log(response.data);
+      // console.log(response.data);
       router.push("/dashboard/actions/problem?lobby=" + lobby);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

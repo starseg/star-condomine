@@ -79,8 +79,8 @@ export default function UpdateVisitor() {
         relation: visitor?.relation || "",
         type: visitor?.visitorTypeId.toString() || "",
       });
-      console.log("data:");
-      console.log(data);
+      // console.log("data:");
+      // console.log(data);
     }
   }, [visitor]);
 

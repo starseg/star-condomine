@@ -57,7 +57,7 @@ export default function ProblemTable({ lobby }: { lobby: string }) {
     fetchData();
   }, [session]);
 
-  // console.log(devices);
+  // // console.log(devices);
 
   const deleteAction = async (id: number) => {
     try {

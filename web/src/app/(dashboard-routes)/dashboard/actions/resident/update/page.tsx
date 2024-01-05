@@ -95,8 +95,8 @@ export default function UpdateResident() {
         comments: member?.comments || "",
         telephone: "",
       });
-      console.log("data:");
-      console.log(data);
+      // console.log("data:");
+      // console.log(data);
     }
   }, [member]);
 

@@ -102,10 +102,10 @@ export function EmployeeUpdateForm({
 
     try {
       await uploadBytes(fileRef, file).then((snapshot) => {
-        console.log("Uploaded file!");
+        // console.log("Uploaded file!");
       });
       const downloadURL = await getDownloadURL(fileRef);
-      console.log("Arquivo enviado com sucesso. URL de download:", downloadURL);
+      // console.log("Arquivo enviado com sucesso. URL de download:", downloadURL);
 
       return downloadURL;
     } catch (error) {
@@ -117,7 +117,7 @@ export function EmployeeUpdateForm({
   const handleFileUpload = async (file: File) => {
     try {
       const url = await uploadFile(file);
-      console.log("URL do arquivo:", url);
+      // console.log("URL do arquivo:", url);
       return url;
     } catch (error) {
       console.error("Erro durante o upload:", error);
@@ -155,7 +155,7 @@ export function EmployeeUpdateForm({
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      console.log(response.data);
+      // console.log(response.data);
 
       router.push("/dashboard/actions/employee?lobby=" + lobby);
     } catch (error) {

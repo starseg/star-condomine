@@ -70,8 +70,8 @@ export default function UpdateProblem() {
         date: formattedDate,
         status: problem?.status || "ACTIVE",
       });
-      console.log("data:");
-      console.log(data);
+      // console.log("data:");
+      // console.log(data);
     }
   }, [problem]);
 

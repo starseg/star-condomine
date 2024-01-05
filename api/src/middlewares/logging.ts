@@ -14,7 +14,7 @@ export const logging = async (
     // Registra as informações no banco de dados
     if (method !== "GET" && !url.startsWith("/log"))
       await createLogging(method, url, userAgent, operatorId);
-    console.log(method, url, operatorId);
+    // console.log(method, url, operatorId);
 
     // Continue para a próxima middleware ou rota
     next();

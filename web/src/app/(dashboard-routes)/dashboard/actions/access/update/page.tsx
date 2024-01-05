@@ -89,8 +89,8 @@ export default function UpdateAccess() {
         member: access?.memberId || 0,
         visitor: access?.visitorId || 0,
       });
-      console.log("data:");
-      console.log(data);
+      // console.log("data:");
+      // console.log(data);
     }
   }, [access]);
 

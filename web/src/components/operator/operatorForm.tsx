@@ -52,7 +52,7 @@ export function OperatorForm() {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      console.log(response.data);
+      // console.log(response.data);
       router.push("/operators");
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

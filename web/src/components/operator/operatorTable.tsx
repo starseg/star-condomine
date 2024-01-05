@@ -37,7 +37,7 @@ export default function OperatorTable() {
         },
       });
       setOperators(response.data);
-      console.log(response.data);
+      // console.log(response.data);
     } catch (error) {
       console.error("Erro ao obter dados:", error);
     }
@@ -47,7 +47,7 @@ export default function OperatorTable() {
   }, [session]);
 
   const deleteAction = async (id: number) => {
-    console.log("operator/" + id);
+    // console.log("operator/" + id);
     try {
       await api.delete("operator/" + id, {
         headers: {

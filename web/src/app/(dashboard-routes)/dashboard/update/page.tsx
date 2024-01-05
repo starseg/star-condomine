@@ -88,8 +88,8 @@ export default function UpdateDevice() {
         complement: lobby?.complement || "",
         datasheet: new File([], ""),
       });
-      console.log("data:");
-      console.log(data);
+      // console.log("data:");
+      // console.log(data);
     }
   }, [lobby]);
 

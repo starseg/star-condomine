@@ -137,14 +137,14 @@ export function VehicleForm() {
       color: data.color,
       comments: data.comments,
     };
-    console.log(info);
+    // console.log(info);
     try {
       const response = await api.post("vehicle", info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      console.log(response.data);
+      // console.log(response.data);
       router.push("/dashboard/actions/vehicle?lobby=" + lobby);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

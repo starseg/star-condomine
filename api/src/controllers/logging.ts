@@ -61,7 +61,7 @@ export const createLogging = async (
     const logging = await prisma.logging.create({
       data: { method, url, userAgent, operatorId },
     });
-    console.log("Registro de logging criado:", logging);
+    // console.log("Registro de logging criado:", logging);
   } catch (error) {
     console.error("Erro ao criar o registro de logging:", error);
     throw error; // Propaga o erro para o chamador, se necessário

@@ -51,7 +51,7 @@ export default function LobbyDetails() {
         },
       });
       if (response.data) {
-        console.log(response.data);
+        // console.log(response.data);
         setLobby(response.data);
       }
     } catch (error) {

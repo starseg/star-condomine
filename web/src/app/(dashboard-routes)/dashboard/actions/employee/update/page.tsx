@@ -91,8 +91,8 @@ export default function UpdateResident() {
         remoteControlAccess: bool(member?.remoteControlAccess) || false,
         comments: member?.comments || "",
       });
-      console.log("data:");
-      console.log(data);
+      // console.log("data:");
+      // console.log(data);
     }
   }, [member]);
 

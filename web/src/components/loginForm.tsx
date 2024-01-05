@@ -56,7 +56,7 @@ export function LoginForm() {
       } else if (result.error == "Request failed with status code 500") {
         setError("Usuário não encontrado ou inativo");
       } else {
-        console.log(result.error);
+        // console.log(result.error);
       }
       return;
     }

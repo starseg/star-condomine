@@ -46,7 +46,7 @@ export const PdfButton = ({
   const generatePdf = (data: Access[]) => {
     const doc = new jsPDF({ orientation: "landscape" });
 
-    console.log(period);
+    // console.log(period);
 
     const from = period.from ? simpleDateFormat(period.from) : "";
     const to = period.to ? simpleDateFormat(period.to) : "";

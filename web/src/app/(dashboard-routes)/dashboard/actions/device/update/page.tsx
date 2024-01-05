@@ -58,8 +58,8 @@ export default function UpdateDevice() {
         description: device?.description || "",
         model: device?.deviceModelId || 0,
       });
-      console.log("data:");
-      console.log(data);
+      // console.log("data:");
+      // console.log(data);
     }
   }, [device]);
 
