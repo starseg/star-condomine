@@ -51,7 +51,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ error: "Algo deu errado!", details: err.message });
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3333;
 app.listen(port, () => {
   console.log(`✨ Servidor rodando na porta ${port} ✨`);
 });
