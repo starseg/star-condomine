@@ -33,7 +33,7 @@ import {
   CommandInput,
   CommandItem,
 } from "../ui/command";
-import { PlusCircle } from "@phosphor-icons/react/dist/ssr";
+import { PlusCircle, Trash } from "@phosphor-icons/react/dist/ssr";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -186,6 +186,9 @@ export function ResidentForm() {
     setPhoneNumber((prev) => [...prev, value]);
     form.setValue("telephone", "");
   };
+  const deleteTelephone = (value: string) => {
+    setPhoneNumber(phoneNumber.filter((item) => item !== value));
+  };
 
   const [tagNumber, setTagNumber] = useState<string[]>([]);
   const addTag = (value: string) => {
@@ -197,6 +200,14 @@ export function ResidentForm() {
   const addCard = (value: string) => {
     setCardNumber((prev) => [...prev, value]);
     form.setValue("card", "");
+  };
+
+  const deleteTag = (type: string, value: string) => {
+    if (type === "tag") {
+      setTagNumber(tagNumber.filter((item) => item !== value));
+    } else {
+      setCardNumber(cardNumber.filter((item) => item !== value));
+    }
   };
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
@@ -437,14 +448,24 @@ export function ResidentForm() {
                 </div>
               </FormControl>
               <div className="flex gap-2 flex-wrap">
-                {phoneNumber.map((telefone, index) => (
-                  <p
-                    key={index}
-                    className="text-normal p-2 mt-2 rounded-md bg-muted"
-                  >
-                    {telefone}
-                  </p>
-                ))}
+                {phoneNumber.map((telephone, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className="text-lg py-2 px-4 mt-2 rounded-md bg-muted flex justify-between items-center gap-2"
+                    >
+                      <p>{telephone}</p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="aspect-square p-1"
+                        onClick={() => deleteTelephone(telephone)}
+                      >
+                        <Trash size={"24px"} />
+                      </Button>
+                    </div>
+                  );
+                })}
               </div>
               <FormMessage />
             </FormItem>
@@ -605,14 +626,24 @@ export function ResidentForm() {
                 </div>
               </FormControl>
               <div className="flex gap-2 flex-wrap">
-                {tagNumber.map((num, index) => (
-                  <p
-                    key={index}
-                    className="text-normal p-2 mt-2 rounded-md bg-muted"
-                  >
-                    {num}
-                  </p>
-                ))}
+                {tagNumber.map((num, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className="text-lg p-2 mt-2 rounded-md bg-muted flex justify-between items-center gap-2"
+                    >
+                      <p>{num}</p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="aspect-square p-1"
+                        onClick={() => deleteTag("tag", num)}
+                      >
+                        <Trash size={"24px"} />
+                      </Button>
+                    </div>
+                  );
+                })}
               </div>
               <FormMessage />
             </FormItem>
@@ -644,14 +675,25 @@ export function ResidentForm() {
                 </div>
               </FormControl>
               <div className="flex gap-2 flex-wrap">
-                {cardNumber.map((num, index) => (
-                  <p
-                    key={index}
-                    className="text-normal p-2 mt-2 rounded-md bg-muted"
-                  >
-                    {num}
-                  </p>
-                ))}
+                {cardNumber.map((num, index) => {
+                  // // console.log("TAG NUMBER: ", tagNumber);
+                  return (
+                    <div
+                      key={index}
+                      className="text-lg p-2 mt-2 rounded-md bg-muted flex justify-between items-center gap-2"
+                    >
+                      <p>{num}</p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="aspect-square p-1"
+                        onClick={() => deleteTag("card", num)}
+                      >
+                        <Trash size={"24px"} />
+                      </Button>
+                    </div>
+                  );
+                })}
               </div>
               <FormMessage />
             </FormItem>

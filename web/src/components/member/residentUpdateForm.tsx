@@ -34,7 +34,7 @@ import {
   CommandInput,
   CommandItem,
 } from "../ui/command";
-import { PlusCircle } from "@phosphor-icons/react/dist/ssr";
+import { PlusCircle, Trash } from "@phosphor-icons/react/dist/ssr";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -129,6 +129,7 @@ export function ResidentUpdateForm({
 
   const [addressType, setAddressType] = useState([]);
   const [phoneNumber, setPhoneNumber] = useState<string[]>([]);
+  let phones: Telephone[] = [];
 
   const fetchTelephoneData = async () => {
     try {
@@ -137,11 +138,7 @@ export function ResidentUpdateForm({
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      response.data.forEach((telephone: Telephone) => {
-        if (!phoneNumber.includes(telephone.number)) {
-          setPhoneNumber([...phoneNumber, telephone.number]);
-        }
-      });
+      return response.data;
     } catch (error) {
       console.error("Erro ao obter dados:", error);
     }
@@ -161,8 +158,18 @@ export function ResidentUpdateForm({
 
   useEffect(() => {
     fetchAddressData();
-    fetchTelephoneData();
+    console.log(fetchTelephoneData());
   }, [session]);
+
+  useEffect(() => {
+    console.log("IMPRIMINDO TELEFONES");
+    console.log(phones);
+    phones.forEach((telephone: Telephone) => {
+      if (!phoneNumber.includes(telephone.number)) {
+        setPhoneNumber((prev) => [...prev, telephone.number]);
+      }
+    });
+  }, []);
 
   type UploadFunction = (file: File) => Promise<string>;
   const uploadFile: UploadFunction = async (file) => {
@@ -205,13 +212,14 @@ export function ResidentUpdateForm({
     })
   );
 
-  const [newPhones, setNewPhones] = useState<string[]>([]);
   const addTelephone = (value: string) => {
     if (!phoneNumber.includes(value)) {
       setPhoneNumber([...phoneNumber, value]);
-      setNewPhones([...newPhones, value]);
     }
     form.setValue("telephone", "");
+  };
+  const deleteTelephone = (value: string) => {
+    setPhoneNumber(phoneNumber.filter((item) => item !== value));
   };
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
@@ -246,29 +254,44 @@ export function ResidentUpdateForm({
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      // console.log(response.data);
 
       // REGISTRA OS NÚMEROS DE TELEFONE
-      if (newPhones[0] != "") {
-        try {
-          for (let i = 0; i < newPhones.length; i++) {
-            await api.post(
-              "telephone",
-              {
-                number: newPhones[i],
-                memberId: response.data.memberId,
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${session?.token.user.token}`,
-                },
+      try {
+        const res = await api.delete("telephone/member/" + params.get("id"), {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+
+        if (res) {
+          if (phoneNumber[0] != "") {
+            try {
+              for (let i = 0; i < phoneNumber.length; i++) {
+                await api.post(
+                  "telephone",
+                  {
+                    number: phoneNumber[i],
+                    memberId: response.data.memberId,
+                  },
+                  {
+                    headers: {
+                      Authorization: `Bearer ${session?.token.user.token}`,
+                    },
+                  }
+                );
               }
-            );
+            } catch (error) {
+              console.error(
+                "(Telefone) Erro ao enviar dados para a API:",
+                error
+              );
+              throw error;
+            }
           }
-        } catch (error) {
-          console.error("(Telefone) Erro ao enviar dados para a API:", error);
-          throw error;
         }
+      } catch (error) {
+        console.error("(Tel) Erro ao enviar dados para a API:", error);
+        throw error;
       }
 
       router.push("/dashboard/actions/resident?lobby=" + lobby);
@@ -405,14 +428,24 @@ export function ResidentUpdateForm({
                 </div>
               </FormControl>
               <div className="flex gap-2 flex-wrap">
-                {phoneNumber.map((telefone, index) => (
-                  <p
-                    key={index}
-                    className="text-normal p-2 mt-2 rounded-md bg-muted"
-                  >
-                    {telefone}
-                  </p>
-                ))}
+                {phoneNumber.map((telephone, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className="text-lg py-2 px-4 mt-2 rounded-md bg-muted flex justify-between items-center gap-2"
+                    >
+                      <p>{telephone}</p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="aspect-square p-1"
+                        onClick={() => deleteTelephone(telephone)}
+                      >
+                        <Trash size={"24px"} />
+                      </Button>
+                    </div>
+                  );
+                })}
               </div>
               <FormMessage />
             </FormItem>

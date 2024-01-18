@@ -16,6 +16,6 @@ tagRouter.get("/find/:id", getTag);
 tagRouter.get("/types", getTagTypes);
 tagRouter.post("/", createTag);
 tagRouter.delete("/id/:id", checkAdminPermission, deleteTag);
-tagRouter.delete("/member/:id", checkAdminPermission, deleteTagsByMember);
+tagRouter.delete("/member/:id", deleteTagsByMember);
 
 export default tagRouter;

@@ -79,3 +79,18 @@ export const getTelephonesByMember = async (
     res.status(500).json({ error: "Erro ao buscar os telefones" });
   }
 };
+
+export const deletePhonesByMember = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    await prisma.telephone.deleteMany({
+      where: { memberId: id },
+    });
+    res.json({ message: "Telefones excluídos com sucesso" });
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao excluir os telefones" });
+  }
+};
