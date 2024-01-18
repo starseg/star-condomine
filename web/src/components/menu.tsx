@@ -66,7 +66,7 @@ export function Menu({ url = "" }: { url?: string }) {
               </button>
             ) : (
               <Link
-                href={"operators"}
+                href={"/operators"}
                 className="flex justify-center items-center gap-2"
               >
                 <UsersThree size={"24px"} /> Operadores
@@ -83,7 +83,7 @@ export function Menu({ url = "" }: { url?: string }) {
               </button>
             ) : (
               <Link
-                href={"logging"}
+                href={"/logging"}
                 className="flex justify-center items-center gap-2"
               >
                 <Eye size={"24px"} /> Monitoramento
