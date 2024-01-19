@@ -15,7 +15,7 @@ telephoneRouter.get("/", getAllTelephones);
 telephoneRouter.get("/find/:id", getTelephone);
 telephoneRouter.get("/member/:id", getTelephonesByMember);
 telephoneRouter.post("/", createTelephone);
-telephoneRouter.delete("/:id", checkAdminPermission, deleteTelephone);
+telephoneRouter.delete("/id/:id", checkAdminPermission, deleteTelephone);
 telephoneRouter.delete("/member/:id", deletePhonesByMember);
 
 export default telephoneRouter;

@@ -1,5 +1,4 @@
 "use client";
-
 import * as z from "zod";
 import api from "@/lib/axios";
 import { initializeApp } from "firebase/app";
@@ -96,30 +95,33 @@ interface Values {
   remoteControlAccess: boolean;
   telephone: string;
 }
+interface Telephone {
+  telephoneId: number;
+  number: string;
+}
+interface item {
+  value: number;
+  label: string;
+}
+interface IAddressType {
+  addressTypeId: number;
+  description: string;
+}
 
 export function ResidentUpdateForm({
   preloadedValues,
   member,
+  phones,
 }: {
   preloadedValues: Values;
   member: Member;
+  phones: Telephone[];
 }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: preloadedValues,
   });
-  interface Telephone {
-    telephoneId: number;
-    number: string;
-  }
-  interface item {
-    value: number;
-    label: string;
-  }
-  interface IAddressType {
-    addressTypeId: number;
-    description: string;
-  }
+
   let items: item[] = [];
 
   const { data: session } = useSession();
@@ -129,20 +131,16 @@ export function ResidentUpdateForm({
 
   const [addressType, setAddressType] = useState([]);
   const [phoneNumber, setPhoneNumber] = useState<string[]>([]);
-  let phones: Telephone[] = [];
+  let numbers: string[] = [];
+  useEffect(() => {
+    phones.forEach((phone: Telephone) => {
+      if (!numbers.includes(phone.number)) {
+        numbers.push(phone.number);
+        setPhoneNumber((prev) => [...prev, phone.number]);
+      }
+    });
+  }, []);
 
-  const fetchTelephoneData = async () => {
-    try {
-      const response = await api.get("telephone/member/" + params.get("id"), {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
-  };
   const fetchAddressData = async () => {
     try {
       const response = await api.get("member/address", {
@@ -158,18 +156,7 @@ export function ResidentUpdateForm({
 
   useEffect(() => {
     fetchAddressData();
-    console.log(fetchTelephoneData());
   }, [session]);
-
-  useEffect(() => {
-    console.log("IMPRIMINDO TELEFONES");
-    console.log(phones);
-    phones.forEach((telephone: Telephone) => {
-      if (!phoneNumber.includes(telephone.number)) {
-        setPhoneNumber((prev) => [...prev, telephone.number]);
-      }
-    });
-  }, []);
 
   type UploadFunction = (file: File) => Promise<string>;
   const uploadFile: UploadFunction = async (file) => {

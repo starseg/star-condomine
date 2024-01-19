@@ -52,31 +52,50 @@ export default function UpdateResident() {
     remoteControlAccess: boolean;
     telephone: string;
   }
+  interface Telephone {
+    telephoneId: number;
+    number: string;
+  }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
 
   const [member, setMember] = useState<Member | null>(null);
+  const [phones, setPhones] = useState<Telephone[] | null>(null);
   const [data, setData] = useState<Values>();
 
   function bool(value: string | undefined) {
     return value === "true";
   }
 
+  const fetchData = async () => {
+    try {
+      const response = await api.get("member/find/" + params.get("id"), {
+        headers: {
+          Authorization: `Bearer ${session?.token.user.token}`,
+        },
+      });
+      setMember(response.data);
+    } catch (error) {
+      console.error("(Member) Erro ao obter dados:", error);
+    }
+  };
+  const fetchTelephoneData = async () => {
+    try {
+      const response = await api.get("telephone/member/" + params.get("id"), {
+        headers: {
+          Authorization: `Bearer ${session?.token.user.token}`,
+        },
+      });
+      setPhones(response.data);
+    } catch (error) {
+      console.error("(Phone) Erro ao obter dados:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await api.get("member/find/" + params.get("id"), {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
-        setMember(response.data);
-      } catch (error) {
-        console.error("(Member) Erro ao obter dados:", error);
-      }
-    };
     fetchData();
+    fetchTelephoneData();
   }, [session]);
 
   useEffect(() => {
@@ -95,8 +114,6 @@ export default function UpdateResident() {
         comments: member?.comments || "",
         telephone: "",
       });
-      // console.log("data:");
-      // console.log(data);
     }
   }, [member]);
 
@@ -105,8 +122,12 @@ export default function UpdateResident() {
       <Menu />
       <section className="flex flex-col justify-center items-center mb-12">
         <h1 className="text-4xl mt-2 mb-4">Atualizar Morador</h1>
-        {member && data ? (
-          <ResidentUpdateForm preloadedValues={data} member={member} />
+        {member && data && phones ? (
+          <ResidentUpdateForm
+            preloadedValues={data}
+            member={member}
+            phones={phones}
+          />
         ) : (
           <LoadingIcon />
         )}

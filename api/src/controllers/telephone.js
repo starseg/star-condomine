@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTelephonesByMember = exports.deleteTelephone = exports.createTelephone = exports.getTelephone = exports.getAllTelephones = void 0;
+exports.deletePhonesByMember = exports.getTelephonesByMember = exports.deleteTelephone = exports.createTelephone = exports.getTelephone = exports.getAllTelephones = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getAllTelephones = async (req, res) => {
@@ -70,3 +70,16 @@ const getTelephonesByMember = async (req, res) => {
     }
 };
 exports.getTelephonesByMember = getTelephonesByMember;
+const deletePhonesByMember = async (req, res) => {
+    try {
+        const id = parseInt(req.params.id, 10);
+        await prisma.telephone.deleteMany({
+            where: { memberId: id },
+        });
+        res.json({ message: "Telefones excluídos com sucesso" });
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao excluir os telefones" });
+    }
+};
+exports.deletePhonesByMember = deletePhonesByMember;
