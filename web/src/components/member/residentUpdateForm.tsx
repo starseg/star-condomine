@@ -38,8 +38,8 @@ import { PlusCircle, Trash } from "@phosphor-icons/react/dist/ssr";
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
   name: z.string().min(5),
-  cpf: z.string().min(14),
-  rg: z.string().min(12),
+  cpf: z.string(),
+  rg: z.string(),
   email: z.string().min(6),
   telephone: z.string(),
   addressType: z.number(),
@@ -359,8 +359,7 @@ export function ResidentUpdateForm({
             <FormItem>
               <FormLabel>RG</FormLabel>
               <FormControl>
-                <MaskedInput
-                  mask="99.999.999-9"
+                <Input
                   placeholder="Digite o RG do morador"
                   autoComplete="off"
                   {...field}

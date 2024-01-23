@@ -13,6 +13,7 @@ import LogoutButton from "./logoutButton";
 import Link from "next/link";
 import {
   ArrowLeft,
+  BookBookmark,
   Eye,
   List,
   UsersThree,
@@ -89,6 +90,15 @@ export function Menu({ url = "" }: { url?: string }) {
                 <Eye size={"24px"} /> Monitoramento
               </Link>
             )}
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <a
+              href="https://northern-squirrel-23f.notion.site/Manual-Star-Condomine-14149e5d23a24c1ab3a9a199478ee9d6"
+              target="_blank"
+              className="flex justify-center items-center gap-2"
+            >
+              <BookBookmark size={"24px"} /> Manual
+            </a>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <LogoutButton />

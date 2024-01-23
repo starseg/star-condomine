@@ -47,9 +47,9 @@ import { Textarea } from "../ui/textarea";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
-  name: z.string().min(5),
-  cpf: z.string().min(14),
-  rg: z.string().min(12),
+  name: z.string(),
+  cpf: z.string(),
+  rg: z.string(),
   phone: z.string(),
   type: z.string(),
   relation: z.string(),
@@ -316,8 +316,7 @@ export function VisitorForm() {
             <FormItem>
               <FormLabel>RG</FormLabel>
               <FormControl>
-                <MaskedInput
-                  mask="99.999.999-9"
+                <Input
                   placeholder="Digite o RG do visitante"
                   autoComplete="off"
                   {...field}

@@ -58,7 +58,7 @@ model Member {
   profileUrl          String?
   name                String
   rg                  String
-  cpf                 String       @unique
+  cpf                 String
   email               String?
   comments            String?
   status              Status       @default(ACTIVE)
@@ -156,7 +156,7 @@ model Visitor {
   profileUrl String?
   name       String
   rg         String
-  cpf        String    @unique
+  cpf        String
   phone      String
   startDate  DateTime?
   endDate    DateTime?

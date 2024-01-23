@@ -1,14 +1,9 @@
 import List from "@/components/lobby/list";
 import Search from "@/components/search";
-import {
-  DoorOpen,
-  FilePlus,
-  Smiley,
-  SmileySad,
-} from "@phosphor-icons/react/dist/ssr";
-import Link from "next/link";
+import { DoorOpen, Smiley, SmileySad } from "@phosphor-icons/react/dist/ssr";
 import { Menu } from "@/components/menu";
 import NewLobbyButton from "@/components/lobby/newLobbyButton";
+import FeedbackButton from "@/components/feedback/feedbackButton";
 
 export default async function Dashboard() {
   return (
@@ -31,6 +26,7 @@ export default async function Dashboard() {
             <p>Com problemas</p>
           </div>
         </div>
+        <FeedbackButton />
       </section>
     </>
   );

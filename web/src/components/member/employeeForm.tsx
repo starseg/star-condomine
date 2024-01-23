@@ -28,8 +28,8 @@ import { PlusCircle } from "@phosphor-icons/react/dist/ssr";
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
   name: z.string().min(5),
-  cpf: z.string().min(14),
-  rg: z.string().min(12),
+  cpf: z.string(),
+  rg: z.string(),
   position: z.string().min(2),
   accessPeriod: z.string(),
   comments: z.string(),
@@ -301,8 +301,7 @@ export function EmployeeForm() {
             <FormItem>
               <FormLabel>RG</FormLabel>
               <FormControl>
-                <MaskedInput
-                  mask="99.999.999-9"
+                <Input
                   placeholder="Digite o RG do funcionário"
                   autoComplete="off"
                   {...field}

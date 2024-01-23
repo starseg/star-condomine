@@ -1,6 +1,6 @@
 import { Smiley, SmileyMeh, SmileySad } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
-import clsx from 'clsx';
+import clsx from "clsx";
 
 interface LobbyCardProps {
   href: String;
@@ -18,13 +18,13 @@ export default function LobbyCard(props: LobbyCardProps) {
       className={clsx(
         "p-4 border rounded-md lg:w-[30%] md:w-[45%] w-full h-[170px] flex flex-col justify-between hover:bg-stone-850 transition-colors",
         {
-          "border-green-500" : props.status === 0,
+          "border-green-500": props.status === 0,
         },
         {
-          "border-red-500" : props.status === 1,
+          "border-red-500": props.status === 1,
         },
         {
-          "border-yellow-500" : props.status === 2,
+          "border-yellow-500": props.status === 2,
         }
       )}
     >
@@ -38,7 +38,7 @@ export default function LobbyCard(props: LobbyCardProps) {
             <Smiley weight="fill" size={32} className="text-green-500" />
           ) : props.status === 1 ? (
             <SmileySad weight="fill" size={32} className="text-red-500" />
-          ): (
+          ) : (
             <SmileyMeh weight="fill" size={32} className="text-yellow-500" />
           )}
         </p>
@@ -49,7 +49,7 @@ export default function LobbyCard(props: LobbyCardProps) {
           <br />
           {props.ramais}
         </p>
-        <p className="w-1/2 text-right">{props.location}</p>
+        <p className="w-1/2 text-right text-sm">{props.location}</p>
       </div>
     </Link>
   );
