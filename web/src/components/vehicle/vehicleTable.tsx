@@ -111,7 +111,7 @@ export default function VehicleTable({ lobby }: { lobby: string }) {
           <TableHead>Ações</TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>
+      <TableBody className="uppercase">
         {vehicles.map((vehicle) => {
           return (
             <TableRow key={vehicle.vehicleId}>

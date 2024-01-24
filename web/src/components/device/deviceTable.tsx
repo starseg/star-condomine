@@ -105,7 +105,7 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
           <TableHead>Ações</TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>
+      <TableBody className="uppercase">
         {devices.map((device) => (
           <TableRow key={device.deviceId}>
             <TableCell>{device.name}</TableCell>

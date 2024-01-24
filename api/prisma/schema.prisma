@@ -281,6 +281,17 @@ model Logging {
   operatorId Int
 }
 
+model Feedback {
+  feedbackId Int      @id @default(autoincrement())
+  name       String?
+  subject    String
+  message    String   @db.VarChar(1000)
+  response   String?  @db.VarChar(1000)
+  status     Status   @default(ACTIVE)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
 enum Status {
   ACTIVE
   INACTIVE

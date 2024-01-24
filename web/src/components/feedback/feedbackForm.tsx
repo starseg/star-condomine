@@ -49,7 +49,7 @@ export function FeedbackForm() {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      router.push("/dashboard");
+      router.push("/feedback/success");
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
@@ -85,7 +85,7 @@ export function FeedbackForm() {
           name="subject"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Assunto*</FormLabel>
+              <FormLabel>Assunto *</FormLabel>
               <FormControl>
                 <Input
                   type="text"
@@ -103,7 +103,7 @@ export function FeedbackForm() {
           name="message"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Mensagem*</FormLabel>
+              <FormLabel>Mensagem *</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Deixe aqui sua mensagem"

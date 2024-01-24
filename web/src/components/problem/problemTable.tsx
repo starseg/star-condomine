@@ -114,7 +114,7 @@ export default function ProblemTable({ lobby }: { lobby: string }) {
           <TableHead>Ações</TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>
+      <TableBody className="uppercase">
         {problems.map((problem) => (
           <TableRow key={problem.lobbyProblemId}>
             <TableCell>{problem.title}</TableCell>

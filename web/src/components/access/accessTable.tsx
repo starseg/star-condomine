@@ -150,7 +150,7 @@ export default function AccessTable({ lobby }: { lobby: string }) {
           <TableHead>Ações</TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>
+      <TableBody className="uppercase">
         {access.map((item) => {
           return (
             <TableRow key={item.accessId}>

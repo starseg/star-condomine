@@ -14,6 +14,7 @@ import Link from "next/link";
 import {
   ArrowLeft,
   BookBookmark,
+  Envelope,
   Eye,
   List,
   UsersThree,
@@ -90,6 +91,14 @@ export function Menu({ url = "" }: { url?: string }) {
                 <Eye size={"24px"} /> Monitoramento
               </Link>
             )}
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link
+              href={"/feedback"}
+              className="flex justify-center items-center gap-2"
+            >
+              <Envelope size={"24px"} /> Feedbacks
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <a

@@ -101,7 +101,7 @@ export default function CalendarTable({ lobby }: { lobby: string }) {
           <TableHead>Ações</TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>
+      <TableBody className="uppercase">
         {calendar.map((holiday) => {
           const date = new Date(holiday.date);
           const formattedDate = format(date, "dd/MM/yyyy");

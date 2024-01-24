@@ -161,7 +161,7 @@ export const getAccessByLobby = async (
           },
         },
       },
-      orderBy: [{ status: "asc" }, { endTime: "asc" }, { startTime: "desc" }],
+      orderBy: [{ status: "asc" }, { startTime: "desc" }],
     });
     res.json(access);
   } catch (error) {

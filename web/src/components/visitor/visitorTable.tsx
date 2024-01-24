@@ -124,7 +124,7 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
           <TableHead>Ações</TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>
+      <TableBody className="uppercase">
         {visitors.map((visitor) => (
           <TableRow key={visitor.visitorId}>
             <TableCell>{visitor.cpf}</TableCell>

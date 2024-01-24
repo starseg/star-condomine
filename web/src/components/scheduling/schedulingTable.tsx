@@ -127,7 +127,7 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
           <TableHead>Ações</TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>
+      <TableBody className="uppercase">
         {scheduling.map((item) => {
           return (
             <TableRow key={item.schedulingId}>

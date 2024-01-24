@@ -145,7 +145,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
           <TableHead>Ações</TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>
+      <TableBody className="uppercase">
         {members.map((member) => {
           let type = "";
           if (member.type === "RESIDENT") type = "resident";
