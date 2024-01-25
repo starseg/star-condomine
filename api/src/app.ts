@@ -28,6 +28,7 @@ app.use(helmet());
 
 const corsOptions = {
   origin: [
+    "https://starseg.com",
     "https://starcondomine.starseg.com",
     "https://starcondomineapi.starseg.com",
     "http://localhost:3000",
