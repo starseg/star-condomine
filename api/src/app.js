@@ -23,10 +23,22 @@ const visitorRouter_1 = __importDefault(require("./routes/visitorRouter"));
 const loggingRouter_1 = __importDefault(require("./routes/loggingRouter"));
 const feedbackRouter_1 = __importDefault(require("./routes/feedbackRouter"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const helmet_1 = __importDefault(require("helmet"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
-app.use((0, cors_1.default)());
+app.use((0, helmet_1.default)());
+const corsOptions = {
+    origin: [
+        "https://starcondomine.starseg.com",
+        "https://starcondomineapi.starseg.com",
+        "http://localhost:3000",
+    ],
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
+    optionsSuccessStatus: 204,
+};
+app.use((0, cors_1.default)(corsOptions));
 app.get("/", (request, response) => {
     response.json({ message: "API DO SISTEMA STAR CONDOMINE" });
 });

@@ -18,11 +18,25 @@ import visitorRouter from "./routes/visitorRouter";
 import loggingRouter from "./routes/loggingRouter";
 import feedbackRouter from "./routes/feedbackRouter";
 import dotenv from "dotenv";
+import helmet from "helmet";
 dotenv.config();
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+
+app.use(helmet());
+
+const corsOptions = {
+  origin: [
+    "https://starcondomine.starseg.com",
+    "https://starcondomineapi.starseg.com",
+    "http://localhost:3000",
+  ],
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
+  optionsSuccessStatus: 204,
+};
+app.use(cors(corsOptions));
 
 app.get("/", (request: Request, response: Response) => {
   response.json({ message: "API DO SISTEMA STAR CONDOMINE" });
