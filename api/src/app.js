@@ -30,6 +30,7 @@ app.use(express_1.default.json());
 app.use((0, helmet_1.default)());
 const corsOptions = {
     origin: [
+        "https://starseg.com",
         "https://starcondomine.starseg.com",
         "https://starcondomineapi.starseg.com",
         "http://localhost:3000",
