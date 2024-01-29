@@ -24,7 +24,7 @@ export default async function Report({
         <div className="mb-4">
           <DatePickerWithRange />
         </div>
-        <div className="max-h-[60vh] overflow-x-auto">
+        <div>
           <ReportTable lobby={lobby} />
         </div>
       </section>

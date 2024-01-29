@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { formatDate, simpleDateFormat } from "@/lib/utils";
 import { FilePdf } from "@phosphor-icons/react/dist/ssr";
 import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 
 interface Access {
   accessId: number;
@@ -45,14 +46,11 @@ export const PdfButton = ({
 }) => {
   const generatePdf = (data: Access[]) => {
     const doc = new jsPDF({ orientation: "landscape" });
-
-    // console.log(period);
-
     const from = period.from ? simpleDateFormat(period.from) : "";
     const to = period.to ? simpleDateFormat(period.to) : "";
 
-    doc.text(`Relatório da portaria ${data[0].lobby.name} - Starseg`, 10, 20);
-    doc.text(`Período: ${from} a ${to}`, 10, 30);
+    doc.text(`Relatório da portaria ${data[0].lobby.name} - Starseg`, 15, 10);
+    doc.text(`Período: ${from} a ${to}`, 15, 20);
 
     const headers = [
       "Visitante",
@@ -81,11 +79,27 @@ export const PdfButton = ({
       return obj;
     });
 
+    doc.setFontSize(12);
+
+    const columnWidths = [40, 40, 30, 30, 40, 30];
+    autoTable(doc, {
+      body: tableRows,
+      columns: headers.map((header, index) => ({
+        header,
+        dataKey: header,
+        width: columnWidths[index],
+      })),
+      margin: { top: 25 },
+      startY: 25,
+      theme: "striped", // Pode ajustar conforme preferir
+    });
+
     // Insira a tabela no documento PDF
-    doc.table(10, 40, tableRows, headers, { autoSize: true });
+    // doc.table(10, 30, tableRows, headers, { autoSize: true });
 
     doc.save(`Relatório_da_portaria_${data[0].lobby.name}.pdf`);
   };
+
   return (
     <Button
       variant={"outline"}

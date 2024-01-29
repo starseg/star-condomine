@@ -82,79 +82,77 @@ export default function ReportTable({ lobby }: { lobby: string }) {
   }, [session, searchParams]);
 
   return (
-    <>
-      <Table className="border border-stone-800 rouded-lg">
-        <TableHeader className="bg-stone-800 font-semibold">
-          <TableRow>
-            <TableHead>Visitante</TableHead>
-            <TableHead>Visitado</TableHead>
-            <TableHead>Entrada</TableHead>
-            <TableHead>Saída</TableHead>
-            <TableHead>Motivo</TableHead>
-            <TableHead>Local</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {access.map((item) => {
-            return (
-              <TableRow key={item.accessId}>
-                <TableCell>
-                  <p className="max-w-[20ch] text-ellipsis overflow-hidden whitespace-nowrap hover:overflow-auto hover:max-w-full">
-                    {item.visitor.name}
-                  </p>
-                </TableCell>
-                <TableCell>
-                  <p className="max-w-[20ch] text-ellipsis overflow-hidden whitespace-nowrap hover:overflow-auto hover:max-w-full">
-                    {item.member.name}
-                  </p>
-                </TableCell>
-                <TableCell>{formatDate(item.startTime)}</TableCell>
-                <TableCell>
-                  {item.endTime !== null && item.endTime.length > 0
-                    ? formatDate(item.endTime)
-                    : "Não saiu"}
-                </TableCell>
-                <TableCell>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button className="max-w-[15ch] text-ellipsis overflow-hidden whitespace-nowrap">
-                          {item.reason}
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-[300px] border-primary bg-stone-800 p-4 break-words">
-                        <p>{item.reason}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </TableCell>
-                <TableCell>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button className="max-w-[15ch] text-ellipsis overflow-hidden whitespace-nowrap">
-                          {item.local}
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-[300px] border-primary bg-stone-800 p-4 break-words">
-                        <p>{item.local}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell className="text-right" colSpan={6}>
-              Total de registros: {access.length}
-            </TableCell>
-          </TableRow>
-        </TableFooter>
-      </Table>
+    <div>
+      <div className="max-h-[60vh] overflow-x-auto uppercase">
+        <Table className="border border-stone-800 rouded-lg">
+          <TableHeader className="bg-stone-800 font-semibold sticky top-0">
+            <TableRow>
+              <TableHead>Visitante</TableHead>
+              <TableHead>Visitado</TableHead>
+              <TableHead>Entrada</TableHead>
+              <TableHead>Saída</TableHead>
+              <TableHead>Motivo</TableHead>
+              <TableHead>Local</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {access.map((item) => {
+              return (
+                <TableRow key={item.accessId}>
+                  <TableCell>
+                    <p>{item.visitor.name}</p>
+                  </TableCell>
+                  <TableCell>
+                    <p>{item.member.name}</p>
+                  </TableCell>
+                  <TableCell>{formatDate(item.startTime)}</TableCell>
+                  <TableCell>
+                    {item.endTime !== null && item.endTime.length > 0
+                      ? formatDate(item.endTime)
+                      : "Não saiu"}
+                  </TableCell>
+                  <TableCell>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button className="max-w-[15ch] text-ellipsis overflow-hidden whitespace-nowrap uppercase">
+                            {item.reason}
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-[300px] border-primary bg-stone-800 p-4 break-words">
+                          <p>{item.reason}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </TableCell>
+                  <TableCell>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button className="max-w-[15ch] text-ellipsis overflow-hidden whitespace-nowrap uppercase">
+                            {item.local}
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-[300px] border-primary bg-stone-800 p-4 break-words">
+                          <p>{item.local}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell className="text-right uppercase" colSpan={6}>
+                Total de registros: {access.length}
+              </TableCell>
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </div>
       <PdfButton data={access} period={period} />
-    </>
+    </div>
   );
 }
