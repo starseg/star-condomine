@@ -8,7 +8,9 @@ export const getAllLobbies = async (
   res: Response
 ): Promise<void> => {
   try {
-    const lobby = await prisma.lobby.findMany();
+    const lobby = await prisma.lobby.findMany({
+      orderBy: [{ name: "asc" }],
+    });
     res.json(lobby);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar as portarias" });
@@ -23,14 +25,14 @@ export const getFilteredLobbies = async (
     const { query } = req.query;
 
     const whereCondition = query
-  ? {
-      OR: [
-        { name: { contains: query as string } },
-        { city: { contains: query as string } },
-        { state: { contains: query as string } },
-      ],
-    }
-  : {};
+      ? {
+          OR: [
+            { name: { contains: query as string } },
+            { city: { contains: query as string } },
+            { state: { contains: query as string } },
+          ],
+        }
+      : {};
 
     const lobbies = await prisma.lobby.findMany({
       where: whereCondition,
@@ -38,6 +40,7 @@ export const getFilteredLobbies = async (
         device: true,
         lobbyProblem: true,
       },
+      orderBy: [{ name: "asc" }],
     });
 
     res.json(lobbies);

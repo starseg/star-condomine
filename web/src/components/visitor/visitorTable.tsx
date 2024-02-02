@@ -119,7 +119,7 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
           <TableHead>CPF</TableHead>
           <TableHead>Nome</TableHead>
           <TableHead>Tipo</TableHead>
-          <TableHead>Validade</TableHead>
+          <TableHead>Agendamento</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Ações</TableHead>
         </TableRow>
@@ -130,26 +130,12 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
             <TableCell>{visitor.cpf}</TableCell>
             <TableCell>{visitor.name}</TableCell>
             <TableCell>{visitor.visitorType.description}</TableCell>
-            <TableCell>
-              {visitor.endDate > currentDate ? (
-                <p className="text-green-500">
-                  {simpleDateFormat(visitor.startDate) +
-                    " - " +
-                    simpleDateFormat(visitor.endDate)}
-                </p>
-              ) : (
-                <p className="text-red-500">
-                  {simpleDateFormat(visitor.startDate) +
-                    " - " +
-                    simpleDateFormat(visitor.endDate)}
-                </p>
-              )}
-            </TableCell>
+            <TableCell>SIM</TableCell>
             <TableCell>
               {visitor.status === "ACTIVE" ? (
                 <p className="text-green-500">ATIVO</p>
               ) : (
-                <p className="text-red-400">INATIVO</p>
+                <p className="text-red-400">BLOQUEADO</p>
               )}
             </TableCell>
             <TableCell className="flex gap-4 text-2xl">

@@ -5,7 +5,9 @@ const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getAllLobbies = async (req, res) => {
     try {
-        const lobby = await prisma.lobby.findMany();
+        const lobby = await prisma.lobby.findMany({
+            orderBy: [{ name: "asc" }],
+        });
         res.json(lobby);
     }
     catch (error) {
@@ -31,6 +33,7 @@ const getFilteredLobbies = async (req, res) => {
                 device: true,
                 lobbyProblem: true,
             },
+            orderBy: [{ name: "asc" }],
         });
         res.json(lobbies);
     }

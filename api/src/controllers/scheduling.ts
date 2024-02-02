@@ -209,3 +209,20 @@ export const getFilteredSchedulings = async (
     res.status(500).json({ error: "Erro ao buscar os acessos" });
   }
 };
+
+export const getActiveSchedulingsByVisitor = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  try {
+    const visitor = parseInt(req.params.visitor, 10);
+    const scheduling = await prisma.scheduling.findMany({
+      where: { visitorId: visitor, status: "ACTIVE", endDate: { gte: today } },
+    });
+    res.json(scheduling);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os acessos" });
+  }
+};

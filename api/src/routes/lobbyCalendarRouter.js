@@ -10,6 +10,7 @@ const lobbyCalendarRouter = express_1.default.Router();
 lobbyCalendarRouter.get("/", lobbyCalendar_1.getAllLobbyCalendars);
 lobbyCalendarRouter.get("/find/:id", lobbyCalendar_1.getLobbyCalendar);
 lobbyCalendarRouter.get("/lobby/:lobby", lobbyCalendar_1.getCalendarByLobby);
+lobbyCalendarRouter.get("/today/:lobby", lobbyCalendar_1.getTodaysHoliday);
 lobbyCalendarRouter.post("/", lobbyCalendar_1.createLobbyCalendar);
 lobbyCalendarRouter.put("/:id", lobbyCalendar_1.updateLobbyCalendar);
 lobbyCalendarRouter.delete("/:id", permissions_1.checkAdminPermission, lobbyCalendar_1.deleteLobbyCalendar);

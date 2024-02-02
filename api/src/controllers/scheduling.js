@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getFilteredSchedulings = exports.getSchedulingsByLobby = exports.deleteScheduling = exports.updateScheduling = exports.createScheduling = exports.getScheduling = exports.getAllSchedules = void 0;
+exports.getActiveSchedulingsByVisitor = exports.getFilteredSchedulings = exports.getSchedulingsByLobby = exports.deleteScheduling = exports.updateScheduling = exports.createScheduling = exports.getScheduling = exports.getAllSchedules = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getAllSchedules = async (req, res) => {
@@ -177,3 +177,18 @@ const getFilteredSchedulings = async (req, res) => {
     }
 };
 exports.getFilteredSchedulings = getFilteredSchedulings;
+const getActiveSchedulingsByVisitor = async (req, res) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    try {
+        const visitor = parseInt(req.params.visitor, 10);
+        const scheduling = await prisma.scheduling.findMany({
+            where: { visitorId: visitor, status: "ACTIVE", endDate: { gte: today } },
+        });
+        res.json(scheduling);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao buscar os acessos" });
+    }
+};
+exports.getActiveSchedulingsByVisitor = getActiveSchedulingsByVisitor;

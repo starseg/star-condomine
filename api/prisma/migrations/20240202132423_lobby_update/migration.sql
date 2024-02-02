@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `lobby` ADD COLUMN `exitControl` ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'ACTIVE';

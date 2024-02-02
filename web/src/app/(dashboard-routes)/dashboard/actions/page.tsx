@@ -14,6 +14,7 @@ import {
   Notepad,
   PersonSimpleRun,
   SealWarning,
+  Warning,
 } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
@@ -37,8 +38,15 @@ interface LobbyProps {
   type: string;
 }
 
+interface CalendarProps {
+  lobbyCalendarId: number;
+  date: string;
+  description: string;
+}
+
 export default function LobbyDetails() {
   const [lobby, setLobby] = useState<LobbyProps | null>(null);
+  const [calendar, setCalendar] = useState<CalendarProps[] | null>(null);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const fetchData = async () => {
@@ -58,9 +66,29 @@ export default function LobbyDetails() {
       console.error("Erro ao obter dados:", error);
     }
   };
+
+  const fetchCalendar = async () => {
+    const params = new URLSearchParams(searchParams);
+    try {
+      const path = "lobbyCalendar/today/" + params.get("id");
+      const response = await api.get(path, {
+        headers: {
+          Authorization: `Bearer ${session?.token.user.token}`,
+        },
+      });
+      if (response.data) {
+        // console.log(response.data);
+        setCalendar(response.data);
+      }
+    } catch (error) {
+      console.error("Erro ao obter dados:", error);
+    }
+  };
+
   let id = 0;
   useEffect(() => {
     fetchData();
+    fetchCalendar();
   }, []);
   if (lobby) id = lobby.lobbyId;
   return (
@@ -68,11 +96,17 @@ export default function LobbyDetails() {
       <Menu url={`/dashboard`} />
       <section className="max-w-5xl mx-auto mb-24">
         <div>
-          <h1 className="text-4xl mt-2 text-primary mb-12">
+          <h1 className="text-4xl mt-2 text-primary mb-2">
             Portaria: {lobby ? lobby.name : "Desconhecida"}
           </h1>
+          {calendar && calendar.length > 0 && (
+            <p className="text-xl flex items-center gap-2">
+              <Warning size={32} className="text-red-500" /> Verifique as
+              restrições do feriado de hoje
+            </p>
+          )}
         </div>
-        <div className="flex w-full flex-col items-center justify-center lg:flex-row">
+        <div className="mt-8 flex w-full flex-col items-center justify-center lg:flex-row">
           <div className="flex w-full flex-col items-center justify-center lg:items-start lg:justify-start lg:w-1/2 lg:border-r lg:border-stone-50">
             <div>
               <h2 className="flex text-3xl mb-4">
@@ -129,7 +163,7 @@ export default function LobbyDetails() {
                 </div>
               )
             ) : (
-              "erro"
+              ""
             )}
             <div>
               <h2 className="flex text-3xl mt-12 mb-4">

@@ -11,6 +11,7 @@ schedulingRouter.get("/", scheduling_1.getAllSchedules);
 schedulingRouter.get("/find/:id", scheduling_1.getScheduling);
 schedulingRouter.get("/lobby/:lobby", scheduling_1.getSchedulingsByLobby);
 schedulingRouter.get("/filtered/:lobby", scheduling_1.getFilteredSchedulings);
+schedulingRouter.get("/active/:visitor", scheduling_1.getActiveSchedulingsByVisitor);
 schedulingRouter.post("/", scheduling_1.createScheduling);
 schedulingRouter.put("/:id", scheduling_1.updateScheduling);
 schedulingRouter.delete("/:id", permissions_1.checkAdminPermission, scheduling_1.deleteScheduling);

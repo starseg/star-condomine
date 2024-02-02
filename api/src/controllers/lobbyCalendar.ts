@@ -95,3 +95,27 @@ export const getCalendarByLobby = async (
     res.status(500).json({ error: "Erro ao buscar o calendário" });
   }
 };
+
+export const getTodaysHoliday = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const lobbyCalendar = await prisma.lobbyCalendar.findMany({
+      where: {
+        lobbyId: lobby,
+        date: {
+          gte: today,
+          lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
+        },
+      },
+    });
+    res.json(lobbyCalendar);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar a data" });
+  }
+};

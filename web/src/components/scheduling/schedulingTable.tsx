@@ -142,7 +142,7 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
                 </p>
               </TableCell>
               <TableCell>
-                {item.endDate > currentDate ? (
+                {item.endDate >= currentDate ? (
                   <p className="text-green-400">
                     {simpleDateFormat(item.startDate) +
                       " - " +
