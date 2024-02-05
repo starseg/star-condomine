@@ -32,6 +32,7 @@ const FormSchema = z.object({
   responsible: z.string().min(5),
   telephone: z.string().min(10),
   schedules: z.string().min(3),
+  exitControl: z.enum(["ACTIVE", "INACTIVE"]),
   procedures: z.string().optional(),
   cep: z.string().min(9),
   state: z.string().min(2).max(2),
@@ -53,6 +54,7 @@ export function LobbyForm() {
       responsible: "",
       telephone: "",
       schedules: "",
+      exitControl: "ACTIVE",
       procedures: "",
       cep: "",
       state: "",
@@ -138,6 +140,7 @@ export function LobbyForm() {
         responsible: data.responsible,
         telephone: data.telephone,
         schedules: data.schedules,
+        exitControl: data.exitControl,
         procedures: data.procedures,
         cep: data.cep,
         state: data.state,
@@ -289,6 +292,38 @@ export function LobbyForm() {
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="exitControl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Controle de saída</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex flex-col space-y-1"
+                >
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="ACTIVE" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Sim</FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="INACTIVE" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Não</FormLabel>
+                  </FormItem>
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="procedures"

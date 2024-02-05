@@ -20,7 +20,7 @@ import api from "@/lib/axios";
 import { useEffect, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -29,21 +29,30 @@ import {
   CommandItem,
 } from "../ui/command";
 import { useSearchParams } from "next/navigation";
-import { format } from "date-fns";
+import { addDays, format } from "date-fns";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@radix-ui/react-select";
+import { Calendar } from "../ui/calendar";
+import { ptBR } from "date-fns/locale";
 const FormSchema = z.object({
   visitor: z.number(),
   member: z.number(),
   reason: z.string(),
   location: z.string(),
-  startDate: z.string(),
-  endDate: z.string(),
+  startDate: z.date(),
+  endDate: z.date(),
   status: z.enum(["ACTIVE", "INACTIVE"]),
 });
 
 interface Values {
-  startDate: string;
-  endDate: string;
+  startDate: Date | undefined;
+  endDate: Date | undefined;
   location: string;
   reason: string;
   status: "ACTIVE" | "INACTIVE" | undefined;
@@ -145,8 +154,8 @@ export function SchedulingUpdateForm({
     const id = params.get("id");
 
     const info = {
-      startTime: setStringDate(data.startDate),
-      endTime: setStringDate(data.endDate),
+      startDate: data.startDate.toISOString(),
+      endDate: data.endDate.toISOString(),
       status: data.status,
       location: data.location,
       reason: data.reason,
@@ -155,14 +164,14 @@ export function SchedulingUpdateForm({
       operatorId: operator,
       lobbyId: lobby,
     };
-    // console.log(info);
+    console.log(info);
     try {
       const response = await api.put("scheduling/" + id, info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      // console.log(response.data);
+      console.log(response.data);
       router.push("/dashboard/actions/scheduling?lobby=" + lobby);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
@@ -328,42 +337,110 @@ export function SchedulingUpdateForm({
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="startDate"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Data de início</FormLabel>
-              <FormControl>
-                <Input
-                  type="date"
-                  placeholder="Data e hora"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="endDate"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Data de fim</FormLabel>
-              <FormControl>
-                <Input
-                  type="date"
-                  placeholder="Data e hora"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="flex gap-2">
+          <FormField
+            control={form.control}
+            name="startDate"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Validade do acesso</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-[240px] pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value ? (
+                          format(field.value, "PPP", { locale: ptBR })
+                        ) : (
+                          <span>Data de início</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      locale={ptBR}
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="endDate"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel className="text-transparent">a</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-[240px] pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value ? (
+                          format(field.value, "PPP", { locale: ptBR })
+                        ) : (
+                          <span>Data de fim</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-auto p-2 space-y-2"
+                    align="start"
+                  >
+                    <Select
+                      onValueChange={(value) =>
+                        form.setValue(
+                          "endDate",
+                          addDays(new Date(), parseInt(value))
+                        )
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent position="popper">
+                        <SelectItem value="1">Amanhã</SelectItem>
+                        <SelectItem value="7">Em uma semana</SelectItem>
+                        <SelectItem value="30">Em um mês</SelectItem>
+                        <SelectItem value="365">Em um ano</SelectItem>
+                        <SelectItem value="3650">Em 10 anos</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <div className="rounded-md border">
+                      <Calendar
+                        locale={ptBR}
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        initialFocus
+                      />
+                    </div>
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <FormField
           control={form.control}
           name="status"

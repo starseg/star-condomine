@@ -62,7 +62,7 @@ const getLobby = async (req, res) => {
 exports.getLobby = getLobby;
 const createLobby = async (req, res) => {
     try {
-        const { cnpj, name, responsible, telephone, schedules, procedures, datasheet, cep, state, city, neighborhood, street, number, complement, type, } = req.body;
+        const { cnpj, name, responsible, telephone, schedules, exitControl, procedures, datasheet, cep, state, city, neighborhood, street, number, complement, type, } = req.body;
         const lobby = await prisma.lobby.create({
             data: {
                 cnpj,
@@ -70,6 +70,7 @@ const createLobby = async (req, res) => {
                 responsible,
                 telephone,
                 schedules,
+                exitControl,
                 procedures,
                 datasheet,
                 cep,
@@ -92,7 +93,7 @@ exports.createLobby = createLobby;
 const updateLobby = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const { cnpj, name, responsible, telephone, schedules, procedures, datasheet, cep, state, city, neighborhood, street, number, complement, type, } = req.body;
+        const { cnpj, name, responsible, telephone, schedules, exitControl, procedures, datasheet, cep, state, city, neighborhood, street, number, complement, type, } = req.body;
         const lobby = await prisma.lobby.update({
             where: { lobbyId: id },
             data: {
@@ -101,6 +102,7 @@ const updateLobby = async (req, res) => {
                 responsible,
                 telephone,
                 schedules,
+                exitControl,
                 procedures,
                 datasheet,
                 cep,

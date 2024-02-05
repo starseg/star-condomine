@@ -30,8 +30,8 @@ export default function UpdateScheduling() {
     };
   }
   interface Values {
-    startDate: string;
-    endDate: string;
+    startDate: Date | undefined;
+    endDate: Date | undefined;
     location: string;
     reason: string;
     status: "ACTIVE" | "INACTIVE" | undefined;
@@ -60,24 +60,15 @@ export default function UpdateScheduling() {
     fetchData();
   }, [session]);
 
-  const dateFormat = (date: string | undefined) => {
-    if (date) {
-      const parsedDate = parse(
-        date,
-        "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-        new Date()
-      );
-      return format(parsedDate, "yyyy-MM-dd");
-    } else {
-      return "";
-    }
+  const convertStringToDate = (date: string) => {
+    return date ? new Date(date) : undefined;
   };
 
   useEffect(() => {
     if (scheduling) {
       setData({
-        startDate: dateFormat(scheduling?.startDate),
-        endDate: dateFormat(scheduling?.endDate),
+        startDate: convertStringToDate(scheduling?.startDate),
+        endDate: convertStringToDate(scheduling?.endDate),
         location: scheduling?.location || "",
         reason: scheduling?.reason || "",
         status: scheduling?.status || "ACTIVE",

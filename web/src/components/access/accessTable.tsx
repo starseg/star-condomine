@@ -49,6 +49,8 @@ export default function AccessTable({ lobby }: { lobby: string }) {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+  const control = params.get("c");
+
   const fetchData = async () => {
     try {
       let path;
@@ -146,7 +148,7 @@ export default function AccessTable({ lobby }: { lobby: string }) {
           <TableHead>Visitante</TableHead>
           <TableHead>Visitado</TableHead>
           <TableHead>Data de entrada</TableHead>
-          <TableHead>Data de saída</TableHead>
+          {control === "S" ? <TableHead>Data de saída</TableHead> : ""}
           <TableHead>Ações</TableHead>
         </TableRow>
       </TableHeader>
@@ -155,43 +157,47 @@ export default function AccessTable({ lobby }: { lobby: string }) {
           return (
             <TableRow key={item.accessId}>
               <TableCell>
-                <p className="max-w-[20ch] text-ellipsis overflow-hidden whitespace-nowrap hover:overflow-auto hover:max-w-full">
-                  {item.visitor.name}
-                </p>
+                <p className="max-w-[25ch]">{item.visitor.name}</p>
               </TableCell>
               <TableCell>
-                <p className="max-w-[20ch] text-ellipsis overflow-hidden whitespace-nowrap hover:overflow-auto hover:max-w-full">
-                  {item.member.name}
-                </p>
+                <p className="max-w-[25ch]">{item.member.name}</p>
               </TableCell>
               <TableCell>{formatDate(item.startTime)}</TableCell>
-              <TableCell>
-                {item.endTime !== null && item.endTime.length > 0
-                  ? formatDate(item.endTime)
-                  : "Não saiu"}
-              </TableCell>
+              {control === "S" ? (
+                <TableCell>
+                  {item.endTime !== null && item.endTime.length > 0
+                    ? formatDate(item.endTime)
+                    : "Não saiu"}
+                </TableCell>
+              ) : (
+                ""
+              )}
               <TableCell className="flex gap-4 text-2xl">
-                {item.endTime !== null && item.endTime.length > 1 ? (
-                  <button
-                    title="Saída registrada"
-                    disabled
-                    className="text-muted"
-                  >
-                    <SignOut />
-                  </button>
+                {control === "S" ? (
+                  item.endTime !== null && item.endTime.length > 1 ? (
+                    <button
+                      title="Saída registrada"
+                      disabled
+                      className="text-muted"
+                    >
+                      <SignOut />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => registerExit(item.accessId)}
+                      title="Registrar saída"
+                    >
+                      <SignOut />
+                    </button>
+                  )
                 ) : (
-                  <button
-                    onClick={() => registerExit(item.accessId)}
-                    title="Registrar saída"
-                  >
-                    <SignOut />
-                  </button>
+                  ""
                 )}
-                <Link href={`access/details?id=${item.accessId}`}>
+                <Link href={`access/details?id=${item.accessId}&c=${control}`}>
                   <MagnifyingGlass />
                 </Link>
                 <Link
-                  href={`access/update?lobby=${item.lobbyId}&id=${item.accessId}`}
+                  href={`access/update?lobby=${item.lobbyId}&id=${item.accessId}&c=${control}`}
                 >
                   <PencilLine />
                 </Link>

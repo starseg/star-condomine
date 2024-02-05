@@ -135,6 +135,7 @@ export const deleteScheduling = async (
     res.status(500).json({ error: "Erro ao excluir o agendamento" });
   }
 };
+
 export const getSchedulingsByLobby = async (
   req: Request,
   res: Response

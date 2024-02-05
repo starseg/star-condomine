@@ -76,6 +76,7 @@ export function AccessUpdateForm({
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+  const control = params.get("c");
 
   const [visitors, setVisitors] = useState([]);
   const fetchVisitors = async () => {
@@ -352,24 +353,28 @@ export function AccessUpdateForm({
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="endTime"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Data e hora da saída</FormLabel>
-              <FormControl>
-                <Input
-                  type="datetime-local"
-                  placeholder="Data e hora"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {control === "S" ? (
+          <FormField
+            control={form.control}
+            name="endTime"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Data e hora da saída</FormLabel>
+                <FormControl>
+                  <Input
+                    type="datetime-local"
+                    placeholder="Data e hora"
+                    autoComplete="off"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ) : (
+          ""
+        )}
         <FormField
           control={form.control}
           name="comments"

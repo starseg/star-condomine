@@ -54,6 +54,7 @@ export default function ReportTable({ lobby }: { lobby: string }) {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+  const control = params.get("c") || "";
 
   let from = params.get("from") || "";
   let to = params.get("to") || "";
@@ -90,7 +91,7 @@ export default function ReportTable({ lobby }: { lobby: string }) {
               <TableHead>Visitante</TableHead>
               <TableHead>Visitado</TableHead>
               <TableHead>Entrada</TableHead>
-              <TableHead>Saída</TableHead>
+              {control === "S" ? <TableHead>Saída</TableHead> : ""}
               <TableHead>Motivo</TableHead>
               <TableHead>Local</TableHead>
             </TableRow>
@@ -106,11 +107,17 @@ export default function ReportTable({ lobby }: { lobby: string }) {
                     <p>{item.member.name}</p>
                   </TableCell>
                   <TableCell>{formatDate(item.startTime)}</TableCell>
-                  <TableCell>
-                    {item.endTime !== null && item.endTime.length > 0
-                      ? formatDate(item.endTime)
-                      : "Não saiu"}
-                  </TableCell>
+
+                  {control === "S" ? (
+                    <TableCell>
+                      {item.endTime !== null && item.endTime.length > 0
+                        ? formatDate(item.endTime)
+                        : "Não saiu"}
+                    </TableCell>
+                  ) : (
+                    ""
+                  )}
+
                   <TableCell>
                     <TooltipProvider>
                       <Tooltip>
@@ -152,7 +159,7 @@ export default function ReportTable({ lobby }: { lobby: string }) {
           </TableFooter>
         </Table>
       </div>
-      <PdfButton data={access} period={period} />
+      <PdfButton data={access} period={period} control={control} />
     </div>
   );
 }

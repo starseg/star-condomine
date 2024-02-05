@@ -108,8 +108,23 @@ const getVisitorsByLobby = async (req, res) => {
     try {
         const lobby = parseInt(req.params.lobby, 10);
         const visitor = await prisma.visitor.findMany({
+            include: {
+                visitorType: true,
+                access: {
+                    select: {
+                        endTime: true,
+                    },
+                    where: {
+                        endTime: null,
+                    },
+                },
+                lobby: {
+                    select: {
+                        exitControl: true,
+                    },
+                },
+            },
             where: { lobbyId: lobby },
-            include: { visitorType: true },
             orderBy: [{ status: "asc" }, { name: "asc" }],
         });
         res.json(visitor);

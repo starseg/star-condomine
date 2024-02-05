@@ -36,6 +36,7 @@ interface LobbyProps {
   state: string;
   street: string;
   type: string;
+  exitControl: "ACTIVE" | "INACTIVE";
 }
 
 interface CalendarProps {
@@ -86,11 +87,15 @@ export default function LobbyDetails() {
   };
 
   let id = 0;
+  let control = "";
   useEffect(() => {
     fetchData();
     fetchCalendar();
   }, []);
-  if (lobby) id = lobby.lobbyId;
+  if (lobby) {
+    id = lobby.lobbyId;
+    control = lobby.exitControl === "ACTIVE" ? "S" : "N";
+  }
   return (
     <>
       <Menu url={`/dashboard`} />
@@ -115,7 +120,7 @@ export default function LobbyDetails() {
               </h2>
               <ActionSet
                 register={`actions/access/new?lobby=${id}`}
-                list={`actions/access?lobby=${id}`}
+                list={`actions/access?lobby=${id}&c=${control}`}
               />
             </div>
             <div>
@@ -125,7 +130,7 @@ export default function LobbyDetails() {
               </h2>
               <ActionSet
                 register={`actions/scheduling/new?lobby=${id}`}
-                list={`actions/scheduling?lobby=${id}`}
+                list={`actions/scheduling?lobby=${id}&c=${control}`}
               />
             </div>
             <div>
@@ -213,13 +218,8 @@ export default function LobbyDetails() {
                 Relatórios
               </h2>
               <div className="flex gap-4">
-                {/* <ActionButton
-                  url={`actions/report/new?lobby=${id}`}
-                  type="+"
-                  text="Gerar"
-                /> */}
                 <ActionButton
-                  url={`actions/report?lobby=${id}`}
+                  url={`actions/report?lobby=${id}&c=${control}`}
                   type="-"
                   text="Visualizar"
                 />

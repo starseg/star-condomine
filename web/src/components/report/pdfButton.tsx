@@ -40,9 +40,11 @@ interface Period {
 export const PdfButton = ({
   data,
   period,
+  control,
 }: {
   data: Access[];
   period: Period;
+  control: string;
 }) => {
   const generatePdf = (data: Access[]) => {
     const doc = new jsPDF({ orientation: "landscape" });
@@ -52,23 +54,29 @@ export const PdfButton = ({
     doc.text(`Relatório da portaria ${data[0].lobby.name} - Starseg`, 15, 10);
     doc.text(`Período: ${from} a ${to}`, 15, 20);
 
-    const headers = [
-      "Visitante",
-      "Visitado",
-      "Entrada",
-      "Saída",
-      "Motivo",
-      "Local",
-    ];
+    const headers =
+      control === "S"
+        ? ["Visitante", "Visitado", "Entrada", "Saída", "Motivo", "Local"]
+        : ["Visitante", "Visitado", "Entrada", "Motivo", "Local"];
 
-    const tableData = data.map((row) => [
-      row.visitor.name,
-      row.member.name,
-      formatDate(row.startTime),
-      row.endTime !== null ? formatDate(row.endTime) : "Não saiu",
-      row.reason,
-      row.local,
-    ]);
+    const tableData = data.map((row) =>
+      control === "S"
+        ? [
+            row.visitor.name,
+            row.member.name,
+            formatDate(row.startTime),
+            row.endTime !== null ? formatDate(row.endTime) : "Não saiu",
+            row.reason,
+            row.local,
+          ]
+        : [
+            row.visitor.name,
+            row.member.name,
+            formatDate(row.startTime),
+            row.reason,
+            row.local,
+          ]
+    );
 
     // Transforme os dados em objetos
     const tableRows = tableData.map((row) => {

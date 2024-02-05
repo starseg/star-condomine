@@ -31,6 +31,7 @@ const FormSchema = z.object({
   responsible: z.string().min(5),
   telephone: z.string().min(10),
   schedules: z.string().min(3),
+  exitControl: z.enum(["ACTIVE", "INACTIVE"]),
   procedures: z.string().optional(),
   cep: z.string().min(9),
   state: z.string().min(2).max(2),
@@ -61,9 +62,11 @@ interface Lobby {
   createdAt: string;
   updatedAt: string;
   type: "CONDOMINIUM" | "COMPANY" | undefined;
+  exitControl: "ACTIVE" | "INACTIVE" | undefined;
 }
 interface Values {
   type: "CONDOMINIUM" | "COMPANY" | undefined;
+  exitControl: "ACTIVE" | "INACTIVE" | undefined;
   cnpj: string;
   name: string;
   responsible: string;
@@ -296,6 +299,36 @@ export function LobbyUpdateForm({
                   autoComplete="off"
                   {...field}
                 />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="exitControl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Controle de saída</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex flex-col space-y-1"
+                >
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="ACTIVE" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Sim</FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="INACTIVE" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Não</FormLabel>
+                  </FormItem>
+                </RadioGroup>
               </FormControl>
               <FormMessage />
             </FormItem>

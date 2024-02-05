@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import LoadingIcon from "../loadingIcon";
 import DetailItem from "../detailItem";
 import { formatDate, simpleDateFormat } from "@/lib/utils";
+import { useSearchParams } from "next/navigation";
 
 interface Access {
   accessId: number;
@@ -34,6 +35,9 @@ interface Access {
 export default function AccessDetails({ id }: { id: number }) {
   const [access, setAccess] = useState<Access>();
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const control = params.get("c");
   const fetchData = async () => {
     try {
       const response = await api.get("access/find/" + id, {
@@ -65,12 +69,16 @@ export default function AccessDetails({ id }: { id: number }) {
               label="Data de entrada"
               content={simpleDateFormat(access.startTime)}
             />
-            <DetailItem
-              label="Data de saída"
-              content={
-                access.endTime ? simpleDateFormat(access.endTime) : "Não saiu"
-              }
-            />
+            {control === "S" ? (
+              <DetailItem
+                label="Data de saída"
+                content={
+                  access.endTime ? simpleDateFormat(access.endTime) : "Não saiu"
+                }
+              />
+            ) : (
+              ""
+            )}
             <DetailItem label="Local" content={access.local} />
             <DetailItem label="Motivo" content={access.reason} />
             <DetailItem

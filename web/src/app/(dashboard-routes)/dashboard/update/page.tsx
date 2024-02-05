@@ -27,9 +27,11 @@ export default function UpdateDevice() {
     createdAt: string;
     updatedAt: string;
     type: "CONDOMINIUM" | "COMPANY" | undefined;
+    exitControl: "ACTIVE" | "INACTIVE" | undefined;
   }
   interface Values {
     type: "CONDOMINIUM" | "COMPANY" | undefined;
+    exitControl: "ACTIVE" | "INACTIVE" | undefined;
     cnpj: string;
     name: string;
     responsible: string;
@@ -73,6 +75,7 @@ export default function UpdateDevice() {
     if (lobby) {
       setData({
         type: lobby?.type || "CONDOMINIUM",
+        exitControl: lobby?.exitControl || "ACTIVE",
         cnpj: lobby?.cnpj || "",
         name: lobby?.name || "",
         responsible: lobby?.responsible || "",

@@ -11,6 +11,7 @@ import {
 import api from "@/lib/axios";
 import { formatDate, simpleDateFormat } from "@/lib/utils";
 import {
+  FilePlus,
   MagnifyingGlass,
   PencilLine,
   SignOut,
@@ -18,7 +19,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
@@ -48,6 +49,7 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+  const router = useRouter();
   const fetchData = async () => {
     try {
       let path;
@@ -114,7 +116,39 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
     }
   };
 
-  let currentDate = new Date().toJSON();
+  const operator = session?.payload.user.id || null;
+  const registerAccess = async (
+    visitor: number,
+    member: number,
+    reason: string,
+    location: string
+  ) => {
+    const info = {
+      visitorId: visitor,
+      memberId: member,
+      reason: reason,
+      local: location,
+      startTime: new Date().toISOString(),
+      comments: "",
+      operatorId: operator,
+      lobbyId: Number(lobby),
+    };
+    try {
+      await api.post("access", info, {
+        headers: {
+          Authorization: `Bearer ${session?.token.user.token}`,
+        },
+      });
+      router.push("/dashboard/actions/access?lobby=" + lobby);
+    } catch (error) {
+      console.error("Erro ao enviar dados para a API:", error);
+      throw error;
+    }
+  };
+
+  let currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
+  let currentDateUTC = currentDate.toISOString();
 
   return (
     <Table className="border border-stone-800 rouded-lg">
@@ -132,17 +166,13 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
           return (
             <TableRow key={item.schedulingId}>
               <TableCell>
-                <p className="max-w-[20ch] text-ellipsis overflow-hidden whitespace-nowrap hover:overflow-auto hover:max-w-full">
-                  {item.visitor.name}
-                </p>
+                <p className="max-w-[25ch]">{item.visitor.name}</p>
               </TableCell>
               <TableCell>
-                <p className="max-w-[20ch] text-ellipsis overflow-hidden whitespace-nowrap hover:overflow-auto hover:max-w-full">
-                  {item.member.name}
-                </p>
+                <p className="max-w-[25ch]">{item.member.name}</p>
               </TableCell>
               <TableCell>
-                {item.endDate >= currentDate ? (
+                {item.endDate >= currentDateUTC ? (
                   <p className="text-green-400">
                     {simpleDateFormat(item.startDate) +
                       " - " +
@@ -164,6 +194,25 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
                 )}
               </TableCell>
               <TableCell className="flex gap-4 text-2xl">
+                {item.status === "INACTIVE" || item.endDate < currentDateUTC ? (
+                  <button disabled title="Não disponível para registrar acesso">
+                    <FilePlus className="text-muted" />
+                  </button>
+                ) : (
+                  <button
+                    title="Registrar acesso"
+                    onClick={() =>
+                      registerAccess(
+                        item.visitorId,
+                        item.memberId,
+                        item.reason,
+                        item.location
+                      )
+                    }
+                  >
+                    <FilePlus />
+                  </button>
+                )}
                 <Link href={`scheduling/details?id=${item.schedulingId}`}>
                   <MagnifyingGlass />
                 </Link>

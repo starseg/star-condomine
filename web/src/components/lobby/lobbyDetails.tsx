@@ -28,6 +28,7 @@ interface Lobby {
   number: string;
   complement: string;
   type: string;
+  exitControl: "ACTIVE" | "INACTIVE";
   createdAt: string;
   updatedAt: string;
 }
@@ -120,6 +121,10 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
             <DetailItem label="Responsável" content={details.responsible} />
             <DetailItem label="Telefone" content={details.telephone} />
             <DetailItem label="Horários" content={details.schedules} />
+            <DetailItem
+              label="Controle de saída"
+              content={details.exitControl === "ACTIVE" ? "Sim" : "Não"}
+            />
             <DetailItem
               label="Procedimentos gerais"
               content={

@@ -60,6 +60,10 @@ export function AccessForm() {
   interface Visitor {
     visitorId: number;
     name: string;
+    access: [];
+    lobby: {
+      exitControl: "ACTIVE" | "INACTIVE";
+    };
   }
   interface Member {
     memberId: number;
@@ -104,20 +108,30 @@ export function AccessForm() {
     fetchMembers();
   }, [session]);
 
-  interface item {
+  interface visitorItem {
+    value: number;
+    label: string;
+    openAccess: boolean;
+  }
+
+  interface memberItem {
     value: number;
     label: string;
   }
 
-  let visitorItems: item[] = [];
+  let visitorItems: visitorItem[] = [];
   visitors.map((visitor: Visitor) =>
     visitorItems.push({
       value: visitor.visitorId,
       label: visitor.name,
+      openAccess:
+        visitor.access.length > 0 && visitor.lobby.exitControl === "ACTIVE"
+          ? true
+          : false,
     })
   );
 
-  let memberItems: item[] = [];
+  let memberItems: memberItem[] = [];
   members.map((member: Member) =>
     memberItems.push({
       value: member.memberId,
@@ -207,6 +221,9 @@ export function AccessForm() {
                           onSelect={() => {
                             form.setValue("visitor", item.value);
                           }}
+                          className={cn(
+                            item.openAccess && "text-red-400 font-semibold"
+                          )}
                         >
                           <Check
                             className={cn(
