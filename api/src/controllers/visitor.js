@@ -106,6 +106,9 @@ const getVisitorTypes = async (req, res) => {
 exports.getVisitorTypes = getVisitorTypes;
 const getVisitorsByLobby = async (req, res) => {
     try {
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+        const stringCurrentDate = currentDate.toISOString();
         const lobby = parseInt(req.params.lobby, 10);
         const visitor = await prisma.visitor.findMany({
             include: {
@@ -121,6 +124,20 @@ const getVisitorsByLobby = async (req, res) => {
                 lobby: {
                     select: {
                         exitControl: true,
+                    },
+                },
+                scheduling: {
+                    select: {
+                        schedulingId: true,
+                    },
+                    where: {
+                        status: "ACTIVE",
+                        startDate: {
+                            lte: new Date(),
+                        },
+                        endDate: {
+                            gte: new Date(),
+                        },
                     },
                 },
             },
@@ -149,7 +166,23 @@ const getFilteredVisitors = async (req, res) => {
             : {};
         const visitor = await prisma.visitor.findMany({
             where: whereCondition,
-            include: { visitorType: true },
+            include: {
+                visitorType: true,
+                scheduling: {
+                    select: {
+                        schedulingId: true,
+                    },
+                    where: {
+                        status: "ACTIVE",
+                        startDate: {
+                            lte: new Date(),
+                        },
+                        endDate: {
+                            gte: new Date(),
+                        },
+                    },
+                },
+            },
             orderBy: [{ status: "asc" }, { name: "asc" }],
         });
         if (!visitor) {

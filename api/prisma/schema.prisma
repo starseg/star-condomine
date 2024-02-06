@@ -92,7 +92,7 @@ model Telephone {
   telephoneId Int    @id @default(autoincrement())
   number      String
 
-  member   Member @relation(fields: [memberId], references: [memberId])
+  member   Member @relation(fields: [memberId], references: [memberId], onDelete: Cascade)
   memberId Int
 }
 
@@ -111,7 +111,7 @@ model Tag {
   type      TagType @relation(fields: [tagTypeId], references: [tagTypeId])
   tagTypeId Int
 
-  member   Member @relation(fields: [memberId], references: [memberId])
+  member   Member @relation(fields: [memberId], references: [memberId], onDelete: Cascade)
   memberId Int
 }
 
@@ -134,7 +134,7 @@ model Vehicle {
   vehicleType   VehicleType @relation(fields: [vehicleTypeId], references: [vehicleTypeId])
   vehicleTypeId Int
 
-  member   Member @relation(fields: [memberId], references: [memberId])
+  member   Member @relation(fields: [memberId], references: [memberId], onDelete: Cascade)
   memberId Int
 }
 
