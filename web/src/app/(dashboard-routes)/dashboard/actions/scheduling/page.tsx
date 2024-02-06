@@ -34,7 +34,7 @@ export default async function Scheduling({
         <div className="mt-4 flex gap-4 items-center">
           <Link
             href={`scheduling/new?lobby=${lobby}`}
-            className={buttonVariants({ variant: "outline" })}
+            className={buttonVariants({ variant: "default" })}
           >
             <p className="flex gap-2 text-xl items-center">
               <FilePlus size={24} /> Agendar
@@ -42,10 +42,18 @@ export default async function Scheduling({
           </Link>
           <Link
             href={`access?lobby=${lobby}&c=${control}`}
-            className={buttonVariants({ variant: "outline" })}
+            className={buttonVariants({ variant: "default" })}
           >
             <p className="flex gap-2 text-xl items-center">
               <FileSearch size={24} /> Acessos
+            </p>
+          </Link>
+          <Link
+            href={`visitor?lobby=${lobby}&c=${control}`}
+            className={buttonVariants({ variant: "default" })}
+          >
+            <p className="flex gap-2 text-xl items-center">
+              <FileSearch size={24} /> Visitantes
             </p>
           </Link>
         </div>

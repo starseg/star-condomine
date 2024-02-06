@@ -53,8 +53,6 @@ const FormSchema = z.object({
   phone: z.string(),
   type: z.string(),
   relation: z.string(),
-  startDate: z.date(),
-  endDate: z.date(),
 
   isAccessing: z.boolean(),
   host: z.number().optional(),
@@ -74,8 +72,6 @@ export function VisitorForm() {
       phone: "",
       type: "1",
       relation: "",
-      startDate: undefined,
-      endDate: undefined,
       isAccessing: false,
       host: 0,
       reason: "",
@@ -205,8 +201,8 @@ export function VisitorForm() {
         phone: data.phone,
         visitorTypeId: Number(data.type),
         relation: data.relation,
-        startDate: data.startDate,
-        endDate: data.endDate,
+        startDate: null,
+        endDate: null,
         lobbyId: Number(lobby),
       };
       const response = await api.post("visitor", info, {
@@ -252,7 +248,7 @@ export function VisitorForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-3/4 lg:w-1/3 space-y-6"
+        className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
       >
         <FormField
           control={form.control}
@@ -397,111 +393,6 @@ export function VisitorForm() {
             </FormItem>
           )}
         />
-
-        <div className="flex gap-2">
-          <FormField
-            control={form.control}
-            name="startDate"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Validade do visitante</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-[240px] pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, "PPP", { locale: ptBR })
-                        ) : (
-                          <span>Data de início</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      locale={ptBR}
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="endDate"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel className="text-transparent">a</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-[240px] pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, "PPP", { locale: ptBR })
-                        ) : (
-                          <span>Data de fim</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    className="w-auto p-2 space-y-2"
-                    align="start"
-                  >
-                    <Select
-                      onValueChange={(value) =>
-                        form.setValue(
-                          "endDate",
-                          addDays(new Date(), parseInt(value))
-                        )
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione" />
-                      </SelectTrigger>
-                      <SelectContent position="popper">
-                        <SelectItem value="1">Amanhã</SelectItem>
-                        <SelectItem value="7">Em uma semana</SelectItem>
-                        <SelectItem value="30">Em um mês</SelectItem>
-                        <SelectItem value="365">Em um ano</SelectItem>
-                        <SelectItem value="3650">Em 10 anos</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <div className="rounded-md border">
-                      <Calendar
-                        locale={ptBR}
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        initialFocus
-                      />
-                    </div>
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
 
         <div className="flex items-center space-x-2">
           <Checkbox

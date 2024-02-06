@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -31,15 +30,15 @@ import {
 import { useSearchParams } from "next/navigation";
 import { addDays, format } from "date-fns";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@radix-ui/react-select";
 import { Calendar } from "../ui/calendar";
 import { ptBR } from "date-fns/locale";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 const FormSchema = z.object({
   visitor: z.number(),
   member: z.number(),
@@ -183,7 +182,7 @@ export function SchedulingUpdateForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-3/4 lg:w-1/3 space-y-6"
+        className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
       >
         <FormField
           control={form.control}
@@ -422,7 +421,6 @@ export function SchedulingUpdateForm({
                         <SelectItem value="7">Em uma semana</SelectItem>
                         <SelectItem value="30">Em um mês</SelectItem>
                         <SelectItem value="365">Em um ano</SelectItem>
-                        <SelectItem value="3650">Em 10 anos</SelectItem>
                       </SelectContent>
                     </Select>
                     <div className="rounded-md border">

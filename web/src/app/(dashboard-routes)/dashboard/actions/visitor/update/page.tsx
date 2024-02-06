@@ -15,8 +15,6 @@ export default function UpdateVisitor() {
     rg: string;
     cpf: string;
     phone: string;
-    startDate: string;
-    endDate: string;
     status: "ACTIVE" | "INACTIVE" | undefined;
     relation: string;
     createdAt: string;
@@ -33,8 +31,6 @@ export default function UpdateVisitor() {
     rg: string;
     cpf: string;
     phone: string;
-    startDate: Date | undefined;
-    endDate: Date | undefined;
     status: "ACTIVE" | "INACTIVE" | undefined;
     relation: string;
     type: string;
@@ -61,10 +57,6 @@ export default function UpdateVisitor() {
     fetchData();
   }, [session]);
 
-  const convertStringToDate = (date: string) => {
-    return date ? new Date(date) : undefined;
-  };
-
   useEffect(() => {
     if (visitor) {
       setData({
@@ -73,14 +65,10 @@ export default function UpdateVisitor() {
         cpf: visitor?.cpf || "",
         rg: visitor?.rg || "",
         phone: visitor?.phone || "",
-        startDate: convertStringToDate(visitor?.startDate),
-        endDate: convertStringToDate(visitor?.endDate),
         status: visitor?.status || "ACTIVE",
         relation: visitor?.relation || "",
         type: visitor?.visitorTypeId.toString() || "",
       });
-      // console.log("data:");
-      // console.log(data);
     }
   }, [visitor]);
 

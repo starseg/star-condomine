@@ -14,8 +14,6 @@ interface Visitor {
   rg: string;
   cpf: string;
   phone: string;
-  startDate: string;
-  endDate: string;
   status: string;
   relation: string;
   createdAt: string;
@@ -68,15 +66,6 @@ export default function VisitorDetails({ id }: { id: number }) {
             <DetailItem label="CPF" content={visitor.cpf} />
             <DetailItem label="RG" content={visitor.rg} />
             <DetailItem label="Telefone" content={visitor.phone} />
-
-            <DetailItem
-              label="Início da validade"
-              content={simpleDateFormat(visitor.startDate)}
-            />
-            <DetailItem
-              label="Fim da validade"
-              content={simpleDateFormat(visitor.endDate)}
-            />
 
             <DetailItem
               label="Tipo de visitante"

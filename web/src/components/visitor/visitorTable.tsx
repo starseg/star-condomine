@@ -9,7 +9,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import api from "@/lib/axios";
-import { simpleDateFormat } from "@/lib/utils";
 import {
   MagnifyingGlass,
   PencilLine,
@@ -28,8 +27,6 @@ interface Visitor {
   rg: string;
   cpf: string;
   phone: string;
-  startDate: string;
-  endDate: string;
   status: string;
   relation: string;
   createdAt: string;
@@ -38,6 +35,11 @@ interface Visitor {
     visitorTypeId: number;
     description: string;
   };
+  scheduling: [
+    {
+      schedulingId: number;
+    }
+  ];
 }
 
 export default function VisitorTable({ lobby }: { lobby: string }) {
@@ -45,6 +47,7 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+  const control = params.get("c");
   const fetchData = async () => {
     try {
       let path;
@@ -110,7 +113,6 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
       });
     }
   };
-  let currentDate = new Date().toJSON();
 
   return (
     <Table className="border border-stone-800 rouded-lg">
@@ -130,7 +132,18 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
             <TableCell>{visitor.cpf}</TableCell>
             <TableCell>{visitor.name}</TableCell>
             <TableCell>{visitor.visitorType.description}</TableCell>
-            <TableCell>SIM</TableCell>
+            <TableCell>
+              {visitor.scheduling.length > 0 ? (
+                <Link
+                  href={`scheduling?lobby=${lobby}&c=${control}&query=${visitor.name}`}
+                  className="text-green-300 flex gap-1 items-center"
+                >
+                  Sim - <MagnifyingGlass size={18} />
+                </Link>
+              ) : (
+                <p className="text-red-200">Não</p>
+              )}
+            </TableCell>
             <TableCell>
               {visitor.status === "ACTIVE" ? (
                 <p className="text-green-500">ATIVO</p>

@@ -1,7 +1,6 @@
 "use client";
 import { Menu } from "@/components/menu";
 import ActionButton from "@/components/actionButton";
-import ActionSet from "@/components/lobby/actionSet";
 import api from "@/lib/axios";
 import {
   CalendarBlank,
@@ -19,6 +18,8 @@ import {
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 
 interface LobbyProps {
   lobbyId: number;
@@ -101,142 +102,104 @@ export default function LobbyDetails() {
       <Menu url={`/dashboard`} />
       <section className="max-w-5xl mx-auto mb-24">
         <div>
-          <h1 className="text-4xl mt-2 text-primary mb-2">
-            Portaria: {lobby ? lobby.name : "Desconhecida"}
-          </h1>
+          <div className="flex justify-between items-center">
+            <h1 className="text-4xl mt-2 text-primary mb-2 ml-10">
+              Portaria: {lobby ? lobby.name : "Desconhecida"}
+            </h1>
+            <Link
+              href={`actions/details?lobby=${id}`}
+              className="flex justify-center gap-2 items-center text-xl mr-10 hover:underline hover:underline-offset-4"
+            >
+              <MagnifyingGlass />
+              Detalhes
+            </Link>
+          </div>
+
           {calendar && calendar.length > 0 && (
-            <p className="text-xl flex items-center gap-2">
+            <p className="text-xl flex items-center gap-2 ml-10">
               <Warning size={32} className="text-red-500" /> Verifique as
-              restrições do feriado de hoje
+              restrições do feriado de hoje no calendário
             </p>
           )}
         </div>
-        <div className="mt-8 flex w-full flex-col items-center justify-center lg:flex-row">
-          <div className="flex w-full flex-col items-center justify-center lg:items-start lg:justify-start lg:w-1/2 lg:border-r lg:border-stone-50">
-            <div>
-              <h2 className="flex text-3xl mb-4">
-                <PersonSimpleRun className="mr-2" />
-                Acessos
-              </h2>
-              <ActionSet
-                register={`actions/access/new?lobby=${id}`}
-                list={`actions/access?lobby=${id}&c=${control}`}
-              />
-            </div>
-            <div>
-              <h2 className="flex text-3xl mt-12 mb-4">
-                <CalendarCheck className="mr-2" />
-                Agendamentos
-              </h2>
-              <ActionSet
-                register={`actions/scheduling/new?lobby=${id}`}
-                list={`actions/scheduling?lobby=${id}&c=${control}`}
-              />
-            </div>
-            <div>
-              <h2 className="flex text-3xl mt-12 mb-4">
-                <IdentificationCard className="mr-2" />
-                Visitantes
-              </h2>
-              <ActionSet
-                register={`actions/visitor/new?lobby=${id}`}
-                list={`actions/visitor?lobby=${id}`}
-              />
-            </div>
-            {lobby ? (
-              lobby.type === "COMPANY" ? (
-                <div>
-                  <h2 className="flex text-3xl mt-12 mb-4">
-                    <HouseLine className="mr-2" />
-                    Funcionários
-                  </h2>
-                  <ActionSet
-                    register={`actions/employee/new?lobby=${id}`}
-                    list={`actions/employee?lobby=${id}`}
-                  />
-                </div>
-              ) : (
-                <div>
-                  <h2 className="flex text-3xl mt-12 mb-4">
-                    <HouseLine className="mr-2" />
-                    Moradores
-                  </h2>
-                  <ActionSet
-                    register={`actions/resident/new?lobby=${id}`}
-                    list={`actions/resident?lobby=${id}`}
-                  />
-                </div>
-              )
+        <div className="mt-8 flex w-full flex-col flex-wrap items-center justify-center lg:flex-row gap-6">
+          <Link
+            href={`actions/access?lobby=${id}&c=${control}`}
+            className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
+          >
+            <PersonSimpleRun />
+            Acessos
+          </Link>
+          <Link
+            href={`actions/scheduling?lobby=${id}&c=${control}`}
+            className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
+          >
+            <CalendarCheck />
+            Agendamentos
+          </Link>
+          <Link
+            href={`actions/visitor?lobby=${id}&c=${control}`}
+            className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
+          >
+            <IdentificationCard />
+            Visitantes
+          </Link>
+          {lobby ? (
+            lobby.type === "COMPANY" ? (
+              <Link
+                href={`actions/employee?lobby=${id}&c=${control}`}
+                className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
+              >
+                <HouseLine />
+                Funcionários
+              </Link>
             ) : (
-              ""
-            )}
-            <div>
-              <h2 className="flex text-3xl mt-12 mb-4">
-                <Car className="mr-2" />
-                Veículos
-              </h2>
-              <ActionSet
-                register={`actions/vehicle/new?lobby=${id}`}
-                list={`actions/vehicle?lobby=${id}`}
-              />
-            </div>
-          </div>
-          <div className="flex w-full flex-col items-center justify-center lg:items-start lg:justify-start lg:w-1/2 lg:ml-8">
-            <div>
-              <h2 className="flex text-3xl mb-4 mt-12 lg:mt-0">
-                <DeviceMobileCamera className="mr-2" />
-                Dispositivos
-              </h2>
-              <ActionSet
-                register={`actions/device/new?lobby=${id}`}
-                list={`actions/device?lobby=${id}`}
-              />
-            </div>
-            <div>
-              <h2 className="flex text-3xl mt-12 mb-4">
-                <SealWarning className="mr-2" />
-                Problemas
-              </h2>
-              <ActionSet
-                register={`actions/problem/new?lobby=${id}`}
-                list={`actions/problem?lobby=${id}`}
-              />
-            </div>
-            <div>
-              <h2 className="flex text-3xl mt-12 mb-4">
-                <CalendarBlank className="mr-2" />
-                Calendário de Feriados
-              </h2>
-              <ActionSet
-                register={`actions/calendar/new?lobby=${id}`}
-                list={`actions/calendar?lobby=${id}`}
-              />
-            </div>
-            <div>
-              <h2 className="flex text-3xl mt-12 mb-4">
-                <Notepad className="mr-2" />
-                Relatórios
-              </h2>
-              <div className="flex gap-4">
-                <ActionButton
-                  url={`actions/report?lobby=${id}&c=${control}`}
-                  type="-"
-                  text="Visualizar"
-                />
-              </div>
-            </div>
-            <div>
-              <h2 className="flex text-3xl mt-12 mb-4">
-                <MagnifyingGlass className="mr-2" />
-                Detalhes
-              </h2>
-              <ActionButton
-                url={`actions/details?lobby=${id}`}
-                type="-"
-                text="Visualizar"
-              />
-            </div>
-          </div>
+              <Link
+                href={`actions/resident?lobby=${id}&c=${control}`}
+                className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
+              >
+                <HouseLine />
+                Moradores
+              </Link>
+            )
+          ) : (
+            ""
+          )}
+          <Link
+            href={`actions/vehicle?lobby=${id}`}
+            className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
+          >
+            <Car />
+            Veículos
+          </Link>
+          <Link
+            href={`actions/device?lobby=${id}`}
+            className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
+          >
+            <DeviceMobileCamera />
+            Dispositivos
+          </Link>
+          <Link
+            href={`actions/problem?lobby=${id}`}
+            className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
+          >
+            <SealWarning />
+            Problemas
+          </Link>
+          <Link
+            href={`actions/calendar?lobby=${id}`}
+            className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
+          >
+            <CalendarBlank />
+            Calendário
+          </Link>
+          <Link
+            href={`actions/report?lobby=${id}`}
+            className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
+          >
+            <Notepad />
+            Relatórios
+          </Link>
         </div>
       </section>
     </>
