@@ -49,6 +49,7 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+  const control = params.get("c");
   const router = useRouter();
   const fetchData = async () => {
     try {
@@ -139,7 +140,7 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      router.push("/dashboard/actions/access?lobby=" + lobby);
+      router.push(`/dashboard/actions/access?lobby=${lobby}&c=${control}`);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
