@@ -12,7 +12,7 @@ export default function AddVehicle({
 }) {
   return (
     <>
-      <Menu url={`/dashboard/actions?id=${searchParams?.lobby}`} />
+      <Menu />
       <section className="flex flex-col justify-center items-center mb-12">
         <h1 className="text-4xl mt-2 mb-4">Registrar Veículo</h1>
         <VehicleForm />

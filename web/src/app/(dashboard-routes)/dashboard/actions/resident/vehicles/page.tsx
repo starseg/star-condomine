@@ -21,7 +21,7 @@ export default async function Vehicles({
     <>
       <Menu />
       <section className="max-w-5xl mx-auto mb-24">
-        <h1 className="text-4xl mt-2 mb-4 text-center">Veículos do morador</h1>
+        <h1 className="text-4xl text-center">Veículos do morador</h1>
         <div className="max-h-[60vh] overflow-x-auto mb-4">
           <MemberVehicleTable lobby={lobby} member={id} />
         </div>

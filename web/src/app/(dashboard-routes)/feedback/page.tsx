@@ -11,7 +11,7 @@ export default function Feedbacks() {
     <>
       <Menu url={`/dashboard`} />
       <section className="max-w-5xl mx-auto mb-24">
-        <h1 className="text-4xl mt-2 mb-4 text-center">Feedbacks</h1>
+        <h1 className="text-4xl text-center">Feedbacks</h1>
         <FeedbackList />
       </section>
     </>
