@@ -40,7 +40,7 @@ const FormSchema = z.object({
   name: z.string().min(5),
   cpf: z.string(),
   rg: z.string(),
-  email: z.string().min(6),
+  email: z.string(),
   addressType: z.number(),
   address: z.string().min(1),
   comments: z.string(),
