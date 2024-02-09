@@ -13,6 +13,7 @@ import LogoutButton from "./logoutButton";
 import Link from "next/link";
 import {
   ArrowLeft,
+  BellRinging,
   BookBookmark,
   Envelope,
   Eye,
@@ -21,6 +22,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import Swal from "sweetalert2";
 import { useSession } from "next-auth/react";
+import NotificationList from "./notification/notificationList";
 
 const showPermissionError = () => {
   Swal.fire({
@@ -36,8 +38,8 @@ export function Menu({ url = "" }: { url?: string }) {
     <header className="flex flex-row w-full justify-between md:justify-around items-center p-4">
       {url === "" ? (
         <BackButton />
-      ) : url === "x" ? (
-        <div></div>
+      ) : url === "bell" ? (
+        <NotificationList />
       ) : (
         <Link href={`${url}`}>
           <ArrowLeft size={"2.5rem"} />
@@ -92,6 +94,18 @@ export function Menu({ url = "" }: { url?: string }) {
               </Link>
             )}
           </DropdownMenuItem>
+
+          <DropdownMenuItem>
+            {session?.payload.user.type === "ADMIN" && (
+              <Link
+                href={"/notification/new"}
+                className="flex justify-center items-center gap-2"
+              >
+                <BellRinging size={"24px"} /> Criar notificação
+              </Link>
+            )}
+          </DropdownMenuItem>
+
           <DropdownMenuItem>
             <Link
               href={"/feedback"}

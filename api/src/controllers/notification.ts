@@ -7,9 +7,19 @@ export const getAllNotifications = async (
   req: Request,
   res: Response
 ): Promise<void> => {
+  const currentDate = new Date();
+  const sevenDaysAgo = new Date(currentDate);
+  sevenDaysAgo.setDate(currentDate.getDate() - 7);
   try {
     const notification = await prisma.notification.findMany({
-      orderBy: [{ status: "asc" }, { createdAt: "asc" }],
+      where: {
+        date: {
+          lte: currentDate,
+          gte: sevenDaysAgo,
+        },
+        status: "ACTIVE",
+      },
+      orderBy: [{ date: "desc" }],
     });
     res.json(notification);
   } catch (error) {

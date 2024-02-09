@@ -4,9 +4,19 @@ exports.deleteNotification = exports.updateNotification = exports.createNotifica
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getAllNotifications = async (req, res) => {
+    const currentDate = new Date();
+    const sevenDaysAgo = new Date(currentDate);
+    sevenDaysAgo.setDate(currentDate.getDate() - 7);
     try {
         const notification = await prisma.notification.findMany({
-            orderBy: [{ status: "asc" }, { createdAt: "asc" }],
+            where: {
+                date: {
+                    lte: currentDate,
+                    gte: sevenDaysAgo,
+                },
+                status: "ACTIVE",
+            },
+            orderBy: [{ date: "desc" }],
         });
         res.json(notification);
     }

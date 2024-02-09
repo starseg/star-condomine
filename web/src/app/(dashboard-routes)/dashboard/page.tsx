@@ -8,7 +8,7 @@ import FeedbackButton from "@/components/feedback/feedbackButton";
 export default async function Dashboard() {
   return (
     <>
-      <Menu url="x" />
+      <Menu url="bell" />
       <section className="max-w-5xl mx-auto mb-12">
         <div className="flex items-center justify-between mb-2 flex-wrap flex-col md:flex-row w-[90%] ml-[5%]">
           <h1 className="flex gap-2 items-center text-stone-50 text-4xl pb-4">
