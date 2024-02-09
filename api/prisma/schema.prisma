@@ -293,6 +293,16 @@ model Feedback {
   updatedAt  DateTime @updatedAt
 }
 
+model Notification {
+  notificationId Int      @id @default(autoincrement())
+  date           DateTime
+  title          String
+  message        String   @db.VarChar(1000)
+  status         Status   @default(ACTIVE)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
 enum Status {
   ACTIVE
   INACTIVE

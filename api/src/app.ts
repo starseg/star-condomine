@@ -19,6 +19,7 @@ import loggingRouter from "./routes/loggingRouter";
 import feedbackRouter from "./routes/feedbackRouter";
 import dotenv from "dotenv";
 import helmet from "helmet";
+import notificationRouter from "./routes/notificationRouter";
 dotenv.config();
 
 const app = express();
@@ -57,6 +58,7 @@ app.use("/lobbyCalendar", lobbyCalendarRouter);
 app.use("/lobbyProblem", lobbyProblemRouter);
 app.use("/log", loggingRouter);
 app.use("/member", memberRouter);
+app.use("/notification", notificationRouter);
 app.use("/scheduling", schedulingRouter);
 app.use("/tag", tagRouter);
 app.use("/telephone", telephoneRouter);
