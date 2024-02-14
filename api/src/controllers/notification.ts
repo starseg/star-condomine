@@ -12,6 +12,23 @@ export const getAllNotifications = async (
   sevenDaysAgo.setDate(currentDate.getDate() - 7);
   try {
     const notification = await prisma.notification.findMany({
+      orderBy: [{ date: "desc" }],
+    });
+    res.json(notification);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar as notificações" });
+  }
+};
+
+export const getActiveNotifications = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const currentDate = new Date();
+  const sevenDaysAgo = new Date(currentDate);
+  sevenDaysAgo.setDate(currentDate.getDate() - 7);
+  try {
+    const notification = await prisma.notification.findMany({
       where: {
         date: {
           lte: currentDate,

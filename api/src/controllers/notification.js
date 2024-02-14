@@ -1,9 +1,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteNotification = exports.updateNotification = exports.createNotification = exports.getNotification = exports.getAllNotifications = void 0;
+exports.deleteNotification = exports.updateNotification = exports.createNotification = exports.getNotification = exports.getActiveNotifications = exports.getAllNotifications = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getAllNotifications = async (req, res) => {
+    const currentDate = new Date();
+    const sevenDaysAgo = new Date(currentDate);
+    sevenDaysAgo.setDate(currentDate.getDate() - 7);
+    try {
+        const notification = await prisma.notification.findMany({
+            orderBy: [{ date: "desc" }],
+        });
+        res.json(notification);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao buscar as notificações" });
+    }
+};
+exports.getAllNotifications = getAllNotifications;
+const getActiveNotifications = async (req, res) => {
     const currentDate = new Date();
     const sevenDaysAgo = new Date(currentDate);
     sevenDaysAgo.setDate(currentDate.getDate() - 7);
@@ -24,7 +39,7 @@ const getAllNotifications = async (req, res) => {
         res.status(500).json({ error: "Erro ao buscar as notificações" });
     }
 };
-exports.getAllNotifications = getAllNotifications;
+exports.getActiveNotifications = getActiveNotifications;
 const getNotification = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);

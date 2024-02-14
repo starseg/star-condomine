@@ -24,7 +24,7 @@ export default function NotificationList() {
   const { data: session } = useSession();
   const fetchData = async () => {
     try {
-      const response = await api.get("notification", {
+      const response = await api.get("notification/active", {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },

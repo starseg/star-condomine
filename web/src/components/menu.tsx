@@ -60,51 +60,35 @@ export function Menu({ url = "" }: { url?: string }) {
         <DropdownMenuContent className="px-4">
           <DropdownMenuLabel>Menu</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            {session?.payload.user.type === "USER" ? (
-              <button
-                className="flex justify-center items-center gap-2"
-                onClick={showPermissionError}
-              >
-                <UsersThree size={"24px"} /> Operadores
-              </button>
-            ) : (
-              <Link
-                href={"/operators"}
-                className="flex justify-center items-center gap-2"
-              >
-                <UsersThree size={"24px"} /> Operadores
-              </Link>
-            )}
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            {session?.payload.user.type === "USER" ? (
-              <button
-                className="flex justify-center items-center gap-2"
-                onClick={showPermissionError}
-              >
-                <Eye size={"24px"} /> Monitoramento
-              </button>
-            ) : (
-              <Link
-                href={"/logging"}
-                className="flex justify-center items-center gap-2"
-              >
-                <Eye size={"24px"} /> Monitoramento
-              </Link>
-            )}
-          </DropdownMenuItem>
 
-          <DropdownMenuItem>
-            {session?.payload.user.type === "ADMIN" && (
-              <Link
-                href={"/notification/new"}
-                className="flex justify-center items-center gap-2"
-              >
-                <BellRinging size={"24px"} /> Criar notificação
-              </Link>
-            )}
-          </DropdownMenuItem>
+          {session?.payload.user.type === "ADMIN" && (
+            <>
+              <DropdownMenuItem>
+                <Link
+                  href={"/operators"}
+                  className="flex justify-center items-center gap-2"
+                >
+                  <UsersThree size={"24px"} /> Operadores
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link
+                  href={"/logging"}
+                  className="flex justify-center items-center gap-2"
+                >
+                  <Eye size={"24px"} /> Monitoramento
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link
+                  href={"/notification"}
+                  className="flex justify-center items-center gap-2"
+                >
+                  <BellRinging size={"24px"} /> Notificações
+                </Link>
+              </DropdownMenuItem>
+            </>
+          )}
 
           <DropdownMenuItem>
             <Link

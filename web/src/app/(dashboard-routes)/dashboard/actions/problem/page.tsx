@@ -21,7 +21,7 @@ export default async function Problems({
     <>
       <Menu url={`/dashboard/actions?id=${lobby}`} />
       <section className="max-w-5xl mx-auto mb-24">
-        <h1 className="text-4xl text-center">Problemas da portaria</h1>
+        <h1 className="text-4xl text-center mb-2">Problemas da portaria</h1>
         <div className="max-h-[60vh] overflow-x-auto">
           <ProblemTable lobby={lobby} />
         </div>

@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import api from "@/lib/axios";
 import { Textarea } from "../ui/textarea";
@@ -24,34 +24,47 @@ import { Calendar } from "../ui/calendar";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 const FormSchema = z.object({
   date: z.date(),
   title: z.string(),
   message: z.string(),
+  status: z.enum(["ACTIVE", "INACTIVE"]),
 });
 
-export function NotificationForm() {
+interface Values {
+  date: Date | undefined;
+  title: string;
+  message: string;
+  status: "ACTIVE" | "INACTIVE";
+}
+
+export function NotificationUpdateForm({
+  preloadedValues,
+}: {
+  preloadedValues: Values;
+}) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      date: undefined,
-      title: "",
-      message: "",
-    },
+    defaultValues: preloadedValues,
   });
 
   const { data: session } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const id = params.get("id");
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     const info = {
       date: data.date,
       title: data.title,
       message: data.message,
+      status: data.status,
     };
     try {
-      const response = await api.post("notification", info, {
+      const response = await api.put("notification/" + id, info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
@@ -143,8 +156,38 @@ export function NotificationForm() {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="status"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Status</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex flex-col space-y-1"
+                >
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="ACTIVE" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Ativa</FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="INACTIVE" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Inativa</FormLabel>
+                  </FormItem>
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <Button type="submit" className="w-full text-lg">
-          Criar
+          Atualizar
         </Button>
       </form>
     </Form>

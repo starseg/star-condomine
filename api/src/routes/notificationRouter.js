@@ -8,6 +8,7 @@ const notification_1 = require("../controllers/notification");
 const permissions_1 = require("../middlewares/permissions");
 const notificationRouter = express_1.default.Router();
 notificationRouter.get("/", notification_1.getAllNotifications);
+notificationRouter.get("/active", notification_1.getActiveNotifications);
 notificationRouter.get("/find/:id", notification_1.getNotification);
 notificationRouter.post("/", permissions_1.checkAdminPermission, notification_1.createNotification);
 notificationRouter.put("/:id", permissions_1.checkAdminPermission, notification_1.updateNotification);
