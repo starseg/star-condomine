@@ -5,11 +5,7 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Registrar Acesso",
 };
-export default function AddAccess({
-  searchParams,
-}: {
-  searchParams?: { lobby: string };
-}) {
+export default function AddAccess() {
   return (
     <>
       <Menu />

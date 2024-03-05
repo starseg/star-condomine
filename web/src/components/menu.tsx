@@ -20,17 +20,8 @@ import {
   List,
   UsersThree,
 } from "@phosphor-icons/react/dist/ssr";
-import Swal from "sweetalert2";
 import { useSession } from "next-auth/react";
 import NotificationList from "./notification/notificationList";
-
-const showPermissionError = () => {
-  Swal.fire({
-    title: "Operação não permitida",
-    text: "Sua permissão de usuário não realizar essa ação.",
-    icon: "warning",
-  });
-};
 
 export function Menu({ url = "" }: { url?: string }) {
   const { data: session } = useSession();
