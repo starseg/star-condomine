@@ -1,8 +1,9 @@
+import CopyButton from "@/components/copyButton";
 import MemberTable from "@/components/member/memberTable";
 import { Menu } from "@/components/menu";
 import Search from "@/components/search";
-import { buttonVariants } from "@/components/ui/button";
-import { FilePlus, FileSearch } from "@phosphor-icons/react/dist/ssr";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { FilePlus, FileSearch, Share } from "@phosphor-icons/react/dist/ssr";
 import { Metadata } from "next";
 import Link from "next/link";
 
@@ -47,6 +48,9 @@ export default async function Member({
               <FileSearch size={24} /> Lista detalhada
             </p>
           </Link>
+          <CopyButton
+            text={`https://starcondomine.starseg.com/guest/resident?lobby=${lobby}`}
+          />
         </div>
       </section>
     </>

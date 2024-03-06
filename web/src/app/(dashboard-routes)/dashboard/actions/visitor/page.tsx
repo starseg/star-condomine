@@ -5,6 +5,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { FilePlus, FileSearch } from "@phosphor-icons/react/dist/ssr";
+import CopyButton from "@/components/copyButton";
 
 export const metadata: Metadata = {
   title: "Visitantes",
@@ -65,6 +66,9 @@ export default async function Visitor({
               <FileSearch size={24} /> Lista detalhada
             </p>
           </Link>
+          <CopyButton
+            text={`https://starcondomine.starseg.com/guest/visitor?lobby=${lobby}`}
+          />
         </div>
       </section>
     </>

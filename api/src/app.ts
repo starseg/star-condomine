@@ -20,6 +20,7 @@ import feedbackRouter from "./routes/feedbackRouter";
 import dotenv from "dotenv";
 import helmet from "helmet";
 import notificationRouter from "./routes/notificationRouter";
+import guestRouter from "./routes/guestRouter";
 dotenv.config();
 
 const app = express();
@@ -43,6 +44,8 @@ app.use(cors(corsOptions));
 app.get("/", (request: Request, response: Response) => {
   response.json({ message: "API DO SISTEMA STAR CONDOMINE" });
 });
+
+app.use("/guest", guestRouter);
 
 app.post("/auth", authenticateOperator);
 

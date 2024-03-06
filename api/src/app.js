@@ -25,6 +25,7 @@ const feedbackRouter_1 = __importDefault(require("./routes/feedbackRouter"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const helmet_1 = __importDefault(require("helmet"));
 const notificationRouter_1 = __importDefault(require("./routes/notificationRouter"));
+const guestRouter_1 = __importDefault(require("./routes/guestRouter"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
@@ -44,6 +45,7 @@ app.use((0, cors_1.default)(corsOptions));
 app.get("/", (request, response) => {
     response.json({ message: "API DO SISTEMA STAR CONDOMINE" });
 });
+app.use("/guest", guestRouter_1.default);
 app.post("/auth", auth_1.authenticateOperator);
 app.use(permissions_1.verifyToken, logging_1.logging);
 // app.use();

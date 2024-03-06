@@ -12,28 +12,17 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MaskedInput } from "../maskedInput";
+import { MaskedInput } from "@/components/maskedInput";
 import { useEffect, useState } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown } from "lucide-react";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "../ui/command";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { Textarea } from "../ui/textarea";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -43,12 +32,6 @@ const FormSchema = z.object({
   phone: z.string(),
   type: z.string(),
   relation: z.string(),
-
-  isAccessing: z.boolean(),
-  host: z.number().optional(),
-  reason: z.string().optional(),
-  local: z.string().optional(),
-  comments: z.string().optional(),
 });
 
 export function VisitorForm() {
@@ -62,11 +45,6 @@ export function VisitorForm() {
       phone: "",
       type: "1",
       relation: "",
-      isAccessing: false,
-      host: 0,
-      reason: "",
-      local: "",
-      comments: "",
     },
   });
 
@@ -106,17 +84,10 @@ export function VisitorForm() {
     }
   };
 
-  interface Member {
-    memberId: number;
-    name: string;
-    type: string;
-  }
-
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const lobby = params.get("lobby");
 
   interface VisitorTypes {
     visitorTypeId: number;
@@ -126,25 +97,8 @@ export function VisitorForm() {
   const [visitorType, setVisitorType] = useState<VisitorTypes[]>([]);
   const fetchVisitorTypes = async () => {
     try {
-      const response = await api.get("visitor/types", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.get("guest/visitor/types");
       setVisitorType(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
-  };
-  const [members, setMembers] = useState<Member[]>([]);
-  const fetchMembers = async () => {
-    try {
-      const response = await api.get("member/lobby/" + lobby, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setMembers(response.data);
     } catch (error) {
       console.error("Erro ao obter dados:", error);
     }
@@ -152,25 +106,11 @@ export function VisitorForm() {
 
   useEffect(() => {
     fetchVisitorTypes();
-    fetchMembers();
   }, [session]);
 
-  interface item {
-    value: number;
-    label: string;
-  }
-  let items: item[] = [];
-
-  members.map((member: Member) => {
-    items.push({
-      value: member.memberId,
-      label: member.name,
-    });
-  });
-
-  const [isAccessing, setIsAccessing] = useState(false);
-
+  const [isSendind, setIsSending] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    setIsSending(true);
     // PEGA O ID DA PORTARIA
     const lobbyParam = params.get("lobby");
     const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
@@ -195,42 +135,14 @@ export function VisitorForm() {
         endDate: null,
         lobbyId: Number(lobby),
       };
-      const response = await api.post("visitor", info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      // console.log(response.data);
+      const response = await api.post("guest/visitor", info);
 
-      if (isAccessing) {
-        try {
-          const operator = session?.payload.user.id || null;
-          const access = {
-            memberId: Number(data.host),
-            visitorId: Number(response.data.visitorId),
-            startTime: new Date().toISOString(),
-            local: data.local,
-            reason: data.reason,
-            comments: data.comments,
-            operatorId: Number(operator),
-            lobbyId: Number(lobby),
-          };
-          const res = await api.post("access", access, {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
-          // console.log(res.data);
-        } catch (error) {
-          console.error("Erro ao enviar dados para a API:", error);
-          throw error;
-        }
-      }
-
-      router.push("/dashboard/actions/visitor?lobby=" + lobby);
+      router.push("visitor/success?lobby=" + lobby);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -380,146 +292,14 @@ export function VisitorForm() {
                 />
               </FormControl>
               <FormMessage />
+              <FormDescription>
+                Exemplo: familiar, filho de proprietário, pedreiro,
+                jardineiro...
+              </FormDescription>
             </FormItem>
           )}
         />
-
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="terms"
-            onClick={() => {
-              setIsAccessing(!isAccessing);
-            }}
-          />
-          <label
-            htmlFor="terms"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            A pessoa já está acessando a portaria?
-          </label>
-        </div>
-
-        <div>
-          {isAccessing && (
-            <div className="space-y-6">
-              <FormField
-                control={form.control}
-                name="host"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Visitado</FormLabel>
-                    <FormControl>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              className={cn(
-                                "justify-between",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value
-                                ? items.find(
-                                    (item) => item.value === field.value
-                                  )?.label
-                                : "Selecione a pessoa visitada"}
-                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="p-0">
-                          <Command className="w-full">
-                            <CommandInput placeholder="Buscar pessoa..." />
-                            <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
-                            <CommandGroup>
-                              {items.map((item) => (
-                                <CommandItem
-                                  value={item.label}
-                                  key={item.value}
-                                  onSelect={() => {
-                                    form.setValue("host", item.value);
-                                  }}
-                                >
-                                  <Check
-                                    className={cn(
-                                      "mr-2 h-4 w-4",
-                                      item.value === field.value
-                                        ? "opacity-100"
-                                        : "opacity-0"
-                                    )}
-                                  />
-                                  {item.label}
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="reason"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Motivo</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="Por que está sendo feita essa visita?"
-                        autoComplete="off"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="local"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Local da visita</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="Para onde está indo? Casa, Salão de Festas..."
-                        autoComplete="off"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="comments"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Observações</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Alguma informação adicional..."
-                        autoComplete="off"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          )}
-        </div>
-
-        <Button type="submit" className="w-full text-lg">
+        <Button type="submit" className="w-full text-lg" disabled={isSendind}>
           Registrar
         </Button>
       </form>

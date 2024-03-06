@@ -6,11 +6,7 @@ export const metadata: Metadata = {
   title: "Registrar morador",
 };
 
-export default function NewResident({
-  searchParams,
-}: {
-  searchParams?: { lobby: string };
-}) {
+export default function NewResident() {
   return (
     <>
       <Menu />
