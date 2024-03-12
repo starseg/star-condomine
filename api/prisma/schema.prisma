@@ -25,7 +25,7 @@ model Operator {
 
 model Lobby {
   lobbyId      Int       @id @default(autoincrement())
-  cnpj         String    @unique
+  cnpj         String
   name         String
   responsible  String
   telephone    String
