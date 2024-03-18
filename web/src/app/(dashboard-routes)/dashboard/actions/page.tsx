@@ -194,7 +194,7 @@ export default function LobbyDetails() {
             Calendário
           </Link>
           <Link
-            href={`actions/report?lobby=${id}`}
+            href={`actions/report?lobby=${id}&c=${control}`}
             className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
           >
             <Notepad />

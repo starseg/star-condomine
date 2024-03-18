@@ -51,7 +51,7 @@ export const PdfButton = ({
     const from = period.from ? simpleDateFormat(period.from) : "";
     const to = period.to ? simpleDateFormat(period.to) : "";
 
-    doc.text(`Relatório da portaria ${data[0].lobby.name} - Starseg`, 15, 10);
+    doc.text(`Relatório da portaria ${data[0].lobby.name} - STAR SEG`, 15, 10);
     doc.text(`Período: ${from} a ${to}`, 15, 20);
 
     const headers =

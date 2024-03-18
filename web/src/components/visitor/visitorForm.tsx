@@ -37,7 +37,9 @@ import { Textarea } from "../ui/textarea";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
-  name: z.string(),
+  name: z.string().min(6, {
+    message: "O nome completo precisa ter ao menos 6 caracteres.",
+  }),
   cpf: z.string(),
   rg: z.string(),
   phone: z.string(),
@@ -268,7 +270,7 @@ export function VisitorForm() {
               <FormControl>
                 <Input
                   type="text"
-                  placeholder="Digite o nome do visitante"
+                  placeholder="Digite o nome e sobrenome do visitante"
                   autoComplete="off"
                   {...field}
                 />
