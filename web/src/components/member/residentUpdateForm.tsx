@@ -209,7 +209,9 @@ export function ResidentUpdateForm({
     setPhoneNumber(phoneNumber.filter((item) => item !== value));
   };
 
+  const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    setIsSendind(true);
     // PEGA O ID DA PORTARIA
     const lobbyParam = params.get("lobby");
     const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
@@ -279,6 +281,8 @@ export function ResidentUpdateForm({
       } catch (error) {
         console.error("(Tel) Erro ao enviar dados para a API:", error);
         throw error;
+      } finally {
+        setIsSendind(false);
       }
 
       router.push("/dashboard/actions/resident?lobby=" + lobby);
@@ -583,7 +587,7 @@ export function ResidentUpdateForm({
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full text-lg">
+        <Button type="submit" className="w-full text-lg" disabled={isSending}>
           Atualizar
         </Button>
       </form>

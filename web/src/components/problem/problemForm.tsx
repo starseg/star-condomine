@@ -20,6 +20,7 @@ import { useSearchParams } from "next/navigation";
 import { Textarea } from "../ui/textarea";
 import { Checkbox } from "../ui/checkbox";
 import { format } from "date-fns";
+import { useState } from "react";
 
 const FormSchema = z.object({
   title: z.string(),
@@ -44,7 +45,9 @@ export function ProblemForm() {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
 
+  const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    setIsSendind(true);
     const lobbyParam = params.get("lobby");
     const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
     const operator = session?.payload.user.id || null;
@@ -75,6 +78,8 @@ export function ProblemForm() {
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
+    } finally {
+      setIsSendind(false);
     }
   };
 
@@ -154,7 +159,7 @@ export function ProblemForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full text-lg">
+        <Button type="submit" className="w-full text-lg" disabled={isSending}>
           Registrar
         </Button>
       </form>

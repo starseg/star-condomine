@@ -4,6 +4,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { FilePlus } from "@phosphor-icons/react/dist/ssr";
+import Search from "@/components/search";
 
 export const metadata: Metadata = {
   title: "Problemas da portaria",
@@ -22,6 +23,9 @@ export default async function Problems({
       <Menu url={`/dashboard/actions?id=${lobby}`} />
       <section className="max-w-5xl mx-auto mb-24">
         <h1 className="text-4xl text-center mb-2">Problemas da portaria</h1>
+        <div className="flex justify-end mb-4">
+          <Search placeholder="Buscar..." pagination={false} />
+        </div>
         <div className="max-h-[60vh] overflow-x-auto">
           <ProblemTable lobby={lobby} />
         </div>

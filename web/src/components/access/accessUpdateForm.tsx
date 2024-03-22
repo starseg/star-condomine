@@ -141,9 +141,12 @@ export function AccessUpdateForm({
     }
   };
 
+  const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    setIsSendind(true);
     const lobbyParam = params.get("lobby");
     const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
+    const control = params.get("c");
     const operator = session?.payload.user.id || null;
     const id = params.get("id");
 
@@ -170,10 +173,12 @@ export function AccessUpdateForm({
         },
       });
       // console.log(response.data);
-      router.push("/dashboard/actions/access?lobby=" + lobby);
+      router.push(`/dashboard/actions/access?lobby=${lobby}&c=${control}`);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
+    } finally {
+      setIsSendind(false);
     }
   };
 
@@ -392,7 +397,7 @@ export function AccessUpdateForm({
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full text-lg">
+        <Button type="submit" className="w-full text-lg" disabled={isSending}>
           Atualizar
         </Button>
       </form>

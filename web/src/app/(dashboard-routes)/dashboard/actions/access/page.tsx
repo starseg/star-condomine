@@ -33,7 +33,7 @@ export default async function Access({
         </div>
         <div className="mt-4 flex gap-4 items-center">
           <Link
-            href={`access/new?lobby=${lobby}`}
+            href={`access/new?lobby=${lobby}&c=${control}`}
             className={buttonVariants({ variant: "default" })}
           >
             <p className="flex gap-2 text-xl items-center">

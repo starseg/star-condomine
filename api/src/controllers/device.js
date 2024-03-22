@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDeviceByLobby = exports.getDeviceModels = exports.deleteDevice = exports.updateDevice = exports.createDevice = exports.getDevice = exports.getAllDevices = void 0;
+exports.getFilteredDevices = exports.getDeviceByLobby = exports.getDeviceModels = exports.deleteDevice = exports.updateDevice = exports.createDevice = exports.getDevice = exports.getAllDevices = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getAllDevices = async (req, res) => {
@@ -99,3 +99,36 @@ const getDeviceByLobby = async (req, res) => {
     }
 };
 exports.getDeviceByLobby = getDeviceByLobby;
+const getFilteredDevices = async (req, res) => {
+    try {
+        const lobby = parseInt(req.params.lobby, 10);
+        const { query } = req.query;
+        const whereCondition = query
+            ? {
+                OR: [
+                    { name: { contains: query } },
+                    { ip: { contains: query } },
+                    { description: { contains: query } },
+                    { deviceModel: { model: { contains: query } } },
+                ],
+                AND: { lobbyId: lobby },
+            }
+            : {};
+        const device = await prisma.device.findMany({
+            where: whereCondition,
+            include: {
+                deviceModel: true,
+            },
+            orderBy: [{ name: "asc" }],
+        });
+        if (!device) {
+            res.status(404).json({ error: "Nenhum veículo encontrado" });
+            return;
+        }
+        res.json(device);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao buscar os veículos" });
+    }
+};
+exports.getFilteredDevices = getFilteredDevices;

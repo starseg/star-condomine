@@ -18,6 +18,7 @@ import {
   Envelope,
   Eye,
   List,
+  ListChecks,
   UsersThree,
 } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
@@ -81,6 +82,14 @@ export function Menu({ url = "" }: { url?: string }) {
             </>
           )}
 
+          <DropdownMenuItem>
+            <Link
+              href={"/schedulingList"}
+              className="flex justify-center items-center gap-2"
+            >
+              <ListChecks size={"24px"} /> Lista de agendamentos
+            </Link>
+          </DropdownMenuItem>
           <DropdownMenuItem>
             <Link
               href={"/feedback"}

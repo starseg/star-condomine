@@ -14,4 +14,5 @@ deviceRouter.put("/:id", device_1.updateDevice);
 deviceRouter.delete("/:id", permissions_1.checkAdminPermission, device_1.deleteDevice);
 deviceRouter.get("/models", device_1.getDeviceModels);
 deviceRouter.get("/lobby/:lobby", device_1.getDeviceByLobby);
+deviceRouter.get("/filtered/:lobby", device_1.getFilteredDevices);
 exports.default = deviceRouter;

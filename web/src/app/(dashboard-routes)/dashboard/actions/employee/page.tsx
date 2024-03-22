@@ -15,9 +15,11 @@ export default async function Member({
 }: {
   searchParams?: {
     lobby?: string;
+    c?: string;
   };
 }) {
   const lobby = searchParams?.lobby || "";
+  const control = searchParams?.c || "";
 
   return (
     <>
@@ -45,6 +47,14 @@ export default async function Member({
           >
             <p className="flex gap-2 text-xl items-center">
               <FileSearch size={24} /> Lista detalhada
+            </p>
+          </Link>
+          <Link
+            href={`access?lobby=${lobby}&c=${control}`}
+            className={buttonVariants({ variant: "default" })}
+          >
+            <p className="flex gap-2 text-xl items-center">
+              <FileSearch size={24} /> Acessos
             </p>
           </Link>
         </div>

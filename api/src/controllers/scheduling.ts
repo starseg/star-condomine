@@ -61,6 +61,7 @@ export const createScheduling = async (
       location,
       startDate,
       endDate,
+      comments,
       visitorId,
       lobbyId,
       memberId,
@@ -72,6 +73,7 @@ export const createScheduling = async (
         location,
         startDate,
         endDate,
+        comments,
         visitorId,
         lobbyId,
         memberId,
@@ -95,6 +97,7 @@ export const updateScheduling = async (
       location,
       startDate,
       endDate,
+      comments,
       status,
       visitorId,
       lobbyId,
@@ -108,6 +111,7 @@ export const updateScheduling = async (
         location,
         startDate,
         endDate,
+        comments,
         status,
         visitorId,
         lobbyId,
@@ -158,7 +162,7 @@ export const getSchedulingsByLobby = async (
           },
         },
       },
-      orderBy: [{ status: "asc" }, { endDate: "asc" }, { startDate: "desc" }],
+      orderBy: [{ status: "asc" }, { endDate: "desc" }, { startDate: "desc" }],
     });
     res.json(scheduling);
   } catch (error) {

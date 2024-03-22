@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
 import { searchCEP } from "@/lib/utils";
 import { MaskedInput } from "../maskedInput";
+import { useState } from "react";
 
 const FormSchema = z.object({
   type: z.enum(["CONDOMINIUM", "COMPANY"]),
@@ -127,7 +128,9 @@ export function LobbyForm() {
 
   const { data: session } = useSession();
   const router = useRouter();
+  const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    setIsSendind(true);
     let file;
     if (data.datasheet instanceof File && data.datasheet.size > 0)
       file = await handleFileUpload(data.datasheet);
@@ -161,6 +164,8 @@ export function LobbyForm() {
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
+    } finally {
+      setIsSendind(false);
     }
   };
 
@@ -493,7 +498,7 @@ export function LobbyForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full text-lg">
+        <Button type="submit" className="w-full text-lg" disabled={isSending}>
           Registrar
         </Button>
       </form>

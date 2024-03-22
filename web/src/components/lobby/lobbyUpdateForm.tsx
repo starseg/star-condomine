@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
 import { MaskedInput } from "../maskedInput";
+import { useState } from "react";
 
 const FormSchema = z.object({
   type: z.enum(["CONDOMINIUM", "COMPANY"]),
@@ -137,7 +138,9 @@ export function LobbyUpdateForm({
   const params = new URLSearchParams(searchParams);
   const id = params.get("id");
 
+  const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    setIsSendind(true);
     let file;
     if (data.datasheet instanceof File && data.datasheet.size > 0)
       file = await handleFileUpload(data.datasheet);
@@ -172,6 +175,8 @@ export function LobbyUpdateForm({
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
+    } finally {
+      setIsSendind(false);
     }
   };
 
@@ -505,7 +510,7 @@ export function LobbyUpdateForm({
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full text-lg">
+        <Button type="submit" className="w-full text-lg" disabled={isSending}>
           Atualizar
         </Button>
       </form>

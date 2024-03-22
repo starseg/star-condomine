@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getProblemsByLobby = exports.deleteLobbyProblem = exports.updateLobbyProblem = exports.createLobbyProblem = exports.getLobbyProblem = exports.getAllLobbyProblems = void 0;
+exports.getFilteredLobbyProblem = exports.getProblemsByLobby = exports.deleteLobbyProblem = exports.updateLobbyProblem = exports.createLobbyProblem = exports.getLobbyProblem = exports.getAllLobbyProblems = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getAllLobbyProblems = async (req, res) => {
@@ -86,3 +86,32 @@ const getProblemsByLobby = async (req, res) => {
     }
 };
 exports.getProblemsByLobby = getProblemsByLobby;
+const getFilteredLobbyProblem = async (req, res) => {
+    try {
+        const lobby = parseInt(req.params.lobby, 10);
+        const { query } = req.query;
+        const whereCondition = query
+            ? {
+                OR: [
+                    { title: { contains: query } },
+                    { description: { contains: query } },
+                ],
+                AND: { lobbyId: lobby },
+            }
+            : {};
+        const lobbyProblem = await prisma.lobbyProblem.findMany({
+            where: whereCondition,
+            include: { operator: true },
+            orderBy: [{ status: "asc" }],
+        });
+        if (!lobbyProblem) {
+            res.status(404).json({ error: "Nenhum problema encontrado" });
+            return;
+        }
+        res.json(lobbyProblem);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao buscar os acessos" });
+    }
+};
+exports.getFilteredLobbyProblem = getFilteredLobbyProblem;

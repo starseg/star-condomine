@@ -2,8 +2,8 @@ import CopyButton from "@/components/copyButton";
 import MemberTable from "@/components/member/memberTable";
 import { Menu } from "@/components/menu";
 import Search from "@/components/search";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { FilePlus, FileSearch, Share } from "@phosphor-icons/react/dist/ssr";
+import { buttonVariants } from "@/components/ui/button";
+import { FilePlus, FileSearch } from "@phosphor-icons/react/dist/ssr";
 import { Metadata } from "next";
 import Link from "next/link";
 
@@ -16,9 +16,11 @@ export default async function Member({
 }: {
   searchParams?: {
     lobby?: string;
+    c?: string;
   };
 }) {
   const lobby = searchParams?.lobby || "";
+  const control = searchParams?.c || "";
 
   return (
     <>
@@ -46,6 +48,14 @@ export default async function Member({
           >
             <p className="flex gap-2 text-xl items-center">
               <FileSearch size={24} /> Lista detalhada
+            </p>
+          </Link>
+          <Link
+            href={`access?lobby=${lobby}&c=${control}`}
+            className={buttonVariants({ variant: "default" })}
+          >
+            <p className="flex gap-2 text-xl items-center">
+              <FileSearch size={24} /> Acessos
             </p>
           </Link>
           <CopyButton

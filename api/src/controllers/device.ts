@@ -109,3 +109,39 @@ export const getDeviceByLobby = async (
     res.status(500).json({ error: "Erro ao buscar os dispositivos" });
   }
 };
+
+export const getFilteredDevices = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const { query } = req.query;
+
+    const whereCondition = query
+      ? {
+          OR: [
+            { name: { contains: query as string } },
+            { ip: { contains: query as string } },
+            { description: { contains: query as string } },
+            { deviceModel: { model: { contains: query as string } } },
+          ],
+          AND: { lobbyId: lobby },
+        }
+      : {};
+    const device = await prisma.device.findMany({
+      where: whereCondition,
+      include: {
+        deviceModel: true,
+      },
+      orderBy: [{ name: "asc" }],
+    });
+    if (!device) {
+      res.status(404).json({ error: "Nenhum veículo encontrado" });
+      return;
+    }
+    res.json(device);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os veículos" });
+  }
+};

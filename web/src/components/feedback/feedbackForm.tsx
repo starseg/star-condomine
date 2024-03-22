@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import api from "@/lib/axios";
 import { Textarea } from "../ui/textarea";
+import { useState } from "react";
 
 const FormSchema = z.object({
   name: z.string(),
@@ -37,7 +38,9 @@ export function FeedbackForm() {
   const { data: session } = useSession();
   const router = useRouter();
 
+  const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    setIsSendind(true);
     const info = {
       name: data.name,
       subject: data.subject,
@@ -49,10 +52,13 @@ export function FeedbackForm() {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
+
       router.push("/feedback/success");
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
+    } finally {
+      setIsSendind(false);
     }
   };
 
@@ -115,7 +121,7 @@ export function FeedbackForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full text-lg">
+        <Button type="submit" className="w-full text-lg" disabled={isSending}>
           Enviar
         </Button>
       </form>

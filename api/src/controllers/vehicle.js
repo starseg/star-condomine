@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getVehicleTypes = exports.getVehiclesByOwner = exports.deleteVehicle = exports.updateVehicle = exports.createVehicle = exports.getVehicle = exports.getAllVehicles = void 0;
+exports.getFilteredVehicles = exports.getVehiclesByLobby = exports.getVehicleTypes = exports.getVehiclesByOwner = exports.deleteVehicle = exports.updateVehicle = exports.createVehicle = exports.getVehicle = exports.getAllVehicles = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getAllVehicles = async (req, res) => {
@@ -37,7 +37,7 @@ const getVehicle = async (req, res) => {
 exports.getVehicle = getVehicle;
 const createVehicle = async (req, res) => {
     try {
-        const { licensePlate, brand, model, color, tag, comments, vehicleTypeId, memberId, } = req.body;
+        const { licensePlate, brand, model, color, tag, comments, vehicleTypeId, memberId, lobbyId, } = req.body;
         const vehicle = await prisma.vehicle.create({
             data: {
                 licensePlate,
@@ -48,6 +48,7 @@ const createVehicle = async (req, res) => {
                 comments,
                 vehicleTypeId,
                 memberId,
+                lobbyId,
             },
         });
         res.status(201).json(vehicle);
@@ -120,3 +121,58 @@ const getVehicleTypes = async (req, res) => {
     }
 };
 exports.getVehicleTypes = getVehicleTypes;
+const getVehiclesByLobby = async (req, res) => {
+    try {
+        const lobby = parseInt(req.params.lobby, 10);
+        const vehicle = await prisma.vehicle.findMany({
+            where: { lobbyId: lobby },
+            include: {
+                member: true,
+                vehicleType: true,
+            },
+        });
+        res.json(vehicle);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao buscar os veículos" });
+    }
+};
+exports.getVehiclesByLobby = getVehiclesByLobby;
+const getFilteredVehicles = async (req, res) => {
+    try {
+        const lobby = parseInt(req.params.lobby, 10);
+        const { query } = req.query;
+        const whereCondition = query
+            ? {
+                OR: [
+                    { licensePlate: { contains: query } },
+                    { model: { contains: query } },
+                    { brand: { contains: query } },
+                    { member: { name: { contains: query } } },
+                ],
+                AND: { lobbyId: lobby },
+            }
+            : {};
+        const vehicle = await prisma.vehicle.findMany({
+            where: whereCondition,
+            include: {
+                member: {
+                    select: {
+                        name: true,
+                    },
+                },
+                vehicleType: true,
+            },
+            orderBy: [{ licensePlate: "asc" }],
+        });
+        if (!vehicle) {
+            res.status(404).json({ error: "Nenhum veículo encontrado" });
+            return;
+        }
+        res.json(vehicle);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao buscar os veículos" });
+    }
+};
+exports.getFilteredVehicles = getFilteredVehicles;

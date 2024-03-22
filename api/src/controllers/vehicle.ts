@@ -53,6 +53,7 @@ export const createVehicle = async (
       comments,
       vehicleTypeId,
       memberId,
+      lobbyId,
     } = req.body;
     const vehicle = await prisma.vehicle.create({
       data: {
@@ -64,6 +65,7 @@ export const createVehicle = async (
         comments,
         vehicleTypeId,
         memberId,
+        lobbyId,
       },
     });
     res.status(201).json(vehicle);
@@ -139,6 +141,7 @@ export const getVehiclesByOwner = async (
     res.status(500).json({ error: "Erro ao buscar os veículos" });
   }
 };
+
 export const getVehicleTypes = async (
   req: Request,
   res: Response
@@ -146,6 +149,66 @@ export const getVehicleTypes = async (
   try {
     const vehicleType = await prisma.vehicleType.findMany();
     res.json(vehicleType);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os veículos" });
+  }
+};
+
+export const getVehiclesByLobby = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const vehicle = await prisma.vehicle.findMany({
+      where: { lobbyId: lobby },
+      include: {
+        member: true,
+        vehicleType: true,
+      },
+    });
+    res.json(vehicle);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os veículos" });
+  }
+};
+
+export const getFilteredVehicles = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const { query } = req.query;
+
+    const whereCondition = query
+      ? {
+          OR: [
+            { licensePlate: { contains: query as string } },
+            { model: { contains: query as string } },
+            { brand: { contains: query as string } },
+            { member: { name: { contains: query as string } } },
+          ],
+          AND: { lobbyId: lobby },
+        }
+      : {};
+    const vehicle = await prisma.vehicle.findMany({
+      where: whereCondition,
+      include: {
+        member: {
+          select: {
+            name: true,
+          },
+        },
+        vehicleType: true,
+      },
+      orderBy: [{ licensePlate: "asc" }],
+    });
+    if (!vehicle) {
+      res.status(404).json({ error: "Nenhum veículo encontrado" });
+      return;
+    }
+    res.json(vehicle);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar os veículos" });
   }

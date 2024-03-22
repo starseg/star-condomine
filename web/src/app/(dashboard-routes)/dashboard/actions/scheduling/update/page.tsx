@@ -15,6 +15,7 @@ export default function UpdateScheduling() {
     endDate: string;
     location: string;
     reason: string;
+    comments: string;
     status: "ACTIVE" | "INACTIVE" | undefined;
     createdAt: string;
     updatedAt: string;
@@ -34,6 +35,7 @@ export default function UpdateScheduling() {
     endDate: Date | undefined;
     location: string;
     reason: string;
+    comments: string;
     status: "ACTIVE" | "INACTIVE" | undefined;
     member: number;
     visitor: number;
@@ -72,6 +74,7 @@ export default function UpdateScheduling() {
         location: scheduling?.location || "",
         reason: scheduling?.reason || "",
         status: scheduling?.status || "ACTIVE",
+        comments: scheduling?.comments || "",
         member: scheduling?.memberId || 0,
         visitor: scheduling?.visitorId || 0,
       });

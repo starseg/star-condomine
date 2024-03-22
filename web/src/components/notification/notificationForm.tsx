@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import api from "@/lib/axios";
 import { Textarea } from "../ui/textarea";
-import React from "react";
+import React, { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
@@ -44,7 +44,9 @@ export function NotificationForm() {
   const { data: session } = useSession();
   const router = useRouter();
 
+  const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    setIsSendind(true);
     const info = {
       date: data.date,
       title: data.title,
@@ -60,6 +62,8 @@ export function NotificationForm() {
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
+    } finally {
+      setIsSendind(false);
     }
   };
 
@@ -143,7 +147,7 @@ export function NotificationForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full text-lg">
+        <Button type="submit" className="w-full text-lg" disabled={isSending}>
           Criar
         </Button>
       </form>

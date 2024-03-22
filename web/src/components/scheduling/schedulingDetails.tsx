@@ -12,6 +12,7 @@ interface Scheduling {
   endDate: string;
   location: string;
   reason: string;
+  comments: string;
   createdAt: string;
   updatedAt: string;
   lobbyId: number;
@@ -72,6 +73,10 @@ export default function SchedulingDetails({ id }: { id: number }) {
             />
             <DetailItem label="Local" content={scheduling.location} />
             <DetailItem label="Motivo" content={scheduling.reason} />
+            <DetailItem
+              label="Observações"
+              content={scheduling.comments || "Nenhuma"}
+            />
 
             <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
             <DetailItem

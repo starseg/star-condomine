@@ -124,7 +124,9 @@ export function VehicleForm() {
     })
   );
 
+  const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    setIsSendind(true);
     const lobby = params.get("lobby");
 
     const info = {
@@ -149,6 +151,8 @@ export function VehicleForm() {
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
+    } finally {
+      setIsSendind(false);
     }
   };
 
@@ -381,7 +385,7 @@ export function VehicleForm() {
           )}
         />
 
-        <Button type="submit" className="w-full text-lg">
+        <Button type="submit" className="w-full text-lg" disabled={isSending}>
           Registrar
         </Button>
       </form>

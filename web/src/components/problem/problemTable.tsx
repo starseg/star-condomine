@@ -19,6 +19,7 @@ import { formatDate } from "@/lib/utils";
 import { PencilLine, Trash } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
@@ -41,9 +42,17 @@ interface Problem {
 export default function ProblemTable({ lobby }: { lobby: string }) {
   const [problems, setProblems] = useState<Problem[]>([]);
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
   const fetchData = async () => {
     try {
-      const response = await api.get("lobbyProblem/lobby/" + lobby, {
+      let path;
+      if (!params.get("query")) {
+        path = "lobbyProblem/lobby/" + lobby;
+      } else {
+        path = `lobbyProblem/filtered/${lobby}?query=${params.get("query")}`;
+      }
+      const response = await api.get(path, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
@@ -55,7 +64,7 @@ export default function ProblemTable({ lobby }: { lobby: string }) {
   };
   useEffect(() => {
     fetchData();
-  }, [session]);
+  }, [session, searchParams]);
 
   // // console.log(devices);
 

@@ -7,6 +7,7 @@ import {
   deleteLobbyCalendar,
   getCalendarByLobby,
   getTodaysHoliday,
+  getFilteredCalendar,
 } from "../controllers/lobbyCalendar";
 import { checkAdminPermission } from "../middlewares/permissions";
 
@@ -16,6 +17,7 @@ lobbyCalendarRouter.get("/", getAllLobbyCalendars);
 lobbyCalendarRouter.get("/find/:id", getLobbyCalendar);
 lobbyCalendarRouter.get("/lobby/:lobby", getCalendarByLobby);
 lobbyCalendarRouter.get("/today/:lobby", getTodaysHoliday);
+lobbyCalendarRouter.get("/filtered/:lobby", getFilteredCalendar);
 lobbyCalendarRouter.post("/", createLobbyCalendar);
 lobbyCalendarRouter.put("/:id", updateLobbyCalendar);
 lobbyCalendarRouter.delete("/:id", checkAdminPermission, deleteLobbyCalendar);

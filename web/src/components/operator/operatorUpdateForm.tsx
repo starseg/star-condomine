@@ -19,6 +19,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import api from "@/lib/axios";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { useState } from "react";
 
 const FormSchema = z.object({
   type: z.enum(["ADMIN", "USER"]),
@@ -55,7 +56,9 @@ export function OperatorUpdateForm({
   const params = new URLSearchParams(searchParams);
   const router = useRouter();
 
+  const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    setIsSendind(true);
     try {
       const response = await api.put("operator/" + params.get("id"), data, {
         headers: {
@@ -67,6 +70,8 @@ export function OperatorUpdateForm({
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
+    } finally {
+      setIsSendind(false);
     }
   };
 
@@ -196,7 +201,7 @@ export function OperatorUpdateForm({
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full text-lg">
+        <Button type="submit" className="w-full text-lg" disabled={isSending}>
           Cadastrar
         </Button>
       </form>

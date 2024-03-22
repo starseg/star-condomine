@@ -12,6 +12,7 @@ import api from "@/lib/axios";
 import { PencilLine, Trash } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
@@ -31,9 +32,18 @@ interface Device {
 export default function DeviceTable({ lobby }: { lobby: string }) {
   const [devices, setDevices] = useState<Device[]>([]);
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
   const fetchData = async () => {
     try {
-      const response = await api.get("device/lobby/" + lobby, {
+      let path;
+      if (!params.get("query")) {
+        path = "device/lobby/" + lobby;
+        // console.log(path);
+      } else {
+        path = `device/filtered/${lobby}?query=${params.get("query")}`;
+      }
+      const response = await api.get(path, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
@@ -45,7 +55,7 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
   };
   useEffect(() => {
     fetchData();
-  }, [session]);
+  }, [session, searchParams]);
 
   // // console.log(devices);
 

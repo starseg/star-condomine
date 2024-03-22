@@ -17,10 +17,11 @@ model Operator {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  access       Access[]
-  scheduling   Scheduling[]
-  lobbyProblem LobbyProblem[]
-  logging      Logging[]
+  access         Access[]
+  scheduling     Scheduling[]
+  lobbyProblem   LobbyProblem[]
+  logging        Logging[]
+  schedulingList SchedulingList[]
 }
 
 model Lobby {
@@ -44,13 +45,15 @@ model Lobby {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
-  member        Member[]
-  scheduling    Scheduling[]
-  access        Access[]
-  lobbyProblem  LobbyProblem[]
-  lobbyCalendar LobbyCalendar[]
-  device        Device[]
-  visitor       Visitor[]
+  member         Member[]
+  scheduling     Scheduling[]
+  access         Access[]
+  lobbyProblem   LobbyProblem[]
+  lobbyCalendar  LobbyCalendar[]
+  device         Device[]
+  visitor        Visitor[]
+  vehicle        Vehicle[]
+  schedulingList SchedulingList[]
 }
 
 model Member {
@@ -81,11 +84,12 @@ model Member {
   lobby               Lobby        @relation(fields: [lobbyId], references: [lobbyId])
   lobbyId             Int
 
-  tag        Tag[]
-  scheduling Scheduling[]
-  telephone  Telephone[]
-  vehicle    Vehicle[]
-  access     Access[]
+  tag            Tag[]
+  scheduling     Scheduling[]
+  telephone      Telephone[]
+  vehicle        Vehicle[]
+  access         Access[]
+  schedulingList SchedulingList[]
 }
 
 model Telephone {
@@ -136,6 +140,9 @@ model Vehicle {
 
   member   Member @relation(fields: [memberId], references: [memberId], onDelete: Cascade)
   memberId Int
+
+  lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId], onDelete: Cascade)
+  lobbyId Int
 }
 
 model AddressType {
@@ -182,6 +189,7 @@ model Scheduling {
   location     String
   startDate    DateTime
   endDate      DateTime
+  comments     String?
   status       Status   @default(ACTIVE)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -301,6 +309,22 @@ model Notification {
   status         Status   @default(ACTIVE)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+}
+
+model SchedulingList {
+  schedulingListId Int      @id @default(autoincrement())
+  description      String   @db.VarChar(1000)
+  status           Status   @default(ACTIVE)
+  createdAt        DateTime @default(now())
+
+  member   Member @relation(fields: [memberId], references: [memberId])
+  memberId Int
+
+  operator   Operator @relation(fields: [operatorId], references: [operatorId])
+  operatorId Int
+
+  lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId])
+  lobbyId Int
 }
 
 enum Status {

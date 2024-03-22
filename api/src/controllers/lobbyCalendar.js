@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTodaysHoliday = exports.getCalendarByLobby = exports.deleteLobbyCalendar = exports.updateLobbyCalendar = exports.createLobbyCalendar = exports.getLobbyCalendar = exports.getAllLobbyCalendars = void 0;
+exports.getFilteredCalendar = exports.getTodaysHoliday = exports.getCalendarByLobby = exports.deleteLobbyCalendar = exports.updateLobbyCalendar = exports.createLobbyCalendar = exports.getLobbyCalendar = exports.getAllLobbyCalendars = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getAllLobbyCalendars = async (req, res) => {
@@ -105,3 +105,28 @@ const getTodaysHoliday = async (req, res) => {
     }
 };
 exports.getTodaysHoliday = getTodaysHoliday;
+const getFilteredCalendar = async (req, res) => {
+    try {
+        const lobby = parseInt(req.params.lobby, 10);
+        const { query } = req.query;
+        const whereCondition = query
+            ? {
+                OR: [{ description: { contains: query } }],
+                AND: { lobbyId: lobby },
+            }
+            : {};
+        const lobbyCalendar = await prisma.lobbyCalendar.findMany({
+            where: whereCondition,
+            orderBy: [{ date: "asc" }],
+        });
+        if (!lobbyCalendar) {
+            res.status(404).json({ error: "Nenhuma data encontrada" });
+            return;
+        }
+        res.json(lobbyCalendar);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao buscar as datas" });
+    }
+};
+exports.getFilteredCalendar = getFilteredCalendar;

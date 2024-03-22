@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "../ui/calendar";
 import { ptBR } from "date-fns/locale";
+import { useState } from "react";
 
 const FormSchema = z.object({
   description: z.string(),
@@ -43,7 +44,9 @@ export function CalendarForm() {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
 
+  const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    setIsSendind(true);
     const lobbyParam = params.get("lobby");
     const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
 
@@ -63,6 +66,8 @@ export function CalendarForm() {
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
+    } finally {
+      setIsSendind(false);
     }
   };
 
@@ -128,7 +133,7 @@ export function CalendarForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full text-lg">
+        <Button type="submit" className="w-full text-lg" disabled={isSending}>
           Registrar
         </Button>
       </form>

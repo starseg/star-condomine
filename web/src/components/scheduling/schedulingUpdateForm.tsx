@@ -39,11 +39,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { Textarea } from "../ui/textarea";
 const FormSchema = z.object({
   visitor: z.number(),
   member: z.number(),
   reason: z.string(),
   location: z.string(),
+  comments: z.string(),
   startDate: z.date(),
   endDate: z.date(),
   status: z.enum(["ACTIVE", "INACTIVE"]),
@@ -54,6 +56,7 @@ interface Values {
   endDate: Date | undefined;
   location: string;
   reason: string;
+  comments: string;
   status: "ACTIVE" | "INACTIVE" | undefined;
   member: number;
   visitor: number;
@@ -146,7 +149,9 @@ export function SchedulingUpdateForm({
     }
   };
 
+  const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    setIsSendind(true);
     const lobbyParam = params.get("lobby");
     const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
     const operator = session?.payload.user.id || null;
@@ -158,6 +163,7 @@ export function SchedulingUpdateForm({
       status: data.status,
       location: data.location,
       reason: data.reason,
+      comments: data.comments,
       memberId: data.member,
       visitorId: data.visitor,
       operatorId: operator,
@@ -175,6 +181,8 @@ export function SchedulingUpdateForm({
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
+    } finally {
+      setIsSendind(false);
     }
   };
 
@@ -469,7 +477,24 @@ export function SchedulingUpdateForm({
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full text-lg">
+        <FormField
+          control={form.control}
+          name="comments"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Observações</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Alguma informação adicional..."
+                  autoComplete="off"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit" className="w-full text-lg" disabled={isSending}>
           Atualizar
         </Button>
       </form>

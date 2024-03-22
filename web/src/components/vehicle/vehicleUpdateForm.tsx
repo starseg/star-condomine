@@ -130,7 +130,9 @@ export function VehicleUpdateForm({
     })
   );
 
+  const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    setIsSendind(true);
     const lobby = params.get("lobby");
     const id = params.get("id");
 
@@ -156,6 +158,8 @@ export function VehicleUpdateForm({
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
+    } finally {
+      setIsSendind(false);
     }
   };
 
@@ -388,7 +392,7 @@ export function VehicleUpdateForm({
           )}
         />
 
-        <Button type="submit" className="w-full text-lg">
+        <Button type="submit" className="w-full text-lg" disabled={isSending}>
           Atualizar
         </Button>
       </form>

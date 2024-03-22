@@ -49,13 +49,14 @@ const getScheduling = async (req, res) => {
 exports.getScheduling = getScheduling;
 const createScheduling = async (req, res) => {
     try {
-        const { reason, location, startDate, endDate, visitorId, lobbyId, memberId, operatorId, } = req.body;
+        const { reason, location, startDate, endDate, comments, visitorId, lobbyId, memberId, operatorId, } = req.body;
         const scheduling = await prisma.scheduling.create({
             data: {
                 reason,
                 location,
                 startDate,
                 endDate,
+                comments,
                 visitorId,
                 lobbyId,
                 memberId,
@@ -72,7 +73,7 @@ exports.createScheduling = createScheduling;
 const updateScheduling = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const { reason, location, startDate, endDate, status, visitorId, lobbyId, memberId, operatorId, } = req.body;
+        const { reason, location, startDate, endDate, comments, status, visitorId, lobbyId, memberId, operatorId, } = req.body;
         const scheduling = await prisma.scheduling.update({
             where: { schedulingId: id },
             data: {
@@ -80,6 +81,7 @@ const updateScheduling = async (req, res) => {
                 location,
                 startDate,
                 endDate,
+                comments,
                 status,
                 visitorId,
                 lobbyId,
@@ -126,7 +128,7 @@ const getSchedulingsByLobby = async (req, res) => {
                     },
                 },
             },
-            orderBy: [{ status: "asc" }, { endDate: "asc" }, { startDate: "desc" }],
+            orderBy: [{ status: "asc" }, { endDate: "desc" }, { startDate: "desc" }],
         });
         res.json(scheduling);
     }

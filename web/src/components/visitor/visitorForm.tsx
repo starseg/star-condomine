@@ -171,8 +171,9 @@ export function VisitorForm() {
   });
 
   const [isAccessing, setIsAccessing] = useState(false);
-
+  const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    setIsSendind(true);
     // PEGA O ID DA PORTARIA
     const lobbyParam = params.get("lobby");
     const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
@@ -226,6 +227,8 @@ export function VisitorForm() {
         } catch (error) {
           console.error("Erro ao enviar dados para a API:", error);
           throw error;
+        } finally {
+          setIsSendind(false);
         }
       }
 
@@ -521,7 +524,7 @@ export function VisitorForm() {
           )}
         </div>
 
-        <Button type="submit" className="w-full text-lg">
+        <Button type="submit" className="w-full text-lg" disabled={isSending}>
           Registrar
         </Button>
       </form>

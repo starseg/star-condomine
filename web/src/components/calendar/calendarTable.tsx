@@ -8,18 +8,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import api from "@/lib/axios";
-import { formatDate } from "@/lib/utils";
 import { PencilLine, Trash } from "@phosphor-icons/react/dist/ssr";
 import { format } from "date-fns";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
@@ -33,9 +27,17 @@ interface Calendar {
 export default function CalendarTable({ lobby }: { lobby: string }) {
   const [calendar, setCalendar] = useState<Calendar[]>([]);
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
   const fetchData = async () => {
     try {
-      const response = await api.get("lobbyCalendar/lobby/" + lobby, {
+      let path;
+      if (!params.get("query")) {
+        path = "lobbyCalendar/lobby/" + lobby;
+      } else {
+        path = `lobbyCalendar/filtered/${lobby}?query=${params.get("query")}`;
+      }
+      const response = await api.get(path, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
@@ -47,7 +49,7 @@ export default function CalendarTable({ lobby }: { lobby: string }) {
   };
   useEffect(() => {
     fetchData();
-  }, [session]);
+  }, [session, searchParams]);
 
   const deleteAction = async (id: number) => {
     try {

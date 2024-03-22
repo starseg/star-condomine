@@ -12,6 +12,7 @@ import api from "@/lib/axios";
 import { PencilLine, Trash } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
@@ -36,9 +37,17 @@ interface Vehicle {
 export default function VehicleTable({ lobby }: { lobby: string }) {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
   const fetchData = async () => {
     try {
-      let path = "vehicle";
+      let path;
+      if (!params.get("query")) {
+        path = "vehicle/lobby/" + lobby;
+        // console.log(path);
+      } else {
+        path = `vehicle/filtered/${lobby}?query=${params.get("query")}`;
+      }
       const response = await api.get(path, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
@@ -51,7 +60,7 @@ export default function VehicleTable({ lobby }: { lobby: string }) {
   };
   useEffect(() => {
     fetchData();
-  }, [session]);
+  }, [session, searchParams]);
 
   const deleteAction = async (id: number) => {
     try {
@@ -121,10 +130,8 @@ export default function VehicleTable({ lobby }: { lobby: string }) {
               <TableCell>{vehicle.brand}</TableCell>
               <TableCell>{vehicle.model}</TableCell>
               <TableCell>{vehicle.color}</TableCell>
-              <TableCell className="max-w-[20ch] overflow-hidden text-ellipsis whitespace-nowrap hover:overflow-auto hover:max-w-full">
-                {vehicle.member.name}
-              </TableCell>
-              <TableCell className="max-w-[20ch] overflow-hidden text-ellipsis whitespace-nowrap hover:overflow-auto hover:max-w-full">
+              <TableCell>{vehicle.member.name}</TableCell>
+              <TableCell>
                 {vehicle.comments ? vehicle.comments : "Nenhuma"}
               </TableCell>
               <TableCell className="flex gap-4 text-2xl">

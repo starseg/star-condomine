@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import api from "@/lib/axios";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { useState } from "react";
 
 const FormSchema = z.object({
   type: z.enum(["ADMIN", "USER"]),
@@ -45,7 +46,9 @@ export function OperatorForm() {
   const { data: session } = useSession();
   const router = useRouter();
 
+  const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    setIsSendind(true);
     try {
       const response = await api.post("operator", data, {
         headers: {
@@ -57,6 +60,8 @@ export function OperatorForm() {
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
+    } finally {
+      setIsSendind(false);
     }
   };
 
@@ -156,7 +161,7 @@ export function OperatorForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full text-lg">
+        <Button type="submit" className="w-full text-lg" disabled={isSending}>
           Cadastrar
         </Button>
       </form>

@@ -97,3 +97,35 @@ export const getProblemsByLobby = async (
     res.status(500).json({ error: "Erro ao buscar os problemas" });
   }
 };
+
+export const getFilteredLobbyProblem = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const { query } = req.query;
+
+    const whereCondition = query
+      ? {
+          OR: [
+            { title: { contains: query as string } },
+            { description: { contains: query as string } },
+          ],
+          AND: { lobbyId: lobby },
+        }
+      : {};
+    const lobbyProblem = await prisma.lobbyProblem.findMany({
+      where: whereCondition,
+      include: { operator: true },
+      orderBy: [{ status: "asc" }],
+    });
+    if (!lobbyProblem) {
+      res.status(404).json({ error: "Nenhum problema encontrado" });
+      return;
+    }
+    res.json(lobbyProblem);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os acessos" });
+  }
+};
