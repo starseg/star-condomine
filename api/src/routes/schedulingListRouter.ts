@@ -13,7 +13,7 @@ const schedulingListRouter = express.Router();
 
 schedulingListRouter.get("/", getAllSchedulingLists);
 schedulingListRouter.get("/find/:id", getSchedulingList);
-schedulingListRouter.get("/filtered/:lobby", getFilteredSchedulingLists);
+schedulingListRouter.get("/filtered", getFilteredSchedulingLists);
 schedulingListRouter.post("/", createSchedulingList);
 schedulingListRouter.put("/:id", updateSchedulingList);
 schedulingListRouter.delete("/:id", checkAdminPermission, deleteSchedulingList);

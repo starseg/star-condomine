@@ -12,7 +12,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import api from "@/lib/axios";
@@ -28,61 +27,46 @@ import {
   CommandItem,
 } from "../../ui/command";
 import { useSearchParams } from "next/navigation";
-import { Checkbox } from "../../ui/checkbox";
 import { Textarea } from "../../ui/textarea";
-import { format } from "date-fns";
 
 const FormSchema = z.object({
-  visitor: z.number(),
+  lobby: z.number(),
   member: z.number(),
-  reason: z.string(),
-  local: z.string(),
-  startTime: z.string(),
-  comments: z.string(),
-  currentDate: z.boolean(),
+  description: z.string(),
 });
 
-export function AccessForm() {
+export function SchedulingListForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      visitor: 0,
+      lobby: 0,
       member: 0,
-      reason: "",
-      local: "",
-      startTime: "",
-      comments: "",
-      currentDate: false,
+      description: "",
     },
   });
 
-  interface Visitor {
-    visitorId: number;
+  interface Lobby {
+    lobbyId: number;
     name: string;
-    access: [];
-    lobby: {
-      exitControl: "ACTIVE" | "INACTIVE";
-    };
   }
   interface Member {
     memberId: number;
     name: string;
+    lobbyId: number;
   }
 
   const { data: session } = useSession();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
 
-  const [visitors, setVisitors] = useState([]);
-  const fetchVisitors = async () => {
+  const [lobbies, setLobbies] = useState([]);
+  const fetchLobbies = async () => {
     try {
-      const response = await api.get("visitor/lobby/" + params.get("lobby"), {
+      const response = await api.get("lobby", {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      setVisitors(response.data);
+      setLobbies(response.data);
     } catch (error) {
       console.error("Erro ao obter dados:", error);
     }
@@ -91,7 +75,7 @@ export function AccessForm() {
   const [members, setMembers] = useState([]);
   const fetchMembers = async () => {
     try {
-      const response = await api.get("member/lobby/" + params.get("lobby"), {
+      const response = await api.get("member", {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
@@ -103,76 +87,71 @@ export function AccessForm() {
   };
 
   useEffect(() => {
-    fetchVisitors();
+    fetchLobbies();
     fetchMembers();
   }, [session]);
 
-  interface visitorItem {
-    value: number;
-    label: string;
-    openAccess: boolean;
-  }
-
-  interface memberItem {
+  interface LobbyItem {
     value: number;
     label: string;
   }
 
-  let visitorItems: visitorItem[] = [];
-  visitors.map((visitor: Visitor) =>
-    visitorItems.push({
-      value: visitor.visitorId,
-      label: visitor.name,
-      openAccess:
-        visitor.access.length > 0 && visitor.lobby.exitControl === "ACTIVE"
-          ? true
-          : false,
+  interface MemberItem {
+    value: number;
+    label: string;
+    lobbyId: number;
+  }
+
+  let lobbyItems: LobbyItem[] = [];
+  lobbies.map((lobby: Lobby) =>
+    lobbyItems.push({
+      value: lobby.lobbyId,
+      label: lobby.name,
     })
   );
 
-  let memberItems: memberItem[] = [];
+  let memberItems: MemberItem[] = [];
   members.map((member: Member) =>
     memberItems.push({
       value: member.memberId,
       label: member.name,
+      lobbyId: member.lobbyId,
     })
   );
+
+  const [filteredMemberItems, setFilteredMemberItems] = useState<MemberItem[]>(
+    []
+  );
+  const [lobbyField, setLobbyField] = useState(0);
+  useEffect(() => {
+    if (lobbyField !== 0) {
+      const filteredItems = memberItems.filter(
+        (item) => item.lobbyId === lobbyField
+      );
+      setFilteredMemberItems(filteredItems);
+    } else {
+      setFilteredMemberItems(memberItems);
+    }
+  }, [lobbyField]);
 
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
-    const lobbyParam = params.get("lobby");
-    const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
-    const control = params.get("c");
     const operator = session?.payload.user.id || null;
 
-    let realDate = "";
-    if (data.startTime !== "") {
-      const dateObject = new Date(data.startTime);
-      realDate = format(dateObject, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    }
-    if (data.currentDate) realDate = new Date().toISOString();
-    // console.log(realDate);
-
     const info = {
-      startTime: realDate,
-      local: data.local,
-      reason: data.reason,
-      comments: data.comments,
+      description: data.description,
       memberId: data.member,
-      visitorId: data.visitor,
       operatorId: operator,
-      lobbyId: lobby,
+      lobbyId: data.lobby,
     };
-    // console.log(info);
     try {
-      const response = await api.post("access", info, {
+      const response = await api.post("schedulingList", info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      // console.log(response.data);
-      router.push(`/dashboard/actions/access?lobby=${lobby}&c=${control}`);
+      router.push(`/schedulingList`);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
@@ -189,10 +168,10 @@ export function AccessForm() {
       >
         <FormField
           control={form.control}
-          name="visitor"
+          name="lobby"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Visitante</FormLabel>
+              <FormLabel>Portaria</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -205,29 +184,26 @@ export function AccessForm() {
                       )}
                     >
                       {field.value
-                        ? visitorItems.find(
-                            (item) => item.value === field.value
-                          )?.label
-                        : "Selecione o visitante que está acessando"}
+                        ? lobbyItems.find((item) => item.value === field.value)
+                            ?.label
+                        : "Selecione a portaria"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
                 <PopoverContent className="p-0">
                   <Command className="w-full">
-                    <CommandInput placeholder="Buscar visitante..." />
+                    <CommandInput placeholder="Buscar portaria..." />
                     <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
                     <CommandGroup>
-                      {visitorItems.map((item) => (
+                      {lobbyItems.map((item) => (
                         <CommandItem
                           value={item.label}
                           key={item.value}
                           onSelect={() => {
-                            form.setValue("visitor", item.value);
+                            form.setValue("lobby", item.value);
+                            setLobbyField(item.value);
                           }}
-                          className={cn(
-                            item.openAccess && "text-red-400 font-semibold"
-                          )}
                         >
                           <Check
                             className={cn(
@@ -254,7 +230,7 @@ export function AccessForm() {
           name="member"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Morador visitado / colaborador acionado</FormLabel>
+              <FormLabel>Visitado / Responsável</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -267,9 +243,10 @@ export function AccessForm() {
                       )}
                     >
                       {field.value
-                        ? memberItems.find((item) => item.value === field.value)
-                            ?.label
-                        : "Selecione quem está sendo visitado"}
+                        ? filteredMemberItems.find(
+                            (item) => item.value === field.value
+                          )?.label
+                        : "Selecione para quem é o agendamento"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </FormControl>
@@ -279,7 +256,7 @@ export function AccessForm() {
                     <CommandInput placeholder="Buscar pessoa..." />
                     <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
                     <CommandGroup>
-                      {memberItems.map((item) => (
+                      {filteredMemberItems.map((item) => (
                         <CommandItem
                           value={item.label}
                           key={item.value}
@@ -308,85 +285,13 @@ export function AccessForm() {
         />
         <FormField
           control={form.control}
-          name="reason"
+          name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Motivo</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Por que está sendo feita essa visita?"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="local"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Local da visita</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Para onde está indo? Casa, Salão de Festas..."
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="startTime"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Data e hora do acesso</FormLabel>
-              <FormControl>
-                <Input
-                  type="datetime-local"
-                  placeholder="Data e hora"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="currentDate"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <FormLabel className="font-normal">
-                Utilizar data e hora atuais
-              </FormLabel>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="comments"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Observações</FormLabel>
+              <FormLabel>Descrição</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Alguma informação adicional..."
+                  placeholder="Adicione aqui os detalhes passados pelo proprietário"
                   autoComplete="off"
                   {...field}
                 />

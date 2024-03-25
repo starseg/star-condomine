@@ -9,7 +9,7 @@ const permissions_1 = require("../middlewares/permissions");
 const schedulingListRouter = express_1.default.Router();
 schedulingListRouter.get("/", schedulingList_1.getAllSchedulingLists);
 schedulingListRouter.get("/find/:id", schedulingList_1.getSchedulingList);
-schedulingListRouter.get("/filtered/:lobby", schedulingList_1.getFilteredSchedulingLists);
+schedulingListRouter.get("/filtered", schedulingList_1.getFilteredSchedulingLists);
 schedulingListRouter.post("/", schedulingList_1.createSchedulingList);
 schedulingListRouter.put("/:id", schedulingList_1.updateSchedulingList);
 schedulingListRouter.delete("/:id", permissions_1.checkAdminPermission, schedulingList_1.deleteSchedulingList);
