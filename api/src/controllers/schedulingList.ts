@@ -26,6 +26,7 @@ export const getAllSchedulingLists = async (
           },
         },
       },
+      orderBy: [{ status: "asc" }, { lobby: { name: "asc" } }],
     });
     res.json(schedulingList);
   } catch (error) {

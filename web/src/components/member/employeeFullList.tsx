@@ -3,7 +3,7 @@ import api from "@/lib/axios";
 import { UserCircle } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { formatDate } from "@/lib/utils";
 
 interface Member {

@@ -54,7 +54,7 @@ export default function SchedulingDetails({ id }: { id: number }) {
     <div>
       {scheduling ? (
         <>
-          <div className="max-w-2xl mx-auto border border-primary py-4 px-12 rounded-md">
+          <div className="max-w-2xl mx-auto border border-primary py-4 px-12 rounded-md mt-4">
             <DetailItem label="Visitante" content={scheduling.visitor.name} />
             <DetailItem label="Visitado" content={scheduling.member.name} />
             <DetailItem

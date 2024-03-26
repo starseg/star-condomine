@@ -45,6 +45,7 @@ const FormSchema = z.object({
   phone: z.string(),
   type: z.string(),
   relation: z.string(),
+  visitorComments: z.string(),
 
   isAccessing: z.boolean(),
   host: z.number().optional(),
@@ -64,6 +65,7 @@ export function VisitorForm() {
       phone: "",
       type: "1",
       relation: "",
+      visitorComments: "",
       isAccessing: false,
       host: 0,
       reason: "",
@@ -194,6 +196,7 @@ export function VisitorForm() {
         phone: data.phone,
         visitorTypeId: Number(data.type),
         relation: data.relation,
+        comments: data.visitorComments,
         startDate: null,
         endDate: null,
         lobbyId: Number(lobby),
@@ -381,6 +384,22 @@ export function VisitorForm() {
                   type="text"
                   placeholder="Qual é a relação desse visitante com a portaria?"
                   autoComplete="off"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="visitorComments"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Observações</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Alguma informação adicional..."
                   {...field}
                 />
               </FormControl>

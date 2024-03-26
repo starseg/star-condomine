@@ -23,6 +23,7 @@ const getAllSchedulingLists = async (req, res) => {
                     },
                 },
             },
+            orderBy: [{ status: "asc" }, { lobby: { name: "asc" } }],
         });
         res.json(schedulingList);
     }

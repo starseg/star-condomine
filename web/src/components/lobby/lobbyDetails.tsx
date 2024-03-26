@@ -109,7 +109,7 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
     <div>
       {details ? (
         <>
-          <div className="max-w-2xl mx-auto border border-primary py-4 px-12 rounded-md">
+          <div className="max-w-2xl mx-auto border border-primary py-4 px-12 rounded-md mt-4">
             <DetailItem label="Nome" content={details.name} />
             <DetailItem
               label="Tipo"

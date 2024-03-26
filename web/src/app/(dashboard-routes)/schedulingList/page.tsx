@@ -19,7 +19,9 @@ export default function SchedulingList() {
         <div className="flex justify-end mb-2">
           <Search placeholder="Buscar..." pagination={false} />
         </div>
-        <SchedulingListItems />
+        <div className="max-h-[60vh] overflow-x-auto">
+          <SchedulingListItems />
+        </div>
         <div className="mt-4 flex gap-4 items-center">
           <Link href={"schedulingList/new"}>
             <Button className="self-end text-lg flex gap-2">

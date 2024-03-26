@@ -22,9 +22,6 @@ export default function LobbyCard(props: LobbyCardProps) {
         },
         {
           "border-red-500": props.status === 1,
-        },
-        {
-          "border-yellow-500": props.status === 2,
         }
       )}
     >
@@ -39,7 +36,7 @@ export default function LobbyCard(props: LobbyCardProps) {
           ) : props.status === 1 ? (
             <SmileySad weight="fill" size={32} className="text-red-500" />
           ) : (
-            <SmileyMeh weight="fill" size={32} className="text-yellow-500" />
+            ""
           )}
         </p>
       </div>
@@ -47,7 +44,7 @@ export default function LobbyCard(props: LobbyCardProps) {
         <p className="w-1/2">
           Ramais:
           <br />
-          {props.ramais}
+          {props.ramais != "0" && props.ramais}
         </p>
         <p className="w-1/2 text-right text-sm">{props.location}</p>
       </div>

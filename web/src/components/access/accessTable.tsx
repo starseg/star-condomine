@@ -141,6 +141,32 @@ export default function AccessTable({ lobby }: { lobby: string }) {
     }
   };
 
+  const duplicateEntries: Record<number, Access[]> = {};
+
+  // Identificar registros duplicados sem data de saída
+  access.forEach((item: Access) => {
+    if (!item.endTime) {
+      if (!duplicateEntries[item.visitorId]) {
+        duplicateEntries[item.visitorId] = [];
+      }
+      duplicateEntries[item.visitorId].push(item);
+    }
+  });
+
+  // Objeto para armazenar os registros mais antigos entre os duplicados
+  const oldestEntries: Record<number, Access> = {};
+  Object.values(duplicateEntries).forEach((entries) => {
+    entries.forEach((entry) => {
+      if (
+        !oldestEntries[entry.visitorId] ||
+        new Date(entry.startTime) <
+          new Date(oldestEntries[entry.visitorId].startTime)
+      ) {
+        oldestEntries[entry.visitorId] = entry;
+      }
+    });
+  });
+
   return (
     <Table className="border border-stone-800 rouded-lg">
       <TableHeader className="bg-stone-800 font-semibold">
@@ -154,8 +180,15 @@ export default function AccessTable({ lobby }: { lobby: string }) {
       </TableHeader>
       <TableBody className="uppercase">
         {access.map((item) => {
+          const isOldestEntry: boolean =
+            oldestEntries[item.visitorId] &&
+            control === "S" &&
+            oldestEntries[item.visitorId].accessId === item.accessId;
+          const nameStyle: React.CSSProperties = isOldestEntry
+            ? { color: "#f87171", fontWeight: "bold" }
+            : {};
           return (
-            <TableRow key={item.accessId}>
+            <TableRow key={item.accessId} style={nameStyle}>
               <TableCell>
                 <p className="max-w-[25ch]">{item.visitor.name}</p>
               </TableCell>

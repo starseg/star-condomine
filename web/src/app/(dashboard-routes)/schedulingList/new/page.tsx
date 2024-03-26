@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function Notification() {
   return (
     <>
-      <Menu url={`/dashboard`} />
+      <Menu />
       <section className="flex flex-col justify-center items-center mb-12">
         <h1 className="text-4xl mt-2 text-center">
           Criar lista de agendamento

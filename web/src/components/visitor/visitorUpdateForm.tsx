@@ -22,20 +22,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MaskedInput } from "../maskedInput";
 import { useEffect, useState } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { cn } from "@/lib/utils";
-import { CalendarIcon } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { addDays, format } from "date-fns";
-import { Calendar } from "../ui/calendar";
-import { ptBR } from "date-fns/locale";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { Textarea } from "../ui/textarea";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -45,6 +33,7 @@ const FormSchema = z.object({
   phone: z.string(),
   type: z.string(),
   relation: z.string(),
+  comments: z.string(),
   status: z.enum(["ACTIVE", "INACTIVE"]),
 });
 
@@ -57,6 +46,7 @@ interface Visitor {
   phone: string;
   status: "ACTIVE" | "INACTIVE" | undefined;
   relation: string;
+  comments: string;
   createdAt: string;
   updatedAt: string;
   visitorTypeId: number;
@@ -73,6 +63,7 @@ interface Values {
   phone: string;
   status: "ACTIVE" | "INACTIVE" | undefined;
   relation: string;
+  comments: string;
   type: string;
 }
 
@@ -176,14 +167,14 @@ export function VisitorUpdateForm({
         phone: data.phone,
         visitorTypeId: Number(data.type),
         relation: data.relation,
+        comments: data.comments,
         status: data.status,
       };
-      const response = await api.put("visitor/" + visitor.visitorId, info, {
+      await api.put("visitor/" + visitor.visitorId, info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      // console.log(response.data);
 
       router.push("/dashboard/actions/visitor?lobby=" + lobby);
     } catch (error) {
@@ -372,6 +363,22 @@ export function VisitorUpdateForm({
                     <FormLabel className="font-normal">Bloqueado</FormLabel>
                   </FormItem>
                 </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="comments"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Observações</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Alguma informação adicional..."
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

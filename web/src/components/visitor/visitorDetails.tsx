@@ -1,11 +1,10 @@
 "use client";
 import api from "@/lib/axios";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import LoadingIcon from "../loadingIcon";
 import DetailItem from "../detailItem";
-import { formatDate, simpleDateFormat } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 
 interface Visitor {
   visitorId: number;
@@ -16,6 +15,7 @@ interface Visitor {
   phone: string;
   status: string;
   relation: string;
+  comments: string;
   createdAt: string;
   updatedAt: string;
   visitorType: {
@@ -47,7 +47,7 @@ export default function VisitorDetails({ id }: { id: number }) {
     <div>
       {visitor ? (
         <>
-          <div className="max-w-2xl mx-auto border border-primary py-4 px-12 rounded-md">
+          <div className="max-w-2xl mx-auto border border-primary py-4 px-12 rounded-md mt-4">
             {visitor.profileUrl.length > 0 ? (
               <img
                 src={visitor.profileUrl}
@@ -72,6 +72,10 @@ export default function VisitorDetails({ id }: { id: number }) {
               content={visitor.visitorType.description}
             />
             <DetailItem label="Relação" content={visitor.relation} />
+            <DetailItem
+              label="Observações"
+              content={visitor.comments ? visitor.comments : "Sem observações"}
+            />
 
             <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
             <DetailItem

@@ -17,6 +17,7 @@ export default function UpdateVisitor() {
     phone: string;
     status: "ACTIVE" | "INACTIVE" | undefined;
     relation: string;
+    comments: string;
     createdAt: string;
     updatedAt: string;
     visitorTypeId: number;
@@ -33,6 +34,7 @@ export default function UpdateVisitor() {
     phone: string;
     status: "ACTIVE" | "INACTIVE" | undefined;
     relation: string;
+    comments: string;
     type: string;
   }
   const { data: session } = useSession();
@@ -67,6 +69,7 @@ export default function UpdateVisitor() {
         phone: visitor?.phone || "",
         status: visitor?.status || "ACTIVE",
         relation: visitor?.relation || "",
+        comments: visitor?.comments || "",
         type: visitor?.visitorTypeId.toString() || "",
       });
     }

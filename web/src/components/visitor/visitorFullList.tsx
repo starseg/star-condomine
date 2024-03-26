@@ -15,6 +15,7 @@ interface Visitor {
   phone: string;
   status: string;
   relation: string;
+  comments: string;
   createdAt: string;
   updatedAt: string;
   visitorType: {
@@ -84,6 +85,11 @@ export default function VisitorFullList({ lobby }: { lobby: string }) {
             <p>Relação: {visitor.relation}</p>
             <p>Data de registro: {formatDate(visitor.createdAt)}</p>
             <p>Última atualização: {formatDate(visitor.updatedAt)}</p>
+          </div>
+          <div className="flex flex-col gap-1 font-bold">
+            <p>
+              Observações: {visitor.comments ? visitor.comments : "Nenhuma"}
+            </p>
           </div>
         </div>
       ))}

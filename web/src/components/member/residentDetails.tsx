@@ -61,7 +61,7 @@ export default function residentDetails({ id }: { id: number }) {
     <div>
       {member ? (
         <>
-          <div className="max-w-2xl mx-auto border border-primary py-4 px-12 rounded-md">
+          <div className="max-w-2xl mx-auto border border-primary py-4 px-12 rounded-md mt-4">
             {member.profileUrl.length > 0 ? (
               <img
                 src={member.profileUrl}

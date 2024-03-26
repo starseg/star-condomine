@@ -31,10 +31,10 @@ CREATE TABLE `Lobby` (
     `number` VARCHAR(191) NOT NULL,
     `complement` VARCHAR(191) NULL,
     `type` ENUM('CONDOMINIUM', 'COMPANY') NOT NULL,
+    `exitControl` ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'ACTIVE',
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `Lobby_cnpj_key`(`cnpj`),
     PRIMARY KEY (`lobbyId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -110,6 +110,7 @@ CREATE TABLE `Vehicle` (
     `comments` VARCHAR(191) NULL,
     `vehicleTypeId` INTEGER NOT NULL,
     `memberId` INTEGER NOT NULL,
+    `lobbyId` INTEGER NOT NULL,
 
     UNIQUE INDEX `Vehicle_licensePlate_key`(`licensePlate`),
     UNIQUE INDEX `Vehicle_tag_key`(`tag`),
@@ -144,6 +145,7 @@ CREATE TABLE `Visitor` (
     `endDate` DATETIME(3) NULL,
     `status` ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'ACTIVE',
     `relation` VARCHAR(191) NULL,
+    `comments` VARCHAR(300) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
     `visitorTypeId` INTEGER NOT NULL,
@@ -159,6 +161,7 @@ CREATE TABLE `Scheduling` (
     `location` VARCHAR(191) NOT NULL,
     `startDate` DATETIME(3) NOT NULL,
     `endDate` DATETIME(3) NOT NULL,
+    `comments` VARCHAR(191) NULL,
     `status` ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'ACTIVE',
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
@@ -254,13 +257,40 @@ CREATE TABLE `Feedback` (
     `feedbackId` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NULL,
     `subject` VARCHAR(191) NOT NULL,
-    `message` VARCHAR(191) NOT NULL,
-    `response` VARCHAR(191) NULL,
+    `message` VARCHAR(1000) NOT NULL,
+    `response` VARCHAR(1000) NULL,
     `status` ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'ACTIVE',
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`feedbackId`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Notification` (
+    `notificationId` INTEGER NOT NULL AUTO_INCREMENT,
+    `date` DATETIME(3) NOT NULL,
+    `title` VARCHAR(191) NOT NULL,
+    `message` VARCHAR(1000) NOT NULL,
+    `status` ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'ACTIVE',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`notificationId`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `SchedulingList` (
+    `schedulingListId` INTEGER NOT NULL AUTO_INCREMENT,
+    `description` VARCHAR(1000) NOT NULL,
+    `status` ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'ACTIVE',
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `UpdatedAt` DATETIME(3) NOT NULL,
+    `memberId` INTEGER NOT NULL,
+    `operatorId` INTEGER NOT NULL,
+    `lobbyId` INTEGER NOT NULL,
+
+    PRIMARY KEY (`schedulingListId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
@@ -270,19 +300,22 @@ ALTER TABLE `Member` ADD CONSTRAINT `Member_addressTypeId_fkey` FOREIGN KEY (`ad
 ALTER TABLE `Member` ADD CONSTRAINT `Member_lobbyId_fkey` FOREIGN KEY (`lobbyId`) REFERENCES `Lobby`(`lobbyId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Telephone` ADD CONSTRAINT `Telephone_memberId_fkey` FOREIGN KEY (`memberId`) REFERENCES `Member`(`memberId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Telephone` ADD CONSTRAINT `Telephone_memberId_fkey` FOREIGN KEY (`memberId`) REFERENCES `Member`(`memberId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Tag` ADD CONSTRAINT `Tag_tagTypeId_fkey` FOREIGN KEY (`tagTypeId`) REFERENCES `TagType`(`tagTypeId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Tag` ADD CONSTRAINT `Tag_memberId_fkey` FOREIGN KEY (`memberId`) REFERENCES `Member`(`memberId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Tag` ADD CONSTRAINT `Tag_memberId_fkey` FOREIGN KEY (`memberId`) REFERENCES `Member`(`memberId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Vehicle` ADD CONSTRAINT `Vehicle_vehicleTypeId_fkey` FOREIGN KEY (`vehicleTypeId`) REFERENCES `VehicleType`(`vehicleTypeId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Vehicle` ADD CONSTRAINT `Vehicle_memberId_fkey` FOREIGN KEY (`memberId`) REFERENCES `Member`(`memberId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Vehicle` ADD CONSTRAINT `Vehicle_memberId_fkey` FOREIGN KEY (`memberId`) REFERENCES `Member`(`memberId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Vehicle` ADD CONSTRAINT `Vehicle_lobbyId_fkey` FOREIGN KEY (`lobbyId`) REFERENCES `Lobby`(`lobbyId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Visitor` ADD CONSTRAINT `Visitor_visitorTypeId_fkey` FOREIGN KEY (`visitorTypeId`) REFERENCES `VisitorType`(`visitorTypeId`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -331,3 +364,12 @@ ALTER TABLE `Device` ADD CONSTRAINT `Device_lobbyId_fkey` FOREIGN KEY (`lobbyId`
 
 -- AddForeignKey
 ALTER TABLE `Logging` ADD CONSTRAINT `Logging_operatorId_fkey` FOREIGN KEY (`operatorId`) REFERENCES `Operator`(`operatorId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `SchedulingList` ADD CONSTRAINT `SchedulingList_memberId_fkey` FOREIGN KEY (`memberId`) REFERENCES `Member`(`memberId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `SchedulingList` ADD CONSTRAINT `SchedulingList_operatorId_fkey` FOREIGN KEY (`operatorId`) REFERENCES `Operator`(`operatorId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `SchedulingList` ADD CONSTRAINT `SchedulingList_lobbyId_fkey` FOREIGN KEY (`lobbyId`) REFERENCES `Lobby`(`lobbyId`) ON DELETE RESTRICT ON UPDATE CASCADE;

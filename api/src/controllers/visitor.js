@@ -33,7 +33,7 @@ const getVisitor = async (req, res) => {
 exports.getVisitor = getVisitor;
 const createVisitor = async (req, res) => {
     try {
-        const { profileUrl, name, rg, cpf, phone, startDate, endDate, relation, visitorTypeId, lobbyId, } = req.body;
+        const { profileUrl, name, rg, cpf, phone, startDate, endDate, relation, comments, visitorTypeId, lobbyId, } = req.body;
         const visitor = await prisma.visitor.create({
             data: {
                 profileUrl,
@@ -44,6 +44,7 @@ const createVisitor = async (req, res) => {
                 startDate,
                 endDate,
                 relation,
+                comments,
                 visitorTypeId,
                 lobbyId,
             },
@@ -58,7 +59,7 @@ exports.createVisitor = createVisitor;
 const updateVisitor = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const { profileUrl, name, rg, cpf, phone, startDate, endDate, relation, status, visitorTypeId, } = req.body;
+        const { profileUrl, name, rg, cpf, phone, startDate, endDate, relation, comments, status, visitorTypeId, } = req.body;
         const visitor = await prisma.visitor.update({
             where: { visitorId: id },
             data: {
@@ -70,6 +71,7 @@ const updateVisitor = async (req, res) => {
                 startDate,
                 endDate,
                 relation,
+                comments,
                 status,
                 visitorTypeId,
             },

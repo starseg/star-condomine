@@ -156,6 +156,7 @@ export function LobbyUpdateForm({
         telephone: data.telephone,
         schedules: data.schedules,
         procedures: data.procedures,
+        exitControl: data.exitControl,
         cep: data.cep,
         state: data.state,
         city: data.city,
@@ -165,7 +166,7 @@ export function LobbyUpdateForm({
         complement: data.complement,
         datasheet: file,
       };
-      const response = await api.put("lobby/" + id, info, {
+      await api.put("lobby/" + id, info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
