@@ -127,9 +127,10 @@ export function VehicleForm() {
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
-    const lobby = params.get("lobby");
+    const lobby = Number(params.get("lobby"));
 
     const info = {
+      lobbyId: lobby,
       memberId: data.member,
       vehicleTypeId: data.vehicleType,
       licensePlate: data.licensePlate,

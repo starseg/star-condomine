@@ -120,7 +120,7 @@ export function LoginForm() {
               </div>
             </div>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex flex-col gap-4">
             <Button type="submit" className="w-full">
               Entrar
             </Button>
