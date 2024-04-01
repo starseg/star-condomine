@@ -22,6 +22,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { SkeletonTable } from "../_skeletons/skeleton-table";
+import { deleteAction } from "@/lib/delete-action";
 
 interface Scheduling {
   schedulingId: number;
@@ -45,6 +47,7 @@ interface Scheduling {
 }
 
 export default function SchedulingTable({ lobby }: { lobby: string }) {
+  const [isLoading, setIsLoading] = useState(true);
   const [scheduling, setScheduling] = useState<Scheduling[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
@@ -66,6 +69,7 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
         },
       });
       setScheduling(response.data);
+      setIsLoading(false);
     } catch (error) {
       console.error("Erro ao obter dados:", error);
     }
@@ -74,47 +78,8 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
     fetchData();
   }, [session, searchParams]);
 
-  const deleteAction = async (id: number) => {
-    try {
-      await api.delete("scheduling/" + id, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      fetchData();
-      Swal.fire({
-        title: "Excluído!",
-        text: "Esse agendamento acabou de ser apagado.",
-        icon: "success",
-      });
-    } catch (error) {
-      console.error("Erro excluir dado:", error);
-    }
-  };
-
   const deleteScheduling = async (id: number) => {
-    if (session?.payload.user.type === "USER") {
-      Swal.fire({
-        title: "Operação não permitida",
-        text: "Sua permissão de usuário não permite exclusões",
-        icon: "warning",
-      });
-    } else {
-      Swal.fire({
-        title: "Excluir agendamento?",
-        text: "Essa ação não poderá ser revertida!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#43C04F",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Sim, excluir!",
-        cancelButtonText: "Cancelar",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          deleteAction(id);
-        }
-      });
-    }
+    deleteAction(session, "agendamento", `scheduling/${id}`, fetchData);
   };
 
   const operator = session?.payload.user.id || null;
@@ -152,94 +117,104 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
   let currentDateUTC = currentDate.toISOString();
 
   return (
-    <Table className="border border-stone-800 rouded-lg">
-      <TableHeader className="bg-stone-800 font-semibold">
-        <TableRow>
-          <TableHead>Visitante</TableHead>
-          <TableHead>Visitado</TableHead>
-          <TableHead>Validade do acesso</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Ações</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody className="uppercase">
-        {scheduling.map((item) => {
-          return (
-            <TableRow key={item.schedulingId}>
-              <TableCell>
-                <p className="max-w-[25ch]">{item.visitor.name}</p>
-              </TableCell>
-              <TableCell>
-                <p className="max-w-[25ch]">{item.member.name}</p>
-              </TableCell>
-              <TableCell>
-                {item.endDate >= currentDateUTC ? (
-                  <p className="text-green-400">
-                    {simpleDateFormat(item.startDate) +
-                      " - " +
-                      simpleDateFormat(item.endDate)}
-                  </p>
-                ) : (
-                  <p className="text-red-500">
-                    {simpleDateFormat(item.startDate) +
-                      " - " +
-                      simpleDateFormat(item.endDate)}
-                  </p>
-                )}
-              </TableCell>
-              <TableCell>
-                {item.status === "ACTIVE" ? (
-                  <p className="text-green-400">ATIVO</p>
-                ) : (
-                  <p className="text-red-400">INATIVO</p>
-                )}
-              </TableCell>
-              <TableCell className="flex gap-4 text-2xl">
-                {item.status === "INACTIVE" || item.endDate < currentDateUTC ? (
-                  <button disabled title="Não disponível para registrar acesso">
-                    <FilePlus className="text-muted" />
-                  </button>
-                ) : (
-                  <button
-                    title="Registrar acesso"
-                    onClick={() =>
-                      registerAccess(
-                        item.visitorId,
-                        item.memberId,
-                        item.reason,
-                        item.location
-                      )
-                    }
-                  >
-                    <FilePlus />
-                  </button>
-                )}
-                <Link href={`scheduling/details?id=${item.schedulingId}`}>
-                  <MagnifyingGlass />
-                </Link>
-                <Link
-                  href={`scheduling/update?lobby=${item.lobbyId}&id=${item.schedulingId}`}
-                >
-                  <PencilLine />
-                </Link>
-                <button
-                  onClick={() => deleteScheduling(item.schedulingId)}
-                  title="Excluir"
-                >
-                  <Trash />
-                </button>
+    <>
+      {isLoading ? (
+        <SkeletonTable />
+      ) : (
+        <Table className="border border-stone-800 rouded-lg">
+          <TableHeader className="bg-stone-800 font-semibold">
+            <TableRow>
+              <TableHead>Visitante</TableHead>
+              <TableHead>Visitado</TableHead>
+              <TableHead>Validade do acesso</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="uppercase">
+            {scheduling.map((item) => {
+              return (
+                <TableRow key={item.schedulingId}>
+                  <TableCell>
+                    <p className="max-w-[25ch]">{item.visitor.name}</p>
+                  </TableCell>
+                  <TableCell>
+                    <p className="max-w-[25ch]">{item.member.name}</p>
+                  </TableCell>
+                  <TableCell>
+                    {item.endDate >= currentDateUTC ? (
+                      <p className="text-green-400">
+                        {simpleDateFormat(item.startDate) +
+                          " - " +
+                          simpleDateFormat(item.endDate)}
+                      </p>
+                    ) : (
+                      <p className="text-red-500">
+                        {simpleDateFormat(item.startDate) +
+                          " - " +
+                          simpleDateFormat(item.endDate)}
+                      </p>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {item.status === "ACTIVE" ? (
+                      <p className="text-green-400">ATIVO</p>
+                    ) : (
+                      <p className="text-red-400">INATIVO</p>
+                    )}
+                  </TableCell>
+                  <TableCell className="flex gap-4 text-2xl">
+                    {item.status === "INACTIVE" ||
+                    item.endDate < currentDateUTC ? (
+                      <button
+                        disabled
+                        title="Não disponível para registrar acesso"
+                      >
+                        <FilePlus className="text-muted" />
+                      </button>
+                    ) : (
+                      <button
+                        title="Registrar acesso"
+                        onClick={() =>
+                          registerAccess(
+                            item.visitorId,
+                            item.memberId,
+                            item.reason,
+                            item.location
+                          )
+                        }
+                      >
+                        <FilePlus />
+                      </button>
+                    )}
+                    <Link href={`scheduling/details?id=${item.schedulingId}`}>
+                      <MagnifyingGlass />
+                    </Link>
+                    <Link
+                      href={`scheduling/update?lobby=${item.lobbyId}&id=${item.schedulingId}`}
+                    >
+                      <PencilLine />
+                    </Link>
+                    <button
+                      onClick={() => deleteScheduling(item.schedulingId)}
+                      title="Excluir"
+                    >
+                      <Trash />
+                    </button>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell className="text-right" colSpan={5}>
+                Total de registros: {scheduling.length}
               </TableCell>
             </TableRow>
-          );
-        })}
-      </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TableCell className="text-right" colSpan={5}>
-            Total de registros: {scheduling.length}
-          </TableCell>
-        </TableRow>
-      </TableFooter>
-    </Table>
+          </TableFooter>
+        </Table>
+      )}
+    </>
   );
 }

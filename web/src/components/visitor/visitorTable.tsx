@@ -19,6 +19,8 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { SkeletonTable } from "../_skeletons/skeleton-table";
+import { deleteAction } from "@/lib/delete-action";
 
 interface Visitor {
   visitorId: number;
@@ -43,6 +45,7 @@ interface Visitor {
 }
 
 export default function VisitorTable({ lobby }: { lobby: string }) {
+  const [isLoading, setIsLoading] = useState(true);
   const [visitors, setVisitors] = useState<Visitor[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
@@ -63,6 +66,7 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
         },
       });
       setVisitors(response.data);
+      setIsLoading(false);
     } catch (error) {
       console.error("Erro ao obter dados:", error);
     }
@@ -71,112 +75,79 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
     fetchData();
   }, [session, searchParams]);
 
-  const deleteAction = async (id: number) => {
-    try {
-      await api.delete("visitor/" + id, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      fetchData();
-      Swal.fire({
-        title: "Excluído!",
-        text: "Esse operador acabou de ser apagado.",
-        icon: "success",
-      });
-    } catch (error) {
-      console.error("Erro excluir dado:", error);
-    }
-  };
-
   const deleteVisitor = async (id: number) => {
-    if (session?.payload.user.type === "USER") {
-      Swal.fire({
-        title: "Operação não permitida",
-        text: "Sua permissão de usuário não permite exclusões",
-        icon: "warning",
-      });
-    } else {
-      Swal.fire({
-        title: "Excluir visitante?",
-        text: "Isso não é recomendado, o ideal seria inativar o visitante apenas. Ele não pode ser excluído se tiver algum acesso registrado no sistema.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#43C04F",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Sim, excluir!",
-        cancelButtonText: "Cancelar",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          deleteAction(id);
-        }
-      });
-    }
+    deleteAction(session, "visitante", `visitor/${id}`, fetchData);
   };
 
   return (
-    <Table className="border border-stone-800 rouded-lg">
-      <TableHeader className="bg-stone-800 font-semibold">
-        <TableRow>
-          <TableHead>CPF</TableHead>
-          <TableHead>Nome</TableHead>
-          <TableHead>Tipo</TableHead>
-          <TableHead>Agendamento</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Ações</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody className="uppercase">
-        {visitors.map((visitor) => (
-          <TableRow key={visitor.visitorId}>
-            <TableCell>{visitor.cpf}</TableCell>
-            <TableCell>{visitor.name}</TableCell>
-            <TableCell>{visitor.visitorType.description}</TableCell>
-            <TableCell>
-              {visitor.scheduling.length > 0 ? (
-                <Link
-                  href={`scheduling?lobby=${lobby}&c=${control}&query=${visitor.name}`}
-                  className="text-green-300 flex gap-1 items-center"
-                >
-                  Sim - <MagnifyingGlass size={18} />
-                </Link>
-              ) : (
-                <p className="text-red-200">Não</p>
-              )}
-            </TableCell>
-            <TableCell>
-              {visitor.status === "ACTIVE" ? (
-                <p className="text-green-500">ATIVO</p>
-              ) : (
-                <p className="text-red-400">BLOQUEADO</p>
-              )}
-            </TableCell>
-            <TableCell className="flex gap-4 text-2xl">
-              <Link href={`visitor/details?id=${visitor.visitorId}`}>
-                <MagnifyingGlass />
-              </Link>
-              <Link
-                href={`visitor/update?id=${visitor.visitorId}&lobby=${lobby}`}
-              >
-                <PencilLine />
-              </Link>
-              <button
-                onClick={() => deleteVisitor(visitor.visitorId)}
-                title="Excluir"
-              >
-                <Trash />
-              </button>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TableCell className="text-right" colSpan={6}>
-            Total de registros: {visitors.length}
-          </TableCell>
-        </TableRow>
-      </TableFooter>
-    </Table>
+    <>
+      {isLoading ? (
+        <SkeletonTable />
+      ) : (
+        <Table className="border border-stone-800 rouded-lg">
+          <TableHeader className="bg-stone-800 font-semibold">
+            <TableRow>
+              <TableHead>CPF</TableHead>
+              <TableHead>Nome</TableHead>
+              <TableHead>Tipo</TableHead>
+              <TableHead>Agendamento</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="uppercase">
+            {visitors.map((visitor) => (
+              <TableRow key={visitor.visitorId}>
+                <TableCell>{visitor.cpf}</TableCell>
+                <TableCell>{visitor.name}</TableCell>
+                <TableCell>{visitor.visitorType.description}</TableCell>
+                <TableCell>
+                  {visitor.scheduling.length > 0 ? (
+                    <Link
+                      href={`scheduling?lobby=${lobby}&c=${control}&query=${visitor.name}`}
+                      className="text-green-300 flex gap-1 items-center"
+                    >
+                      Sim - <MagnifyingGlass size={18} />
+                    </Link>
+                  ) : (
+                    <p className="text-red-200">Não</p>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {visitor.status === "ACTIVE" ? (
+                    <p className="text-green-500">ATIVO</p>
+                  ) : (
+                    <p className="text-red-400">BLOQUEADO</p>
+                  )}
+                </TableCell>
+                <TableCell className="flex gap-4 text-2xl">
+                  <Link href={`visitor/details?id=${visitor.visitorId}`}>
+                    <MagnifyingGlass />
+                  </Link>
+                  <Link
+                    href={`visitor/update?id=${visitor.visitorId}&lobby=${lobby}`}
+                  >
+                    <PencilLine />
+                  </Link>
+                  <button
+                    onClick={() => deleteVisitor(visitor.visitorId)}
+                    title="Excluir"
+                  >
+                    <Trash />
+                  </button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell className="text-right" colSpan={6}>
+                Total de registros: {visitors.length}
+              </TableCell>
+            </TableRow>
+          </TableFooter>
+        </Table>
+      )}
+    </>
   );
 }

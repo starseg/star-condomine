@@ -22,6 +22,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { SkeletonTable } from "../_skeletons/skeleton-table";
+import { deleteAction } from "@/lib/delete-action";
 
 interface Access {
   accessId: number;
@@ -77,47 +78,8 @@ export default function AccessTable({ lobby }: { lobby: string }) {
     fetchData();
   }, [session, searchParams]);
 
-  const deleteAction = async (id: number) => {
-    try {
-      await api.delete("access/" + id, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      fetchData();
-      Swal.fire({
-        title: "Excluído!",
-        text: "Esse acesso acabou de ser apagado.",
-        icon: "success",
-      });
-    } catch (error) {
-      console.error("Erro excluir dado:", error);
-    }
-  };
-
   const deleteAccess = async (id: number) => {
-    if (session?.payload.user.type === "USER") {
-      Swal.fire({
-        title: "Operação não permitida",
-        text: "Sua permissão de usuário não permite exclusões",
-        icon: "warning",
-      });
-    } else {
-      Swal.fire({
-        title: "Excluir acesso?",
-        text: "Essa ação não poderá ser revertida!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#43C04F",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Sim, excluir!",
-        cancelButtonText: "Cancelar",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          deleteAction(id);
-        }
-      });
-    }
+    deleteAction(session, "acesso", `access/${id}`, fetchData);
   };
 
   const registerExit = async (id: number) => {

@@ -53,24 +53,6 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
     fetchData();
   }, [session]);
 
-  const deleteAction = async (id: number) => {
-    try {
-      await api.delete("lobby/" + id, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      fetchData();
-      Swal.fire({
-        title: "Excluída!",
-        text: "Essa portaria acabou de ser apagada.",
-        icon: "success",
-      });
-    } catch (error) {
-      console.error("Erro excluir dado:", error);
-    }
-  };
-
   const showPermissionError = () => {
     Swal.fire({
       title: "Operação não permitida",
@@ -96,9 +78,23 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
         cancelButtonColor: "#d33",
         confirmButtonText: "Sim, excluir!",
         cancelButtonText: "Cancelar",
-      }).then((result) => {
+      }).then(async (result) => {
         if (result.isConfirmed) {
-          deleteAction(id);
+          try {
+            await api.delete("lobby/" + id, {
+              headers: {
+                Authorization: `Bearer ${session?.token.user.token}`,
+              },
+            });
+            fetchData();
+            Swal.fire({
+              title: "Excluída!",
+              text: "Essa portaria acabou de ser apagada.",
+              icon: "success",
+            });
+          } catch (error) {
+            console.error("Erro excluir dado:", error);
+          }
           router.push("/dashboard");
         }
       });

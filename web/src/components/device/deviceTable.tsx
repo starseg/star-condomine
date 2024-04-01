@@ -15,6 +15,8 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { SkeletonTable } from "../_skeletons/skeleton-table";
+import { deleteAction } from "@/lib/delete-action";
 
 interface Device {
   deviceId: number;
@@ -30,6 +32,7 @@ interface Device {
 }
 
 export default function DeviceTable({ lobby }: { lobby: string }) {
+  const [isLoading, setIsLoading] = useState(true);
   const [devices, setDevices] = useState<Device[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
@@ -49,6 +52,7 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
         },
       });
       setDevices(response.data);
+      setIsLoading(false);
     } catch (error) {
       console.error("Erro ao obter dados:", error);
     }
@@ -57,95 +61,59 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
     fetchData();
   }, [session, searchParams]);
 
-  // // console.log(devices);
-
-  const deleteAction = async (id: number) => {
-    // console.log("device/" + id);
-    try {
-      await api.delete("device/" + id, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      fetchData();
-      Swal.fire({
-        title: "Excluído!",
-        text: "Esse dispositivo acabou de ser apagado.",
-        icon: "success",
-      });
-    } catch (error) {
-      console.error("Erro excluir dado:", error);
-    }
-  };
-
   const deleteDevice = async (id: number) => {
-    if (session?.payload.user.type === "USER") {
-      Swal.fire({
-        title: "Operação não permitida",
-        text: "Sua permissão de usuário não permite exclusões",
-        icon: "warning",
-      });
-    } else {
-      Swal.fire({
-        title: "Excluir dispositivo?",
-        text: "Essa ação não poderá ser revertida!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#43C04F",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Sim, excluir!",
-        cancelButtonText: "Cancelar",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          deleteAction(id);
-        }
-      });
-    }
+    deleteAction(session, "dispositivo", `device/${id}`, fetchData);
   };
 
   return (
-    <Table className="border border-stone-800 rouded-lg">
-      <TableHeader className="bg-stone-800 font-semibold">
-        <TableRow>
-          <TableHead>Nome</TableHead>
-          <TableHead>IP</TableHead>
-          <TableHead>Ramal</TableHead>
-          <TableHead>Descrição</TableHead>
-          <TableHead>Modelo</TableHead>
-          <TableHead>Ações</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody className="uppercase">
-        {devices.map((device) => (
-          <TableRow key={device.deviceId}>
-            <TableCell>{device.name}</TableCell>
-            <TableCell>{device.ip}</TableCell>
-            <TableCell>{device.ramal}</TableCell>
-            <TableCell>{device.description}</TableCell>
-            <TableCell>{device.deviceModel.model}</TableCell>
-            <TableCell className="flex gap-4 text-2xl">
-              <Link
-                href={`device/update?lobby=${device.lobbyId}&id=${device.deviceId}`}
-              >
-                <PencilLine />
-              </Link>
-              <button
-                onClick={() => deleteDevice(device.deviceId)}
-                title="Excluir"
-              >
-                <Trash />
-              </button>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TableCell className="text-right" colSpan={6}>
-            Total de registros: {devices.length}
-          </TableCell>
-        </TableRow>
-      </TableFooter>
-    </Table>
+    <>
+      {isLoading ? (
+        <SkeletonTable />
+      ) : (
+        <Table className="border border-stone-800 rouded-lg">
+          <TableHeader className="bg-stone-800 font-semibold">
+            <TableRow>
+              <TableHead>Nome</TableHead>
+              <TableHead>IP</TableHead>
+              <TableHead>Ramal</TableHead>
+              <TableHead>Descrição</TableHead>
+              <TableHead>Modelo</TableHead>
+              <TableHead>Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="uppercase">
+            {devices.map((device) => (
+              <TableRow key={device.deviceId}>
+                <TableCell>{device.name}</TableCell>
+                <TableCell>{device.ip}</TableCell>
+                <TableCell>{device.ramal}</TableCell>
+                <TableCell>{device.description}</TableCell>
+                <TableCell>{device.deviceModel.model}</TableCell>
+                <TableCell className="flex gap-4 text-2xl">
+                  <Link
+                    href={`device/update?lobby=${device.lobbyId}&id=${device.deviceId}`}
+                  >
+                    <PencilLine />
+                  </Link>
+                  <button
+                    onClick={() => deleteDevice(device.deviceId)}
+                    title="Excluir"
+                  >
+                    <Trash />
+                  </button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell className="text-right" colSpan={6}>
+                Total de registros: {devices.length}
+              </TableCell>
+            </TableRow>
+          </TableFooter>
+        </Table>
+      )}
+    </>
   );
 }

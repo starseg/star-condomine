@@ -1,5 +1,6 @@
 import ActionButton from "@/components/actionButton";
 import { Menu } from "@/components/menu";
+import { Button } from "@/components/ui/button";
 import MemberVehicleTable from "@/components/vehicle/memberVehicleTable";
 import { FilePlus } from "@phosphor-icons/react/dist/ssr";
 import { Metadata } from "next";
@@ -27,12 +28,11 @@ export default async function Vehicles({
         <div className="max-h-[60vh] overflow-x-auto mb-4">
           <MemberVehicleTable lobby={lobby} member={id} />
         </div>
-        <Link
-          href={`/dashboard/actions/vehicle/new?lobby=${lobby}`}
-          className="w-[200px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
-        >
-          <FilePlus />
-          Registrar
+        <Link href={`/dashboard/actions/vehicle/new?lobby=${lobby}`}>
+          <Button className="text-lg flex gap-2">
+            <FilePlus />
+            Registrar novo
+          </Button>
         </Link>
       </section>
     </>
