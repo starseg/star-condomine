@@ -44,7 +44,7 @@ export default function LobbyCard(props: LobbyCardProps) {
         <p className="w-1/2">
           Ramais:
           <br />
-          {props.ramais != "0" && props.ramais}
+          {props.ramais}
         </p>
         <p className="w-1/2 text-right text-sm">{props.location}</p>
       </div>

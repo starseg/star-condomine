@@ -17,6 +17,9 @@ import { Input } from "@/components/ui/input";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { InputPassword } from "./input-password";
+import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
+import Image from "next/image";
 
 const FormSchema = z.object({
   username: z
@@ -64,55 +67,71 @@ export function LoginForm() {
   };
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
-      >
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Usuário</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Digite seu nome de usuário"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+    <Card className="w-[300px] md:w-[400px] border-yellow-600">
+      <CardHeader className="flex flex-col items-center mt-2">
+        <Image
+          src="/logo.svg"
+          alt="Logo Star Condomine"
+          width={276}
+          height={37}
+          priority={true}
         />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Senha</FormLabel>
-              <FormControl>
-                <Input
-                  type="password"
-                  placeholder="Digite sua senha"
-                  {...field}
+      </CardHeader>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <CardContent>
+            <div className="grid w-full items-center gap-2">
+              <div className="flex flex-col space-y-1.5">
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Usuário</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Digite seu nome de usuário"
+                          autoComplete="off"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button type="submit" className="w-full">
-          Entrar
-        </Button>
-        {error && (
-          <div className="w-full border border-red-500 text-red-500 p-2 rounded-md text-center text-sm">
-            {error}
-          </div>
-        )}
-      </form>
-    </Form>
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Senha</FormLabel>
+                      <FormControl>
+                        <InputPassword
+                          placeholder="Digite sua senha"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button type="submit" className="w-full">
+              Entrar
+            </Button>
+            {error && (
+              <div className="w-full border border-red-500 text-red-500 p-2 rounded-md text-center text-sm">
+                {error}
+              </div>
+            )}
+          </CardFooter>
+        </form>
+      </Form>
+    </Card>
   );
 }

@@ -21,6 +21,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { SkeletonTable } from "../_skeletons/skeleton-table";
 
 interface Access {
   accessId: number;
@@ -45,6 +46,7 @@ interface Access {
 }
 
 export default function AccessTable({ lobby }: { lobby: string }) {
+  const [isLoading, setIsLoading] = useState(true);
   const [access, setAccess] = useState<Access[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
@@ -66,6 +68,7 @@ export default function AccessTable({ lobby }: { lobby: string }) {
         },
       });
       setAccess(response.data);
+      setIsLoading(false);
     } catch (error) {
       console.error("Erro ao obter dados:", error);
     }
@@ -168,90 +171,98 @@ export default function AccessTable({ lobby }: { lobby: string }) {
   });
 
   return (
-    <Table className="border border-stone-800 rouded-lg">
-      <TableHeader className="bg-stone-800 font-semibold">
-        <TableRow>
-          <TableHead>Visitante</TableHead>
-          <TableHead>Visitado</TableHead>
-          <TableHead>Data de entrada</TableHead>
-          {control === "S" ? <TableHead>Data de saída</TableHead> : ""}
-          <TableHead>Ações</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody className="uppercase">
-        {access.map((item) => {
-          const isOldestEntry: boolean =
-            oldestEntries[item.visitorId] &&
-            control === "S" &&
-            oldestEntries[item.visitorId].accessId === item.accessId;
-          const nameStyle: React.CSSProperties = isOldestEntry
-            ? { color: "#f87171", fontWeight: "bold" }
-            : {};
-          return (
-            <TableRow key={item.accessId} style={nameStyle}>
-              <TableCell>
-                <p className="max-w-[25ch]">{item.visitor.name}</p>
-              </TableCell>
-              <TableCell>
-                <p className="max-w-[25ch]">{item.member.name}</p>
-              </TableCell>
-              <TableCell>{formatDate(item.startTime)}</TableCell>
-              {control === "S" ? (
-                <TableCell>
-                  {item.endTime !== null && item.endTime.length > 0
-                    ? formatDate(item.endTime)
-                    : "Não saiu"}
-                </TableCell>
-              ) : (
-                ""
-              )}
-              <TableCell className="flex gap-4 text-2xl">
-                {control === "S" ? (
-                  item.endTime !== null && item.endTime.length > 1 ? (
-                    <button
-                      title="Saída registrada"
-                      disabled
-                      className="text-muted"
-                    >
-                      <SignOut />
-                    </button>
+    <>
+      {isLoading ? (
+        <SkeletonTable />
+      ) : (
+        <Table className="border border-stone-800 rouded-lg">
+          <TableHeader className="bg-stone-800 font-semibold">
+            <TableRow>
+              <TableHead>Visitante</TableHead>
+              <TableHead>Visitado</TableHead>
+              <TableHead>Data de entrada</TableHead>
+              {control === "S" ? <TableHead>Data de saída</TableHead> : ""}
+              <TableHead>Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="uppercase">
+            {access.map((item) => {
+              const isOldestEntry: boolean =
+                oldestEntries[item.visitorId] &&
+                control === "S" &&
+                oldestEntries[item.visitorId].accessId === item.accessId;
+              const nameStyle: React.CSSProperties = isOldestEntry
+                ? { color: "#f87171", fontWeight: "bold" }
+                : {};
+              return (
+                <TableRow key={item.accessId} style={nameStyle}>
+                  <TableCell>
+                    <p className="max-w-[25ch]">{item.visitor.name}</p>
+                  </TableCell>
+                  <TableCell>
+                    <p className="max-w-[25ch]">{item.member.name}</p>
+                  </TableCell>
+                  <TableCell>{formatDate(item.startTime)}</TableCell>
+                  {control === "S" ? (
+                    <TableCell>
+                      {item.endTime !== null && item.endTime.length > 0
+                        ? formatDate(item.endTime)
+                        : "Não saiu"}
+                    </TableCell>
                   ) : (
-                    <button
-                      onClick={() => registerExit(item.accessId)}
-                      title="Registrar saída"
+                    ""
+                  )}
+                  <TableCell className="flex gap-4 text-2xl">
+                    {control === "S" ? (
+                      item.endTime !== null && item.endTime.length > 1 ? (
+                        <button
+                          title="Saída registrada"
+                          disabled
+                          className="text-muted"
+                        >
+                          <SignOut />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => registerExit(item.accessId)}
+                          title="Registrar saída"
+                        >
+                          <SignOut />
+                        </button>
+                      )
+                    ) : (
+                      ""
+                    )}
+                    <Link
+                      href={`access/details?id=${item.accessId}&c=${control}`}
                     >
-                      <SignOut />
+                      <MagnifyingGlass />
+                    </Link>
+                    <Link
+                      href={`access/update?lobby=${item.lobbyId}&id=${item.accessId}&c=${control}`}
+                    >
+                      <PencilLine />
+                    </Link>
+                    <button
+                      onClick={() => deleteAccess(item.accessId)}
+                      title="Excluir"
+                    >
+                      <Trash />
                     </button>
-                  )
-                ) : (
-                  ""
-                )}
-                <Link href={`access/details?id=${item.accessId}&c=${control}`}>
-                  <MagnifyingGlass />
-                </Link>
-                <Link
-                  href={`access/update?lobby=${item.lobbyId}&id=${item.accessId}&c=${control}`}
-                >
-                  <PencilLine />
-                </Link>
-                <button
-                  onClick={() => deleteAccess(item.accessId)}
-                  title="Excluir"
-                >
-                  <Trash />
-                </button>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell className="text-right" colSpan={5}>
+                Total de registros: {access.length}
               </TableCell>
             </TableRow>
-          );
-        })}
-      </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TableCell className="text-right" colSpan={5}>
-            Total de registros: {access.length}
-          </TableCell>
-        </TableRow>
-      </TableFooter>
-    </Table>
+          </TableFooter>
+        </Table>
+      )}
+    </>
   );
 }

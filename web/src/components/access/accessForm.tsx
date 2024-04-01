@@ -149,6 +149,7 @@ export function AccessForm() {
     let realDate = "";
     if (data.startTime !== "") {
       const dateObject = new Date(data.startTime);
+      dateObject.setHours(dateObject.getHours() + 3);
       realDate = format(dateObject, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     }
     if (data.currentDate) realDate = new Date().toISOString();

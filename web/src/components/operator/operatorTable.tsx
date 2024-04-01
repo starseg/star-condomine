@@ -83,54 +83,56 @@ export default function OperatorTable() {
   };
 
   return (
-    <Table className="border border-stone-800 rouded-lg max-w-[90%] mx-auto">
-      <TableHeader className="bg-stone-800 font-semibold">
-        <TableRow>
-          <TableHead>Nome</TableHead>
-          <TableHead>Usuário</TableHead>
-          <TableHead>Senha</TableHead>
-          <TableHead>Permissão</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Ações</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {operators.map((operator) => (
-          <TableRow key={operator.operatorId}>
-            <TableCell>{operator.name}</TableCell>
-            <TableCell>{operator.username}</TableCell>
-            <TableCell>********</TableCell>
-            <TableCell>
-              {operator.type === "ADMIN" ? "Administrador" : "Comum"}
-            </TableCell>
-            <TableCell>
-              {operator.status === "ACTIVE" ? (
-                <p className="text-green-500">Ativo</p>
-              ) : (
-                <p className="text-red-400">Inativo</p>
-              )}
-            </TableCell>
-            <TableCell className="flex gap-4 text-2xl">
-              <Link href={`operators/update?id=${operator.operatorId}`}>
-                <PencilLine />
-              </Link>
-              <button
-                onClick={() => deleteOperator(operator.operatorId)}
-                title="Excluir"
-              >
-                <Trash />
-              </button>
+    <div className="max-h-[60vh] overflow-x-auto rouded-lg max-w-[90%] mx-auto">
+      <Table className="border border-stone-800">
+        <TableHeader className="bg-stone-800 font-semibold">
+          <TableRow>
+            <TableHead>Nome</TableHead>
+            <TableHead>Usuário</TableHead>
+            <TableHead>Senha</TableHead>
+            <TableHead>Permissão</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Ações</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {operators.map((operator) => (
+            <TableRow key={operator.operatorId}>
+              <TableCell>{operator.name}</TableCell>
+              <TableCell>{operator.username}</TableCell>
+              <TableCell>********</TableCell>
+              <TableCell>
+                {operator.type === "ADMIN" ? "Administrador" : "Comum"}
+              </TableCell>
+              <TableCell>
+                {operator.status === "ACTIVE" ? (
+                  <p className="text-green-500">Ativo</p>
+                ) : (
+                  <p className="text-red-400">Inativo</p>
+                )}
+              </TableCell>
+              <TableCell className="flex gap-4 text-2xl">
+                <Link href={`operators/update?id=${operator.operatorId}`}>
+                  <PencilLine />
+                </Link>
+                <button
+                  onClick={() => deleteOperator(operator.operatorId)}
+                  title="Excluir"
+                >
+                  <Trash />
+                </button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TableCell className="text-right" colSpan={6}>
+              Total de registros: {operators.length}
             </TableCell>
           </TableRow>
-        ))}
-      </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TableCell className="text-right" colSpan={6}>
-            Total de registros: {operators.length}
-          </TableCell>
-        </TableRow>
-      </TableFooter>
-    </Table>
+        </TableFooter>
+      </Table>
+    </div>
   );
 }

@@ -66,7 +66,10 @@ export default function List() {
           (problem) => problem.status === "ACTIVE"
         );
         const status = hasActiveProblem ? 1 : 0;
-        const ramais = lobby.device.map((device) => device.ramal).join(", ");
+        const ramais = lobby.device
+          .map((device) => (device.ramal !== 0 ? device.ramal : null))
+          .filter((ramal) => ramal !== null)
+          .join(", ");
         return (
           <LobbyCard
             key={lobby.lobbyId}

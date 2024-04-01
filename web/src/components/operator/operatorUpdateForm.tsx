@@ -20,6 +20,7 @@ import { useSession } from "next-auth/react";
 import api from "@/lib/axios";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { useState } from "react";
+import { InputPassword } from "../input-password";
 
 const FormSchema = z.object({
   type: z.enum(["ADMIN", "USER"]),
@@ -154,12 +155,7 @@ export function OperatorUpdateForm({
             <FormItem>
               <FormLabel>Senha</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
-                  placeholder="Crie uma senha nova"
-                  autoComplete="off"
-                  {...field}
-                />
+                <InputPassword placeholder="Crie uma senha nova" {...field} />
               </FormControl>
               <FormDescription>
                 Dicas para criar uma senha forte: <br />
