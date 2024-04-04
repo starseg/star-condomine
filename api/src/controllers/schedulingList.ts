@@ -75,10 +75,11 @@ export const createSchedulingList = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { description, lobbyId, memberId, operatorId } = req.body;
+    const { description, url, lobbyId, memberId, operatorId } = req.body;
     const schedulingList = await prisma.schedulingList.create({
       data: {
         description,
+        url,
         lobbyId,
         memberId,
         operatorId,
@@ -96,11 +97,13 @@ export const updateSchedulingList = async (
 ): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
-    const { description, status, lobbyId, memberId, operatorId } = req.body;
+    const { description, url, status, lobbyId, memberId, operatorId } =
+      req.body;
     const schedulingList = await prisma.schedulingList.update({
       where: { schedulingListId: id },
       data: {
         description,
+        url,
         status,
         lobbyId,
         memberId,

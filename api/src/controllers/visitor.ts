@@ -70,7 +70,7 @@ export const createVisitor = async (
     });
     res.status(201).json(visitor);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao criar o visitante" });
+    res.status(500).json(error);
   }
 };
 
@@ -111,7 +111,7 @@ export const updateVisitor = async (
     });
     res.status(200).json(visitor);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao atualizar o visitante" });
+    res.status(500).json(error);
   }
 };
 
@@ -147,9 +147,9 @@ export const getVisitorsByLobby = async (
   res: Response
 ): Promise<void> => {
   try {
-    const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
-    const stringCurrentDate = currentDate.toISOString();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     const lobby = parseInt(req.params.lobby, 10);
     const visitor = await prisma.visitor.findMany({
       include: {
@@ -177,7 +177,7 @@ export const getVisitorsByLobby = async (
               lte: new Date(),
             },
             endDate: {
-              gte: new Date(),
+              gte: today,
             },
           },
         },

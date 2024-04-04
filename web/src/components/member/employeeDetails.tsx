@@ -85,8 +85,8 @@ export default function EmployeeDetails({ id }: { id: number }) {
               content={member.accessPeriod}
             />
             <DetailItem
-              label="Comentários"
-              content={member.comments ? member.comments : "Nenhum comentário"}
+              label="Observações"
+              content={member.comments ? member.comments : "Nenhuma observação"}
             />
 
             <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>

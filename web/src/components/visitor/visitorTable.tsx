@@ -18,7 +18,6 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
 import { SkeletonTable } from "../_skeletons/skeleton-table";
 import { deleteAction } from "@/lib/delete-action";
 
@@ -31,6 +30,7 @@ interface Visitor {
   phone: string;
   status: string;
   relation: string;
+  comments: string;
   createdAt: string;
   updatedAt: string;
   visitorType: {
@@ -56,7 +56,6 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
       let path;
       if (!params.get("query")) {
         path = "visitor/lobby/" + lobby;
-        // console.log(path);
       } else {
         path = `visitor/filtered/${lobby}?query=${params.get("query")}`;
       }

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -26,13 +27,15 @@ import {
   CommandInput,
   CommandItem,
 } from "../../ui/command";
-import { useSearchParams } from "next/navigation";
 import { Textarea } from "../../ui/textarea";
+import { handleFileUpload } from "@/lib/firebase-upload";
+import { Input } from "@/components/ui/input";
 
 const FormSchema = z.object({
   lobby: z.number(),
   member: z.number(),
   description: z.string(),
+  url: z.instanceof(File),
 });
 
 export function SchedulingListForm() {
@@ -42,6 +45,7 @@ export function SchedulingListForm() {
       lobby: 0,
       member: 0,
       description: "",
+      url: new File([], ""),
     },
   });
 
@@ -139,14 +143,25 @@ export function SchedulingListForm() {
     setIsSendind(true);
     const operator = session?.payload.user.id || null;
 
+    const timestamp = new Date().toISOString();
+    let file;
+    if (data.url instanceof File && data.url.size > 0) {
+      const fileExtension = data.url.name.split(".").pop();
+      file = await handleFileUpload(
+        data.url,
+        `agendamentos/proprietario_${data.member}_${timestamp}.${fileExtension}`
+      );
+    } else file = "";
+
     const info = {
+      url: file,
       description: data.description,
       memberId: data.member,
       operatorId: operator,
       lobbyId: data.lobby,
     };
     try {
-      const response = await api.post("schedulingList", info, {
+      await api.post("schedulingList", info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
@@ -170,7 +185,7 @@ export function SchedulingListForm() {
           control={form.control}
           name="lobby"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
+            <FormItem className="flex flex-col mt-4">
               <FormLabel>Portaria</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
@@ -297,6 +312,29 @@ export function SchedulingListForm() {
                 />
               </FormControl>
               <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="url"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Arquivo (opcional)</FormLabel>
+              <FormControl>
+                <Input
+                  type="file"
+                  onChange={(e) =>
+                    field.onChange(e.target.files ? e.target.files[0] : null)
+                  }
+                />
+              </FormControl>
+              <FormMessage />
+              <FormDescription>
+                Se for adicionado um arquivo com a lista, informar na descrição
+                e relacionar as datas de agendamento.
+              </FormDescription>
             </FormItem>
           )}
         />

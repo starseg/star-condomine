@@ -67,13 +67,13 @@ export default function AccessDetails({ id }: { id: number }) {
             />
             <DetailItem
               label="Data de entrada"
-              content={simpleDateFormat(access.startTime)}
+              content={formatDate(access.startTime)}
             />
             {control === "S" ? (
               <DetailItem
                 label="Data de saída"
                 content={
-                  access.endTime ? simpleDateFormat(access.endTime) : "Não saiu"
+                  access.endTime ? formatDate(access.endTime) : "Não saiu"
                 }
               />
             ) : (

@@ -33,7 +33,7 @@ const FormSchema = z.object({
   phone: z.string(),
   type: z.string(),
   relation: z.string(),
-  comments: z.string(),
+  comments: z.string().optional(),
   status: z.enum(["ACTIVE", "INACTIVE"]),
 });
 
@@ -145,7 +145,7 @@ export function VisitorUpdateForm({
 
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    const [isSending, setIsSendind] = useState(false);
+    setIsSendind(true);
     // PEGA O ID DA PORTARIA
     const lobbyParam = params.get("lobby");
     const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
@@ -300,7 +300,10 @@ export function VisitorUpdateForm({
                 >
                   {visitorType.map((type) => {
                     return (
-                      <FormItem className="flex items-center space-x-3 space-y-0">
+                      <FormItem
+                        className="flex items-center space-x-3 space-y-0"
+                        key={type.visitorTypeId}
+                      >
                         <FormControl>
                           <RadioGroupItem
                             value={type.visitorTypeId.toString()}

@@ -45,7 +45,7 @@ const FormSchema = z.object({
   phone: z.string(),
   type: z.string(),
   relation: z.string(),
-  visitorComments: z.string(),
+  visitorComments: z.string().optional(),
 
   isAccessing: z.boolean(),
   host: z.number().optional(),
@@ -221,7 +221,7 @@ export function VisitorForm() {
             operatorId: Number(operator),
             lobbyId: Number(lobby),
           };
-          const res = await api.post("access", access, {
+          await api.post("access", access, {
             headers: {
               Authorization: `Bearer ${session?.token.user.token}`,
             },
@@ -354,7 +354,10 @@ export function VisitorForm() {
                 >
                   {visitorType.map((type) => {
                     return (
-                      <FormItem className="flex items-center space-x-3 space-y-0">
+                      <FormItem
+                        className="flex items-center space-x-3 space-y-0"
+                        key={type.visitorTypeId}
+                      >
                         <FormControl>
                           <RadioGroupItem
                             value={type.visitorTypeId.toString()}

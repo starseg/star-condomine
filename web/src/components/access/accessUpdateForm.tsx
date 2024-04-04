@@ -153,9 +153,23 @@ export function AccessUpdateForm({
     let accessStatus = "ACTIVE";
     if (data.endTime !== "") accessStatus = "INACTIVE";
 
+    let realStartDate = "";
+    if (data.startTime !== "") {
+      const dateObject = new Date(data.startTime);
+      dateObject.setHours(dateObject.getHours() + 3);
+      realStartDate = format(dateObject, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    }
+
+    let realEndDate = "";
+    if (data.startTime !== "") {
+      const dateObject = new Date(data.startTime);
+      dateObject.setHours(dateObject.getHours() + 3);
+      realStartDate = format(dateObject, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    }
+
     const info = {
-      startTime: setStringDate(data.startTime),
-      endTime: setStringDate(data.endTime),
+      startTime: realStartDate,
+      endTime: realEndDate,
       status: accessStatus,
       local: data.local,
       reason: data.reason,
@@ -165,14 +179,12 @@ export function AccessUpdateForm({
       operatorId: operator,
       lobbyId: lobby,
     };
-    // console.log(info);
     try {
-      const response = await api.put("access/" + id, info, {
+      await api.put("access/" + id, info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      // console.log(response.data);
       router.push(`/dashboard/actions/access?lobby=${lobby}&c=${control}`);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

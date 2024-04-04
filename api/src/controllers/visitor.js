@@ -52,7 +52,7 @@ const createVisitor = async (req, res) => {
         res.status(201).json(visitor);
     }
     catch (error) {
-        res.status(500).json({ error: "Erro ao criar o visitante" });
+        res.status(500).json(error);
     }
 };
 exports.createVisitor = createVisitor;
@@ -79,7 +79,7 @@ const updateVisitor = async (req, res) => {
         res.status(200).json(visitor);
     }
     catch (error) {
-        res.status(500).json({ error: "Erro ao atualizar o visitante" });
+        res.status(500).json(error);
     }
 };
 exports.updateVisitor = updateVisitor;
@@ -108,9 +108,10 @@ const getVisitorTypes = async (req, res) => {
 exports.getVisitorTypes = getVisitorTypes;
 const getVisitorsByLobby = async (req, res) => {
     try {
-        const currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0);
-        const stringCurrentDate = currentDate.toISOString();
+        const datePlusOne = new Date();
+        datePlusOne.setDate(datePlusOne.getDate() + 1);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
         const lobby = parseInt(req.params.lobby, 10);
         const visitor = await prisma.visitor.findMany({
             include: {
@@ -138,7 +139,7 @@ const getVisitorsByLobby = async (req, res) => {
                             lte: new Date(),
                         },
                         endDate: {
-                            gte: new Date(),
+                            gte: today,
                         },
                     },
                 },

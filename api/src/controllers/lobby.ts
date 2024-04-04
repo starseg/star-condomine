@@ -30,11 +30,6 @@ export const getFilteredLobbies = async (
             { name: { contains: query as string } },
             { city: { contains: query as string } },
             { state: { contains: query as string } },
-            {
-              device: {
-                some: { ramal: { equals: parseInt(query as string) } },
-              },
-            },
           ],
         }
       : {};

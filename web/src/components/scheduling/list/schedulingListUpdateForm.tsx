@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -30,25 +31,47 @@ import {
 import { useSearchParams } from "next/navigation";
 import { Textarea } from "../../ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Input } from "@/components/ui/input";
+import { handleFileUpload } from "@/lib/firebase-upload";
 
 const FormSchema = z.object({
   lobby: z.number(),
   member: z.number(),
   description: z.string(),
+  url: z.instanceof(File),
   status: z.enum(["ACTIVE", "INACTIVE"]),
 });
 
+interface SchedulingList {
+  schedulingListId: number;
+  description: string;
+  url: string;
+  status: "ACTIVE" | "INACTIVE" | undefined;
+  createdAt: string;
+  memberId: number;
+  lobbyId: number;
+  operatorId: number;
+  lobby: {
+    name: string;
+  };
+  member: {
+    name: string;
+  };
+}
 interface Values {
   lobby: number;
   member: number;
   description: string;
+  url: File;
   status: "ACTIVE" | "INACTIVE" | undefined;
 }
 
 export function SchedulingListUpdateForm({
   preloadedValues,
+  scheduling,
 }: {
   preloadedValues: Values;
+  scheduling: SchedulingList;
 }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -127,16 +150,31 @@ export function SchedulingListUpdateForm({
     setIsSendind(true);
 
     const operator = session?.payload.user.id || null;
+
+    const timestamp = new Date().toISOString();
+    let file;
+    if (data.url instanceof File && data.url.size > 0) {
+      const fileExtension = data.url.name.split(".").pop();
+      file = await handleFileUpload(
+        data.url,
+        `agendamentos/proprietario_${data.member}_${timestamp}.${fileExtension}`
+      );
+    } else if (scheduling.url) {
+      file = scheduling.url;
+    } else {
+      file = "";
+    }
+
     const info = {
+      url: file,
       description: data.description,
       memberId: data.member,
       operatorId: operator,
       lobbyId: data.lobby,
       status: data.status,
     };
-    // console.log(info);
     try {
-      const response = await api.put(`schedulingList/${id}`, info, {
+      await api.put(`schedulingList/${id}`, info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
@@ -234,6 +272,29 @@ export function SchedulingListUpdateForm({
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="url"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Arquivo</FormLabel>
+              <FormControl>
+                <Input
+                  type="file"
+                  onChange={(e) =>
+                    field.onChange(e.target.files ? e.target.files[0] : null)
+                  }
+                />
+              </FormControl>
+              <FormMessage />
+              <FormDescription>
+                Caso você não queira alterar o arquivo previamente registrado,
+                não preencha esse campo.
+              </FormDescription>
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="status"
@@ -264,6 +325,7 @@ export function SchedulingListUpdateForm({
             </FormItem>
           )}
         />
+
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
           Atualizar
         </Button>

@@ -24,11 +24,6 @@ const getFilteredLobbies = async (req, res) => {
                     { name: { contains: query } },
                     { city: { contains: query } },
                     { state: { contains: query } },
-                    {
-                        device: {
-                            some: { ramal: { equals: parseInt(query) } },
-                        },
-                    },
                 ],
             }
             : {};

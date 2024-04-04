@@ -77,11 +77,25 @@ export default function UpdateAccess() {
     }
   };
 
+  let realStartDate = "";
+  if (access?.startTime !== "" && access !== null) {
+    const dateObject = new Date(access.startTime);
+    dateObject.setHours(dateObject.getHours() - 3);
+    realStartDate = format(dateObject, "yyyy-MM-dd'T'HH:mm");
+  }
+
+  let realEndDate = "";
+  if (access?.startTime !== "" && access !== null) {
+    const dateObject = new Date(access.startTime);
+    dateObject.setHours(dateObject.getHours() - 3);
+    realStartDate = format(dateObject, "yyyy-MM-dd'T'HH:mm");
+  }
+
   useEffect(() => {
     if (access) {
       setData({
-        startTime: dateTimeFormat(access?.startTime),
-        endTime: dateTimeFormat(access?.endTime),
+        startTime: realStartDate,
+        endTime: realEndDate,
         local: access?.local || "",
         reason: access?.reason || "",
         comments: access?.comments || "",
@@ -89,8 +103,6 @@ export default function UpdateAccess() {
         member: access?.memberId || 0,
         visitor: access?.visitorId || 0,
       });
-      // console.log("data:");
-      // console.log(data);
     }
   }, [access]);
 

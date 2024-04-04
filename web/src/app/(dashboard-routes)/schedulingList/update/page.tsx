@@ -11,6 +11,7 @@ export default function UpdateSchedulingList() {
   interface SchedulingList {
     schedulingListId: number;
     description: string;
+    url: string;
     status: "ACTIVE" | "INACTIVE" | undefined;
     createdAt: string;
     memberId: number;
@@ -25,6 +26,7 @@ export default function UpdateSchedulingList() {
   }
   interface Values {
     description: string;
+    url: File;
     status: "ACTIVE" | "INACTIVE" | undefined;
     lobby: number;
     member: number;
@@ -58,6 +60,7 @@ export default function UpdateSchedulingList() {
     if (list) {
       setData({
         description: list?.description || "",
+        url: new File([], ""),
         status: list?.status || "ACTIVE",
         member: list?.memberId || 0,
         lobby: list?.lobbyId || 0,
@@ -70,8 +73,8 @@ export default function UpdateSchedulingList() {
       <Menu />
       <section className="flex flex-col justify-center items-center mb-12">
         <h1 className="text-4xl mt-2 mb-4">Atualizar Lista</h1>
-        {data ? (
-          <SchedulingListUpdateForm preloadedValues={data} />
+        {list && data ? (
+          <SchedulingListUpdateForm preloadedValues={data} scheduling={list} />
         ) : (
           <LoadingIcon />
         )}

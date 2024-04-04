@@ -53,6 +53,7 @@ app.post("/auth", authenticateOperator);
 app.use(verifyToken, logging);
 // app.use();
 
+app.use("/visitor", visitorRouter);
 app.use("/operator", operatorRouter);
 app.use("/access", accessRouter);
 app.use("/device", deviceRouter);
@@ -68,7 +69,6 @@ app.use("/schedulingList", schedulingListRouter);
 app.use("/tag", tagRouter);
 app.use("/telephone", telephoneRouter);
 app.use("/vehicle", vehicleRouter);
-app.use("/visitor", visitorRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);

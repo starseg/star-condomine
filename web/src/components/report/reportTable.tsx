@@ -101,6 +101,7 @@ export default function ReportTable({ lobby }: { lobby: string }) {
                   {control === "S" ? <TableHead>Saída</TableHead> : ""}
                   <TableHead>Motivo</TableHead>
                   <TableHead>Local</TableHead>
+                  <TableHead>Observações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -153,13 +154,27 @@ export default function ReportTable({ lobby }: { lobby: string }) {
                           </Tooltip>
                         </TooltipProvider>
                       </TableCell>
+                      <TableCell>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button className="max-w-[15ch] text-ellipsis overflow-hidden whitespace-nowrap uppercase">
+                                {item.comments ? item.comments : "Nenhuma"}
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-[300px] border-primary bg-stone-800 p-4 break-words">
+                              <p>{item.comments ? item.comments : "Nenhuma"}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </TableCell>
                     </TableRow>
                   );
                 })}
               </TableBody>
               <TableFooter>
                 <TableRow>
-                  <TableCell className="text-right uppercase" colSpan={6}>
+                  <TableCell className="text-right uppercase" colSpan={7}>
                     Total de registros: {access.length}
                   </TableCell>
                 </TableRow>

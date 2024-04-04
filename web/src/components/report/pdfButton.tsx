@@ -56,8 +56,23 @@ export const PdfButton = ({
 
     const headers =
       control === "S"
-        ? ["Visitante", "Visitado", "Entrada", "Saída", "Motivo", "Local"]
-        : ["Visitante", "Visitado", "Entrada", "Motivo", "Local"];
+        ? [
+            "Visitante",
+            "Visitado",
+            "Entrada",
+            "Saída",
+            "Motivo",
+            "Local",
+            "Observações",
+          ]
+        : [
+            "Visitante",
+            "Visitado",
+            "Entrada",
+            "Motivo",
+            "Local",
+            "Observações",
+          ];
 
     const tableData = data.map((row) =>
       control === "S"
@@ -68,6 +83,7 @@ export const PdfButton = ({
             row.endTime !== null ? formatDate(row.endTime) : "Não saiu",
             row.reason,
             row.local,
+            row.comments ? row.comments : "Nenhuma",
           ]
         : [
             row.visitor.name,
@@ -75,6 +91,7 @@ export const PdfButton = ({
             formatDate(row.startTime),
             row.reason,
             row.local,
+            row.comments ? row.comments : "Nenhuma",
           ]
     );
 

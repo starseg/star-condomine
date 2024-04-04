@@ -50,6 +50,7 @@ app.use("/guest", guestRouter_1.default);
 app.post("/auth", auth_1.authenticateOperator);
 app.use(permissions_1.verifyToken, logging_1.logging);
 // app.use();
+app.use("/visitor", visitorRouter_1.default);
 app.use("/operator", operatorRouter_1.default);
 app.use("/access", accessRouter_1.default);
 app.use("/device", deviceRouter_1.default);
@@ -65,7 +66,6 @@ app.use("/schedulingList", schedulingListRouter_1.default);
 app.use("/tag", tagRouter_1.default);
 app.use("/telephone", telephoneRouter_1.default);
 app.use("/vehicle", vehicleRouter_1.default);
-app.use("/visitor", visitorRouter_1.default);
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ error: "Algo deu errado!", details: err.message });
