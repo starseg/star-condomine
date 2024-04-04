@@ -199,6 +199,9 @@ export const getFilteredVisitors = async (
     const lobby = parseInt(req.params.lobby, 10);
     const { query } = req.query;
 
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     const whereCondition = query
       ? {
           OR: [
@@ -222,7 +225,7 @@ export const getFilteredVisitors = async (
               lte: new Date(),
             },
             endDate: {
-              gte: new Date(),
+              gte: today,
             },
           },
         },

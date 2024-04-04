@@ -135,6 +135,7 @@ export function AccessUpdateForm({
   const setStringDate = (time: string) => {
     if (time !== "") {
       const dateObject = new Date(time);
+      dateObject.setHours(dateObject.getHours() + 3);
       return format(dateObject, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     } else {
       return null;
@@ -153,23 +154,9 @@ export function AccessUpdateForm({
     let accessStatus = "ACTIVE";
     if (data.endTime !== "") accessStatus = "INACTIVE";
 
-    let realStartDate = "";
-    if (data.startTime !== "") {
-      const dateObject = new Date(data.startTime);
-      dateObject.setHours(dateObject.getHours() + 3);
-      realStartDate = format(dateObject, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    }
-
-    let realEndDate = "";
-    if (data.startTime !== "") {
-      const dateObject = new Date(data.startTime);
-      dateObject.setHours(dateObject.getHours() + 3);
-      realStartDate = format(dateObject, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    }
-
     const info = {
-      startTime: realStartDate,
-      endTime: realEndDate,
+      startTime: setStringDate(data.startTime),
+      endTime: setStringDate(data.endTime),
       status: accessStatus,
       local: data.local,
       reason: data.reason,

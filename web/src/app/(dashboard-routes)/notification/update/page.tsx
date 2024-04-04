@@ -5,7 +5,6 @@ import api from "@/lib/axios";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { format, parse } from "date-fns";
 import { NotificationUpdateForm } from "@/components/notification/notificationUpdateForm";
 
 export default function UpdateNotification() {

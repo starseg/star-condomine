@@ -80,14 +80,14 @@ export default function UpdateAccess() {
   let realStartDate = "";
   if (access?.startTime !== "" && access !== null) {
     const dateObject = new Date(access.startTime);
-    dateObject.setHours(dateObject.getHours() - 3);
+    dateObject.setHours(dateObject.getHours());
     realStartDate = format(dateObject, "yyyy-MM-dd'T'HH:mm");
   }
 
   let realEndDate = "";
   if (access?.startTime !== "" && access !== null) {
     const dateObject = new Date(access.startTime);
-    dateObject.setHours(dateObject.getHours() - 3);
+    dateObject.setHours(dateObject.getHours());
     realStartDate = format(dateObject, "yyyy-MM-dd'T'HH:mm");
   }
 

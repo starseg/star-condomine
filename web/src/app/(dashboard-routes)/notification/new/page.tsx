@@ -3,7 +3,7 @@ import { Menu } from "@/components/menu";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Feedback",
+  title: "Notificações",
 };
 
 export default function Notification() {

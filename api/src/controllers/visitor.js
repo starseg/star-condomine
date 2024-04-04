@@ -108,8 +108,6 @@ const getVisitorTypes = async (req, res) => {
 exports.getVisitorTypes = getVisitorTypes;
 const getVisitorsByLobby = async (req, res) => {
     try {
-        const datePlusOne = new Date();
-        datePlusOne.setDate(datePlusOne.getDate() + 1);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const lobby = parseInt(req.params.lobby, 10);
@@ -158,6 +156,8 @@ const getFilteredVisitors = async (req, res) => {
     try {
         const lobby = parseInt(req.params.lobby, 10);
         const { query } = req.query;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
         const whereCondition = query
             ? {
                 OR: [
@@ -181,7 +181,7 @@ const getFilteredVisitors = async (req, res) => {
                             lte: new Date(),
                         },
                         endDate: {
-                            gte: new Date(),
+                            gte: today,
                         },
                     },
                 },
