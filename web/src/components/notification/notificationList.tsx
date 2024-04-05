@@ -53,7 +53,11 @@ export default function NotificationList() {
                   {simpleDateFormat(item.date)}
                 </h4>
                 <h3 className="text-xl">{item.title}</h3>
-                <p>{item.message}</p>
+                <p
+                  dangerouslySetInnerHTML={{
+                    __html: item.message.replace(/\n/g, "<br/>"),
+                  }}
+                ></p>
               </DropdownMenuItem>
             </>
           ))}

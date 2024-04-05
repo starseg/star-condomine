@@ -24,6 +24,7 @@ import { MaskedInput } from "../maskedInput";
 import { useEffect, useState } from "react";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Textarea } from "../ui/textarea";
+import { handleFileUpload } from "@/lib/firebase-upload";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -79,42 +80,6 @@ export function VisitorUpdateForm({
     defaultValues: preloadedValues,
   });
 
-  type UploadFunction = (file: File) => Promise<string>;
-
-  // Função para fazer upload de um arquivo para o Firebase Storage
-  const uploadFile: UploadFunction = async (file) => {
-    initializeApp(firebaseConfig);
-    const storage = getStorage();
-
-    const timestamp = new Date().toISOString();
-    const fileName = `pessoas/foto-perfil-visita-${timestamp}.jpeg`;
-
-    const fileRef = ref(storage, fileName);
-
-    try {
-      await uploadBytes(fileRef, file).then((snapshot) => {
-        // console.log("Uploaded file!");
-      });
-      const downloadURL = await getDownloadURL(fileRef);
-      // console.log("Arquivo enviado com sucesso. URL de download:", downloadURL);
-
-      return downloadURL;
-    } catch (error) {
-      console.error("Erro ao enviar o arquivo:", error);
-      throw error;
-    }
-  };
-
-  const handleFileUpload = async (file: File) => {
-    try {
-      const url = await uploadFile(file);
-      // console.log("URL do arquivo:", url);
-      return url;
-    } catch (error) {
-      console.error("Erro durante o upload:", error);
-    }
-  };
-
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -152,9 +117,14 @@ export function VisitorUpdateForm({
 
     // FAZ O UPLOAD DA FOTO
     let file;
-    if (data.profileUrl instanceof File && data.profileUrl.size > 0)
-      file = await handleFileUpload(data.profileUrl);
-    else if (visitor?.profileUrl) file = visitor.profileUrl;
+    if (data.profileUrl instanceof File && data.profileUrl.size > 0) {
+      const timestamp = new Date().toISOString();
+      const fileExtension = data.profileUrl.name.split(".").pop();
+      file = await handleFileUpload(
+        data.profileUrl,
+        `pessoas/foto-perfil-visita-${timestamp}.${fileExtension}`
+      );
+    } else if (visitor?.profileUrl) file = visitor.profileUrl;
     else file = "";
 
     // REGISTRA O visitante

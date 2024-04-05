@@ -159,10 +159,18 @@ export default function AccessTable({ lobby }: { lobby: string }) {
               return (
                 <TableRow key={item.accessId} style={nameStyle}>
                   <TableCell>
-                    <p className="max-w-[25ch]">{item.visitor.name}</p>
+                    <p className="max-w-[25ch]">
+                      {item.visitor.name !== null
+                        ? item.visitor.name
+                        : "desconhecido"}
+                    </p>
                   </TableCell>
                   <TableCell>
-                    <p className="max-w-[25ch]">{item.member.name}</p>
+                    <p className="max-w-[25ch]">
+                      {item.member.name !== null
+                        ? item.member.name
+                        : "desconhecido"}
+                    </p>
                   </TableCell>
                   <TableCell>{formatDate(item.startTime)}</TableCell>
                   {control === "S" ? (
