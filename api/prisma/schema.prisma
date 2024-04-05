@@ -31,7 +31,7 @@ model Lobby {
   responsible  String
   telephone    String
   schedules    String
-  procedures   String?
+  procedures   String?   @db.VarChar(500)
   datasheet    String?
   cep          String
   state        String
@@ -64,7 +64,7 @@ model Member {
   rg                  String
   cpf                 String
   email               String?
-  comments            String?
+  comments            String?      @db.VarChar(500)
   status              Status       @default(ACTIVE)
   // ACCESS
   faceAccess          String?
@@ -133,7 +133,7 @@ model Vehicle {
   model        String?
   color        String?
   tag          String? @unique
-  comments     String?
+  comments     String? @db.VarChar(500)
 
   vehicleType   VehicleType @relation(fields: [vehicleTypeId], references: [vehicleTypeId])
   vehicleTypeId Int
@@ -170,7 +170,7 @@ model Visitor {
   endDate    DateTime?
   status     Status    @default(ACTIVE)
   relation   String?
-  comments   String?   @db.VarChar(300)
+  comments   String?   @db.VarChar(500)
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 
@@ -190,7 +190,7 @@ model Scheduling {
   location     String
   startDate    DateTime
   endDate      DateTime
-  comments     String?
+  comments     String?  @db.VarChar(500)
   status       Status   @default(ACTIVE)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -214,7 +214,7 @@ model Access {
   endTime   DateTime?
   local     String?
   reason    String?
-  comments  String?
+  comments  String?   @db.VarChar(500)
   status    Status    @default(ACTIVE)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -251,7 +251,7 @@ model LobbyProblem {
 model LobbyCalendar {
   lobbyCalendarId Int      @id @default(autoincrement())
   date            DateTime
-  description     String
+  description     String   @db.VarChar(500)
 
   lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId])
   lobbyId Int
