@@ -16,10 +16,7 @@ export default function Operators() {
       <section className="max-w-5xl mx-auto mb-24">
         <h1 className="text-4xl text-center mb-4">Operadores do sistema</h1>
         <OperatorTable />
-        <Link
-          href={"operators/new"}
-          className="flex justify-end max-w-[90%] mx-auto mt-4"
-        >
+        <Link href={"operators/new"} className="flex justify-end mt-4">
           <Button className="self-end text-lg flex gap-2">
             <FilePlus size={24} />
             Adicionar operador

@@ -4,33 +4,8 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import LoadingIcon from "../loadingIcon";
 import DetailItem from "../detailItem";
-import { formatDate, simpleDateFormat } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
-
-interface Access {
-  accessId: number;
-  startTime: string;
-  endTime: string;
-  local: string;
-  reason: string;
-  comments: string;
-  createdAt: string;
-  updatedAt: string;
-  lobbyId: number;
-  status: "ACTIVE" | "INACTIVE" | undefined;
-  memberId: number;
-  member: {
-    name: string;
-  };
-  visitorId: number;
-  visitor: {
-    name: string;
-  };
-  operatorId: number;
-  operator: {
-    name: string;
-  };
-}
 
 export default function AccessDetails({ id }: { id: number }) {
   const [access, setAccess] = useState<Access>();

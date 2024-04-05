@@ -63,6 +63,8 @@ export default function MemberCredentialsForm({
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+  const lobby = params.get("lobby");
+  const control = params.get("c");
 
   const [tagNumber, setTagNumber] = useState<string[]>([]);
   const [cardNumber, setCardNumber] = useState<string[]>([]);
@@ -164,7 +166,7 @@ export default function MemberCredentialsForm({
       throw error;
     }
     try {
-      const response = await api.put(
+      await api.put(
         "member/" + params.get("id"),
         {
           passwordAccess: data.password,
@@ -179,7 +181,7 @@ export default function MemberCredentialsForm({
       console.error("(Pass) Erro ao enviar dados para a API:", error);
       throw error;
     }
-    router.push("/dashboard/actions/resident?lobby=" + params.get("lobby"));
+    router.push(`/dashboard/actions/resident?lobby=${lobby}&c=${control}`);
   };
 
   return (

@@ -14,26 +14,7 @@ import { PencilLine, Trash } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
 import { SkeletonTable } from "../_skeletons/skeleton-table";
-
-interface Vehicle {
-  vehicleId: number;
-  licensePlate: string;
-  brand: string;
-  model: string;
-  color: string;
-  tag: string;
-  comments: string;
-  vehicleType: {
-    vehicleTypeId: number;
-    description: string;
-  };
-  member: {
-    memberId: number;
-    name: string;
-  };
-}
 
 export default function VehicleTable({
   lobby,

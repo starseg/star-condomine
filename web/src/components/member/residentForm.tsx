@@ -34,6 +34,7 @@ import {
   CommandItem,
 } from "../ui/command";
 import { PlusCircle, Trash } from "@phosphor-icons/react/dist/ssr";
+import { handleFileUpload } from "@/lib/firebase-upload";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -76,42 +77,6 @@ export function ResidentForm() {
       card: "",
     },
   });
-
-  type UploadFunction = (file: File) => Promise<string>;
-
-  // Função para fazer upload de um arquivo para o Firebase Storage
-  const uploadFile: UploadFunction = async (file) => {
-    initializeApp(firebaseConfig);
-    const storage = getStorage();
-
-    const timestamp = new Date().toISOString();
-    const fileName = `pessoas/foto-perfil-${timestamp}.jpeg`;
-
-    const fileRef = ref(storage, fileName);
-
-    try {
-      await uploadBytes(fileRef, file).then((snapshot) => {
-        // console.log("Uploaded file!");
-      });
-      const downloadURL = await getDownloadURL(fileRef);
-      // console.log("Arquivo enviado com sucesso. URL de download:", downloadURL);
-
-      return downloadURL;
-    } catch (error) {
-      console.error("Erro ao enviar o arquivo:", error);
-      throw error;
-    }
-  };
-
-  const handleFileUpload = async (file: File) => {
-    try {
-      const url = await uploadFile(file);
-      // console.log("URL do arquivo:", url);
-      return url;
-    } catch (error) {
-      console.error("Erro durante o upload:", error);
-    }
-  };
 
   const { data: session } = useSession();
   const router = useRouter();
@@ -216,12 +181,18 @@ export function ResidentForm() {
     // PEGA O ID DA PORTARIA
     const lobbyParam = params.get("lobby");
     const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
+    const control = params.get("c");
 
     // FAZ O UPLOAD DA FOTO
     let file;
-    if (data.profileUrl instanceof File && data.profileUrl.size > 0)
-      file = await handleFileUpload(data.profileUrl);
-    else file = "";
+    if (data.profileUrl instanceof File && data.profileUrl.size > 0) {
+      const timestamp = new Date().toISOString();
+      const fileExtension = data.profileUrl.name.split(".").pop();
+      file = await handleFileUpload(
+        data.profileUrl,
+        `pessoas/foto-perfil-${timestamp}.${fileExtension}`
+      );
+    } else file = "";
 
     // REGISTRA O MORADOR
     try {
@@ -319,7 +290,7 @@ export function ResidentForm() {
         }
       }
 
-      router.push("/dashboard/actions/resident?lobby=" + lobby);
+      router.push(`/dashboard/actions/resident?lobby=${lobby}&c=${control}`);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;

@@ -387,7 +387,7 @@ export function AccessUpdateForm({
               <FormLabel>Observações</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Alguma informação adicional..."
+                  placeholder="Alguma informação adicional. Exemplo: Placa do veículo"
                   autoComplete="off"
                   {...field}
                 />

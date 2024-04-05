@@ -13,20 +13,8 @@ import { PencilLine, Trash } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
 import { SkeletonTable } from "../_skeletons/skeleton-table";
 import { deleteAction } from "@/lib/delete-action";
-
-interface Operator {
-  operatorId: number;
-  username: string;
-  name: string;
-  password: string;
-  type: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-}
 
 export default function OperatorTable() {
   const [isLoading, setIsLoading] = useState(true);
@@ -58,7 +46,7 @@ export default function OperatorTable() {
       {isLoading ? (
         <SkeletonTable />
       ) : (
-        <div className="max-h-[60vh] overflow-x-auto rouded-lg max-w-[90%] mx-auto">
+        <div className="max-h-[60vh] overflow-x-auto">
           <Table className="border border-stone-800">
             <TableHeader className="bg-stone-800 font-semibold">
               <TableRow>

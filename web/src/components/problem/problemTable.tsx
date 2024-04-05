@@ -21,25 +21,8 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
 import { SkeletonTable } from "../_skeletons/skeleton-table";
 import { deleteAction } from "@/lib/delete-action";
-
-interface Problem {
-  lobbyProblemId: number;
-  title: string;
-  description: string;
-  date: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-  lobbyId: number;
-  operatorId: number;
-  operator: {
-    operatorId: number;
-    name: string;
-  };
-}
 
 export default function ProblemTable({ lobby }: { lobby: string }) {
   const [isLoading, setIsLoading] = useState(true);

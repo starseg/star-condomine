@@ -9,42 +9,19 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import api from "@/lib/axios";
-import { formatDate, simpleDateFormat } from "@/lib/utils";
+import { simpleDateFormat } from "@/lib/utils";
 import {
   FilePlus,
   MagnifyingGlass,
   PencilLine,
-  SignOut,
   Trash,
 } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
 import { SkeletonTable } from "../_skeletons/skeleton-table";
 import { deleteAction } from "@/lib/delete-action";
-
-interface Scheduling {
-  schedulingId: number;
-  startDate: string;
-  endDate: string;
-  location: string;
-  reason: string;
-  createdAt: string;
-  updatedAt: string;
-  lobbyId: number;
-  operatorId: number;
-  status: "ACTIVE" | "INACTIVE" | undefined;
-  memberId: number;
-  member: {
-    name: string;
-  };
-  visitorId: number;
-  visitor: {
-    name: string;
-  };
-}
 
 export default function SchedulingTable({ lobby }: { lobby: string }) {
   const [isLoading, setIsLoading] = useState(true);

@@ -3,38 +3,8 @@ import api from "@/lib/axios";
 import { UserCircle } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { formatDate } from "@/lib/utils";
-
-interface Member {
-  memberId: number;
-  type: string;
-  profileUrl: string;
-  name: string;
-  rg: string;
-  cpf: string;
-  email: string;
-  comments: string;
-  status: string;
-  faceAccess: string;
-  biometricAccess: string;
-  remoteControlAccess: string;
-  passwordAccess: string;
-  addressType: {
-    addressTypeId: number;
-    description: string;
-  };
-  address: string;
-  accessPeriod: Date;
-  telephone: {
-    telephoneId: number;
-    number: string;
-  }[];
-  position: string;
-  createdAt: string;
-  updatedAt: string;
-  lobbyId: number;
-}
 
 export default function ResidentFullList({ lobby }: { lobby: string }) {
   const [members, setMembers] = useState<Member[]>([]);

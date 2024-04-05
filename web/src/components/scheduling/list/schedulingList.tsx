@@ -15,26 +15,6 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-interface SchedulingList {
-  schedulingListId: number;
-  description: string;
-  url: string;
-  status: string;
-  createdAt: string;
-  memberId: number;
-  member: {
-    name: string;
-  };
-  operatorId: number;
-  operator: {
-    name: string;
-  };
-  lobbyId: number;
-  lobby: {
-    name: string;
-  };
-}
-
 export default function SchedulingListItems() {
   const [isLoading, setIsLoading] = useState(true);
   const [schedulingList, setSchedulingList] = useState<SchedulingList[]>([]);

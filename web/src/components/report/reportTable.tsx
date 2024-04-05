@@ -22,34 +22,6 @@ import {
 import { PdfButton } from "./pdfButton";
 import { SkeletonTable } from "../_skeletons/skeleton-table";
 
-interface Access {
-  accessId: number;
-  startTime: string;
-  endTime: string;
-  local: string;
-  reason: string;
-  comments: string;
-  createdAt: string;
-  updatedAt: string;
-  status: "ACTIVE" | "INACTIVE" | undefined;
-  memberId: number;
-  member: {
-    name: string;
-  };
-  visitorId: number;
-  visitor: {
-    name: string;
-  };
-  operatorId: number;
-  operator: {
-    name: string;
-  };
-  lobbyId: number;
-  lobby: {
-    name: string;
-  };
-}
-
 export default function ReportTable({ lobby }: { lobby: string }) {
   const [isLoading, setIsLoading] = useState(true);
   const [access, setAccess] = useState<Access[]>([]);

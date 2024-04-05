@@ -17,47 +17,18 @@ import {
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
 import { useSearchParams } from "next/navigation";
 import { SkeletonTable } from "../_skeletons/skeleton-table";
 import { deleteAction } from "@/lib/delete-action";
-
-interface Member {
-  memberId: number;
-  type: string;
-  profileUrl: string;
-  name: string;
-  rg: string;
-  cpf: string;
-  comments: string;
-  status: string;
-  faceAccess: string;
-  biometricAccess: string;
-  remoteControlAccess: string;
-  passwordAccess: string;
-  addressType: {
-    addressTypeId: number;
-    description: string;
-  };
-  address: string;
-  accessPeriod: Date;
-  telephone: {
-    telephoneId: number;
-    number: string;
-  }[];
-  position: string;
-  createdAt: Date;
-  updatedAt: Date;
-  lobbyId: number;
-}
 
 export default function MemberTable({ lobby }: { lobby: string }) {
   const [isLoading, setIsLoading] = useState(true);
   const [members, setMembers] = useState<Member[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const control = params.get("c");
   const fetchData = async () => {
-    const params = new URLSearchParams(searchParams);
     try {
       let path;
       if (!params.get("query")) {
@@ -121,7 +92,13 @@ export default function MemberTable({ lobby }: { lobby: string }) {
               else type = "employee";
               return (
                 <TableRow key={member.memberId}>
-                  <TableCell>{member.name}</TableCell>
+                  <TableCell>
+                    {member.comments ? (
+                      <p className="text-yellow-400">{member.name}</p>
+                    ) : (
+                      member.name
+                    )}
+                  </TableCell>
                   <TableCell>{member.cpf}</TableCell>
                   <TableCell>
                     {type === "resident"
@@ -141,13 +118,13 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                   </TableCell>
                   <TableCell className="space-x-4">
                     <Link
-                      href={`${type}/vehicles?id=${member.memberId}&lobby=${lobby}`}
+                      href={`${type}/vehicles?id=${member.memberId}&lobby=${lobby}&c=${control}`}
                       className="px-3 py-1 border rounded-md hover:border-stone-50 transition-all"
                     >
                       Veículos
                     </Link>
                     <Link
-                      href={`${type}/credentials?id=${member.memberId}&lobby=${lobby}`}
+                      href={`${type}/credentials?id=${member.memberId}&lobby=${lobby}&c=${control}`}
                       className="px-3 py-1 border rounded-md hover:border-stone-50 transition-all"
                     >
                       Credenciais
@@ -158,7 +135,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                       <MagnifyingGlass />
                     </Link>
                     <Link
-                      href={`${type}/update?id=${member.memberId}&lobby=${lobby}`}
+                      href={`${type}/update?id=${member.memberId}&lobby=${lobby}&c=${control}`}
                     >
                       <PencilLine />
                     </Link>

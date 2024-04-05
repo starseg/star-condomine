@@ -6,29 +6,6 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-interface Visitor {
-  visitorId: number;
-  profileUrl: string;
-  name: string;
-  rg: string;
-  cpf: string;
-  phone: string;
-  status: string;
-  relation: string;
-  comments: string;
-  createdAt: string;
-  updatedAt: string;
-  visitorType: {
-    visitorTypeId: number;
-    description: string;
-  };
-  scheduling: [
-    {
-      schedulingId: number;
-    }
-  ];
-}
-
 export default function VisitorFullList({ lobby }: { lobby: string }) {
   const [visitors, setVisitors] = useState<Visitor[]>([]);
   const { data: session } = useSession();

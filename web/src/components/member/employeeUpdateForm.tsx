@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
 import { MaskedInput } from "../maskedInput";
 import { useState } from "react";
+import { handleFileUpload } from "@/lib/firebase-upload";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -91,52 +92,24 @@ export function EmployeeUpdateForm({
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
 
-  type UploadFunction = (file: File) => Promise<string>;
-  const uploadFile: UploadFunction = async (file) => {
-    initializeApp(firebaseConfig);
-    const storage = getStorage();
-
-    const timestamp = new Date().toISOString();
-    const fileName = `pessoas/foto-perfil-${timestamp}.jpeg`;
-
-    const fileRef = ref(storage, fileName);
-
-    try {
-      await uploadBytes(fileRef, file).then((snapshot) => {
-        // console.log("Uploaded file!");
-      });
-      const downloadURL = await getDownloadURL(fileRef);
-      // console.log("Arquivo enviado com sucesso. URL de download:", downloadURL);
-
-      return downloadURL;
-    } catch (error) {
-      console.error("Erro ao enviar o arquivo:", error);
-      throw error;
-    }
-  };
-
-  const handleFileUpload = async (file: File) => {
-    try {
-      const url = await uploadFile(file);
-      // console.log("URL do arquivo:", url);
-      return url;
-    } catch (error) {
-      console.error("Erro durante o upload:", error);
-    }
-  };
-
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
     // PEGA O ID DA PORTARIA
     const lobbyParam = params.get("lobby");
     const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
+    const control = params.get("c");
 
     // FAZ O UPLOAD DA FOTO
     let file;
-    if (data.profileUrl instanceof File && data.profileUrl.size > 0)
-      file = await handleFileUpload(data.profileUrl);
-    else if (member?.profileUrl) file = member.profileUrl;
+    if (data.profileUrl instanceof File && data.profileUrl.size > 0) {
+      const timestamp = new Date().toISOString();
+      const fileExtension = data.profileUrl.name.split(".").pop();
+      file = await handleFileUpload(
+        data.profileUrl,
+        `pessoas/foto-perfil-${timestamp}.${fileExtension}`
+      );
+    } else if (member?.profileUrl) file = member.profileUrl;
     else file = "";
 
     // REGISTRA O FUNCIONARIO
@@ -153,14 +126,14 @@ export function EmployeeUpdateForm({
         remoteControlAccess: data.remoteControlAccess.toString(),
         comments: data.comments,
       };
-      const response = await api.put("member/" + params.get("id"), info, {
+      await api.put("member/" + params.get("id"), info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
       // console.log(response.data);
 
-      router.push("/dashboard/actions/employee?lobby=" + lobby);
+      router.push(`/dashboard/actions/employee?lobby=${lobby}&c=${control}`);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;

@@ -144,6 +144,7 @@ export function VisitorForm() {
     // PEGA O ID DA PORTARIA
     const lobbyParam = params.get("lobby");
     const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
+    const control = params.get("c");
 
     // FAZ O UPLOAD DA FOTO
     let file;
@@ -176,7 +177,6 @@ export function VisitorForm() {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      // console.log(response.data);
 
       if (isAccessing) {
         try {
@@ -205,7 +205,7 @@ export function VisitorForm() {
         }
       }
 
-      router.push("/dashboard/actions/visitor?lobby=" + lobby);
+      router.push(`/dashboard/actions/visitor?lobby=${lobby}&c=${control}`);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;

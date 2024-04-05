@@ -34,7 +34,7 @@ export default async function Member({
         </div>
         <div className="mt-6 flex gap-4 items-center">
           <Link
-            href={`employee/new?lobby=${lobby}`}
+            href={`employee/new?lobby=${lobby}&c=${control}`}
             className={buttonVariants({ variant: "default" })}
           >
             <p className="flex gap-2 text-xl items-center">

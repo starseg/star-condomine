@@ -6,31 +6,6 @@ import LoadingIcon from "../loadingIcon";
 import DetailItem from "../detailItem";
 import { formatDate, simpleDateFormat } from "@/lib/utils";
 
-interface Scheduling {
-  schedulingId: number;
-  startDate: string;
-  endDate: string;
-  location: string;
-  reason: string;
-  comments: string;
-  createdAt: string;
-  updatedAt: string;
-  lobbyId: number;
-  status: "ACTIVE" | "INACTIVE" | undefined;
-  memberId: number;
-  member: {
-    name: string;
-  };
-  visitorId: number;
-  visitor: {
-    name: string;
-  };
-  operatorId: number;
-  operator: {
-    name: string;
-  };
-}
-
 export default function SchedulingDetails({ id }: { id: number }) {
   const [scheduling, setScheduling] = useState<Scheduling>();
   const { data: session } = useSession();

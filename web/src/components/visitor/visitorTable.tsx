@@ -21,29 +21,6 @@ import { useEffect, useState } from "react";
 import { SkeletonTable } from "../_skeletons/skeleton-table";
 import { deleteAction } from "@/lib/delete-action";
 
-interface Visitor {
-  visitorId: number;
-  profileUrl: string;
-  name: string;
-  rg: string;
-  cpf: string;
-  phone: string;
-  status: string;
-  relation: string;
-  comments: string;
-  createdAt: string;
-  updatedAt: string;
-  visitorType: {
-    visitorTypeId: number;
-    description: string;
-  };
-  scheduling: [
-    {
-      schedulingId: number;
-    }
-  ];
-}
-
 export default function VisitorTable({ lobby }: { lobby: string }) {
   const [isLoading, setIsLoading] = useState(true);
   const [visitors, setVisitors] = useState<Visitor[]>([]);

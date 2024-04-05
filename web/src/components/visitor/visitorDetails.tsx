@@ -6,24 +6,6 @@ import LoadingIcon from "../loadingIcon";
 import DetailItem from "../detailItem";
 import { formatDate } from "@/lib/utils";
 
-interface Visitor {
-  visitorId: number;
-  profileUrl: string;
-  name: string;
-  rg: string;
-  cpf: string;
-  phone: string;
-  status: string;
-  relation: string;
-  comments: string;
-  createdAt: string;
-  updatedAt: string;
-  visitorType: {
-    visitorTypeId: number;
-    description: string;
-  };
-}
-
 export default function VisitorDetails({ id }: { id: number }) {
   const [visitor, setVisitor] = useState<Visitor>();
   const { data: session } = useSession();

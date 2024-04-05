@@ -8,17 +8,6 @@ import Swal from "sweetalert2";
 import { SkeletonCard } from "../_skeletons/skeleton-card";
 import { deleteAction } from "@/lib/delete-action";
 
-interface Feedback {
-  feedbackId: number;
-  name: string;
-  subject: string;
-  message: string;
-  response: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export default function FeedbackList() {
   const [isLoading, setIsLoading] = useState(true);
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);

@@ -15,16 +15,8 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
 import { SkeletonTable } from "../_skeletons/skeleton-table";
 import { deleteAction } from "@/lib/delete-action";
-
-interface Calendar {
-  lobbyCalendarId: number;
-  description: string;
-  date: string;
-  lobbyId: number;
-}
 
 export default function CalendarTable({ lobby }: { lobby: string }) {
   const [isLoading, setIsLoading] = useState(true);

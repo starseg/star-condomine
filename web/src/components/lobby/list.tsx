@@ -6,32 +6,10 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { SkeletonLobbyCard } from "../_skeletons/skeleton-lobby-card";
 
-interface lobbyProps {
-  lobbyId: number;
-  name: String;
-  state: String;
-  city: String;
-  schedules: String;
-  device: [
-    {
-      deviceId: number;
-      name: String;
-      ip: String;
-      ramal: number;
-    }
-  ];
-  lobbyProblem: [
-    {
-      lobbyProblemId: String;
-      status: String;
-    }
-  ];
-}
-
 export default function List() {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(true);
-  const [lobbies, setLobbies] = useState<lobbyProps[]>([]);
+  const [lobbies, setLobbies] = useState<Lobby[]>([]);
   const searchParams = useSearchParams();
   useEffect(() => {
     const fetchData = async () => {
@@ -68,7 +46,7 @@ export default function List() {
           className="bg-stone-900 p-4 rounded-md flex items-center
       justify-evenly flex-wrap gap-4 mb-4 max-h-[25rem] overflow-x-auto"
         >
-          {lobbies.map((lobby: lobbyProps) => {
+          {lobbies.map((lobby: Lobby) => {
             const hasActiveProblem = lobby.lobbyProblem.some(
               (problem) => problem.status === "ACTIVE"
             );

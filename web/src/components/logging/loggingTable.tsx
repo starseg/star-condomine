@@ -13,21 +13,8 @@ import { formatDate } from "@/lib/utils";
 import { Trash } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
 import { SkeletonTable } from "../_skeletons/skeleton-table";
 import { deleteAction } from "@/lib/delete-action";
-
-interface Log {
-  logId: number;
-  date: string;
-  method: string;
-  url: string;
-  userAgent: string;
-  operatorId: string;
-  operator: {
-    name: string;
-  };
-}
 
 export default function LoggingTable() {
   const [isLoading, setIsLoading] = useState(true);
