@@ -23,6 +23,16 @@ import { useEffect, useState } from "react";
 import { SkeletonTable } from "../_skeletons/skeleton-table";
 import { deleteAction } from "@/lib/delete-action";
 
+interface Notification {
+  notificationId: number;
+  date: string;
+  title: string;
+  message: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export default function NotificationTable() {
   const [isLoading, setIsLoading] = useState(true);
   const [notifications, setNotifications] = useState<Notification[]>([]);
