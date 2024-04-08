@@ -12,6 +12,7 @@ interface Member {
   biometricAccess: string;
   remoteControlAccess: string;
   passwordAccess: string;
+  addressTypeId: number;
   addressType: {
     addressTypeId: number;
     description: string;

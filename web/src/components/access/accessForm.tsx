@@ -112,8 +112,9 @@ export function AccessForm() {
   interface memberItem {
     value: number;
     label: string;
-    addressType: string;
-    address: string;
+    addressType: string | null;
+    address: string | null;
+    comments: string;
   }
 
   let visitorItems: visitorItem[] = [];
@@ -133,8 +134,10 @@ export function AccessForm() {
     memberItems.push({
       value: member.memberId,
       label: member.name,
-      addressType: member.addressType.description,
-      address: member.address,
+      addressType:
+        member.addressTypeId !== null ? member.addressType.description : "",
+      address: member.address !== null ? member.address : "",
+      comments: member.comments,
     })
   );
 
@@ -284,6 +287,10 @@ export function AccessForm() {
                           onSelect={() => {
                             form.setValue("member", item.value);
                           }}
+                          className={cn(
+                            item.comments.length > 0 &&
+                              "text-yellow-400 font-semibold"
+                          )}
                         >
                           <Check
                             className={cn(
