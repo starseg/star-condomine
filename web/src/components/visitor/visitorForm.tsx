@@ -75,12 +75,6 @@ export function VisitorForm() {
     },
   });
 
-  interface Member {
-    memberId: number;
-    name: string;
-    type: string;
-  }
-
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -127,6 +121,8 @@ export function VisitorForm() {
   interface item {
     value: number;
     label: string;
+    addressType: string;
+    address: string;
   }
   let items: item[] = [];
 
@@ -134,6 +130,8 @@ export function VisitorForm() {
     items.push({
       value: member.memberId,
       label: member.name,
+      addressType: member.addressType.description,
+      address: member.address,
     });
   });
 
@@ -448,6 +446,14 @@ export function VisitorForm() {
                                     )}
                                   />
                                   {item.label}
+                                  {item.address ? (
+                                    <>
+                                      {" "}
+                                      - {item.addressType} {item.address}
+                                    </>
+                                  ) : (
+                                    ""
+                                  )}
                                 </CommandItem>
                               ))}
                             </CommandGroup>

@@ -64,10 +64,6 @@ export function AccessForm() {
       exitControl: "ACTIVE" | "INACTIVE";
     };
   }
-  interface Member {
-    memberId: number;
-    name: string;
-  }
 
   const { data: session } = useSession();
   const router = useRouter();
@@ -116,6 +112,8 @@ export function AccessForm() {
   interface memberItem {
     value: number;
     label: string;
+    addressType: string;
+    address: string;
   }
 
   let visitorItems: visitorItem[] = [];
@@ -135,6 +133,8 @@ export function AccessForm() {
     memberItems.push({
       value: member.memberId,
       label: member.name,
+      addressType: member.addressType.description,
+      address: member.address,
     })
   );
 
@@ -153,7 +153,6 @@ export function AccessForm() {
       realDate = format(dateObject, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     }
     if (data.currentDate) realDate = new Date().toISOString();
-    // console.log(realDate);
 
     const info = {
       startTime: realDate,
@@ -165,14 +164,12 @@ export function AccessForm() {
       operatorId: operator,
       lobbyId: lobby,
     };
-    // console.log(info);
     try {
-      const response = await api.post("access", info, {
+      await api.post("access", info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      // console.log(response.data);
       router.push(`/dashboard/actions/access?lobby=${lobby}&c=${control}`);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
@@ -297,6 +294,14 @@ export function AccessForm() {
                             )}
                           />
                           {item.label}
+                          {item.address ? (
+                            <>
+                              {" "}
+                              - {item.addressType} {item.address}
+                            </>
+                          ) : (
+                            ""
+                          )}
                         </CommandItem>
                       ))}
                     </CommandGroup>
