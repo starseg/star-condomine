@@ -218,7 +218,7 @@ export function SchedulingUpdateForm({
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="p-0">
+                <PopoverContent className="p-0 max-h-[60vh] overflow-x-auto">
                   <Command className="w-full">
                     <CommandInput placeholder="Buscar visitante..." />
                     <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
@@ -276,7 +276,7 @@ export function SchedulingUpdateForm({
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="p-0">
+                <PopoverContent className="p-0 max-h-[60vh] overflow-x-auto">
                   <Command className="w-full">
                     <CommandInput placeholder="Buscar pessoa..." />
                     <CommandEmpty>Nenhum item encontrado.</CommandEmpty>

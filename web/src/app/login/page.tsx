@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { LoginForm } from "@/components/loginForm";
 import BackButton from "@/components/backButton";
 

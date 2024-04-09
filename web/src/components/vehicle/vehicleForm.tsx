@@ -188,7 +188,7 @@ export function VehicleForm() {
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="p-0">
+                <PopoverContent className="p-0 max-h-[60vh] overflow-x-auto">
                   <Command className="w-full">
                     <CommandInput placeholder="Buscar pessoa..." />
                     <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
@@ -245,7 +245,7 @@ export function VehicleForm() {
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="p-0">
+                <PopoverContent className="p-0 max-h-[60vh] overflow-x-auto">
                   <Command className="w-full">
                     <CommandInput placeholder="Buscar tipo..." />
                     <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
