@@ -37,7 +37,6 @@ export default function AccessTable({ lobby }: { lobby: string }) {
       let path;
       if (!params.get("query")) {
         path = "access/lobby/" + lobby;
-        // console.log(path);
       } else {
         path = `access/filtered/${lobby}?query=${params.get("query")}`;
       }
