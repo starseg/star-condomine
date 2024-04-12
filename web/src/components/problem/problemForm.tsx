@@ -55,10 +55,10 @@ export function ProblemForm() {
     let realDate = "";
     if (data.date !== "") {
       const dateObject = new Date(data.date);
+      dateObject.setHours(dateObject.getHours() + 3);
       realDate = format(dateObject, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     }
     if (data.currentDate) realDate = new Date().toISOString();
-    // console.log(realDate);
 
     const info = {
       title: data.title,
@@ -68,12 +68,11 @@ export function ProblemForm() {
       operatorId: operator,
     };
     try {
-      const response = await api.post("lobbyProblem", info, {
+      await api.post("lobbyProblem", info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      // console.log(response.data);
       router.push("/dashboard/actions/problem?lobby=" + lobby);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

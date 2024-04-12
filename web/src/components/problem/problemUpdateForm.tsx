@@ -60,6 +60,7 @@ export function ProblemUpdateForm({
     const id = params.get("id");
 
     const dateObject = new Date(data.date);
+    dateObject.setHours(dateObject.getHours() + 3);
     let realDate = format(dateObject, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     const info = {
@@ -70,12 +71,11 @@ export function ProblemUpdateForm({
       operatorId: operator,
     };
     try {
-      const response = await api.put("lobbyProblem/" + id, info, {
+      await api.put("lobbyProblem/" + id, info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      // console.log(response.data);
       router.push("/dashboard/actions/problem?lobby=" + lobby);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
