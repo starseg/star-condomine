@@ -71,11 +71,7 @@ export default function CalendarTable({ lobby }: { lobby: string }) {
               return (
                 <TableRow key={holiday.lobbyCalendarId}>
                   <TableCell className="w-1/5">{formattedDate}</TableCell>
-                  <TableCell className="w-3/5">
-                    <p className="max-w-3/5 text-ellipsis overflow-hidden whitespace-nowrap">
-                      {holiday.description}
-                    </p>
-                  </TableCell>
+                  <TableCell className="w-3/5">{holiday.description}</TableCell>
                   <TableCell className="w-1/5 flex gap-4 text-2xl">
                     <Link
                       href={`calendar/update?lobby=${holiday.lobbyId}&id=${holiday.lobbyCalendarId}`}
