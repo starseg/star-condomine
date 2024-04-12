@@ -51,23 +51,19 @@ export default function UpdateProblem() {
     fetchData();
   }, [session]);
 
+  let realDate = "";
+  if (problem?.date !== "" && problem !== null) {
+    const dateObject = new Date(problem.date);
+    dateObject.setHours(dateObject.getHours());
+    realDate = format(dateObject, "yyyy-MM-dd'T'HH:mm");
+  }
+
   useEffect(() => {
     if (problem) {
-      let formattedDate;
-      if (problem.date) {
-        const parsedDate = parse(
-          problem.date,
-          "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-          new Date()
-        );
-        formattedDate = format(parsedDate, "yyyy-MM-dd'T'HH:mm");
-      } else {
-        formattedDate = "";
-      }
       setData({
         title: problem?.title || "",
         description: problem?.description || "",
-        date: formattedDate,
+        date: realDate,
         status: problem?.status || "ACTIVE",
       });
       // console.log("data:");

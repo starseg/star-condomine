@@ -64,19 +64,6 @@ export default function UpdateAccess() {
     fetchData();
   }, [session]);
 
-  const dateTimeFormat = (date: string | undefined) => {
-    if (date) {
-      const parsedDate = parse(
-        date,
-        "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-        new Date()
-      );
-      return format(parsedDate, "yyyy-MM-dd'T'HH:mm");
-    } else {
-      return "";
-    }
-  };
-
   let realStartDate = "";
   if (access?.startTime !== "" && access !== null) {
     const dateObject = new Date(access.startTime);
