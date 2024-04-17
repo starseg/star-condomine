@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Frontend do Star Condomine
 
-## Getting Started
+O frontend foi desenvolvido com Next.js + Typescript.
+Os módulos seguem mais ou menos um padrão:
 
-First, run the development server:
+- formulário de cadastro
+- formulário de atualização
+- listagem de dados (geralmente tabela)
+  - opção de exclusão
+  - opção de visualização detalhada
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Todas as ações relacionadas à manipulação de dados são realizadas a partir de requisições para a API. Estas requisições são realizadas com o Axios, passando sempre o token de autenticação do usuário como header da requisição.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Principais Bibliotecas Utilizadas
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### shadcn/ui
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Biblioteca de componentes de interface de usuário para React.
 
-## Learn More
+### sweetalert
 
-To learn more about Next.js, take a look at the following resources:
+Biblioteca para criar alertas e modais com uma experiência de usuário agradável.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### react-input-mask
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Componente React para mascarar inputs de texto conforme o usuário digita.
 
-## Deploy on Vercel
+### date-fns
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Biblioteca JavaScript moderna para manipulação de datas.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### firebase
+
+Plataforma de desenvolvimento de aplicativos móveis e da web desenvolvida pela Google.
+
+### jwt
+
+Biblioteca para lidar com JSON Web Tokens (JWT) em aplicativos JavaScript.
+
+### tailwind
+
+Framework de design CSS de baixo nível que oferece utilitários prontos para uso.
+
+### zod
+
+Biblioteca de validação de esquemas para TypeScript e JavaScript.
+
+### axios
+
+Biblioteca para fazer requisições HTTP no navegador e no Node.js.
+
+### phosphor-icons
+
+Conjunto de ícones para projetos web.
+
+### next-auth
+
+Biblioteca de autenticação para Next.js, que oferece suporte para autenticação social, JWT, cookies, etc.
+
+## Estrutura de Pastas
+
+<p>
+public </br>
+src </br>
+│ </br>
+├── app </br>
+│   ├── dashboard-routes </br>
+│   └── api  </br>
+│ </br>
+├── components </br>
+│ </br>
+├── interfaces </br>
+│ </br>
+├── lib </br>
+│ </br>
+├── providers   </br>
+│ </br>
+└── types  </br>
+</p>
+
+### public
+
+Esta pasta contém os arquivos estáticos do projeto, como imagens, fontes, etc.
+
+### src
+
+O código-fonte do projeto está localizado dentro desta pasta.
+
+#### app
+
+- **dashboard-routes:** Pasta protegida com as páginas internas do sistema, só é acessada após autenticação.
+- **api:** Rotas para autenticação com Next Auth.
+
+#### components
+
+Contém arquivos de componentes genéricos e pastas de componentes relacionados a cada módulo da aplicação.
+
+#### interfaces
+
+Contém as principais interfaces utilizadas para relação com os dados providos pela API.
+
+#### lib
+
+Funções genéricas para reutilização em diversos arquivos.
+
+#### providers
+
+Configuração de autenticação.
+
+#### types
+
+Módulos de interfaces e construtores de componentes específicos do sistema.
