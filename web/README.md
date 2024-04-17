@@ -1,4 +1,10 @@
-# Frontend do Star Condomine
+<div style="display: flex; align-items: center; gap: 24px;">
+  <img src="public/logo.svg" alt="Logo do Star Condomine">
+  <img height="48" src="https://github.com/micaelmi/star-condomine/assets/66328408/bad49011-b501-4818-8ff0-be52b991b7c9" alt="Logo do Next">
+  <img height="48" src="https://github.com/micaelmi/star-condomine/assets/66328408/c90d9b62-a5e7-43be-ad74-3e5f18392378" alt="Logo do Typescript">
+</div>
+
+# Frontend
 
 O frontend foi desenvolvido com Next.js + Typescript.
 Os módulos seguem mais ou menos um padrão:
