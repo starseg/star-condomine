@@ -1,11 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFilteredVisitors = exports.getVisitorsByLobby = exports.getVisitorTypes = exports.deleteVisitor = exports.updateVisitor = exports.createVisitor = exports.getVisitor = exports.getAllVisitors = void 0;
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
+const db_1 = __importDefault(require("../db"));
 const getAllVisitors = async (req, res) => {
     try {
-        const visitor = await prisma.visitor.findMany();
+        const visitor = await db_1.default.visitor.findMany();
         res.json(visitor);
     }
     catch (error) {
@@ -16,7 +18,7 @@ exports.getAllVisitors = getAllVisitors;
 const getVisitor = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const visitor = await prisma.visitor.findUniqueOrThrow({
+        const visitor = await db_1.default.visitor.findUniqueOrThrow({
             where: { visitorId: id },
             include: { visitorType: true },
         });
@@ -34,7 +36,7 @@ exports.getVisitor = getVisitor;
 const createVisitor = async (req, res) => {
     try {
         const { profileUrl, name, rg, cpf, phone, startDate, endDate, relation, comments, visitorTypeId, lobbyId, } = req.body;
-        const visitor = await prisma.visitor.create({
+        const visitor = await db_1.default.visitor.create({
             data: {
                 profileUrl,
                 name,
@@ -60,7 +62,7 @@ const updateVisitor = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
         const { profileUrl, name, rg, cpf, phone, startDate, endDate, relation, comments, status, visitorTypeId, } = req.body;
-        const visitor = await prisma.visitor.update({
+        const visitor = await db_1.default.visitor.update({
             where: { visitorId: id },
             data: {
                 profileUrl,
@@ -86,7 +88,7 @@ exports.updateVisitor = updateVisitor;
 const deleteVisitor = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        await prisma.visitor.delete({
+        await db_1.default.visitor.delete({
             where: { visitorId: id },
         });
         res.json({ message: "Visitante excluído com sucesso" });
@@ -98,7 +100,7 @@ const deleteVisitor = async (req, res) => {
 exports.deleteVisitor = deleteVisitor;
 const getVisitorTypes = async (req, res) => {
     try {
-        const types = await prisma.visitorType.findMany();
+        const types = await db_1.default.visitorType.findMany();
         res.json(types);
     }
     catch (error) {
@@ -111,7 +113,7 @@ const getVisitorsByLobby = async (req, res) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const lobby = parseInt(req.params.lobby, 10);
-        const visitor = await prisma.visitor.findMany({
+        const visitor = await db_1.default.visitor.findMany({
             include: {
                 visitorType: true,
                 access: {
@@ -167,7 +169,7 @@ const getFilteredVisitors = async (req, res) => {
                 AND: { lobbyId: lobby },
             }
             : {};
-        const visitor = await prisma.visitor.findMany({
+        const visitor = await db_1.default.visitor.findMany({
             where: whereCondition,
             include: {
                 visitorType: true,

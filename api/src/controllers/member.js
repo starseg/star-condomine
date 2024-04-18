@@ -1,11 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTagsByMember = exports.countMembers = exports.getFilteredMembers = exports.getAddressTypes = exports.deleteMember = exports.updateMember = exports.createMember = exports.getMember = exports.getMembersByLobby = exports.getAllMembers = void 0;
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
+const db_1 = __importDefault(require("../db"));
 const getAllMembers = async (req, res) => {
     try {
-        const member = await prisma.member.findMany();
+        const member = await db_1.default.member.findMany();
         res.json(member);
     }
     catch (error) {
@@ -16,7 +18,7 @@ exports.getAllMembers = getAllMembers;
 const getMembersByLobby = async (req, res) => {
     try {
         const lobby = parseInt(req.params.lobby, 10);
-        const member = await prisma.member.findMany({
+        const member = await db_1.default.member.findMany({
             where: { lobbyId: lobby },
             include: {
                 addressType: true,
@@ -38,7 +40,7 @@ exports.getMembersByLobby = getMembersByLobby;
 const getMember = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const member = await prisma.member.findUniqueOrThrow({
+        const member = await db_1.default.member.findUniqueOrThrow({
             where: { memberId: id },
             include: {
                 addressType: true,
@@ -59,7 +61,7 @@ exports.getMember = getMember;
 const createMember = async (req, res) => {
     try {
         const { type, profileUrl, name, rg, cpf, email, comments, faceAccess, biometricAccess, remoteControlAccess, passwordAccess, address, addressTypeId, accessPeriod, position, lobbyId, } = req.body;
-        const member = await prisma.member.create({
+        const member = await db_1.default.member.create({
             data: {
                 type,
                 profileUrl,
@@ -90,7 +92,7 @@ const updateMember = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
         const { type, profileUrl, name, rg, cpf, email, comments, status, faceAccess, biometricAccess, remoteControlAccess, passwordAccess, address, addressTypeId, accessPeriod, position, lobbyId, } = req.body;
-        const member = await prisma.member.update({
+        const member = await db_1.default.member.update({
             where: { memberId: id },
             data: {
                 type,
@@ -122,7 +124,7 @@ exports.updateMember = updateMember;
 const deleteMember = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        await prisma.member.delete({
+        await db_1.default.member.delete({
             where: { memberId: id },
         });
         res.json({ message: "Membro excluído com sucesso" });
@@ -134,7 +136,7 @@ const deleteMember = async (req, res) => {
 exports.deleteMember = deleteMember;
 const getAddressTypes = async (req, res) => {
     try {
-        const address = await prisma.addressType.findMany();
+        const address = await db_1.default.addressType.findMany();
         res.json(address);
     }
     catch (error) {
@@ -156,7 +158,7 @@ const getFilteredMembers = async (req, res) => {
                 AND: { lobbyId: lobby },
             }
             : {};
-        const member = await prisma.member.findMany({
+        const member = await db_1.default.member.findMany({
             where: whereCondition,
             include: {
                 addressType: true,
@@ -188,7 +190,7 @@ const countMembers = async (req, res) => {
                 AND: { lobbyId: lobby },
             }
             : {};
-        const member = await prisma.member.count({
+        const member = await db_1.default.member.count({
             where: whereCondition,
         });
         res.json(member);
@@ -201,7 +203,7 @@ exports.countMembers = countMembers;
 const getTagsByMember = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const member = await prisma.member.findUniqueOrThrow({
+        const member = await db_1.default.member.findUniqueOrThrow({
             where: { memberId: id },
             include: {
                 tag: true,

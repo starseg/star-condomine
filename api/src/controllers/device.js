@@ -1,11 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getFilteredDevices = exports.getDeviceByLobby = exports.getDeviceModels = exports.deleteDevice = exports.updateDevice = exports.createDevice = exports.getDevice = exports.getAllDevices = void 0;
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
+exports.getDeviceModels = exports.getFilteredDevices = exports.getDeviceByLobby = exports.deleteDevice = exports.updateDevice = exports.createDevice = exports.getDevice = exports.getAllDevices = void 0;
+const db_1 = __importDefault(require("../db"));
 const getAllDevices = async (req, res) => {
     try {
-        const device = await prisma.device.findMany();
+        const device = await db_1.default.device.findMany();
         res.json(device);
     }
     catch (error) {
@@ -16,7 +18,7 @@ exports.getAllDevices = getAllDevices;
 const getDevice = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const device = await prisma.device.findUniqueOrThrow({
+        const device = await db_1.default.device.findUniqueOrThrow({
             where: { deviceId: id },
         });
         if (!device) {
@@ -33,7 +35,7 @@ exports.getDevice = getDevice;
 const createDevice = async (req, res) => {
     try {
         const { name, ip, ramal, description, deviceModelId, lobbyId } = req.body;
-        const device = await prisma.device.create({
+        const device = await db_1.default.device.create({
             data: { name, ip, ramal, description, deviceModelId, lobbyId },
         });
         res.status(201).json(device);
@@ -47,7 +49,7 @@ const updateDevice = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
         const { name, ip, ramal, description, deviceModelId, lobbyId } = req.body;
-        const device = await prisma.device.update({
+        const device = await db_1.default.device.update({
             where: { deviceId: id },
             data: { name, ip, ramal, description, deviceModelId, lobbyId },
         });
@@ -61,7 +63,7 @@ exports.updateDevice = updateDevice;
 const deleteDevice = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        await prisma.device.delete({
+        await db_1.default.device.delete({
             where: { deviceId: id },
         });
         res.json({ message: "Dispositivo excluído com sucesso" });
@@ -71,20 +73,10 @@ const deleteDevice = async (req, res) => {
     }
 };
 exports.deleteDevice = deleteDevice;
-const getDeviceModels = async (req, res) => {
-    try {
-        const device = await prisma.deviceModel.findMany();
-        res.json(device);
-    }
-    catch (error) {
-        res.status(500).json({ error: "Erro ao buscar os modelos" });
-    }
-};
-exports.getDeviceModels = getDeviceModels;
 const getDeviceByLobby = async (req, res) => {
     try {
         const lobby = parseInt(req.params.lobby, 10);
-        const device = await prisma.device.findMany({
+        const device = await db_1.default.device.findMany({
             where: { lobbyId: lobby },
             include: { deviceModel: true },
         });
@@ -114,7 +106,7 @@ const getFilteredDevices = async (req, res) => {
                 AND: { lobbyId: lobby },
             }
             : {};
-        const device = await prisma.device.findMany({
+        const device = await db_1.default.device.findMany({
             where: whereCondition,
             include: {
                 deviceModel: true,
@@ -132,3 +124,14 @@ const getFilteredDevices = async (req, res) => {
     }
 };
 exports.getFilteredDevices = getFilteredDevices;
+// MODELOS DE DISPOSITIVO
+const getDeviceModels = async (req, res) => {
+    try {
+        const device = await db_1.default.deviceModel.findMany();
+        res.json(device);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao buscar os modelos" });
+    }
+};
+exports.getDeviceModels = getDeviceModels;

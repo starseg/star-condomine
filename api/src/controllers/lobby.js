@@ -1,11 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteLobby = exports.updateLobby = exports.createLobby = exports.getLobby = exports.getFilteredLobbies = exports.getAllLobbies = void 0;
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
+const db_1 = __importDefault(require("../db"));
 const getAllLobbies = async (req, res) => {
     try {
-        const lobby = await prisma.lobby.findMany({
+        const lobby = await db_1.default.lobby.findMany({
             orderBy: [{ name: "asc" }],
         });
         res.json(lobby);
@@ -27,7 +29,7 @@ const getFilteredLobbies = async (req, res) => {
                 ],
             }
             : {};
-        const lobbies = await prisma.lobby.findMany({
+        const lobbies = await db_1.default.lobby.findMany({
             where: whereCondition,
             include: {
                 device: true,
@@ -46,7 +48,7 @@ exports.getFilteredLobbies = getFilteredLobbies;
 const getLobby = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const lobby = await prisma.lobby.findUniqueOrThrow({
+        const lobby = await db_1.default.lobby.findUniqueOrThrow({
             where: { lobbyId: id },
         });
         if (!lobby) {
@@ -63,7 +65,7 @@ exports.getLobby = getLobby;
 const createLobby = async (req, res) => {
     try {
         const { cnpj, name, responsible, telephone, schedules, exitControl, procedures, datasheet, cep, state, city, neighborhood, street, number, complement, type, } = req.body;
-        const lobby = await prisma.lobby.create({
+        const lobby = await db_1.default.lobby.create({
             data: {
                 cnpj,
                 name,
@@ -94,7 +96,7 @@ const updateLobby = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
         const { cnpj, name, responsible, telephone, schedules, exitControl, procedures, datasheet, cep, state, city, neighborhood, street, number, complement, type, } = req.body;
-        const lobby = await prisma.lobby.update({
+        const lobby = await db_1.default.lobby.update({
             where: { lobbyId: id },
             data: {
                 cnpj,
@@ -125,7 +127,7 @@ exports.updateLobby = updateLobby;
 const deleteLobby = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        await prisma.lobby.delete({
+        await db_1.default.lobby.delete({
             where: { lobbyId: id },
         });
         res.json({ message: "Portaria excluída com sucesso" });

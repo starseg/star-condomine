@@ -1,11 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFilteredVehicles = exports.getVehiclesByLobby = exports.getVehicleTypes = exports.getVehiclesByOwner = exports.deleteVehicle = exports.updateVehicle = exports.createVehicle = exports.getVehicle = exports.getAllVehicles = void 0;
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
+const db_1 = __importDefault(require("../db"));
 const getAllVehicles = async (req, res) => {
     try {
-        const vehicle = await prisma.vehicle.findMany({
+        const vehicle = await db_1.default.vehicle.findMany({
             include: {
                 member: true,
                 vehicleType: true,
@@ -21,7 +23,7 @@ exports.getAllVehicles = getAllVehicles;
 const getVehicle = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const vehicle = await prisma.vehicle.findUniqueOrThrow({
+        const vehicle = await db_1.default.vehicle.findUniqueOrThrow({
             where: { vehicleId: id },
         });
         if (!vehicle) {
@@ -38,7 +40,7 @@ exports.getVehicle = getVehicle;
 const createVehicle = async (req, res) => {
     try {
         const { licensePlate, brand, model, color, tag, comments, vehicleTypeId, memberId, lobbyId, } = req.body;
-        const vehicle = await prisma.vehicle.create({
+        const vehicle = await db_1.default.vehicle.create({
             data: {
                 licensePlate,
                 brand,
@@ -62,7 +64,7 @@ const updateVehicle = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
         const { licensePlate, brand, model, color, tag, comments, vehicleTypeId, memberId, } = req.body;
-        const vehicle = await prisma.vehicle.update({
+        const vehicle = await db_1.default.vehicle.update({
             where: { vehicleId: id },
             data: {
                 licensePlate,
@@ -85,7 +87,7 @@ exports.updateVehicle = updateVehicle;
 const deleteVehicle = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        await prisma.vehicle.delete({
+        await db_1.default.vehicle.delete({
             where: { vehicleId: id },
         });
         res.json({ message: "Veículo excluído com sucesso" });
@@ -98,7 +100,7 @@ exports.deleteVehicle = deleteVehicle;
 const getVehiclesByOwner = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const vehicle = await prisma.vehicle.findMany({
+        const vehicle = await db_1.default.vehicle.findMany({
             where: { memberId: id },
             include: {
                 vehicleType: true,
@@ -113,7 +115,7 @@ const getVehiclesByOwner = async (req, res) => {
 exports.getVehiclesByOwner = getVehiclesByOwner;
 const getVehicleTypes = async (req, res) => {
     try {
-        const vehicleType = await prisma.vehicleType.findMany();
+        const vehicleType = await db_1.default.vehicleType.findMany();
         res.json(vehicleType);
     }
     catch (error) {
@@ -124,7 +126,7 @@ exports.getVehicleTypes = getVehicleTypes;
 const getVehiclesByLobby = async (req, res) => {
     try {
         const lobby = parseInt(req.params.lobby, 10);
-        const vehicle = await prisma.vehicle.findMany({
+        const vehicle = await db_1.default.vehicle.findMany({
             where: { lobbyId: lobby },
             include: {
                 member: true,
@@ -153,7 +155,7 @@ const getFilteredVehicles = async (req, res) => {
                 AND: { lobbyId: lobby },
             }
             : {};
-        const vehicle = await prisma.vehicle.findMany({
+        const vehicle = await db_1.default.vehicle.findMany({
             where: whereCondition,
             include: {
                 member: {

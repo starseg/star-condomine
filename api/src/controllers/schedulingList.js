@@ -1,11 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFilteredSchedulingLists = exports.deleteSchedulingList = exports.updateSchedulingList = exports.createSchedulingList = exports.getSchedulingList = exports.getAllSchedulingLists = void 0;
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
+const db_1 = __importDefault(require("../db"));
 const getAllSchedulingLists = async (req, res) => {
     try {
-        const schedulingList = await prisma.schedulingList.findMany({
+        const schedulingList = await db_1.default.schedulingList.findMany({
             include: {
                 lobby: {
                     select: {
@@ -35,7 +37,7 @@ exports.getAllSchedulingLists = getAllSchedulingLists;
 const getSchedulingList = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const schedulingList = await prisma.schedulingList.findUniqueOrThrow({
+        const schedulingList = await db_1.default.schedulingList.findUniqueOrThrow({
             where: { schedulingListId: id },
             include: {
                 member: {
@@ -69,7 +71,7 @@ exports.getSchedulingList = getSchedulingList;
 const createSchedulingList = async (req, res) => {
     try {
         const { description, url, lobbyId, memberId, operatorId } = req.body;
-        const schedulingList = await prisma.schedulingList.create({
+        const schedulingList = await db_1.default.schedulingList.create({
             data: {
                 description,
                 url,
@@ -89,7 +91,7 @@ const updateSchedulingList = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
         const { description, url, status, lobbyId, memberId, operatorId } = req.body;
-        const schedulingList = await prisma.schedulingList.update({
+        const schedulingList = await db_1.default.schedulingList.update({
             where: { schedulingListId: id },
             data: {
                 description,
@@ -110,7 +112,7 @@ exports.updateSchedulingList = updateSchedulingList;
 const deleteSchedulingList = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        await prisma.schedulingList.delete({
+        await db_1.default.schedulingList.delete({
             where: { schedulingListId: id },
         });
         res.json({ message: "Lista excluída com sucesso" });
@@ -133,7 +135,7 @@ const getFilteredSchedulingLists = async (req, res) => {
                 ],
             }
             : {};
-        const schedulingList = await prisma.schedulingList.findMany({
+        const schedulingList = await db_1.default.schedulingList.findMany({
             where: whereCondition,
             include: {
                 operator: {

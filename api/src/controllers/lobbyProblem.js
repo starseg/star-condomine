@@ -1,11 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFilteredLobbyProblem = exports.getProblemsByLobby = exports.deleteLobbyProblem = exports.updateLobbyProblem = exports.createLobbyProblem = exports.getLobbyProblem = exports.getAllLobbyProblems = void 0;
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
+const db_1 = __importDefault(require("../db"));
 const getAllLobbyProblems = async (req, res) => {
     try {
-        const lobbyProblem = await prisma.lobbyProblem.findMany();
+        const lobbyProblem = await db_1.default.lobbyProblem.findMany();
         res.json(lobbyProblem);
     }
     catch (error) {
@@ -16,7 +18,7 @@ exports.getAllLobbyProblems = getAllLobbyProblems;
 const getLobbyProblem = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const lobbyProblem = await prisma.lobbyProblem.findUniqueOrThrow({
+        const lobbyProblem = await db_1.default.lobbyProblem.findUniqueOrThrow({
             where: { lobbyProblemId: id },
         });
         if (!lobbyProblem) {
@@ -33,7 +35,7 @@ exports.getLobbyProblem = getLobbyProblem;
 const createLobbyProblem = async (req, res) => {
     try {
         const { title, description, date, lobbyId, operatorId } = req.body;
-        const lobbyProblem = await prisma.lobbyProblem.create({
+        const lobbyProblem = await db_1.default.lobbyProblem.create({
             data: { title, description, date, lobbyId, operatorId },
         });
         res.status(201).json(lobbyProblem);
@@ -47,7 +49,7 @@ const updateLobbyProblem = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
         const { title, description, date, status, lobbyId, operatorId } = req.body;
-        const lobbyProblem = await prisma.lobbyProblem.update({
+        const lobbyProblem = await db_1.default.lobbyProblem.update({
             where: { lobbyProblemId: id },
             data: { title, description, date, status, lobbyId, operatorId },
         });
@@ -61,7 +63,7 @@ exports.updateLobbyProblem = updateLobbyProblem;
 const deleteLobbyProblem = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        await prisma.lobbyProblem.delete({
+        await db_1.default.lobbyProblem.delete({
             where: { lobbyProblemId: id },
         });
         res.json({ message: "Problema excluído com sucesso" });
@@ -74,7 +76,7 @@ exports.deleteLobbyProblem = deleteLobbyProblem;
 const getProblemsByLobby = async (req, res) => {
     try {
         const lobby = parseInt(req.params.lobby, 10);
-        const lobbyProblem = await prisma.lobbyProblem.findMany({
+        const lobbyProblem = await db_1.default.lobbyProblem.findMany({
             where: { lobbyId: lobby },
             include: { operator: true },
             orderBy: [{ status: "asc" }, { date: "desc" }],
@@ -99,7 +101,7 @@ const getFilteredLobbyProblem = async (req, res) => {
                 AND: { lobbyId: lobby },
             }
             : {};
-        const lobbyProblem = await prisma.lobbyProblem.findMany({
+        const lobbyProblem = await db_1.default.lobbyProblem.findMany({
             where: whereCondition,
             include: { operator: true },
             orderBy: [{ status: "asc" }],

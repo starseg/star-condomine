@@ -1,14 +1,16 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteNotification = exports.updateNotification = exports.createNotification = exports.getNotification = exports.getActiveNotifications = exports.getAllNotifications = void 0;
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
+const db_1 = __importDefault(require("../db"));
 const getAllNotifications = async (req, res) => {
     const currentDate = new Date();
     const sevenDaysAgo = new Date(currentDate);
     sevenDaysAgo.setDate(currentDate.getDate() - 7);
     try {
-        const notification = await prisma.notification.findMany({
+        const notification = await db_1.default.notification.findMany({
             orderBy: [{ date: "desc" }],
         });
         res.json(notification);
@@ -23,7 +25,7 @@ const getActiveNotifications = async (req, res) => {
     const sevenDaysAgo = new Date(currentDate);
     sevenDaysAgo.setDate(currentDate.getDate() - 7);
     try {
-        const notification = await prisma.notification.findMany({
+        const notification = await db_1.default.notification.findMany({
             where: {
                 date: {
                     lte: currentDate,
@@ -43,7 +45,7 @@ exports.getActiveNotifications = getActiveNotifications;
 const getNotification = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const notification = await prisma.notification.findUniqueOrThrow({
+        const notification = await db_1.default.notification.findUniqueOrThrow({
             where: { notificationId: id },
         });
         if (!notification) {
@@ -60,7 +62,7 @@ exports.getNotification = getNotification;
 const createNotification = async (req, res) => {
     try {
         const { title, message, date } = req.body;
-        const notification = await prisma.notification.create({
+        const notification = await db_1.default.notification.create({
             data: { title, message, date },
         });
         res.status(201).json(notification);
@@ -74,7 +76,7 @@ const updateNotification = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
         const { title, message, date, status } = req.body;
-        const notification = await prisma.notification.update({
+        const notification = await db_1.default.notification.update({
             where: { notificationId: id },
             data: { title, message, date, status },
         });
@@ -88,7 +90,7 @@ exports.updateNotification = updateNotification;
 const deleteNotification = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        await prisma.notification.delete({
+        await db_1.default.notification.delete({
             where: { notificationId: id },
         });
         res.json({ message: "notificação excluída com sucesso" });

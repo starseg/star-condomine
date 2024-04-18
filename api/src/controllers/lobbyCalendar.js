@@ -1,11 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFilteredCalendar = exports.getTodaysHoliday = exports.getCalendarByLobby = exports.deleteLobbyCalendar = exports.updateLobbyCalendar = exports.createLobbyCalendar = exports.getLobbyCalendar = exports.getAllLobbyCalendars = void 0;
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
+const db_1 = __importDefault(require("../db"));
 const getAllLobbyCalendars = async (req, res) => {
     try {
-        const lobbyCalendar = await prisma.lobbyCalendar.findMany();
+        const lobbyCalendar = await db_1.default.lobbyCalendar.findMany();
         res.json(lobbyCalendar);
     }
     catch (error) {
@@ -16,7 +18,7 @@ exports.getAllLobbyCalendars = getAllLobbyCalendars;
 const getLobbyCalendar = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const lobbyCalendar = await prisma.lobbyCalendar.findUniqueOrThrow({
+        const lobbyCalendar = await db_1.default.lobbyCalendar.findUniqueOrThrow({
             where: { lobbyCalendarId: id },
         });
         if (!lobbyCalendar) {
@@ -33,7 +35,7 @@ exports.getLobbyCalendar = getLobbyCalendar;
 const createLobbyCalendar = async (req, res) => {
     try {
         const { description, date, lobbyId } = req.body;
-        const lobbyCalendar = await prisma.lobbyCalendar.create({
+        const lobbyCalendar = await db_1.default.lobbyCalendar.create({
             data: { description, date, lobbyId },
         });
         res.status(201).json(lobbyCalendar);
@@ -47,7 +49,7 @@ const updateLobbyCalendar = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
         const { description, date, lobbyId } = req.body;
-        const lobbyCalendar = await prisma.lobbyCalendar.update({
+        const lobbyCalendar = await db_1.default.lobbyCalendar.update({
             where: { lobbyCalendarId: id },
             data: { description, date, lobbyId },
         });
@@ -61,7 +63,7 @@ exports.updateLobbyCalendar = updateLobbyCalendar;
 const deleteLobbyCalendar = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        await prisma.lobbyCalendar.delete({
+        await db_1.default.lobbyCalendar.delete({
             where: { lobbyCalendarId: id },
         });
         res.json({ message: "data excluída com sucesso" });
@@ -74,7 +76,7 @@ exports.deleteLobbyCalendar = deleteLobbyCalendar;
 const getCalendarByLobby = async (req, res) => {
     try {
         const lobby = parseInt(req.params.lobby, 10);
-        const lobbyCalendar = await prisma.lobbyCalendar.findMany({
+        const lobbyCalendar = await db_1.default.lobbyCalendar.findMany({
             where: { lobbyId: lobby },
         });
         res.json(lobbyCalendar);
@@ -89,7 +91,7 @@ const getTodaysHoliday = async (req, res) => {
         const lobby = parseInt(req.params.lobby, 10);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        const lobbyCalendar = await prisma.lobbyCalendar.findMany({
+        const lobbyCalendar = await db_1.default.lobbyCalendar.findMany({
             where: {
                 lobbyId: lobby,
                 date: {
@@ -115,7 +117,7 @@ const getFilteredCalendar = async (req, res) => {
                 AND: { lobbyId: lobby },
             }
             : {};
-        const lobbyCalendar = await prisma.lobbyCalendar.findMany({
+        const lobbyCalendar = await db_1.default.lobbyCalendar.findMany({
             where: whereCondition,
             orderBy: [{ date: "asc" }],
         });

@@ -1,11 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deletePhonesByMember = exports.getTelephonesByMember = exports.deleteTelephone = exports.createTelephone = exports.getTelephone = exports.getAllTelephones = void 0;
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
+const db_1 = __importDefault(require("../db"));
 const getAllTelephones = async (req, res) => {
     try {
-        const telephone = await prisma.telephone.findMany();
+        const telephone = await db_1.default.telephone.findMany();
         res.json(telephone);
     }
     catch (error) {
@@ -16,7 +18,7 @@ exports.getAllTelephones = getAllTelephones;
 const getTelephone = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const telephone = await prisma.telephone.findUniqueOrThrow({
+        const telephone = await db_1.default.telephone.findUniqueOrThrow({
             where: { telephoneId: id },
         });
         if (!telephone) {
@@ -33,7 +35,7 @@ exports.getTelephone = getTelephone;
 const createTelephone = async (req, res) => {
     try {
         const { number, memberId } = req.body;
-        const telephone = await prisma.telephone.create({
+        const telephone = await db_1.default.telephone.create({
             data: { number, memberId },
         });
         res.status(201).json(telephone);
@@ -46,7 +48,7 @@ exports.createTelephone = createTelephone;
 const deleteTelephone = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        await prisma.telephone.delete({
+        await db_1.default.telephone.delete({
             where: { telephoneId: id },
         });
         res.json({ message: "Telefone excluído com sucesso" });
@@ -58,7 +60,7 @@ const deleteTelephone = async (req, res) => {
 exports.deleteTelephone = deleteTelephone;
 const getTelephonesByMember = async (req, res) => {
     try {
-        const telephone = await prisma.telephone.findMany({
+        const telephone = await db_1.default.telephone.findMany({
             where: {
                 memberId: parseInt(req.params.id, 10),
             },
@@ -73,7 +75,7 @@ exports.getTelephonesByMember = getTelephonesByMember;
 const deletePhonesByMember = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        await prisma.telephone.deleteMany({
+        await db_1.default.telephone.deleteMany({
             where: { memberId: id },
         });
         res.json({ message: "Telefones excluídos com sucesso" });

@@ -1,11 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getActiveSchedulingsByVisitor = exports.getFilteredSchedulings = exports.getSchedulingsByLobby = exports.deleteScheduling = exports.updateScheduling = exports.createScheduling = exports.getScheduling = exports.getAllSchedules = void 0;
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
+const db_1 = __importDefault(require("../db"));
 const getAllSchedules = async (req, res) => {
     try {
-        const scheduling = await prisma.scheduling.findMany();
+        const scheduling = await db_1.default.scheduling.findMany();
         res.json(scheduling);
     }
     catch (error) {
@@ -16,7 +18,7 @@ exports.getAllSchedules = getAllSchedules;
 const getScheduling = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const scheduling = await prisma.scheduling.findUniqueOrThrow({
+        const scheduling = await db_1.default.scheduling.findUniqueOrThrow({
             where: { schedulingId: id },
             include: {
                 visitor: {
@@ -50,7 +52,7 @@ exports.getScheduling = getScheduling;
 const createScheduling = async (req, res) => {
     try {
         const { reason, location, startDate, endDate, comments, visitorId, lobbyId, memberId, operatorId, } = req.body;
-        const scheduling = await prisma.scheduling.create({
+        const scheduling = await db_1.default.scheduling.create({
             data: {
                 reason,
                 location,
@@ -74,7 +76,7 @@ const updateScheduling = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
         const { reason, location, startDate, endDate, comments, status, visitorId, lobbyId, memberId, operatorId, } = req.body;
-        const scheduling = await prisma.scheduling.update({
+        const scheduling = await db_1.default.scheduling.update({
             where: { schedulingId: id },
             data: {
                 reason,
@@ -99,7 +101,7 @@ exports.updateScheduling = updateScheduling;
 const deleteScheduling = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        await prisma.scheduling.delete({
+        await db_1.default.scheduling.delete({
             where: { schedulingId: id },
         });
         res.json({ message: "Agendamento excluído com sucesso" });
@@ -112,7 +114,7 @@ exports.deleteScheduling = deleteScheduling;
 const getSchedulingsByLobby = async (req, res) => {
     try {
         const lobby = parseInt(req.params.lobby, 10);
-        const scheduling = await prisma.scheduling.findMany({
+        const scheduling = await db_1.default.scheduling.findMany({
             where: { lobbyId: lobby },
             include: {
                 visitor: {
@@ -150,7 +152,7 @@ const getFilteredSchedulings = async (req, res) => {
                 AND: { lobbyId: lobby },
             }
             : {};
-        const scheduling = await prisma.scheduling.findMany({
+        const scheduling = await db_1.default.scheduling.findMany({
             where: whereCondition,
             include: {
                 visitor: {
@@ -184,7 +186,7 @@ const getActiveSchedulingsByVisitor = async (req, res) => {
     today.setHours(0, 0, 0, 0);
     try {
         const visitor = parseInt(req.params.visitor, 10);
-        const scheduling = await prisma.scheduling.findMany({
+        const scheduling = await db_1.default.scheduling.findMany({
             where: { visitorId: visitor, status: "ACTIVE", endDate: { gte: today } },
         });
         res.json(scheduling);

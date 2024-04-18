@@ -1,11 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteFeedback = exports.updateFeedback = exports.createFeedback = exports.getFeedback = exports.getAllFeedbacks = void 0;
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
+const db_1 = __importDefault(require("../db"));
 const getAllFeedbacks = async (req, res) => {
     try {
-        const feedback = await prisma.feedback.findMany({
+        const feedback = await db_1.default.feedback.findMany({
             orderBy: [{ status: "asc" }, { createdAt: "asc" }],
         });
         res.json(feedback);
@@ -18,7 +20,7 @@ exports.getAllFeedbacks = getAllFeedbacks;
 const getFeedback = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const feedback = await prisma.feedback.findUniqueOrThrow({
+        const feedback = await db_1.default.feedback.findUniqueOrThrow({
             where: { feedbackId: id },
         });
         if (!feedback) {
@@ -35,7 +37,7 @@ exports.getFeedback = getFeedback;
 const createFeedback = async (req, res) => {
     try {
         const { name, subject, message } = req.body;
-        const Feedback = await prisma.feedback.create({
+        const Feedback = await db_1.default.feedback.create({
             data: { name, subject, message },
         });
         res.status(201).json(Feedback);
@@ -49,7 +51,7 @@ const updateFeedback = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
         const { name, subject, message, response, status } = req.body;
-        const feedback = await prisma.feedback.update({
+        const feedback = await db_1.default.feedback.update({
             where: { feedbackId: id },
             data: { name, subject, message, response, status },
         });
@@ -63,7 +65,7 @@ exports.updateFeedback = updateFeedback;
 const deleteFeedback = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        await prisma.feedback.delete({
+        await db_1.default.feedback.delete({
             where: { feedbackId: id },
         });
         res.json({ message: "feedback excluído com sucesso" });

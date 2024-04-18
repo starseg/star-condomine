@@ -1,14 +1,16 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteLogging = exports.createLogging = exports.getLogging = exports.getAllLoggings = void 0;
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
+const db_1 = __importDefault(require("../db"));
 const getAllLoggings = async (req, res) => {
     try {
         const date = new Date();
         date.setDate(date.getDate() - 7);
         const formattedDate = date.toISOString();
-        const logging = await prisma.logging.findMany({
+        const logging = await db_1.default.logging.findMany({
             where: {
                 date: {
                     gte: formattedDate,
@@ -33,7 +35,7 @@ exports.getAllLoggings = getAllLoggings;
 const getLogging = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const logging = await prisma.logging.findUniqueOrThrow({
+        const logging = await db_1.default.logging.findUniqueOrThrow({
             where: { logId: id },
         });
         if (!logging) {
@@ -49,7 +51,7 @@ const getLogging = async (req, res) => {
 exports.getLogging = getLogging;
 const createLogging = async (method, url, userAgent, operatorId) => {
     try {
-        const logging = await prisma.logging.create({
+        const logging = await db_1.default.logging.create({
             data: { method, url, userAgent, operatorId },
         });
         // console.log("Registro de logging criado:", logging);
@@ -63,7 +65,7 @@ exports.createLogging = createLogging;
 const deleteLogging = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        await prisma.logging.delete({
+        await db_1.default.logging.delete({
             where: { logId: id },
         });
         res.json({ message: "Registro excluído com sucesso" });

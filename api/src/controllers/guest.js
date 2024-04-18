@@ -1,12 +1,14 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getVisitorTypes = exports.createVisitor = exports.getAddressTypes = exports.createTelephone = exports.createMember = void 0;
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
+const db_1 = __importDefault(require("../db"));
 const createMember = async (req, res) => {
     try {
         const { type, profileUrl, name, rg, cpf, email, comments, faceAccess, biometricAccess, remoteControlAccess, passwordAccess, address, addressTypeId, accessPeriod, position, lobbyId, } = req.body;
-        const member = await prisma.member.create({
+        const member = await db_1.default.member.create({
             data: {
                 type,
                 profileUrl,
@@ -36,7 +38,7 @@ exports.createMember = createMember;
 const createTelephone = async (req, res) => {
     try {
         const { number, memberId } = req.body;
-        const telephone = await prisma.telephone.create({
+        const telephone = await db_1.default.telephone.create({
             data: { number, memberId },
         });
         res.status(201).json(telephone);
@@ -48,7 +50,7 @@ const createTelephone = async (req, res) => {
 exports.createTelephone = createTelephone;
 const getAddressTypes = async (req, res) => {
     try {
-        const address = await prisma.addressType.findMany();
+        const address = await db_1.default.addressType.findMany();
         res.json(address);
     }
     catch (error) {
@@ -59,7 +61,7 @@ exports.getAddressTypes = getAddressTypes;
 const createVisitor = async (req, res) => {
     try {
         const { profileUrl, name, rg, cpf, phone, startDate, endDate, relation, visitorTypeId, lobbyId, } = req.body;
-        const visitor = await prisma.visitor.create({
+        const visitor = await db_1.default.visitor.create({
             data: {
                 profileUrl,
                 name,
@@ -82,7 +84,7 @@ const createVisitor = async (req, res) => {
 exports.createVisitor = createVisitor;
 const getVisitorTypes = async (req, res) => {
     try {
-        const types = await prisma.visitorType.findMany();
+        const types = await db_1.default.visitorType.findMany();
         res.json(types);
     }
     catch (error) {

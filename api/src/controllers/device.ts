@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "../db";
 
 export const getAllDevices = async (
   req: Request,
@@ -78,18 +76,6 @@ export const deleteDevice = async (
   }
 };
 
-export const getDeviceModels = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const device = await prisma.deviceModel.findMany();
-    res.json(device);
-  } catch (error) {
-    res.status(500).json({ error: "Erro ao buscar os modelos" });
-  }
-};
-
 export const getDeviceByLobby = async (
   req: Request,
   res: Response
@@ -143,5 +129,18 @@ export const getFilteredDevices = async (
     res.json(device);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar os veículos" });
+  }
+};
+
+// MODELOS DE DISPOSITIVO
+export const getDeviceModels = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const device = await prisma.deviceModel.findMany();
+    res.json(device);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os modelos" });
   }
 };

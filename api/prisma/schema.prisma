@@ -177,8 +177,8 @@ model Visitor {
   visitorType   VisitorType @relation(fields: [visitorTypeId], references: [visitorTypeId])
   visitorTypeId Int
 
-  lobby   Lobby? @relation(fields: [lobbyId], references: [lobbyId])
-  lobbyId Int?
+  lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId])
+  lobbyId Int
 
   scheduling Scheduling[]
   access     Access[]
@@ -201,8 +201,8 @@ model Scheduling {
   lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId])
   lobbyId Int
 
-  member   Member? @relation(fields: [memberId], references: [memberId])
-  memberId Int?
+  member   Member @relation(fields: [memberId], references: [memberId])
+  memberId Int
 
   operator   Operator @relation(fields: [operatorId], references: [operatorId])
   operatorId Int
@@ -219,8 +219,8 @@ model Access {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  member   Member? @relation(fields: [memberId], references: [memberId])
-  memberId Int?
+  member   Member @relation(fields: [memberId], references: [memberId])
+  memberId Int
 
   visitor   Visitor @relation(fields: [visitorId], references: [visitorId])
   visitorId Int

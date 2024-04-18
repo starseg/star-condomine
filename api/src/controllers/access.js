@@ -1,11 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateReport = exports.getFilteredAccess = exports.getAccessByLobby = exports.deleteAccess = exports.updateAccess = exports.createAccess = exports.getAccess = exports.getAllAccess = void 0;
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
+const db_1 = __importDefault(require("../db"));
 const getAllAccess = async (req, res) => {
     try {
-        const access = await prisma.access.findMany();
+        const access = await db_1.default.access.findMany();
         res.json(access);
     }
     catch (error) {
@@ -16,7 +18,7 @@ exports.getAllAccess = getAllAccess;
 const getAccess = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const access = await prisma.access.findUniqueOrThrow({
+        const access = await db_1.default.access.findUniqueOrThrow({
             where: { accessId: id },
             include: {
                 visitor: {
@@ -52,7 +54,7 @@ exports.getAccess = getAccess;
 const createAccess = async (req, res) => {
     try {
         const { startTime, endTime, local, reason, comments, memberId, lobbyId, visitorId, operatorId, } = req.body;
-        const access = await prisma.access.create({
+        const access = await db_1.default.access.create({
             data: {
                 startTime,
                 endTime,
@@ -76,7 +78,7 @@ const updateAccess = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
         const { startTime, endTime, local, reason, comments, status, memberId, lobbyId, visitorId, operatorId, } = req.body;
-        const access = await prisma.access.update({
+        const access = await db_1.default.access.update({
             where: { accessId: id },
             data: {
                 startTime,
@@ -101,7 +103,7 @@ exports.updateAccess = updateAccess;
 const deleteAccess = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        await prisma.access.delete({
+        await db_1.default.access.delete({
             where: { accessId: id },
         });
         res.json({ message: "Acesso excluído com sucesso" });
@@ -114,7 +116,7 @@ exports.deleteAccess = deleteAccess;
 const getAccessByLobby = async (req, res) => {
     try {
         const lobby = parseInt(req.params.lobby, 10);
-        const access = await prisma.access.findMany({
+        const access = await db_1.default.access.findMany({
             where: { lobbyId: lobby },
             include: {
                 visitor: {
@@ -152,7 +154,7 @@ const getFilteredAccess = async (req, res) => {
                 AND: { lobbyId: lobby },
             }
             : {};
-        const access = await prisma.access.findMany({
+        const access = await db_1.default.access.findMany({
             where: whereCondition,
             include: {
                 visitor: {
@@ -186,7 +188,7 @@ const generateReport = async (req, res) => {
         const lobby = parseInt(req.params.lobby, 10);
         const { from, to } = req.query;
         if (!from || !to) {
-            const resultWithoutDate = await prisma.access.findMany({
+            const resultWithoutDate = await db_1.default.access.findMany({
                 where: {
                     lobbyId: lobby,
                 },
@@ -220,7 +222,7 @@ const generateReport = async (req, res) => {
             res.status(400).json({ error: "As datas fornecidas não são válidas" });
             return;
         }
-        const access = await prisma.access.findMany({
+        const access = await db_1.default.access.findMany({
             where: {
                 lobbyId: lobby,
                 ...(fromObj && toObj
