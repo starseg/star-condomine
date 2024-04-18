@@ -2,7 +2,7 @@ import DeviceTable from "@/components/device/deviceTable";
 import { Menu } from "@/components/menu";
 import Search from "@/components/search";
 import { buttonVariants } from "@/components/ui/button";
-import { FilePlus } from "@phosphor-icons/react/dist/ssr";
+import { DeviceMobile, FilePlus } from "@phosphor-icons/react/dist/ssr";
 import { Metadata } from "next";
 import Link from "next/link";
 
@@ -36,6 +36,14 @@ export default async function Device({
           >
             <p className="flex gap-2 text-xl items-center">
               <FilePlus size={24} /> Registrar dispositivo
+            </p>
+          </Link>
+          <Link
+            href="/deviceModel"
+            className={buttonVariants({ variant: "default" })}
+          >
+            <p className="flex gap-2 text-xl items-center">
+              <DeviceMobile size={24} /> Modelos de dispositivo
             </p>
           </Link>
         </div>

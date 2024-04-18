@@ -2,9 +2,6 @@
 
 import * as z from "zod";
 import api from "@/lib/axios";
-import { initializeApp } from "firebase/app";
-import { firebaseConfig } from "@/firebase";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
@@ -261,11 +258,10 @@ export function VisitorForm() {
           name="cpf"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>CPF</FormLabel>
+              <FormLabel>CPF/CNPJ</FormLabel>
               <FormControl>
-                <MaskedInput
-                  mask="999.999.999/99"
-                  placeholder="Digite o CPF do visitante"
+                <Input
+                  placeholder="Digite o CPF ou CNPJ do visitante"
                   autoComplete="off"
                   {...field}
                 />
@@ -530,7 +526,7 @@ export function VisitorForm() {
         </div>
 
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
-          Registrar
+          {isSending ? "Registrando..." : "Registrar"}
         </Button>
       </form>
     </Form>

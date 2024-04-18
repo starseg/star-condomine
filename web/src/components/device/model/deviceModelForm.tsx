@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,64 +17,38 @@ import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import api from "@/lib/axios";
-import { useSearchParams } from "next/navigation";
-import { Textarea } from "../ui/textarea";
-import { Checkbox } from "../ui/checkbox";
-import { format } from "date-fns";
 import { useState } from "react";
 
 const FormSchema = z.object({
-  title: z.string(),
+  model: z.string(),
+  brand: z.string(),
   description: z.string(),
-  date: z.string(),
-  currentDate: z.boolean(),
 });
 
-export function ProblemForm() {
+export function DeviceModelForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      title: "",
+      model: "",
+      brand: "",
       description: "",
-      date: "",
-      currentDate: false,
     },
   });
 
   const { data: session } = useSession();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
 
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
-    const lobbyParam = params.get("lobby");
-    const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
-    const operator = session?.payload.user.id || null;
 
-    let realDate = "";
-    if (data.date !== "") {
-      const dateObject = new Date(data.date);
-      dateObject.setHours(dateObject.getHours() + 3);
-      realDate = format(dateObject, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    }
-    if (data.currentDate) realDate = new Date().toISOString();
-
-    const info = {
-      title: data.title,
-      description: data.description,
-      date: realDate,
-      lobbyId: lobby,
-      operatorId: operator,
-    };
     try {
-      await api.post("lobbyProblem", info, {
+      await api.post("deviceModel", data, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      router.push("/dashboard/actions/problem?lobby=" + lobby);
+      router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
@@ -90,15 +65,31 @@ export function ProblemForm() {
       >
         <FormField
           control={form.control}
-          name="title"
+          name="model"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Título</FormLabel>
+              <FormLabel>Modelo</FormLabel>
               <FormControl>
                 <Input
                   type="text"
-                  placeholder="Uma breve descrição do problema..."
-                  autoComplete="off"
+                  placeholder="Digite o modelo do dispositivo"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="brand"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Marca</FormLabel>
+              <FormControl>
+                <Input
+                  type="text"
+                  placeholder="Digite a marca do dispositivo"
                   {...field}
                 />
               </FormControl>
@@ -113,47 +104,12 @@ export function ProblemForm() {
             <FormItem>
               <FormLabel>Descrição</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder="Descreva detalhadamente o problema ocorrido..."
-                  rows={10}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="date"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Data e hora</FormLabel>
-              <FormControl>
                 <Input
-                  type="datetime-local"
-                  placeholder="Data e hora"
+                  type="text"
+                  placeholder="Digite a descrição do dispositivo"
                   {...field}
                 />
               </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="currentDate"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <FormLabel className="font-normal">
-                Utilizar data e hora atuais
-              </FormLabel>
               <FormMessage />
             </FormItem>
           )}

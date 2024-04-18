@@ -79,7 +79,7 @@ export default function UpdateVisitor() {
     <>
       <Menu />
       <section className="flex flex-col justify-center items-center mb-12">
-        <h1 className="text-4xl mt-2 mb-4">Atualizar Morador</h1>
+        <h1 className="text-4xl mt-2 mb-4">Atualizar Visitante</h1>
         {visitor && data ? (
           <VisitorUpdateForm preloadedValues={data} visitor={visitor} />
         ) : (

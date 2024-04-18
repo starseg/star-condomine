@@ -53,7 +53,7 @@ export default function VisitorFullList({ lobby }: { lobby: string }) {
             <p>
               Status: {visitor.status === "ACTIVE" ? "✅ Ativo" : "❌ Inativo"}
             </p>
-            <p>CPF: {visitor.cpf}</p>
+            <p>CPF/CNPJ: {visitor.cpf}</p>
             <p>RG: {visitor.rg}</p>
           </div>
           <div className="flex flex-col gap-1 font-bold">

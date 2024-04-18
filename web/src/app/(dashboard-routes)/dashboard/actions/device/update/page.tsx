@@ -54,12 +54,10 @@ export default function UpdateDevice() {
       setData({
         name: device?.name || "",
         ip: device?.ip || "",
-        ramal: device?.ramal || "",
+        ramal: device?.ramal.toString() || "",
         description: device?.description || "",
         model: device?.deviceModelId || 0,
       });
-      // console.log("data:");
-      // console.log(data);
     }
   }, [device]);
 

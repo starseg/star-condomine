@@ -499,7 +499,7 @@ export function LobbyForm() {
           )}
         />
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
-          Registrar
+          {isSending ? "Registrando..." : "Registrar"}
         </Button>
       </form>
     </Form>

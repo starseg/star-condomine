@@ -173,7 +173,7 @@ export function ProblemUpdateForm({
           )}
         />
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
-          Atualizar
+          {isSending ? "Atualizando..." : "Atualizar"}
         </Button>
       </form>
     </Form>

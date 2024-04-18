@@ -20,6 +20,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SkeletonTable } from "../_skeletons/skeleton-table";
 import { deleteAction } from "@/lib/delete-action";
+import { deleteFile } from "@/lib/firebase-upload";
 
 export default function VisitorTable({ lobby }: { lobby: string }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -51,8 +52,9 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
     fetchData();
   }, [session, searchParams]);
 
-  const deleteVisitor = async (id: number) => {
+  const deleteVisitor = async (id: number, url: string) => {
     deleteAction(session, "visitante", `visitor/${id}`, fetchData);
+    deleteFile(url);
   };
 
   return (
@@ -63,7 +65,7 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
         <Table className="border border-stone-800 rouded-lg">
           <TableHeader className="bg-stone-800 font-semibold">
             <TableRow>
-              <TableHead>CPF</TableHead>
+              <TableHead>CPF/CNPJ</TableHead>
               <TableHead>Nome</TableHead>
               <TableHead>Tipo</TableHead>
               <TableHead>Agendamento</TableHead>
@@ -101,12 +103,14 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
                     <MagnifyingGlass />
                   </Link>
                   <Link
-                    href={`visitor/update?id=${visitor.visitorId}&lobby=${lobby}`}
+                    href={`visitor/update?id=${visitor.visitorId}&lobby=${lobby}&c=${control}`}
                   >
                     <PencilLine />
                   </Link>
                   <button
-                    onClick={() => deleteVisitor(visitor.visitorId)}
+                    onClick={() =>
+                      deleteVisitor(visitor.visitorId, visitor.profileUrl)
+                    }
                     title="Excluir"
                   >
                     <Trash />

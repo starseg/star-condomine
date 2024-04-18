@@ -45,7 +45,7 @@ export default function VisitorDetails({ id }: { id: number }) {
               label="Status"
               content={visitor.status === "ACTIVE" ? "✅ Ativo" : "❌ Inativo"}
             />
-            <DetailItem label="CPF" content={visitor.cpf} />
+            <DetailItem label="CPF/CNPJ" content={visitor.cpf} />
             <DetailItem label="RG" content={visitor.rg} />
             <DetailItem label="Telefone" content={visitor.phone} />
 

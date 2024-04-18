@@ -20,6 +20,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { SkeletonTable } from "../_skeletons/skeleton-table";
 import { deleteAction } from "@/lib/delete-action";
+import { deleteFile } from "@/lib/firebase-upload";
 
 export default function MemberTable({ lobby }: { lobby: string }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -53,8 +54,9 @@ export default function MemberTable({ lobby }: { lobby: string }) {
     fetchData();
   }, [session, searchParams]);
 
-  const deleteMember = async (id: number) => {
+  const deleteMember = async (id: number, url: string) => {
     deleteAction(session, "membro", `member/${id}`, fetchData);
+    deleteFile(url);
   };
 
   return (
@@ -140,7 +142,9 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                       <PencilLine />
                     </Link>
                     <button
-                      onClick={() => deleteMember(member.memberId)}
+                      onClick={() =>
+                        deleteMember(member.memberId, member.profileUrl)
+                      }
                       title="Excluir"
                     >
                       <Trash />

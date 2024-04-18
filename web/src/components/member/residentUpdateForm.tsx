@@ -33,8 +33,8 @@ import {
   CommandInput,
   CommandItem,
 } from "../ui/command";
-import { PlusCircle, Trash } from "@phosphor-icons/react/dist/ssr";
-import { handleFileUpload } from "@/lib/firebase-upload";
+import { PlusCircle, Trash, UserCircle } from "@phosphor-icons/react/dist/ssr";
+import { deleteFile, handleFileUpload } from "@/lib/firebase-upload";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -176,6 +176,7 @@ export function ResidentUpdateForm({
     setPhoneNumber(phoneNumber.filter((item) => item !== value));
   };
 
+  const [removeFile, setRemoveFile] = useState(false);
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
@@ -186,7 +187,12 @@ export function ResidentUpdateForm({
 
     // FAZ O UPLOAD DA FOTO
     let file;
-    if (data.profileUrl instanceof File && data.profileUrl.size > 0) {
+    if (removeFile) {
+      file = "";
+      if (member.profileUrl.length > 0) {
+        deleteFile(member.profileUrl);
+      }
+    } else if (data.profileUrl instanceof File && data.profileUrl.size > 0) {
       const timestamp = new Date().toISOString();
       const fileExtension = data.profileUrl.name.split(".").pop();
       file = await handleFileUpload(
@@ -271,28 +277,62 @@ export function ResidentUpdateForm({
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
       >
-        <FormField
-          control={form.control}
-          name="profileUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Foto</FormLabel>
-              <FormControl>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) =>
-                    field.onChange(e.target.files ? e.target.files[0] : null)
-                  }
-                />
-              </FormControl>
-              <FormDescription>
-                Não preencha esse campo se quiser manter o arquivo anterior
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
+        <div className="flex gap-4 items-center justify-center">
+          {member.profileUrl.length > 0 ? (
+            <div className="flex flex-col justify-center items-center">
+              <img src={member.profileUrl} alt="Foto de perfil" width={80} />
+              <p className="text-sm text-center mt-2">Foto atual</p>
+              {/* {member.profileUrl} */}
+            </div>
+          ) : (
+            <div className="flex flex-col justify-center items-center">
+              <UserCircle className="w-20 h-20" />
+              <p className="text-sm text-center mt-2">
+                Nenhuma foto <br /> cadastrada
+              </p>
+            </div>
           )}
-        />
+          <div className="w-10/12">
+            <FormField
+              control={form.control}
+              name="profileUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nova foto</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.files ? e.target.files[0] : null
+                        )
+                      }
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Não preencha esse campo se quiser manter o arquivo anterior
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex items-center space-x-2 mt-2">
+              <Checkbox
+                id="check"
+                onClick={() => {
+                  setRemoveFile(!removeFile);
+                }}
+              />
+              <label
+                htmlFor="check"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Remover foto - {removeFile ? "sim" : "não"}
+              </label>
+            </div>
+          </div>
+        </div>
         <FormField
           control={form.control}
           name="name"
@@ -561,7 +601,7 @@ export function ResidentUpdateForm({
           )}
         />
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
-          Atualizar
+          {isSending ? "Atualizando..." : "Atualizar"}
         </Button>
       </form>
     </Form>
