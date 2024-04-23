@@ -23,6 +23,7 @@ import notificationRouter from "./routes/notificationRouter";
 import guestRouter from "./routes/guestRouter";
 import dotenv from "dotenv";
 import helmet from "helmet";
+import generalDataRouter from "./routes/generalDataRouter";
 dotenv.config();
 
 const app = express();
@@ -60,6 +61,7 @@ app.use("/access", accessRouter);
 app.use("/device", deviceRouter);
 app.use("/deviceModel", deviceModelRouter);
 app.use("/feedback", feedbackRouter);
+app.use("/generalData", generalDataRouter);
 app.use("/lobby", lobbyRouter);
 app.use("/lobbyCalendar", lobbyCalendarRouter);
 app.use("/lobbyProblem", lobbyProblemRouter);

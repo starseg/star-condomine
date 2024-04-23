@@ -28,6 +28,7 @@ const notificationRouter_1 = __importDefault(require("./routes/notificationRoute
 const guestRouter_1 = __importDefault(require("./routes/guestRouter"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const helmet_1 = __importDefault(require("helmet"));
+const generalDataRouter_1 = __importDefault(require("./routes/generalDataRouter"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
@@ -57,6 +58,7 @@ app.use("/access", accessRouter_1.default);
 app.use("/device", deviceRouter_1.default);
 app.use("/deviceModel", deviceModelRouter_1.default);
 app.use("/feedback", feedbackRouter_1.default);
+app.use("/generalData", generalDataRouter_1.default);
 app.use("/lobby", lobbyRouter_1.default);
 app.use("/lobbyCalendar", lobbyCalendarRouter_1.default);
 app.use("/lobbyProblem", lobbyProblemRouter_1.default);
