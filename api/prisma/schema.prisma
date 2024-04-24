@@ -31,7 +31,7 @@ model Lobby {
   responsible  String
   telephone    String
   schedules    String
-  procedures   String?   @db.VarChar(500)
+  procedures   String?   @db.VarChar(2000)
   datasheet    String?
   cep          String
   state        String
