@@ -38,7 +38,7 @@ import { deleteFile, handleFileUpload } from "@/lib/firebase-upload";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
-  name: z.string().min(5),
+  name: z.string().min(5).trim(),
   cpf: z.string(),
   rg: z.string(),
   email: z.string(),
@@ -180,10 +180,6 @@ export function ResidentUpdateForm({
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
-    // PEGA O ID DA PORTARIA
-    const lobbyParam = params.get("lobby");
-    const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
-    const control = params.get("c");
 
     // FAZ O UPLOAD DA FOTO
     let file;
@@ -264,7 +260,7 @@ export function ResidentUpdateForm({
         setIsSendind(false);
       }
 
-      router.push(`/dashboard/actions/resident?lobby=${lobby}&c=${control}`);
+      router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;

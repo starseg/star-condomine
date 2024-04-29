@@ -19,4 +19,8 @@ interface Visitor {
       schedulingId: number;
     }
   ];
+  access: [];
+  lobby: {
+    exitControl: "ACTIVE" | "INACTIVE";
+  };
 }

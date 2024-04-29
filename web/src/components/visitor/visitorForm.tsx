@@ -35,9 +35,12 @@ import { handleFileUpload } from "@/lib/firebase-upload";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
-  name: z.string().min(6, {
-    message: "O nome completo precisa ter ao menos 6 caracteres.",
-  }),
+  name: z
+    .string()
+    .min(6, {
+      message: "O nome completo precisa ter ao menos 6 caracteres.",
+    })
+    .trim(),
   cpf: z.string(),
   rg: z.string(),
   phone: z.string(),
@@ -142,7 +145,6 @@ export function VisitorForm() {
     // PEGA O ID DA PORTARIA
     const lobbyParam = params.get("lobby");
     const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
-    const control = params.get("c");
 
     // FAZ O UPLOAD DA FOTO
     let file;
@@ -202,8 +204,7 @@ export function VisitorForm() {
           setIsSendind(false);
         }
       }
-
-      router.push(`/dashboard/actions/visitor?lobby=${lobby}&c=${control}`);
+      router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;

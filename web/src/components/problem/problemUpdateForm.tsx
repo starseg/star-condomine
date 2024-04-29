@@ -76,7 +76,7 @@ export function ProblemUpdateForm({
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      router.push("/dashboard/actions/problem?lobby=" + lobby);
+      router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;

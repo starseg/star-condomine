@@ -16,6 +16,12 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SkeletonTable } from "../_skeletons/skeleton-table";
 import { deleteAction } from "@/lib/delete-action";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 export default function VehicleTable({ lobby }: { lobby: string }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -56,15 +62,13 @@ export default function VehicleTable({ lobby }: { lobby: string }) {
       {isLoading ? (
         <SkeletonTable />
       ) : (
-        <Table className="border border-stone-800 rouded-lg">
+        <Table className="max-h-[60vh] overflow-y-auto overflow-x-hidden">
           <TableHeader className="bg-stone-800 font-semibold">
             <TableRow>
               <TableHead>Tipo</TableHead>
               <TableHead>Placa</TableHead>
               <TableHead>Tag</TableHead>
-              <TableHead>Marca</TableHead>
-              <TableHead>Modelo</TableHead>
-              <TableHead>Cor</TableHead>
+              <TableHead>Marca - Modelo - Cor</TableHead>
               <TableHead>Proprietário</TableHead>
               <TableHead>Observação</TableHead>
               <TableHead>Ações</TableHead>
@@ -77,12 +81,25 @@ export default function VehicleTable({ lobby }: { lobby: string }) {
                   <TableCell>{vehicle.vehicleType.description}</TableCell>
                   <TableCell>{vehicle.licensePlate}</TableCell>
                   <TableCell>{vehicle.tag}</TableCell>
-                  <TableCell>{vehicle.brand}</TableCell>
-                  <TableCell>{vehicle.model}</TableCell>
-                  <TableCell>{vehicle.color}</TableCell>
+                  <TableCell>
+                    {vehicle.brand} {vehicle.model} {vehicle.color}
+                  </TableCell>
                   <TableCell>{vehicle.member.name}</TableCell>
                   <TableCell>
-                    {vehicle.comments ? vehicle.comments : "Nenhuma"}
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button className="max-w-[15ch] text-ellipsis overflow-hidden whitespace-nowrap">
+                            {vehicle.comments ? vehicle.comments : "Nenhuma"}
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-[300px] border-primary bg-stone-800 p-4 break-words">
+                          <p>
+                            {vehicle.comments ? vehicle.comments : "Nenhuma"}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </TableCell>
                   <TableCell className="flex gap-4 text-2xl">
                     <Link

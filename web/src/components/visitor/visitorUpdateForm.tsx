@@ -5,7 +5,7 @@ import api from "@/lib/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   Form,
   FormControl,
@@ -27,7 +27,7 @@ import { UserCircle } from "@phosphor-icons/react/dist/ssr";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
-  name: z.string(),
+  name: z.string().trim(),
   cpf: z.string(),
   rg: z.string(),
   phone: z.string(),
@@ -81,8 +81,6 @@ export function VisitorUpdateForm({
 
   const { data: session } = useSession();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
 
   interface VisitorTypes {
     visitorTypeId: number;
@@ -111,10 +109,6 @@ export function VisitorUpdateForm({
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
-    // PEGA O ID DA PORTARIA
-    const lobbyParam = params.get("lobby");
-    const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
-    const control = params.get("c");
 
     // FAZ O UPLOAD DA FOTO
     let file;
@@ -151,8 +145,7 @@ export function VisitorUpdateForm({
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-
-      router.push(`/dashboard/actions/visitor?lobby=${lobby}&c=${control}`);
+      router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
@@ -172,7 +165,6 @@ export function VisitorUpdateForm({
             <div className="flex flex-col justify-center items-center">
               <img src={visitor.profileUrl} alt="Foto de perfil" width={80} />
               <p className="text-sm text-center mt-2">Foto atual</p>
-              {/* {visitor.profileUrl} */}
             </div>
           ) : (
             <div className="flex flex-col justify-center items-center">

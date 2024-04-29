@@ -66,12 +66,12 @@ export function NotificationUpdateForm({
       status: data.status,
     };
     try {
-      const response = await api.put("notification/" + id, info, {
+      await api.put("notification/" + id, info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      router.push("/notification");
+      router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;

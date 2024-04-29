@@ -4,11 +4,15 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import LoadingIcon from "../loadingIcon";
 import Card from "./card";
+import { AccessesByLobbyChart, ProblemChart } from "./charts";
 
 export default function ManagementPanel() {
   const [counts, setCounts] = useState<GeneralCounts>();
+  const [accessesByLobby, setAccessesByLobby] = useState<
+    AccessByLobbyChartProps[]
+  >([]);
   const { data: session } = useSession();
-  const fetchData = async () => {
+  const fetchCount = async () => {
     try {
       const response = await api.get("generalData/count", {
         headers: {
@@ -20,16 +24,35 @@ export default function ManagementPanel() {
       console.error("Erro ao obter dados:", error);
     }
   };
+  const fetchAccessesByLobby = async () => {
+    try {
+      const response = await api.get("generalData/accessesByLobby", {
+        headers: {
+          Authorization: `Bearer ${session?.token.user.token}`,
+        },
+      });
+      setAccessesByLobby(response.data);
+    } catch (error) {
+      console.error("Erro ao obter dados:", error);
+    }
+  };
   useEffect(() => {
-    fetchData();
+    fetchCount();
+    fetchAccessesByLobby();
   }, [session]);
 
   return (
     <div className="mt-8">
-      {counts ? (
+      {accessesByLobby && counts ? (
         <>
           {/* GRÁFICOS */}
-          <div></div>
+          <div className="flex flex-col gap-4 justify-center items-center mb-8">
+            <ProblemChart
+              total={counts.problems}
+              solved={counts.solvedProblems}
+            />
+            <AccessesByLobbyChart {...accessesByLobby} />
+          </div>
           {/* COUNTS */}
           <div className="flex flex-wrap gap-4 items-center justify-center">
             <Card title="Portarias" content={counts.lobbies} />

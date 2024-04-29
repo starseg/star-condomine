@@ -173,7 +173,7 @@ export function AccessForm() {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      router.push(`/dashboard/actions/access?lobby=${lobby}&c=${control}`);
+      router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;

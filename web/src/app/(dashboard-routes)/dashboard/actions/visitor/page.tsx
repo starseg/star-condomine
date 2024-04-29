@@ -33,7 +33,14 @@ export default async function Visitor({
         <div className="max-h-[60vh] overflow-x-auto">
           <VisitorTable lobby={lobby} />
         </div>
-        <div className="mt-6 flex gap-4 items-center">
+
+        {control === "S" && (
+          <p className="mt-4 flex items-center gap-2  text-stone-400 font-medium">
+            <div className="rounded-full w-4 h-4 bg-red-400"></div> Nomes em
+            vermelho: visitantes com acesso sem saída finalizada
+          </p>
+        )}
+        <div className="mt-4 flex gap-4 items-center">
           <Link
             href={`visitor/new?lobby=${lobby}`}
             className={buttonVariants({ variant: "default" })}

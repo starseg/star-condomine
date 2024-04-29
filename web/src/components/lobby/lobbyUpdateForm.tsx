@@ -24,6 +24,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
 import { MaskedInput } from "../maskedInput";
 import { useState } from "react";
+import { deleteFile, handleFileUpload } from "@/lib/firebase-upload";
+import { Checkbox } from "../ui/checkbox";
 
 const FormSchema = z.object({
   type: z.enum(["CONDOMINIUM", "COMPANY"]),
@@ -96,55 +98,31 @@ export function LobbyUpdateForm({
     defaultValues: preloadedValues,
   });
 
-  type UploadFunction = (file: File) => Promise<string>;
-
-  // Função para fazer upload de um arquivo para o Firebase Storage
-  const uploadFile: UploadFunction = async (file) => {
-    initializeApp(firebaseConfig);
-    const storage = getStorage();
-
-    const timestamp = new Date().toISOString();
-    const fileName = `portarias/ficha-tecnica-${timestamp}.pdf`;
-
-    const fileRef = ref(storage, fileName);
-
-    try {
-      await uploadBytes(fileRef, file).then((snapshot) => {
-        // console.log("Uploaded file!");
-      });
-      const downloadURL = await getDownloadURL(fileRef);
-      // console.log("Arquivo enviado com sucesso. URL de download:", downloadURL);
-
-      return downloadURL;
-    } catch (error) {
-      console.error("Erro ao enviar o arquivo:", error);
-      throw error;
-    }
-  };
-
-  const handleFileUpload = async (file: File) => {
-    try {
-      const url = await uploadFile(file);
-      // console.log("URL do arquivo:", url);
-      return url;
-    } catch (error) {
-      console.error("Erro durante o upload:", error);
-    }
-  };
-
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const id = params.get("id");
 
+  const [removeFile, setRemoveFile] = useState(false);
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
+    // FAZ O UPLOAD DA FOTO
     let file;
-    if (data.datasheet instanceof File && data.datasheet.size > 0)
-      file = await handleFileUpload(data.datasheet);
-    else if (lobby?.datasheet) file = lobby.datasheet;
+    if (removeFile) {
+      file = "";
+      if (lobby.datasheet.length > 0) {
+        deleteFile(lobby.datasheet);
+      }
+    } else if (data.datasheet instanceof File && data.datasheet.size > 0) {
+      const timestamp = new Date().toISOString();
+      const fileExtension = data.datasheet.name.split(".").pop();
+      file = await handleFileUpload(
+        data.datasheet,
+        `portarias/ficha-tecnica-${timestamp}.${fileExtension}`
+      );
+    } else if (lobby?.datasheet) file = lobby.datasheet;
     else file = "";
 
     try {
@@ -171,8 +149,7 @@ export function LobbyUpdateForm({
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      // console.log(response.data);
-      router.push("/dashboard/actions/details?lobby=" + id);
+      router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
@@ -366,7 +343,6 @@ export function LobbyUpdateForm({
               <FormControl>
                 <Input
                   type="file"
-                  accept=".pdf"
                   onChange={(e) =>
                     field.onChange(e.target.files ? e.target.files[0] : null)
                   }
@@ -379,6 +355,20 @@ export function LobbyUpdateForm({
             </FormItem>
           )}
         />
+        <div className="flex items-center space-x-2 mt-2">
+          <Checkbox
+            id="check"
+            onClick={() => {
+              setRemoveFile(!removeFile);
+            }}
+          />
+          <label
+            htmlFor="check"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            Remover arquivo - {removeFile ? "sim" : "não"}
+          </label>
+        </div>
         <FormField
           control={form.control}
           name="cep"

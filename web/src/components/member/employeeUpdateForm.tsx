@@ -29,7 +29,7 @@ import { UserCircle } from "@phosphor-icons/react/dist/ssr";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
-  name: z.string().min(5),
+  name: z.string().min(5).trim(),
   cpf: z.string(),
   rg: z.string(),
   position: z.string().min(2),
@@ -97,10 +97,6 @@ export function EmployeeUpdateForm({
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
-    // PEGA O ID DA PORTARIA
-    const lobbyParam = params.get("lobby");
-    const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
-    const control = params.get("c");
 
     // FAZ O UPLOAD DA FOTO
     let file;
@@ -138,9 +134,7 @@ export function EmployeeUpdateForm({
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      // console.log(response.data);
-
-      router.push(`/dashboard/actions/employee?lobby=${lobby}&c=${control}`);
+      router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;

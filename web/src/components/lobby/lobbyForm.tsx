@@ -3,9 +3,6 @@
 import * as z from "zod";
 import Swal from "sweetalert2";
 import api from "@/lib/axios";
-import { initializeApp } from "firebase/app";
-import { firebaseConfig } from "@/firebase";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
@@ -25,6 +22,7 @@ import { Textarea } from "../ui/textarea";
 import { searchCEP } from "@/lib/utils";
 import { MaskedInput } from "../maskedInput";
 import { useState } from "react";
+import { handleFileUpload } from "@/lib/firebase-upload";
 
 const FormSchema = z.object({
   type: z.enum(["CONDOMINIUM", "COMPANY"]),
@@ -90,51 +88,22 @@ export function LobbyForm() {
     }
   };
 
-  type UploadFunction = (file: File) => Promise<string>;
-
-  // Função para fazer upload de um arquivo para o Firebase Storage
-  const uploadFile: UploadFunction = async (file) => {
-    initializeApp(firebaseConfig);
-    const storage = getStorage();
-
-    const timestamp = new Date().toISOString();
-    const fileName = `portarias/ficha-tecnica-${timestamp}.pdf`;
-
-    const fileRef = ref(storage, fileName);
-
-    try {
-      await uploadBytes(fileRef, file).then((snapshot) => {
-        // console.log("Uploaded file!");
-      });
-      const downloadURL = await getDownloadURL(fileRef);
-      // console.log("Arquivo enviado com sucesso. URL de download:", downloadURL);
-
-      return downloadURL;
-    } catch (error) {
-      console.error("Erro ao enviar o arquivo:", error);
-      throw error;
-    }
-  };
-
-  const handleFileUpload = async (file: File) => {
-    try {
-      const url = await uploadFile(file);
-      // console.log("URL do arquivo:", url);
-      return url;
-    } catch (error) {
-      console.error("Erro durante o upload:", error);
-    }
-  };
-
   const { data: session } = useSession();
   const router = useRouter();
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
+    // FAZ O UPLOAD DA FOTO
     let file;
-    if (data.datasheet instanceof File && data.datasheet.size > 0)
-      file = await handleFileUpload(data.datasheet);
-    else file = "";
+    if (data.datasheet instanceof File && data.datasheet.size > 0) {
+      const timestamp = new Date().toISOString();
+      const fileExtension = data.datasheet.name.split(".").pop();
+      file = await handleFileUpload(
+        data.datasheet,
+        `portarias/ficha-tecnica-${timestamp}.${fileExtension}`
+      );
+    } else file = "";
+
     try {
       const info = {
         type: data.type,
@@ -154,13 +123,12 @@ export function LobbyForm() {
         complement: data.complement,
         datasheet: file,
       };
-      const response = await api.post("lobby", info, {
+      await api.post("lobby", info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      // console.log(response.data);
-      router.push("/dashboard");
+      router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
@@ -355,7 +323,6 @@ export function LobbyForm() {
               <FormControl>
                 <Input
                   type="file"
-                  accept=".pdf"
                   onChange={(e) =>
                     field.onChange(e.target.files ? e.target.files[0] : null)
                   }

@@ -179,7 +179,7 @@ export function SchedulingListUpdateForm({
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      router.push(`/schedulingList`);
+      router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;

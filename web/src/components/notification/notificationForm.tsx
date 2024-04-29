@@ -53,12 +53,12 @@ export function NotificationForm() {
       message: data.message,
     };
     try {
-      const response = await api.post("notification", info, {
+      await api.post("notification", info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      router.push("/notification");
+      router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;

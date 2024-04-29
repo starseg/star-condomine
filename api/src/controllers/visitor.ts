@@ -213,6 +213,19 @@ export const getFilteredVisitors = async (
       where: whereCondition,
       include: {
         visitorType: true,
+        access: {
+          select: {
+            endTime: true,
+          },
+          where: {
+            endTime: null,
+          },
+        },
+        lobby: {
+          select: {
+            exitControl: true,
+          },
+        },
         scheduling: {
           select: {
             schedulingId: true,

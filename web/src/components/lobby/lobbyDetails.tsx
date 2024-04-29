@@ -10,6 +10,7 @@ import { Button } from "../ui/button";
 import { formatDate } from "@/lib/utils";
 import LoadingIcon from "../loadingIcon";
 import { useRouter } from "next/navigation";
+import { deleteFile } from "@/lib/firebase-upload";
 
 interface Lobby {
   lobbyId: number;
@@ -61,7 +62,7 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
     });
   };
 
-  const deleteLobby = async (id: number) => {
+  const deleteLobby = async (id: number, url: string) => {
     if (session?.payload.user.type === "USER") {
       Swal.fire({
         title: "Operação não permitida",
@@ -99,6 +100,7 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
         }
       });
     }
+    deleteFile(url);
   };
 
   return (
@@ -175,7 +177,7 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
             )}
             <Button
               className="text-lg w-32 bg-destructive hover:bg-red-400 text-destructive-foreground"
-              onClick={() => deleteLobby(details.lobbyId)}
+              onClick={() => deleteLobby(details.lobbyId, details.datasheet)}
             >
               <Trash className="mr-2" />
               Excluir

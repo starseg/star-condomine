@@ -47,7 +47,7 @@ export function FeedbackForm() {
       message: data.message,
     };
     try {
-      const response = await api.post("feedback", info, {
+      await api.post("feedback", info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },

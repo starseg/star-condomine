@@ -74,50 +74,63 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
             </TableRow>
           </TableHeader>
           <TableBody className="uppercase">
-            {visitors.map((visitor) => (
-              <TableRow key={visitor.visitorId}>
-                <TableCell>{visitor.cpf}</TableCell>
-                <TableCell>{visitor.name}</TableCell>
-                <TableCell>{visitor.visitorType.description}</TableCell>
-                <TableCell>
-                  {visitor.scheduling.length > 0 ? (
-                    <Link
-                      href={`scheduling?lobby=${lobby}&c=${control}&query=${visitor.name}`}
-                      className="text-green-300 flex gap-1 items-center"
-                    >
-                      Sim - <MagnifyingGlass size={18} />
+            {visitors.map((visitor) => {
+              const openAccess =
+                visitor.access.length > 0 &&
+                visitor.lobby.exitControl === "ACTIVE";
+              return (
+                <TableRow key={visitor.visitorId}>
+                  <TableCell>{visitor.cpf}</TableCell>
+                  <TableCell>
+                    {openAccess ? (
+                      <p className="text-red-400 font-semibold">
+                        {visitor.name}
+                      </p>
+                    ) : (
+                      visitor.name
+                    )}
+                  </TableCell>
+                  <TableCell>{visitor.visitorType.description}</TableCell>
+                  <TableCell>
+                    {visitor.scheduling.length > 0 ? (
+                      <Link
+                        href={`scheduling?lobby=${lobby}&c=${control}&query=${visitor.name}`}
+                        className="text-green-300 flex gap-1 items-center"
+                      >
+                        Sim - <MagnifyingGlass size={18} />
+                      </Link>
+                    ) : (
+                      <p className="text-red-200">Não</p>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {visitor.status === "ACTIVE" ? (
+                      <p className="text-green-500">ATIVO</p>
+                    ) : (
+                      <p className="text-red-400">BLOQUEADO</p>
+                    )}
+                  </TableCell>
+                  <TableCell className="flex gap-4 text-2xl">
+                    <Link href={`visitor/details?id=${visitor.visitorId}`}>
+                      <MagnifyingGlass />
                     </Link>
-                  ) : (
-                    <p className="text-red-200">Não</p>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {visitor.status === "ACTIVE" ? (
-                    <p className="text-green-500">ATIVO</p>
-                  ) : (
-                    <p className="text-red-400">BLOQUEADO</p>
-                  )}
-                </TableCell>
-                <TableCell className="flex gap-4 text-2xl">
-                  <Link href={`visitor/details?id=${visitor.visitorId}`}>
-                    <MagnifyingGlass />
-                  </Link>
-                  <Link
-                    href={`visitor/update?id=${visitor.visitorId}&lobby=${lobby}&c=${control}`}
-                  >
-                    <PencilLine />
-                  </Link>
-                  <button
-                    onClick={() =>
-                      deleteVisitor(visitor.visitorId, visitor.profileUrl)
-                    }
-                    title="Excluir"
-                  >
-                    <Trash />
-                  </button>
-                </TableCell>
-              </TableRow>
-            ))}
+                    <Link
+                      href={`visitor/update?id=${visitor.visitorId}&lobby=${lobby}&c=${control}`}
+                    >
+                      <PencilLine />
+                    </Link>
+                    <button
+                      onClick={() =>
+                        deleteVisitor(visitor.visitorId, visitor.profileUrl)
+                      }
+                      title="Excluir"
+                    >
+                      <Trash />
+                    </button>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
           <TableFooter>
             <TableRow>

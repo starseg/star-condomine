@@ -128,11 +128,11 @@ model VehicleType {
 
 model Vehicle {
   vehicleId    Int     @id @default(autoincrement())
-  licensePlate String  @unique
+  licensePlate String
   brand        String?
   model        String?
   color        String?
-  tag          String? @unique
+  tag          String?
   comments     String? @db.VarChar(500)
 
   vehicleType   VehicleType @relation(fields: [vehicleTypeId], references: [vehicleTypeId])

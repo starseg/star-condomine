@@ -42,6 +42,45 @@ export const count = async (req: Request, res: Response): Promise<void> => {
     };
     res.json(data);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao buscar os acessos" });
+    res.status(500).json({ error: "Erro ao buscar os dados" });
   }
 };
+
+export const accessesByLobby = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const count = await prisma.access.groupBy({
+      by: ["lobbyId"],
+      _count: true,
+    });
+
+    const lobbies = await prisma.lobby.findMany({
+      select: {
+        lobbyId: true,
+        name: true,
+      },
+    });
+
+    interface AccessResponseInterface {
+      lobby: string | undefined;
+      count: number;
+    }
+    const accesses: AccessResponseInterface[] = [];
+    count.map((item) => {
+      accesses.push({
+        lobby: lobbies.find((i) => i.lobbyId === item.lobbyId)?.name,
+        count: item._count,
+      });
+    });
+    res.json(accesses);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os dados" });
+  }
+};
+
+export const getAverageAccessesPerHour = async (
+  req: Request,
+  res: Response
+): Promise<void> => {};

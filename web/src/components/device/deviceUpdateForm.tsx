@@ -113,15 +113,13 @@ export function DeviceUpdateForm({
       description: data.description,
       deviceModelId: data.model,
     };
-    // console.log(info);
     try {
       const response = await api.put("device/" + id, info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      // console.log(response.data);
-      router.push("/dashboard/actions/device?lobby=" + lobby);
+      router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;

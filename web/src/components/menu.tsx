@@ -19,6 +19,7 @@ import {
   Eye,
   List,
   ListChecks,
+  PresentationChart,
   UsersThree,
 } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
@@ -77,6 +78,14 @@ export function Menu({ url = "" }: { url?: string }) {
                   className="flex justify-center items-center gap-2"
                 >
                   <BellRinging size={"24px"} /> Notificações
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link
+                  href={"/manager"}
+                  className="flex justify-center items-center gap-2"
+                >
+                  <PresentationChart size={"24px"} /> Painel gerencial
                 </Link>
               </DropdownMenuItem>
             </>

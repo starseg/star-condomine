@@ -7,4 +7,5 @@ const express_1 = __importDefault(require("express"));
 const generalData_1 = require("../controllers/generalData");
 const generalDataRouter = express_1.default.Router();
 generalDataRouter.get("/count", generalData_1.count);
+generalDataRouter.get("/accessesByLobby", generalData_1.accessesByLobby);
 exports.default = generalDataRouter;
