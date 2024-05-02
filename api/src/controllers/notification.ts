@@ -10,7 +10,7 @@ export const getAllNotifications = async (
   sevenDaysAgo.setDate(currentDate.getDate() - 7);
   try {
     const notification = await prisma.notification.findMany({
-      orderBy: [{ date: "desc" }],
+      orderBy: [{ notificationId: "desc" }],
     });
     res.json(notification);
   } catch (error) {
