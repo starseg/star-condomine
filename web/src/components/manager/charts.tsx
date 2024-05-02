@@ -41,6 +41,46 @@ export function ProblemChart(props: ProblemChartProps) {
   );
 }
 
+export function ProblemByLobbyChart(data: AccessByLobbyChartProps[]) {
+  const chartData: any = [];
+  chartData.push(["Problemas", "Quantidade"]);
+  for (let i = 0; i < Object.keys(data).length; i++) {
+    const lobby = data[i].lobby;
+    const count = data[i].count;
+    chartData.push([lobby, count]);
+  }
+
+  const options = {
+    title: "Problemas por portaria",
+    // is3D: true,
+    pieHole: 0.3,
+    backgroundColor: "#0c0a09",
+    titleTextStyle: {
+      color: "white",
+      fontSize: 18,
+    },
+    legend: {
+      textStyle: {
+        color: "white",
+      },
+    },
+    animation: {
+      duration: 1000,
+      easing: "out",
+    },
+  };
+
+  return (
+    <Chart
+      chartType="PieChart"
+      data={chartData}
+      options={options}
+      height={"200px"}
+      width={"400px"}
+    />
+  );
+}
+
 export function AccessesByLobbyChart(data: AccessByLobbyChartProps[]) {
   const chartData: any = [];
   chartData.push(["Portaria", "Acessos"]);
@@ -76,7 +116,7 @@ export function AccessesByLobbyChart(data: AccessByLobbyChartProps[]) {
       chartType="BarChart"
       data={chartData}
       options={options}
-      height={"400px"}
+      height={"600px"}
       width={"800px"}
     />
   );

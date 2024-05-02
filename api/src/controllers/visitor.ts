@@ -21,7 +21,15 @@ export const getVisitor = async (
     const id = parseInt(req.params.id, 10);
     const visitor = await prisma.visitor.findUniqueOrThrow({
       where: { visitorId: id },
-      include: { visitorType: true },
+      include: {
+        visitorType: true,
+        access: {
+          include: { member: { select: { name: true } } },
+        },
+        scheduling: {
+          include: { member: { select: { name: true } } },
+        },
+      },
     });
     if (!visitor) {
       res.status(404).json({ error: "Visitante não encontrado" });

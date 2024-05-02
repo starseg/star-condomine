@@ -133,7 +133,9 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                     </Link>
                   </TableCell>
                   <TableCell className="flex gap-4 text-2xl">
-                    <Link href={`${type}/details?id=${member.memberId}`}>
+                    <Link
+                      href={`${type}/details?id=${member.memberId}&c=${control}`}
+                    >
                       <MagnifyingGlass />
                     </Link>
                     <Link

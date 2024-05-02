@@ -45,6 +45,12 @@ const getMember = async (req, res) => {
             include: {
                 addressType: true,
                 telephone: true,
+                access: {
+                    include: { visitor: { select: { name: true } } },
+                },
+                scheduling: {
+                    include: { visitor: { select: { name: true } } },
+                },
             },
         });
         if (!member) {

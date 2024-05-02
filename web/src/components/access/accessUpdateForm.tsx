@@ -147,7 +147,6 @@ export function AccessUpdateForm({
     setIsSendind(true);
     const lobbyParam = params.get("lobby");
     const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
-    const control = params.get("c");
     const operator = session?.payload.user.id || null;
     const id = params.get("id");
 

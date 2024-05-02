@@ -4,11 +4,18 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import LoadingIcon from "../loadingIcon";
 import Card from "./card";
-import { AccessesByLobbyChart, ProblemChart } from "./charts";
+import {
+  AccessesByLobbyChart,
+  ProblemByLobbyChart,
+  ProblemChart,
+} from "./charts";
 
 export default function ManagementPanel() {
   const [counts, setCounts] = useState<GeneralCounts>();
   const [accessesByLobby, setAccessesByLobby] = useState<
+    AccessByLobbyChartProps[]
+  >([]);
+  const [problemsByLobby, setProblemsByLobby] = useState<
     AccessByLobbyChartProps[]
   >([]);
   const { data: session } = useSession();
@@ -36,21 +43,37 @@ export default function ManagementPanel() {
       console.error("Erro ao obter dados:", error);
     }
   };
+  const fetchProblemsByLobby = async () => {
+    try {
+      const response = await api.get("generalData/problemsByLobby", {
+        headers: {
+          Authorization: `Bearer ${session?.token.user.token}`,
+        },
+      });
+      setProblemsByLobby(response.data);
+    } catch (error) {
+      console.error("Erro ao obter dados:", error);
+    }
+  };
   useEffect(() => {
     fetchCount();
     fetchAccessesByLobby();
+    fetchProblemsByLobby();
   }, [session]);
 
   return (
     <div className="mt-8">
-      {accessesByLobby && counts ? (
+      {counts && problemsByLobby && accessesByLobby ? (
         <>
           {/* GRÁFICOS */}
           <div className="flex flex-col gap-4 justify-center items-center mb-8">
-            <ProblemChart
-              total={counts.problems}
-              solved={counts.solvedProblems}
-            />
+            <div className="flex gap-4 justify-center items-center">
+              <ProblemChart
+                total={counts.problems}
+                solved={counts.solvedProblems}
+              />
+              <ProblemByLobbyChart {...problemsByLobby} />
+            </div>
             <AccessesByLobbyChart {...accessesByLobby} />
           </div>
           {/* COUNTS */}

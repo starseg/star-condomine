@@ -8,4 +8,5 @@ const generalData_1 = require("../controllers/generalData");
 const generalDataRouter = express_1.default.Router();
 generalDataRouter.get("/count", generalData_1.count);
 generalDataRouter.get("/accessesByLobby", generalData_1.accessesByLobby);
+generalDataRouter.get("/problemsByLobby", generalData_1.problemsByLobby);
 exports.default = generalDataRouter;

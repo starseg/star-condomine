@@ -111,7 +111,9 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
                     )}
                   </TableCell>
                   <TableCell className="flex gap-4 text-2xl">
-                    <Link href={`visitor/details?id=${visitor.visitorId}`}>
+                    <Link
+                      href={`visitor/details?id=${visitor.visitorId}&c=${control}`}
+                    >
                       <MagnifyingGlass />
                     </Link>
                     <Link

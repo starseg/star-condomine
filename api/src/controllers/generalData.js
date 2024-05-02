@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.accessesByLobby = exports.count = void 0;
+exports.countAccessesPerHour = exports.problemsByLobby = exports.accessesByLobby = exports.count = void 0;
 const db_1 = __importDefault(require("../db"));
 const count = async (req, res) => {
     try {
@@ -36,7 +36,7 @@ const count = async (req, res) => {
         res.json(data);
     }
     catch (error) {
-        res.status(500).json({ error: "Erro ao buscar os acessos" });
+        res.status(500).json({ error: "Erro ao buscar os dados" });
     }
 };
 exports.count = count;
@@ -59,11 +59,55 @@ const accessesByLobby = async (req, res) => {
                 count: item._count,
             });
         });
-        console.log(accesses);
         res.json(accesses);
     }
     catch (error) {
-        res.status(500).json({ error: "Erro ao buscar os acessos" });
+        res.status(500).json({ error: "Erro ao buscar os dados" });
     }
 };
 exports.accessesByLobby = accessesByLobby;
+const problemsByLobby = async (req, res) => {
+    try {
+        const count = await db_1.default.lobbyProblem.groupBy({
+            by: ["lobbyId"],
+            _count: true,
+        });
+        const lobbies = await db_1.default.lobby.findMany({
+            select: {
+                lobbyId: true,
+                name: true,
+            },
+        });
+        const problems = [];
+        count.map((item) => {
+            problems.push({
+                lobby: lobbies.find((i) => i.lobbyId === item.lobbyId)?.name,
+                count: item._count,
+            });
+        });
+        res.json(problems);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao buscar os dados" });
+    }
+};
+exports.problemsByLobby = problemsByLobby;
+const countAccessesPerHour = async (req, res) => {
+    const { day, from, to } = req.query;
+    const dayObj = day ? new Date(day) : undefined;
+    if (dayObj && isNaN(dayObj.getTime())) {
+        res.status(400).json({ error: "A data fornecida não é válida" });
+        return;
+    }
+    const logs = await db_1.default.logging.findMany({
+        where: {
+            url: { startsWith: "/access" },
+        },
+    });
+    logs.map((log) => {
+        let hour = log.date.getHours() - 3;
+        if (hour) {
+        }
+    });
+};
+exports.countAccessesPerHour = countAccessesPerHour;

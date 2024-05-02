@@ -4,11 +4,19 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import LoadingIcon from "../loadingIcon";
 import DetailItem from "../detailItem";
-import { formatDate } from "@/lib/utils";
+import { formatDate, simpleDateFormat } from "@/lib/utils";
+import MiniTable from "../miniTable";
+import { PencilLine, Trash } from "@phosphor-icons/react/dist/ssr";
+import Link from "next/link";
+import { deleteAction } from "@/lib/delete-action";
+import { useSearchParams } from "next/navigation";
 
 export default function VisitorDetails({ id }: { id: number }) {
-  const [visitor, setVisitor] = useState<Visitor>();
+  const [visitor, setVisitor] = useState<VisitorFull>();
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const control = params.get("c");
   const fetchData = async () => {
     try {
       const response = await api.get("visitor/find/" + id, {
@@ -24,6 +32,13 @@ export default function VisitorDetails({ id }: { id: number }) {
   useEffect(() => {
     fetchData();
   }, [session]);
+
+  const deleteAccess = async (id: number) => {
+    deleteAction(session, "acesso", `access/${id}`, fetchData);
+  };
+  const deleteScheduling = async (id: number) => {
+    deleteAction(session, "agendamento", `scheduling/${id}`, fetchData);
+  };
 
   return (
     <div>
@@ -69,6 +84,69 @@ export default function VisitorDetails({ id }: { id: number }) {
               content={formatDate(visitor.updatedAt)}
             />
           </div>
+          {visitor.access && (
+            <MiniTable title="Acessos" cols={["Entrada", "Saída", "Visitado"]}>
+              {visitor.access.map((access) => (
+                <div className="grid grid-cols-7 px-4 border-b border-stone-700 py-1">
+                  <p className="col-span-2">{formatDate(access.startTime)}</p>
+                  <p className="col-span-2">
+                    {access.endTime ? formatDate(access.endTime) : "Não saiu"}
+                  </p>
+                  <p className="col-span-2 max-w-[15ch] text-ellipsis overflow-hidden whitespace-nowrap">
+                    {access.member.name}
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <button
+                      title="Excluir"
+                      onClick={() => deleteAccess(access.accessId)}
+                    >
+                      <Trash size={24} />
+                    </button>
+                    <Link
+                      href={`/dashboard/actions/access/update?lobby=${access.lobbyId}&id=${access.accessId}&c=${control}`}
+                    >
+                      <PencilLine size={24} />
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </MiniTable>
+          )}
+          {visitor.scheduling && (
+            <MiniTable
+              title="Agendamentos"
+              cols={["Início", "Fim", "Visitado"]}
+            >
+              {visitor.scheduling.map((scheduling) => (
+                <div className="grid grid-cols-7 px-4 border-b border-stone-700 py-1">
+                  <p className="col-span-2">
+                    {simpleDateFormat(scheduling.startDate)}
+                  </p>
+                  <p className="col-span-2">
+                    {scheduling.endDate
+                      ? simpleDateFormat(scheduling.endDate)
+                      : "Não saiu"}
+                  </p>
+                  <p className="col-span-2 max-w-[15ch] text-ellipsis overflow-hidden whitespace-nowrap">
+                    {scheduling.member.name}
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <button
+                      title="Excluir"
+                      onClick={() => deleteScheduling(scheduling.schedulingId)}
+                    >
+                      <Trash size={24} />
+                    </button>
+                    <Link
+                      href={`/dashboard/actions/scheduling/update?lobby=${scheduling.lobbyId}&id=${scheduling.schedulingId}`}
+                    >
+                      <PencilLine size={24} />
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </MiniTable>
+          )}
         </>
       ) : (
         <div className="w-full flex items-center justify-center">
