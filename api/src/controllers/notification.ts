@@ -34,7 +34,7 @@ export const getActiveNotifications = async (
         },
         status: "ACTIVE",
       },
-      orderBy: [{ date: "desc" }],
+      orderBy: [{ notificationId: "desc" }],
     });
     res.json(notification);
   } catch (error) {
