@@ -209,7 +209,7 @@ const generateReport = async (req, res) => {
                         },
                     },
                 },
-                orderBy: [{ status: "asc" }, { endTime: "asc" }, { startTime: "desc" }],
+                orderBy: [{ startTime: "asc" }],
             });
             res.json(resultWithoutDate);
             return;
@@ -256,7 +256,7 @@ const generateReport = async (req, res) => {
                     },
                 },
             },
-            orderBy: [{ status: "asc" }, { endTime: "asc" }, { startTime: "desc" }],
+            orderBy: [{ startTime: "asc" }],
         });
         res.json(access);
     }

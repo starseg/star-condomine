@@ -11,7 +11,7 @@ const getAllNotifications = async (req, res) => {
     sevenDaysAgo.setDate(currentDate.getDate() - 7);
     try {
         const notification = await db_1.default.notification.findMany({
-            orderBy: [{ date: "desc" }],
+            orderBy: [{ notificationId: "desc" }],
         });
         res.json(notification);
     }
@@ -33,7 +33,7 @@ const getActiveNotifications = async (req, res) => {
                 },
                 status: "ACTIVE",
             },
-            orderBy: [{ date: "desc" }],
+            orderBy: [{ notificationId: "desc" }],
         });
         res.json(notification);
     }
