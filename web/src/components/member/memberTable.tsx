@@ -120,13 +120,13 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                   </TableCell>
                   <TableCell className="space-x-4">
                     <Link
-                      href={`${type}/vehicles?id=${member.memberId}&lobby=${lobby}&c=${control}`}
+                      href={`${type}/vehicles?id=${member.memberId}`}
                       className="px-3 py-1 border rounded-md hover:border-stone-50 transition-all"
                     >
                       Veículos
                     </Link>
                     <Link
-                      href={`${type}/credentials?id=${member.memberId}&lobby=${lobby}&c=${control}`}
+                      href={`${type}/credentials/details?id=${member.memberId}`}
                       className="px-3 py-1 border rounded-md hover:border-stone-50 transition-all"
                     >
                       Credenciais

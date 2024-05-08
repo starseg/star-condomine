@@ -95,3 +95,18 @@ interface MemberFull {
     }
   ];
 }
+
+interface Tags {
+  tagId: number;
+  value: string;
+  comments: string | null;
+  status: "ACTIVE" | "INACTIVE";
+  tagTypeId: number;
+  type: {
+    description: string;
+  };
+  memberId: number;
+  member: {
+    name: string;
+  };
+}

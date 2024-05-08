@@ -109,8 +109,10 @@ model TagType {
 }
 
 model Tag {
-  tagId Int    @id @default(autoincrement())
-  value String
+  tagId    Int     @id @default(autoincrement())
+  value    String
+  comments String? @db.VarChar(500)
+  status   Status  @default(ACTIVE)
 
   type      TagType @relation(fields: [tagTypeId], references: [tagTypeId])
   tagTypeId Int

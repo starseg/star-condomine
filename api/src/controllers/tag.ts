@@ -29,11 +29,49 @@ export const getTag = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+export const getTagsByMember = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const tags = await prisma.tag.findMany({
+      where: { memberId: id },
+      include: {
+        type: { select: { description: true } },
+        member: { select: { name: true } },
+      },
+      orderBy: [{ status: "asc" }],
+    });
+    if (!tags) {
+      res.status(404).json({ error: "Tags não encontradas" });
+      return;
+    }
+    res.json(tags);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar as tags" });
+  }
+};
+
 export const createTag = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { value, tagTypeId, memberId } = req.body;
+    const { value, comments, tagTypeId, memberId } = req.body;
     const tag = await prisma.tag.create({
-      data: { value, tagTypeId, memberId },
+      data: { value, comments, tagTypeId, memberId },
+    });
+    res.status(201).json(tag);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao criar a tag" });
+  }
+};
+
+export const updateTag = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const { value, tagTypeId, comments, status, memberId } = req.body;
+    const tag = await prisma.tag.update({
+      where: { tagId: id },
+      data: { value, tagTypeId, comments, status, memberId },
     });
     res.status(201).json(tag);
   } catch (error) {

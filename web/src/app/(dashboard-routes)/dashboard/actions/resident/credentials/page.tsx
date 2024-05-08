@@ -6,6 +6,9 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import MemberCredentialsForm from "@/components/member/memberCredentialsForm";
 import { Menu } from "@/components/menu";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
 
 interface Member {
   memberId: number;
@@ -16,6 +19,8 @@ interface Member {
   tag: {
     tagId: number;
     value: string;
+    comments: string | null;
+    status: "ACTIVE" | "INACTIVE";
     tagTypeId: number;
     memberId: number;
   }[];
@@ -96,12 +101,20 @@ export default function residentCredentials() {
           <>
             <h1 className="text-4xl mt-2">Credenciais</h1>
             <h2 className="text-3xl mb-4 text-primary">{data.name}</h2>
+
             <MemberCredentialsForm
               memberData={data}
               preloadedValues={values}
               tagId={tag}
               cardId={card}
             />
+            <div className="h-8"></div>
+            <Link href={`credentials/details?id=${data.memberId}`}>
+              <Button className="font-semibold text-lg flex gap-2">
+                <MagnifyingGlass size={24} />
+                Detalhes
+              </Button>
+            </Link>
           </>
         ) : (
           <div className="w-full flex items-center justify-center">

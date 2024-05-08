@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTagsByMember = exports.getTagTypes = exports.deleteTag = exports.createTag = exports.getTag = exports.getAllTags = void 0;
+exports.deleteTagsByMember = exports.getTagTypes = exports.deleteTag = exports.updateTag = exports.createTag = exports.getTagsByMember = exports.getTag = exports.getAllTags = void 0;
 const db_1 = __importDefault(require("../db"));
 const getAllTags = async (req, res) => {
     try {
@@ -32,11 +32,33 @@ const getTag = async (req, res) => {
     }
 };
 exports.getTag = getTag;
+const getTagsByMember = async (req, res) => {
+    try {
+        const id = parseInt(req.params.id, 10);
+        const tags = await db_1.default.tag.findMany({
+            where: { memberId: id },
+            include: {
+                type: { select: { description: true } },
+                member: { select: { name: true } },
+            },
+            orderBy: [{ status: "asc" }],
+        });
+        if (!tags) {
+            res.status(404).json({ error: "Tags não encontradas" });
+            return;
+        }
+        res.json(tags);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao buscar as tags" });
+    }
+};
+exports.getTagsByMember = getTagsByMember;
 const createTag = async (req, res) => {
     try {
-        const { value, tagTypeId, memberId } = req.body;
+        const { value, comments, tagTypeId, memberId } = req.body;
         const tag = await db_1.default.tag.create({
-            data: { value, tagTypeId, memberId },
+            data: { value, comments, tagTypeId, memberId },
         });
         res.status(201).json(tag);
     }
@@ -45,6 +67,21 @@ const createTag = async (req, res) => {
     }
 };
 exports.createTag = createTag;
+const updateTag = async (req, res) => {
+    try {
+        const id = parseInt(req.params.id, 10);
+        const { value, tagTypeId, comments, status, memberId } = req.body;
+        const tag = await db_1.default.tag.update({
+            where: { tagId: id },
+            data: { value, tagTypeId, comments, status, memberId },
+        });
+        res.status(201).json(tag);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao criar a tag" });
+    }
+};
+exports.updateTag = updateTag;
 const deleteTag = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);

@@ -1,5 +1,4 @@
 "use client";
-import LoadingIcon from "@/components/loadingIcon";
 import api from "@/lib/axios";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { PlusCircle, Trash } from "@phosphor-icons/react/dist/ssr";
+import { PencilLine, PlusCircle, Trash } from "@phosphor-icons/react/dist/ssr";
 
 const FormSchema = z.object({
   tag: z.string(),
@@ -34,6 +33,8 @@ interface Member {
   tag: {
     tagId: number;
     value: string;
+    comments: string | null;
+    status: "ACTIVE" | "INACTIVE";
     tagTypeId: number;
     memberId: number;
   }[];
@@ -63,8 +64,6 @@ export default function MemberCredentialsForm({
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const lobby = params.get("lobby");
-  const control = params.get("c");
 
   const [tagNumber, setTagNumber] = useState<string[]>([]);
   const [cardNumber, setCardNumber] = useState<string[]>([]);
@@ -72,18 +71,19 @@ export default function MemberCredentialsForm({
   let tags: string[] = [];
   let cards: string[] = [];
   useEffect(() => {
-    // console.log(memberData.tag);
     memberData.tag.forEach((tag) => {
-      if (tag.tagTypeId === tagId) {
-        if (!tags.includes(tag.value)) {
-          tags.push(tag.value);
-          setTagNumber((prev) => [...prev, tag.value]);
+      if (tag.status === "ACTIVE") {
+        if (tag.tagTypeId === tagId) {
+          if (!tags.includes(tag.value)) {
+            tags.push(tag.value);
+            setTagNumber((prev) => [...prev, tag.value]);
+          }
         }
-      }
-      if (tag.tagTypeId === cardId) {
-        if (!cards.includes(tag.value)) {
-          cards.push(tag.value);
-          setCardNumber((prev) => [...prev, tag.value]);
+        if (tag.tagTypeId === cardId) {
+          if (!cards.includes(tag.value)) {
+            cards.push(tag.value);
+            setCardNumber((prev) => [...prev, tag.value]);
+          }
         }
       }
     });
@@ -181,7 +181,7 @@ export default function MemberCredentialsForm({
       console.error("(Pass) Erro ao enviar dados para a API:", error);
       throw error;
     }
-    router.push(`/dashboard/actions/resident?lobby=${lobby}&c=${control}`);
+    router.back();
   };
 
   return (
