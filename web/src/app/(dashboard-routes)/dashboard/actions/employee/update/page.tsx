@@ -49,6 +49,7 @@ export default function UpdateResident() {
     faceAccess: boolean;
     biometricAccess: boolean;
     remoteControlAccess: boolean;
+    passwordAccess: string;
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
@@ -89,6 +90,7 @@ export default function UpdateResident() {
         faceAccess: bool(member?.faceAccess) || false,
         biometricAccess: bool(member?.biometricAccess) || false,
         remoteControlAccess: bool(member?.remoteControlAccess) || false,
+        passwordAccess: member?.passwordAccess || "",
         comments: member?.comments || "",
       });
       // console.log("data:");

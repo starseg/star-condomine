@@ -50,6 +50,7 @@ export default function UpdateResident() {
     faceAccess: boolean;
     biometricAccess: boolean;
     remoteControlAccess: boolean;
+    passwordAccess: string;
     telephone: string;
   }
   interface Telephone {
@@ -112,6 +113,7 @@ export default function UpdateResident() {
         biometricAccess: bool(member?.biometricAccess) || false,
         remoteControlAccess: bool(member?.remoteControlAccess) || false,
         comments: member?.comments || "",
+        passwordAccess: member?.passwordAccess || "",
         telephone: "",
       });
     }

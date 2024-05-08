@@ -2,9 +2,6 @@
 
 import * as z from "zod";
 import api from "@/lib/axios";
-import { initializeApp } from "firebase/app";
-import { firebaseConfig } from "@/firebase";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
@@ -39,6 +36,7 @@ const FormSchema = z.object({
   faceAccess: z.boolean().default(false),
   biometricAccess: z.boolean().default(false),
   remoteControlAccess: z.boolean().default(false),
+  passwordAccess: z.string(),
 });
 
 interface Member {
@@ -74,6 +72,7 @@ interface Values {
   faceAccess: boolean;
   biometricAccess: boolean;
   remoteControlAccess: boolean;
+  passwordAccess: string;
 }
 
 export function EmployeeUpdateForm({
@@ -127,6 +126,7 @@ export function EmployeeUpdateForm({
         faceAccess: data.faceAccess.toString(),
         biometricAccess: data.biometricAccess.toString(),
         remoteControlAccess: data.remoteControlAccess.toString(),
+        passwordAccess: data.passwordAccess,
         comments: data.comments,
       };
       await api.put("member/" + params.get("id"), info, {
@@ -341,6 +341,24 @@ export function EmployeeUpdateForm({
                 />
               </FormControl>
               <FormLabel className="font-normal">Controle remoto</FormLabel>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="passwordAccess"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Senha</FormLabel>
+              <FormControl>
+                <Input
+                  type="text"
+                  placeholder="Digite a senha do morador"
+                  autoComplete="off"
+                  {...field}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
