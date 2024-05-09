@@ -257,8 +257,7 @@ export function LobbyUpdateForm({
             <FormItem>
               <FormLabel>Telefone</FormLabel>
               <FormControl>
-                <MaskedInput
-                  mask="(99) 99999-9999"
+                <Input
                   type="text"
                   placeholder="Digite o telefone da empresa"
                   autoComplete="off"

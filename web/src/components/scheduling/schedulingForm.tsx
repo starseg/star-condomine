@@ -65,21 +65,12 @@ export function SchedulingForm() {
     },
   });
 
-  interface Visitor {
-    visitorId: number;
-    name: string;
-  }
-  interface Member {
-    memberId: number;
-    name: string;
-  }
-
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
 
-  const [visitors, setVisitors] = useState([]);
+  const [visitors, setVisitors] = useState<Visitor[]>([]);
   const fetchVisitors = async () => {
     try {
       const response = await api.get("visitor/lobby/" + params.get("lobby"), {
@@ -93,7 +84,7 @@ export function SchedulingForm() {
     }
   };
 
-  const [members, setMembers] = useState([]);
+  const [members, setMembers] = useState<Member[]>([]);
   const fetchMembers = async () => {
     try {
       const response = await api.get("member/lobby/" + params.get("lobby"), {
@@ -118,20 +109,24 @@ export function SchedulingForm() {
   }
 
   let visitorItems: item[] = [];
-  visitors.map((visitor: Visitor) =>
-    visitorItems.push({
-      value: visitor.visitorId,
-      label: visitor.name,
-    })
-  );
+  visitors.map((visitor: Visitor) => {
+    if (visitor.status === "ACTIVE") {
+      visitorItems.push({
+        value: visitor.visitorId,
+        label: visitor.name,
+      });
+    }
+  });
 
   let memberItems: item[] = [];
-  members.map((member: Member) =>
-    memberItems.push({
-      value: member.memberId,
-      label: member.name,
-    })
-  );
+  members.map((member: Member) => {
+    if (member.status === "ACTIVE") {
+      memberItems.push({
+        value: member.memberId,
+        label: member.name,
+      });
+    }
+  });
 
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {

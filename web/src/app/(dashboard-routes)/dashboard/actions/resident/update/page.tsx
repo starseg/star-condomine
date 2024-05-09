@@ -17,7 +17,7 @@ export default function UpdateResident() {
     cpf: string;
     email: string;
     comments: string;
-    status: string;
+    status: "ACTIVE" | "INACTIVE" | undefined;
     faceAccess: string;
     biometricAccess: string;
     remoteControlAccess: string;
@@ -52,6 +52,7 @@ export default function UpdateResident() {
     remoteControlAccess: boolean;
     passwordAccess: string;
     telephone: string;
+    status: "ACTIVE" | "INACTIVE" | undefined;
   }
   interface Telephone {
     telephoneId: number;
@@ -115,6 +116,7 @@ export default function UpdateResident() {
         comments: member?.comments || "",
         passwordAccess: member?.passwordAccess || "",
         telephone: "",
+        status: member?.status || "INACTIVE",
       });
     }
   }, [member]);

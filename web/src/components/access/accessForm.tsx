@@ -56,21 +56,12 @@ export function AccessForm() {
     },
   });
 
-  interface Visitor {
-    visitorId: number;
-    name: string;
-    access: [];
-    lobby: {
-      exitControl: "ACTIVE" | "INACTIVE";
-    };
-  }
-
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
 
-  const [visitors, setVisitors] = useState([]);
+  const [visitors, setVisitors] = useState<Visitor[]>([]);
   const fetchVisitors = async () => {
     try {
       const response = await api.get("visitor/lobby/" + params.get("lobby"), {
@@ -84,7 +75,7 @@ export function AccessForm() {
     }
   };
 
-  const [members, setMembers] = useState([]);
+  const [members, setMembers] = useState<Member[]>([]);
   const fetchMembers = async () => {
     try {
       const response = await api.get("member/lobby/" + params.get("lobby"), {
@@ -118,35 +109,38 @@ export function AccessForm() {
   }
 
   let visitorItems: visitorItem[] = [];
-  visitors.map((visitor: Visitor) =>
-    visitorItems.push({
-      value: visitor.visitorId,
-      label: visitor.name,
-      openAccess:
-        visitor.access.length > 0 && visitor.lobby.exitControl === "ACTIVE"
-          ? true
-          : false,
-    })
-  );
+  visitors.map((visitor: Visitor) => {
+    if (visitor.status === "ACTIVE") {
+      visitorItems.push({
+        value: visitor.visitorId,
+        label: visitor.name,
+        openAccess:
+          visitor.access.length > 0 && visitor.lobby.exitControl === "ACTIVE"
+            ? true
+            : false,
+      });
+    }
+  });
 
   let memberItems: memberItem[] = [];
-  members.map((member: Member) =>
-    memberItems.push({
-      value: member.memberId,
-      label: member.name,
-      addressType:
-        member.addressTypeId !== null ? member.addressType.description : "",
-      address: member.address !== null ? member.address : "",
-      comments: member.comments !== null ? member.comments : "",
-    })
-  );
+  members.map((member: Member) => {
+    if (member.status === "ACTIVE") {
+      memberItems.push({
+        value: member.memberId,
+        label: member.name,
+        addressType:
+          member.addressTypeId !== null ? member.addressType.description : "",
+        address: member.address !== null ? member.address : "",
+        comments: member.comments !== null ? member.comments : "",
+      });
+    }
+  });
 
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
     const lobbyParam = params.get("lobby");
     const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
-    const control = params.get("c");
     const operator = session?.payload.user.id || null;
 
     let realDate = "";

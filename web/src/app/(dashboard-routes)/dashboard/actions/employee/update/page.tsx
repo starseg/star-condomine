@@ -17,7 +17,7 @@ export default function UpdateResident() {
     cpf: string;
     email: string;
     comments: string;
-    status: string;
+    status: "ACTIVE" | "INACTIVE" | undefined;
     faceAccess: string;
     biometricAccess: string;
     remoteControlAccess: string;
@@ -50,6 +50,7 @@ export default function UpdateResident() {
     biometricAccess: boolean;
     remoteControlAccess: boolean;
     passwordAccess: string;
+    status: "ACTIVE" | "INACTIVE" | undefined;
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
@@ -92,6 +93,7 @@ export default function UpdateResident() {
         remoteControlAccess: bool(member?.remoteControlAccess) || false,
         passwordAccess: member?.passwordAccess || "",
         comments: member?.comments || "",
+        status: member?.status || "INACTIVE",
       });
       // console.log("data:");
       // console.log(data);

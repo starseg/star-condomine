@@ -32,6 +32,7 @@ import {
 } from "../ui/command";
 import { PlusCircle, Trash, UserCircle } from "@phosphor-icons/react/dist/ssr";
 import { deleteFile, handleFileUpload } from "@/lib/firebase-upload";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -48,6 +49,8 @@ const FormSchema = z.object({
   biometricAccess: z.boolean().default(false),
   remoteControlAccess: z.boolean().default(false),
   passwordAccess: z.string(),
+
+  status: z.enum(["ACTIVE", "INACTIVE"]),
 });
 
 interface Member {
@@ -59,7 +62,7 @@ interface Member {
   cpf: string;
   email: string;
   comments: string;
-  status: string;
+  status: "ACTIVE" | "INACTIVE" | undefined;
   faceAccess: string;
   biometricAccess: string;
   remoteControlAccess: string;
@@ -94,6 +97,7 @@ interface Values {
   remoteControlAccess: boolean;
   passwordAccess: string;
   telephone: string;
+  status: "ACTIVE" | "INACTIVE" | undefined;
 }
 interface Telephone {
   telephoneId: number;
@@ -212,6 +216,7 @@ export function ResidentUpdateForm({
         remoteControlAccess: data.remoteControlAccess.toString(),
         passwordAccess: data.passwordAccess,
         comments: data.comments,
+        status: data.status,
       };
       const response = await api.put("member/" + params.get("id"), info, {
         headers: {
@@ -609,6 +614,36 @@ export function ResidentUpdateForm({
                   autoComplete="off"
                   {...field}
                 />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="status"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Status</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex flex-col space-y-1"
+                >
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="ACTIVE" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Ativo</FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="INACTIVE" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Inativo</FormLabel>
+                  </FormItem>
+                </RadioGroup>
               </FormControl>
               <FormMessage />
             </FormItem>

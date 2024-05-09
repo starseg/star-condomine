@@ -96,9 +96,17 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                 <TableRow key={member.memberId}>
                   <TableCell>
                     {member.comments ? (
-                      <p className="text-yellow-400">{member.name}</p>
-                    ) : (
+                      member.status === "ACTIVE" ? (
+                        <p className="text-yellow-400">{member.name}</p>
+                      ) : (
+                        <p className="text-stone-400">
+                          {member.name} - inativo
+                        </p>
+                      )
+                    ) : member.status === "ACTIVE" ? (
                       member.name
+                    ) : (
+                      <p className="text-stone-400">{member.name} - inativo</p>
                     )}
                   </TableCell>
                   <TableCell>{member.cpf}</TableCell>

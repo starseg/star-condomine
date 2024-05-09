@@ -24,7 +24,7 @@ const getMembersByLobby = async (req, res) => {
                 addressType: true,
                 telephone: true,
             },
-            orderBy: [{ name: "asc" }],
+            orderBy: [{ status: "asc" }, { name: "asc" }],
         });
         if (!member) {
             res.status(404).json({ error: "Nenhum membro não encontrado" });

@@ -63,22 +63,13 @@ export function AccessUpdateForm({
     defaultValues: preloadedValues,
   });
 
-  interface Visitor {
-    visitorId: number;
-    name: string;
-  }
-  interface Member {
-    memberId: number;
-    name: string;
-  }
-
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const control = params.get("c");
 
-  const [visitors, setVisitors] = useState([]);
+  const [visitors, setVisitors] = useState<Visitor[]>([]);
   const fetchVisitors = async () => {
     try {
       const response = await api.get("visitor/lobby/" + params.get("lobby"), {
@@ -92,7 +83,7 @@ export function AccessUpdateForm({
     }
   };
 
-  const [members, setMembers] = useState([]);
+  const [members, setMembers] = useState<Member[]>([]);
   const fetchMembers = async () => {
     try {
       const response = await api.get("member/lobby/" + params.get("lobby"), {
