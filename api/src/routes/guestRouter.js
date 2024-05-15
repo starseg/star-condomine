@@ -11,4 +11,5 @@ guestRouter.post("/telephone", guest_1.createTelephone);
 guestRouter.get("/address", guest_1.getAddressTypes);
 guestRouter.post("/visitor", guest_1.createVisitor);
 guestRouter.get("/visitor/types", guest_1.getVisitorTypes);
+guestRouter.get("/lobby/:id", guest_1.getLobby);
 exports.default = guestRouter;

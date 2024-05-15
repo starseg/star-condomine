@@ -2,9 +2,6 @@
 
 import * as z from "zod";
 import api from "@/lib/axios";
-import { initializeApp } from "firebase/app";
-import { firebaseConfig } from "@/firebase";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
@@ -23,6 +20,8 @@ import { Input } from "@/components/ui/input";
 import { MaskedInput } from "@/components/maskedInput";
 import { useEffect, useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { handleFileUpload } from "@/lib/firebase-upload";
+import { decrypt } from "@/lib/crypto";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -48,46 +47,11 @@ export function VisitorForm() {
     },
   });
 
-  type UploadFunction = (file: File) => Promise<string>;
-
-  // Função para fazer upload de um arquivo para o Firebase Storage
-  const uploadFile: UploadFunction = async (file) => {
-    initializeApp(firebaseConfig);
-    const storage = getStorage();
-
-    const timestamp = new Date().toISOString();
-    const fileName = `pessoas/foto-perfil-visita-${timestamp}.jpeg`;
-
-    const fileRef = ref(storage, fileName);
-
-    try {
-      await uploadBytes(fileRef, file).then((snapshot) => {
-        // console.log("Uploaded file!");
-      });
-      const downloadURL = await getDownloadURL(fileRef);
-      // console.log("Arquivo enviado com sucesso. URL de download:", downloadURL);
-
-      return downloadURL;
-    } catch (error) {
-      console.error("Erro ao enviar o arquivo:", error);
-      throw error;
-    }
-  };
-
-  const handleFileUpload = async (file: File) => {
-    try {
-      const url = await uploadFile(file);
-      // console.log("URL do arquivo:", url);
-      return url;
-    } catch (error) {
-      console.error("Erro durante o upload:", error);
-    }
-  };
-
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+  const lobby = params.get("lobby") || "";
 
   interface VisitorTypes {
     visitorTypeId: number;
@@ -111,15 +75,17 @@ export function VisitorForm() {
   const [isSendind, setIsSending] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSending(true);
-    // PEGA O ID DA PORTARIA
-    const lobbyParam = params.get("lobby");
-    const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
 
     // FAZ O UPLOAD DA FOTO
     let file;
-    if (data.profileUrl instanceof File && data.profileUrl.size > 0)
-      file = await handleFileUpload(data.profileUrl);
-    else file = "";
+    if (data.profileUrl instanceof File && data.profileUrl.size > 0) {
+      const timestamp = new Date().toISOString();
+      const fileExtension = data.profileUrl.name.split(".").pop();
+      file = await handleFileUpload(
+        data.profileUrl,
+        `pessoas/foto-perfil-visita-${timestamp}.${fileExtension}`
+      );
+    } else file = "";
 
     // REGISTRA O visitante
     try {
@@ -133,9 +99,9 @@ export function VisitorForm() {
         relation: data.relation,
         startDate: null,
         endDate: null,
-        lobbyId: Number(lobby),
+        lobbyId: decrypt(lobby),
       };
-      const response = await api.post("guest/visitor", info);
+      await api.post("guest/visitor", info);
 
       router.push("visitor/success?lobby=" + lobby);
     } catch (error) {
@@ -258,7 +224,10 @@ export function VisitorForm() {
                 >
                   {visitorType.map((type) => {
                     return (
-                      <FormItem className="flex items-center space-x-3 space-y-0">
+                      <FormItem
+                        className="flex items-center space-x-3 space-y-0"
+                        key={type.visitorTypeId}
+                      >
                         <FormControl>
                           <RadioGroupItem
                             value={type.visitorTypeId.toString()}
@@ -293,8 +262,7 @@ export function VisitorForm() {
               </FormControl>
               <FormMessage />
               <FormDescription>
-                Exemplo: familiar, filho de proprietário, pedreiro,
-                jardineiro...
+                Exemplo: familiar, filho de proprietário, jardineiro...
               </FormDescription>
             </FormItem>
           )}

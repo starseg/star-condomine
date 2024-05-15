@@ -125,3 +125,25 @@ export const getVisitorTypes = async (
     res.status(500).json({ error: "Erro ao buscar os tipos" });
   }
 };
+
+export const getLobby = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const lobby = await prisma.lobby.findUniqueOrThrow({
+      where: { lobbyId: id },
+      select: {
+        code: true,
+      },
+    });
+    if (!lobby.code) {
+      res.status(404).json({ error: "Portaria não encontrada" });
+      return;
+    }
+    const key1 = Number(process.env.LOBBY_CODE_KEY_1);
+    const key2 = Number(process.env.LOBBY_CODE_KEY_2);
+    const result = lobby.code * key1 - key2;
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar a portaria" });
+  }
+};

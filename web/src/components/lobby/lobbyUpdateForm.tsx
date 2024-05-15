@@ -2,9 +2,6 @@
 
 import * as z from "zod";
 import api from "@/lib/axios";
-import { initializeApp } from "firebase/app";
-import { firebaseConfig } from "@/firebase";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
@@ -26,6 +23,11 @@ import { MaskedInput } from "../maskedInput";
 import { useState } from "react";
 import { deleteFile, handleFileUpload } from "@/lib/firebase-upload";
 import { Checkbox } from "../ui/checkbox";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 const FormSchema = z.object({
   type: z.enum(["CONDOMINIUM", "COMPANY"]),
@@ -44,29 +46,11 @@ const FormSchema = z.object({
   number: z.string().min(1),
   complement: z.string().optional(),
   datasheet: z.instanceof(File).optional(),
+  code: z.string().min(6, {
+    message: "O código deve ter 6 números.",
+  }),
 });
 
-interface Lobby {
-  lobbyId: number;
-  cnpj: string;
-  name: string;
-  responsible: string;
-  telephone: string;
-  schedules: string;
-  procedures: string;
-  datasheet: string;
-  cep: string;
-  state: string;
-  city: string;
-  neighborhood: string;
-  street: string;
-  number: string;
-  complement: string;
-  createdAt: string;
-  updatedAt: string;
-  type: "CONDOMINIUM" | "COMPANY" | undefined;
-  exitControl: "ACTIVE" | "INACTIVE" | undefined;
-}
 interface Values {
   type: "CONDOMINIUM" | "COMPANY" | undefined;
   exitControl: "ACTIVE" | "INACTIVE" | undefined;
@@ -84,6 +68,7 @@ interface Values {
   number: string;
   complement: string;
   datasheet: File;
+  code: string;
 }
 
 export function LobbyUpdateForm({
@@ -143,6 +128,7 @@ export function LobbyUpdateForm({
         number: data.number,
         complement: data.complement,
         datasheet: file,
+        code: Number(data.code),
       };
       await api.put("lobby/" + id, info, {
         headers: {
@@ -368,6 +354,30 @@ export function LobbyUpdateForm({
             Remover arquivo - {removeFile ? "sim" : "não"}
           </label>
         </div>
+
+        <FormField
+          control={form.control}
+          name="code"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Código de acesso</FormLabel>
+              <FormControl>
+                <InputOTP maxLength={6} {...field}>
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} />
+                    <InputOTPSlot index={1} />
+                    <InputOTPSlot index={2} />
+                    <InputOTPSlot index={3} />
+                    <InputOTPSlot index={4} />
+                    <InputOTPSlot index={5} />
+                  </InputOTPGroup>
+                </InputOTP>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="cep"

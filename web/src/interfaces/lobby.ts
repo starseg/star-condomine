@@ -1,9 +1,24 @@
 interface Lobby {
   lobbyId: number;
-  name: String;
-  state: String;
-  city: String;
-  schedules: String;
+  cnpj: string;
+  name: string;
+  responsible: string;
+  telephone: string;
+  schedules: string;
+  procedures: string;
+  datasheet: string;
+  cep: string;
+  state: string;
+  city: string;
+  neighborhood: string;
+  street: string;
+  number: string;
+  complement: string;
+  code: number;
+  type: "CONDOMINIUM" | "COMPANY" | undefined;
+  exitControl: "ACTIVE" | "INACTIVE" | undefined;
+  createdAt: string;
+  updatedAt: string;
   device: [
     {
       deviceId: number;

@@ -85,6 +85,7 @@ export const createLobby = async (
       street,
       number,
       complement,
+      code,
       type,
     } = req.body;
     const lobby = await prisma.lobby.create({
@@ -104,6 +105,7 @@ export const createLobby = async (
         street,
         number,
         complement,
+        code,
         type,
       },
     });
@@ -135,6 +137,7 @@ export const updateLobby = async (
       street,
       number,
       complement,
+      code,
       type,
     } = req.body;
     const lobby = await prisma.lobby.update({
@@ -155,6 +158,7 @@ export const updateLobby = async (
         street,
         number,
         complement,
+        code,
         type,
       },
     });

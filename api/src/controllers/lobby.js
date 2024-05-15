@@ -64,7 +64,7 @@ const getLobby = async (req, res) => {
 exports.getLobby = getLobby;
 const createLobby = async (req, res) => {
     try {
-        const { cnpj, name, responsible, telephone, schedules, exitControl, procedures, datasheet, cep, state, city, neighborhood, street, number, complement, type, } = req.body;
+        const { cnpj, name, responsible, telephone, schedules, exitControl, procedures, datasheet, cep, state, city, neighborhood, street, number, complement, code, type, } = req.body;
         const lobby = await db_1.default.lobby.create({
             data: {
                 cnpj,
@@ -82,6 +82,7 @@ const createLobby = async (req, res) => {
                 street,
                 number,
                 complement,
+                code,
                 type,
             },
         });
@@ -95,7 +96,7 @@ exports.createLobby = createLobby;
 const updateLobby = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const { cnpj, name, responsible, telephone, schedules, exitControl, procedures, datasheet, cep, state, city, neighborhood, street, number, complement, type, } = req.body;
+        const { cnpj, name, responsible, telephone, schedules, exitControl, procedures, datasheet, cep, state, city, neighborhood, street, number, complement, code, type, } = req.body;
         const lobby = await db_1.default.lobby.update({
             where: { lobbyId: id },
             data: {
@@ -114,6 +115,7 @@ const updateLobby = async (req, res) => {
                 street,
                 number,
                 complement,
+                code,
                 type,
             },
         });

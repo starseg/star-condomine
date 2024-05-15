@@ -7,28 +7,7 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function UpdateDevice() {
-  interface Lobby {
-    lobbyId: number;
-    cnpj: string;
-    name: string;
-    responsible: string;
-    telephone: string;
-    schedules: string;
-    procedures: string;
-    datasheet: string;
-    cep: string;
-    state: string;
-    city: string;
-    neighborhood: string;
-    street: string;
-    number: string;
-    complement: string;
-    createdAt: string;
-    updatedAt: string;
-    type: "CONDOMINIUM" | "COMPANY" | undefined;
-    exitControl: "ACTIVE" | "INACTIVE" | undefined;
-  }
+export default function UpdateLobby() {
   interface Values {
     type: "CONDOMINIUM" | "COMPANY" | undefined;
     exitControl: "ACTIVE" | "INACTIVE" | undefined;
@@ -46,6 +25,7 @@ export default function UpdateDevice() {
     number: string;
     complement: string;
     datasheet: File;
+    code: string;
   }
 
   const { data: session } = useSession();
@@ -90,6 +70,7 @@ export default function UpdateDevice() {
         number: lobby?.number || "",
         complement: lobby?.complement || "",
         datasheet: new File([], ""),
+        code: lobby?.code?.toString() || "",
       });
       // console.log("data:");
       // console.log(data);

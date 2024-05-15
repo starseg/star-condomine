@@ -12,28 +12,6 @@ import LoadingIcon from "../loadingIcon";
 import { useRouter } from "next/navigation";
 import { deleteFile } from "@/lib/firebase-upload";
 
-interface Lobby {
-  lobbyId: number;
-  cnpj: string;
-  name: string;
-  responsible: string;
-  telephone: string;
-  schedules: string;
-  procedures: string;
-  datasheet: string;
-  cep: string;
-  state: string;
-  city: string;
-  neighborhood: string;
-  street: string;
-  number: string;
-  complement: string;
-  type: string;
-  exitControl: "ACTIVE" | "INACTIVE";
-  createdAt: string;
-  updatedAt: string;
-}
-
 export default function LobbyDetails({ lobby }: { lobby: string }) {
   const router = useRouter();
   const [details, setDetails] = useState<Lobby>();
@@ -128,6 +106,10 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
               content={
                 details.procedures ? details.procedures : "Não especificados"
               }
+            />
+            <DetailItem
+              label="Código de acesso"
+              content={details.code.toString() || ""}
             />
             <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
             <DetailItem label="CEP" content={details.cep} />

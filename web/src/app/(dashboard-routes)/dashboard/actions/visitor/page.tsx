@@ -6,6 +6,7 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { FilePlus, FileSearch } from "@phosphor-icons/react/dist/ssr";
 import CopyButton from "@/components/copyButton";
+import { encrypt } from "@/lib/crypto";
 
 export const metadata: Metadata = {
   title: "Visitantes",
@@ -22,6 +23,8 @@ export default async function Visitor({
   const lobby = searchParams?.lobby || "";
   const control = searchParams?.c || "";
 
+  const encryptedLobby = encrypt(Number(lobby));
+
   return (
     <>
       <Menu url={`/dashboard/actions?id=${lobby}`} />
@@ -35,10 +38,10 @@ export default async function Visitor({
         </div>
 
         {control === "S" && (
-          <p className="mt-4 flex items-center gap-2  text-stone-400 font-medium">
+          <div className="mt-4 flex items-center gap-2  text-stone-400 font-medium">
             <div className="rounded-full w-4 h-4 bg-red-400"></div> Nomes em
             vermelho: visitantes com acesso sem saída finalizada
-          </p>
+          </div>
         )}
         <div className="mt-4 flex gap-4 items-center">
           <Link
@@ -74,7 +77,7 @@ export default async function Visitor({
             </p>
           </Link>
           <CopyButton
-            text={`https://starcondomine.starseg.com/guest/visitor?lobby=${lobby}`}
+            text={`https://starcondomine.starseg.com/guest/visitor?lobby=${encryptedLobby}`}
           />
         </div>
       </section>

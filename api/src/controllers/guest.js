@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getVisitorTypes = exports.createVisitor = exports.getAddressTypes = exports.createTelephone = exports.createMember = void 0;
+exports.getLobby = exports.getVisitorTypes = exports.createVisitor = exports.getAddressTypes = exports.createTelephone = exports.createMember = void 0;
 const db_1 = __importDefault(require("../db"));
 const createMember = async (req, res) => {
     try {
@@ -92,3 +92,26 @@ const getVisitorTypes = async (req, res) => {
     }
 };
 exports.getVisitorTypes = getVisitorTypes;
+const getLobby = async (req, res) => {
+    try {
+        const id = parseInt(req.params.id, 10);
+        const lobby = await db_1.default.lobby.findUniqueOrThrow({
+            where: { lobbyId: id },
+            select: {
+                code: true,
+            },
+        });
+        if (!lobby.code) {
+            res.status(404).json({ error: "Portaria não encontrada" });
+            return;
+        }
+        const key1 = Number(process.env.LOBBY_CODE_KEY_1);
+        const key2 = Number(process.env.LOBBY_CODE_KEY_2);
+        const result = lobby.code * key1 - key2;
+        res.json(result);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao buscar a portaria" });
+    }
+};
+exports.getLobby = getLobby;

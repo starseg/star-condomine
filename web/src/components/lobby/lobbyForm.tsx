@@ -23,6 +23,11 @@ import { searchCEP } from "@/lib/utils";
 import { MaskedInput } from "../maskedInput";
 import { useState } from "react";
 import { handleFileUpload } from "@/lib/firebase-upload";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 const FormSchema = z.object({
   type: z.enum(["CONDOMINIUM", "COMPANY"]),
@@ -41,6 +46,9 @@ const FormSchema = z.object({
   number: z.string().min(1),
   complement: z.string().optional(),
   datasheet: z.instanceof(File).optional(),
+  code: z.string().min(6, {
+    message: "O código deve ter 6 números.",
+  }),
 });
 
 export function LobbyForm() {
@@ -63,6 +71,7 @@ export function LobbyForm() {
       number: "",
       complement: "",
       datasheet: new File([], ""),
+      code: "",
     },
   });
 
@@ -122,6 +131,7 @@ export function LobbyForm() {
         number: data.number,
         complement: data.complement,
         datasheet: file,
+        code: Number(data.code),
       };
       await api.post("lobby", info, {
         headers: {
@@ -331,6 +341,30 @@ export function LobbyForm() {
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="code"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Crie um código de acesso</FormLabel>
+              <FormControl>
+                <InputOTP maxLength={6} {...field}>
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} />
+                    <InputOTPSlot index={1} />
+                    <InputOTPSlot index={2} />
+                    <InputOTPSlot index={3} />
+                    <InputOTPSlot index={4} />
+                    <InputOTPSlot index={5} />
+                  </InputOTPGroup>
+                </InputOTP>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="cep"
