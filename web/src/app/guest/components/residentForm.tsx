@@ -45,10 +45,14 @@ const FormSchema = z.object({
   name: z.string().min(5, {
     message: "Digite seu nome completo",
   }),
-  cpf: z.string(),
-  rg: z.string(),
-  email: z.string(),
-  addressType: z.number(),
+  cpf: z.string().min(11, {
+    message: "Preencha o CPF corretamente",
+  }),
+  rg: z.string().min(8, {
+    message: "Preencha o RG corretamente",
+  }),
+  email: z.string().email({ message: "Preencha o e-mail corretamente" }),
+  addressType: z.number().positive({ message: "Selecione o tipo" }),
   address: z.string().min(1, {
     message: "Digite o endereço",
   }),

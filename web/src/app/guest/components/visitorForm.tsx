@@ -25,12 +25,22 @@ import { decrypt } from "@/lib/crypto";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
-  name: z.string(),
-  cpf: z.string(),
-  rg: z.string(),
-  phone: z.string(),
+  name: z.string().min(5, {
+    message: "Por favor, insira o nome completo",
+  }),
+  cpf: z.string().min(11, {
+    message: "Preencha o CPF corretamente",
+  }),
+  rg: z.string().min(8, {
+    message: "Preencha o RG corretamente",
+  }),
+  phone: z.string().min(10, {
+    message: "Preencha o telefone corretamente",
+  }),
   type: z.string(),
-  relation: z.string(),
+  relation: z.string().min(1, {
+    message: "Preencha o este campo",
+  }),
 });
 
 export function VisitorForm() {
