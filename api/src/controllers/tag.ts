@@ -121,3 +121,31 @@ export const deleteTagsByMember = async (
     res.status(500).json({ error: "Erro ao excluir as tags" });
   }
 };
+
+export const getTagsByLobby = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const tags = await prisma.tag.findMany({
+      include: {
+        type: { select: { description: true } },
+        member: { select: { rg: true, cpf: true, name: true } },
+      },
+      where: {
+        member: {
+          lobbyId: id,
+        },
+      },
+      orderBy: [{ status: "asc" }, { member: { name: "asc" } }],
+    });
+    if (!tags) {
+      res.status(404).json({ error: "Tags não encontradas" });
+      return;
+    }
+    res.json(tags);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar as tags" });
+  }
+};

@@ -11,6 +11,7 @@ tagRouter.get("/", tag_1.getAllTags);
 tagRouter.get("/find/:id", tag_1.getTag);
 tagRouter.get("/types", tag_1.getTagTypes);
 tagRouter.get("/member/:id", tag_1.getTagsByMember);
+tagRouter.get("/lobby/:id", tag_1.getTagsByLobby);
 tagRouter.post("/", tag_1.createTag);
 tagRouter.put("/:id", tag_1.updateTag);
 tagRouter.delete("/id/:id", permissions_1.checkAdminPermission, tag_1.deleteTag);

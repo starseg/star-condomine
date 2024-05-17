@@ -107,6 +107,8 @@ interface Tags {
   };
   memberId: number;
   member: {
+    rg: string;
+    cpf: string;
     name: string;
   };
 }

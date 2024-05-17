@@ -4,7 +4,7 @@ import { Menu } from "@/components/menu";
 import Search from "@/components/search";
 import { buttonVariants } from "@/components/ui/button";
 import { encrypt } from "@/lib/crypto";
-import { FilePlus, FileSearch } from "@phosphor-icons/react/dist/ssr";
+import { FilePlus, FileSearch, LockKey } from "@phosphor-icons/react/dist/ssr";
 import { Metadata } from "next";
 import Link from "next/link";
 
@@ -59,6 +59,14 @@ export default async function Member({
           >
             <p className="flex gap-2 text-xl items-center">
               <FileSearch size={24} /> Acessos
+            </p>
+          </Link>
+          <Link
+            href={`resident/credentials/report?lobby=${lobby}`}
+            className={buttonVariants({ variant: "default" })}
+          >
+            <p className="flex gap-2 text-xl items-center">
+              <LockKey size={24} /> Credenciais
             </p>
           </Link>
           <CopyButton

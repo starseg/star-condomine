@@ -8,6 +8,7 @@ import {
   getTagTypes,
   deleteTagsByMember,
   getTagsByMember,
+  getTagsByLobby,
 } from "../controllers/tag";
 import { checkAdminPermission } from "../middlewares/permissions";
 
@@ -17,6 +18,7 @@ tagRouter.get("/", getAllTags);
 tagRouter.get("/find/:id", getTag);
 tagRouter.get("/types", getTagTypes);
 tagRouter.get("/member/:id", getTagsByMember);
+tagRouter.get("/lobby/:id", getTagsByLobby);
 tagRouter.post("/", createTag);
 tagRouter.put("/:id", updateTag);
 tagRouter.delete("/id/:id", checkAdminPermission, deleteTag);

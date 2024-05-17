@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTagsByMember = exports.getTagTypes = exports.deleteTag = exports.updateTag = exports.createTag = exports.getTagsByMember = exports.getTag = exports.getAllTags = void 0;
+exports.getTagsByLobby = exports.deleteTagsByMember = exports.getTagTypes = exports.deleteTag = exports.updateTag = exports.createTag = exports.getTagsByMember = exports.getTag = exports.getAllTags = void 0;
 const db_1 = __importDefault(require("../db"));
 const getAllTags = async (req, res) => {
     try {
@@ -122,3 +122,29 @@ const deleteTagsByMember = async (req, res) => {
     }
 };
 exports.deleteTagsByMember = deleteTagsByMember;
+const getTagsByLobby = async (req, res) => {
+    try {
+        const id = parseInt(req.params.id, 10);
+        const tags = await db_1.default.tag.findMany({
+            include: {
+                type: { select: { description: true } },
+                member: { select: { rg: true, cpf: true, name: true } },
+            },
+            where: {
+                member: {
+                    lobbyId: id,
+                },
+            },
+            orderBy: [{ status: "asc" }, { member: { name: "asc" } }],
+        });
+        if (!tags) {
+            res.status(404).json({ error: "Tags não encontradas" });
+            return;
+        }
+        res.json(tags);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao buscar as tags" });
+    }
+};
+exports.getTagsByLobby = getTagsByLobby;
