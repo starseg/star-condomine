@@ -59,7 +59,7 @@ export default function CredentialsFullTable() {
               <TableHeader className="bg-stone-800 font-semibold">
                 <TableRow>
                   <TableHead>Proprietário</TableHead>
-                  {tags[0].member.address !== null && (
+                  {tags[0] !== undefined && tags[0].member.address !== null && (
                     <TableHead>Endereço</TableHead>
                   )}
                   <TableHead>Tipo</TableHead>
@@ -78,12 +78,13 @@ export default function CredentialsFullTable() {
                       <br />
                       {tag.member.name}
                     </TableCell>
-                    {tags[0].member.address !== null && (
-                      <TableCell>
-                        {tag.member.addressType.description}{" "}
-                        {tag.member.address}
-                      </TableCell>
-                    )}
+                    {tags[0] !== undefined &&
+                      tags[0].member.address !== null && (
+                        <TableCell>
+                          {tag.member.addressType.description}{" "}
+                          {tag.member.address}
+                        </TableCell>
+                      )}
                     <TableCell>{tag.type.description}</TableCell>
                     <TableCell>{tag.value}</TableCell>
                     <TableCell>
