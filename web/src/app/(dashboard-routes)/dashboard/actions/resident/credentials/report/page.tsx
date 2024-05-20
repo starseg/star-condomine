@@ -16,9 +16,9 @@ export default async function CredentialsReport() {
           Credenciais dos proprietários
         </h1>
         <div className="flex justify-end mb-4">
-          {/* <Search placeholder="Buscar..." pagination={false} /> */}
+          <Search placeholder="Buscar..." pagination={false} />
         </div>
-        <div className="max-h-[60vh] overflow-x-auto">
+        <div>
           <CredentialsFullTable />
         </div>
       </section>

@@ -125,16 +125,51 @@ exports.deleteTagsByMember = deleteTagsByMember;
 const getTagsByLobby = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
+        const { query } = req.query;
+        const whereCondition = query
+            ? {
+                OR: [
+                    { value: { contains: query } },
+                    { comments: { contains: query } },
+                    { type: { description: { contains: query } } },
+                    { member: { name: { contains: query } } },
+                    { member: { cpf: { contains: query } } },
+                    { member: { address: { contains: query } } },
+                    {
+                        member: {
+                            addressType: { description: { contains: query } },
+                        },
+                    },
+                ],
+                AND: {
+                    member: { lobbyId: id },
+                },
+            }
+            : { member: { lobbyId: id } };
         const tags = await db_1.default.tag.findMany({
             include: {
                 type: { select: { description: true } },
-                member: { select: { rg: true, cpf: true, name: true } },
-            },
-            where: {
                 member: {
-                    lobbyId: id,
+                    select: {
+                        rg: true,
+                        cpf: true,
+                        name: true,
+                        address: true,
+                        addressTypeId: true,
+                        addressType: {
+                            select: {
+                                description: true,
+                            },
+                        },
+                        lobby: {
+                            select: {
+                                name: true,
+                            },
+                        },
+                    },
                 },
             },
+            where: whereCondition,
             orderBy: [{ status: "asc" }, { member: { name: "asc" } }],
         });
         if (!tags) {

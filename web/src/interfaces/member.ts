@@ -110,5 +110,13 @@ interface Tags {
     rg: string;
     cpf: string;
     name: string;
+    address: string;
+    addressTypeId: number;
+    addressType: {
+      description: string;
+    };
+    lobby: {
+      name: string;
+    };
   };
 }

@@ -128,16 +128,54 @@ export const getTagsByLobby = async (
 ): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
+
+    const { query } = req.query;
+
+    const whereCondition = query
+      ? {
+          OR: [
+            { value: { contains: query as string } },
+            { comments: { contains: query as string } },
+            { type: { description: { contains: query as string } } },
+            { member: { name: { contains: query as string } } },
+            { member: { cpf: { contains: query as string } } },
+            { member: { address: { contains: query as string } } },
+            {
+              member: {
+                addressType: { description: { contains: query as string } },
+              },
+            },
+          ],
+          AND: {
+            member: { lobbyId: id },
+          },
+        }
+      : { member: { lobbyId: id } };
+
     const tags = await prisma.tag.findMany({
       include: {
         type: { select: { description: true } },
-        member: { select: { rg: true, cpf: true, name: true } },
-      },
-      where: {
         member: {
-          lobbyId: id,
+          select: {
+            rg: true,
+            cpf: true,
+            name: true,
+            address: true,
+            addressTypeId: true,
+            addressType: {
+              select: {
+                description: true,
+              },
+            },
+            lobby: {
+              select: {
+                name: true,
+              },
+            },
+          },
         },
       },
+      where: whereCondition,
       orderBy: [{ status: "asc" }, { member: { name: "asc" } }],
     });
     if (!tags) {
