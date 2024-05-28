@@ -60,7 +60,7 @@ const getAddressTypes = async (req, res) => {
 exports.getAddressTypes = getAddressTypes;
 const createVisitor = async (req, res) => {
     try {
-        const { profileUrl, name, rg, cpf, phone, startDate, endDate, relation, visitorTypeId, lobbyId, } = req.body;
+        const { profileUrl, name, rg, cpf, phone, startDate, endDate, relation, comments, visitorTypeId, lobbyId, } = req.body;
         const visitor = await db_1.default.visitor.create({
             data: {
                 profileUrl,
@@ -71,6 +71,7 @@ const createVisitor = async (req, res) => {
                 startDate,
                 endDate,
                 relation,
+                comments,
                 visitorTypeId,
                 lobbyId,
             },

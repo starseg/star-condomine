@@ -41,6 +41,9 @@ const FormSchema = z.object({
   relation: z.string().min(1, {
     message: "Preencha o este campo",
   }),
+  comments: z.string().min(1, {
+    message: "Preencha o este campo",
+  }),
 });
 
 export function VisitorForm() {
@@ -54,6 +57,7 @@ export function VisitorForm() {
       phone: "",
       type: "1",
       relation: "",
+      comments: "",
     },
   });
 
@@ -107,6 +111,7 @@ export function VisitorForm() {
         phone: data.phone,
         visitorTypeId: Number(data.type),
         relation: data.relation,
+        comments: data.comments,
         startDate: null,
         endDate: null,
         lobbyId: decrypt(lobby),
@@ -274,6 +279,26 @@ export function VisitorForm() {
               <FormDescription>
                 Exemplo: familiar, filho de proprietário, jardineiro...
               </FormDescription>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="comments"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Endereço do proprietário (Lote)</FormLabel>
+              <FormControl>
+                <Input
+                  type="text"
+                  placeholder="Escreva aqui qual é o endereço do proprietário"
+                  autoComplete="off"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+              <FormDescription>Exemplo: LOTE 32</FormDescription>
             </FormItem>
           )}
         />
