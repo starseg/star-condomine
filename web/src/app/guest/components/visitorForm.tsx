@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { handleFileUpload } from "@/lib/firebase-upload";
 import { decrypt } from "@/lib/crypto";
+import Image from "next/image";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -139,6 +140,14 @@ export function VisitorForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Foto</FormLabel>
+              <Image
+                src="/photo-guide.jpeg"
+                alt="Requisitos de foto"
+                width={967}
+                height={911}
+                priority={true}
+                className="rounded-md"
+              />
               <FormControl>
                 <Input
                   type="file"
@@ -288,7 +297,9 @@ export function VisitorForm() {
           name="comments"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Endereço do proprietário (Lote)</FormLabel>
+              <FormLabel>
+                Endereço do proprietário ( Lote | Apto | Título | Gleba )
+              </FormLabel>
               <FormControl>
                 <Input
                   type="text"

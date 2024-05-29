@@ -2,9 +2,6 @@
 
 import * as z from "zod";
 import api from "@/lib/axios";
-import { initializeApp } from "firebase/app";
-import { firebaseConfig } from "@/firebase";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
@@ -39,6 +36,7 @@ import {
 import { PlusCircle, Trash } from "@phosphor-icons/react/dist/ssr";
 import { handleFileUpload } from "@/lib/firebase-upload";
 import { decrypt } from "@/lib/crypto";
+import Image from "next/image";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -189,6 +187,14 @@ export function ResidentForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Foto</FormLabel>
+              <Image
+                src="/photo-guide.jpeg"
+                alt="Requisitos de foto"
+                width={967}
+                height={911}
+                priority={true}
+                className="rounded-md"
+              />
               <FormControl>
                 <Input
                   type="file"
