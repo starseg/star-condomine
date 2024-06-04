@@ -64,6 +64,9 @@ export default function List() {
                 status={status}
                 ramais={ramais}
                 location={lobby.city + " - " + lobby.state}
+                brand={
+                  lobby.controllerBrandId ? lobby.ControllerBrand.iconUrl : ""
+                }
               />
             );
           })}

@@ -9,6 +9,11 @@ const getAllLobbies = async (req, res) => {
     try {
         const lobby = await db_1.default.lobby.findMany({
             orderBy: [{ name: "asc" }],
+            include: {
+                device: true,
+                lobbyProblem: true,
+                ControllerBrand: true,
+            },
         });
         res.json(lobby);
     }
@@ -34,6 +39,7 @@ const getFilteredLobbies = async (req, res) => {
             include: {
                 device: true,
                 lobbyProblem: true,
+                ControllerBrand: true,
             },
             orderBy: [{ name: "asc" }],
         });
@@ -64,7 +70,7 @@ const getLobby = async (req, res) => {
 exports.getLobby = getLobby;
 const createLobby = async (req, res) => {
     try {
-        const { cnpj, name, responsible, telephone, schedules, exitControl, procedures, datasheet, cep, state, city, neighborhood, street, number, complement, code, type, } = req.body;
+        const { cnpj, name, responsible, telephone, schedules, exitControl, procedures, datasheet, cep, state, city, neighborhood, street, number, complement, code, type, controllerBrandId, } = req.body;
         const lobby = await db_1.default.lobby.create({
             data: {
                 cnpj,
@@ -84,6 +90,7 @@ const createLobby = async (req, res) => {
                 complement,
                 code,
                 type,
+                controllerBrandId,
             },
         });
         res.status(201).json(lobby);
@@ -96,7 +103,7 @@ exports.createLobby = createLobby;
 const updateLobby = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const { cnpj, name, responsible, telephone, schedules, exitControl, procedures, datasheet, cep, state, city, neighborhood, street, number, complement, code, type, } = req.body;
+        const { cnpj, name, responsible, telephone, schedules, exitControl, procedures, datasheet, cep, state, city, neighborhood, street, number, complement, code, type, controllerBrandId, } = req.body;
         const lobby = await db_1.default.lobby.update({
             where: { lobbyId: id },
             data: {
@@ -117,6 +124,7 @@ const updateLobby = async (req, res) => {
                 complement,
                 code,
                 type,
+                controllerBrandId,
             },
         });
         res.status(200).json(lobby);

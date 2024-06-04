@@ -1,16 +1,23 @@
 import List from "@/components/lobby/list";
 import Search from "@/components/search";
-import { DoorOpen, Smiley, SmileySad } from "@phosphor-icons/react/dist/ssr";
+import {
+  DoorOpen,
+  Gear,
+  Smiley,
+  SmileySad,
+} from "@phosphor-icons/react/dist/ssr";
 import { Menu } from "@/components/menu";
 import NewLobbyButton from "@/components/lobby/newLobbyButton";
 import FeedbackButton from "@/components/feedback/feedbackButton";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default async function Dashboard() {
   return (
     <>
       <Menu url="bell" />
       <section className="max-w-5xl mx-auto mb-12">
-        <div className="flex items-center justify-between mb-2 flex-wrap flex-col md:flex-row w-[90%] ml-[5%]">
+        <div className="flex items-center justify-between mb-2 flex-wrap flex-col md:flex-row w-[95%] ml-[5%]">
           <h1 className="flex gap-2 items-center text-stone-50 text-4xl pb-4">
             <DoorOpen /> Portarias
           </h1>
@@ -25,6 +32,37 @@ export default async function Dashboard() {
             <SmileySad weight="fill" size={32} className="text-red-500" />
             <p>Com problemas</p>
           </div>
+        </div>
+        <div className="p-4 flex gap-4">
+          <Link href="controllers-config">
+            <Button
+              title="Configurações"
+              className="flex gap-2 font-semibold border-primary"
+              variant={"outline"}
+            >
+              <Gear size={24} /> Geral
+            </Button>
+          </Link>
+
+          <Link href="control-id">
+            <Button
+              title="Configurações"
+              className="flex gap-2 font-semibold border-red-500"
+              variant={"outline"}
+            >
+              <Gear size={24} /> Control iD
+            </Button>
+          </Link>
+
+          <Link href="intelbras">
+            <Button
+              title="Configurações"
+              className="flex gap-2 font-semibold border-green-500"
+              variant={"outline"}
+            >
+              <Gear size={24} /> Intelbras
+            </Button>
+          </Link>
         </div>
         <FeedbackButton />
       </section>

@@ -24,6 +24,7 @@ import guestRouter from "./routes/guestRouter";
 import dotenv from "dotenv";
 import helmet from "helmet";
 import generalDataRouter from "./routes/generalDataRouter";
+import brandRouter from "./routes/controllerBrandRouter";
 dotenv.config();
 
 const app = express();
@@ -58,6 +59,7 @@ app.use(verifyToken, logging);
 app.use("/visitor", visitorRouter);
 app.use("/operator", operatorRouter);
 app.use("/access", accessRouter);
+app.use("/brand", brandRouter);
 app.use("/device", deviceRouter);
 app.use("/deviceModel", deviceModelRouter);
 app.use("/feedback", feedbackRouter);

@@ -1,14 +1,15 @@
-import { Smiley, SmileyMeh, SmileySad } from "@phosphor-icons/react/dist/ssr";
+import { Smiley, SmileySad } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import clsx from "clsx";
 
 interface LobbyCardProps {
-  href: String;
-  title: String;
-  type: String;
+  href: string;
+  title: string;
+  type: string;
   status: number;
-  ramais: String;
-  location: String;
+  ramais: string;
+  location: string;
+  brand: string;
 }
 
 export default function LobbyCard(props: LobbyCardProps) {
@@ -17,12 +18,8 @@ export default function LobbyCard(props: LobbyCardProps) {
       href={`${props.href}`}
       className={clsx(
         "p-4 border rounded-md lg:w-[30%] md:w-[45%] w-full h-[170px] flex flex-col justify-between hover:bg-stone-850 transition-colors",
-        {
-          "border-green-500": props.status === 0,
-        },
-        {
-          "border-red-500": props.status === 1,
-        }
+        { "border-green-500": props.status === 0 },
+        { "border-red-500": props.status === 1 }
       )}
     >
       <div className="flex justify-between items-start">
@@ -46,7 +43,18 @@ export default function LobbyCard(props: LobbyCardProps) {
           <br />
           {props.ramais}
         </p>
-        <p className="w-1/2 text-right text-sm">{props.location}</p>
+        <div className="w-1/2 text-right text-sm flex flex-col items-end">
+          {props.brand ? (
+            <img
+              src={props.brand}
+              alt="Marca das controladoras"
+              className="w-1/2 py-4"
+            />
+          ) : (
+            ""
+          )}
+          {props.location}
+        </div>
       </div>
     </Link>
   );

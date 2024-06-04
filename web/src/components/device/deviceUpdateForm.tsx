@@ -114,7 +114,7 @@ export function DeviceUpdateForm({
       deviceModelId: data.model,
     };
     try {
-      const response = await api.put("device/" + id, info, {
+      await api.put("device/" + id, info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },

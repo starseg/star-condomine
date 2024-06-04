@@ -17,20 +17,26 @@ interface Lobby {
   code: number;
   type: "CONDOMINIUM" | "COMPANY" | undefined;
   exitControl: "ACTIVE" | "INACTIVE" | undefined;
+  controllerBrandId: number;
   createdAt: string;
   updatedAt: string;
   device: [
     {
       deviceId: number;
-      name: String;
-      ip: String;
+      name: string;
+      ip: string;
       ramal: number;
     }
   ];
   lobbyProblem: [
     {
-      lobbyProblemId: String;
-      status: String;
+      lobbyProblemId: number;
+      status: string;
     }
   ];
+  ControllerBrand: {
+    controllerBrandId: number;
+    name: string;
+    iconUrl: string;
+  };
 }

@@ -8,6 +8,11 @@ export const getAllLobbies = async (
   try {
     const lobby = await prisma.lobby.findMany({
       orderBy: [{ name: "asc" }],
+      include: {
+        device: true,
+        lobbyProblem: true,
+        ControllerBrand: true,
+      },
     });
     res.json(lobby);
   } catch (error) {
@@ -37,6 +42,7 @@ export const getFilteredLobbies = async (
       include: {
         device: true,
         lobbyProblem: true,
+        ControllerBrand: true,
       },
       orderBy: [{ name: "asc" }],
     });
@@ -87,6 +93,7 @@ export const createLobby = async (
       complement,
       code,
       type,
+      controllerBrandId,
     } = req.body;
     const lobby = await prisma.lobby.create({
       data: {
@@ -107,6 +114,7 @@ export const createLobby = async (
         complement,
         code,
         type,
+        controllerBrandId,
       },
     });
     res.status(201).json(lobby);
@@ -139,6 +147,7 @@ export const updateLobby = async (
       complement,
       code,
       type,
+      controllerBrandId,
     } = req.body;
     const lobby = await prisma.lobby.update({
       where: { lobbyId: id },
@@ -160,6 +169,7 @@ export const updateLobby = async (
         complement,
         code,
         type,
+        controllerBrandId,
       },
     });
     res.status(200).json(lobby);
