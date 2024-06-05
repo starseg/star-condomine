@@ -6,6 +6,8 @@ interface Device {
   description: string;
   deviceModelId: number;
   lobbyId: number;
+  login: string;
+  password: string;
   deviceModel: {
     model: string;
   };

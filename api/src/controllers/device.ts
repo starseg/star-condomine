@@ -34,9 +34,27 @@ export const createDevice = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { name, ip, ramal, description, deviceModelId, lobbyId } = req.body;
+    const {
+      name,
+      ip,
+      ramal,
+      description,
+      login,
+      password,
+      deviceModelId,
+      lobbyId,
+    } = req.body;
     const device = await prisma.device.create({
-      data: { name, ip, ramal, description, deviceModelId, lobbyId },
+      data: {
+        name,
+        ip,
+        ramal,
+        description,
+        login,
+        password,
+        deviceModelId,
+        lobbyId,
+      },
     });
     res.status(201).json(device);
   } catch (error) {
@@ -50,10 +68,28 @@ export const updateDevice = async (
 ): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
-    const { name, ip, ramal, description, deviceModelId, lobbyId } = req.body;
+    const {
+      name,
+      ip,
+      ramal,
+      description,
+      login,
+      password,
+      deviceModelId,
+      lobbyId,
+    } = req.body;
     const device = await prisma.device.update({
       where: { deviceId: id },
-      data: { name, ip, ramal, description, deviceModelId, lobbyId },
+      data: {
+        name,
+        ip,
+        ramal,
+        description,
+        login,
+        password,
+        deviceModelId,
+        lobbyId,
+      },
     });
     res.status(200).json(device);
   } catch (error) {

@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -18,7 +17,8 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import api from "@/lib/axios";
 import { useState } from "react";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useSearchParams } from "next/navigation";
+import { RadioGroupItem, RadioGroup } from "@/components/ui/radio-group";
 
 const FormSchema = z.object({
   model: z.string(),
@@ -27,26 +27,35 @@ const FormSchema = z.object({
   isFacial: z.string(),
 });
 
-export function DeviceModelForm() {
+interface Values {
+  model: string;
+  brand: string;
+  description: string;
+  isFacial: string;
+}
+
+export function DeviceModelUpdateForm({
+  preloadedValues,
+}: {
+  preloadedValues: Values;
+}) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      model: "",
-      brand: "",
-      description: "",
-      isFacial: "true",
-    },
+    defaultValues: preloadedValues,
   });
 
   const { data: session } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
 
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
+    const id = params.get("id");
 
     try {
-      await api.post("deviceModel", data, {
+      await api.put("deviceModel/" + id, data, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
@@ -148,7 +157,7 @@ export function DeviceModelForm() {
           )}
         />
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
-          {isSending ? "Registrando..." : "Registrar"}
+          {isSending ? "Atualizando..." : "Atualizar"}
         </Button>
       </form>
     </Form>

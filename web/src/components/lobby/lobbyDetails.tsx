@@ -24,6 +24,7 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
         },
       });
       setDetails(response.data);
+      console.log(response.data);
     } catch (error) {
       console.error("Erro ao obter dados:", error);
     }
@@ -110,6 +111,10 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
             <DetailItem
               label="Código de acesso"
               content={details.code.toString() || ""}
+            />
+            <DetailItem
+              label="Marca dos dispositivos"
+              content={details.ControllerBrand.name || ""}
             />
             <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
             <DetailItem label="CEP" content={details.cep} />

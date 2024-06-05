@@ -19,15 +19,24 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
-import { searchCEP } from "@/lib/utils";
+import { cn, searchCEP } from "@/lib/utils";
 import { MaskedInput } from "../maskedInput";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { handleFileUpload } from "@/lib/firebase-upload";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Check, ChevronsUpDown } from "lucide-react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "../ui/command";
 
 const FormSchema = z.object({
   type: z.enum(["CONDOMINIUM", "COMPANY"]),
@@ -49,6 +58,7 @@ const FormSchema = z.object({
   code: z.string().min(6, {
     message: "O código deve ter 6 números.",
   }),
+  brand: z.number(),
 });
 
 export function LobbyForm() {
@@ -72,6 +82,7 @@ export function LobbyForm() {
       complement: "",
       datasheet: new File([], ""),
       code: "",
+      brand: 0,
     },
   });
 
@@ -100,6 +111,38 @@ export function LobbyForm() {
   const { data: session } = useSession();
   const router = useRouter();
   const [isSending, setIsSendind] = useState(false);
+
+  const [brands, setBrands] = useState<Brand[]>([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get("brand", {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setBrands(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+    };
+
+    fetchData();
+  }, [session]);
+
+  interface item {
+    value: number;
+    label: string;
+  }
+  let items: item[] = [];
+
+  brands.map((brand: Brand) =>
+    items.push({
+      value: brand.controllerBrandId,
+      label: brand.name,
+    })
+  );
+
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
     // FAZ O UPLOAD DA FOTO
@@ -132,6 +175,7 @@ export function LobbyForm() {
         complement: data.complement,
         datasheet: file,
         code: Number(data.code),
+        controllerBrandId: data.brand,
       };
       await api.post("lobby", info, {
         headers: {
@@ -360,6 +404,64 @@ export function LobbyForm() {
                   </InputOTPGroup>
                 </InputOTP>
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="brand"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Marca dos dispositivos</FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className={cn(
+                        "justify-between",
+                        !field.value && "text-muted-foreground"
+                      )}
+                    >
+                      {field.value
+                        ? items.find((item) => item.value === field.value)
+                            ?.label
+                        : "Selecione uma marca"}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="p-0 max-h-[60vh] overflow-x-auto">
+                  <Command className="w-full">
+                    <CommandInput placeholder="Buscar marca..." />
+                    <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
+                    <CommandGroup>
+                      {items.map((item) => (
+                        <CommandItem
+                          value={item.label}
+                          key={item.value}
+                          onSelect={() => {
+                            form.setValue("brand", item.value);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              item.value === field.value
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                          {item.label}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </Command>
+                </PopoverContent>
+              </Popover>
               <FormMessage />
             </FormItem>
           )}

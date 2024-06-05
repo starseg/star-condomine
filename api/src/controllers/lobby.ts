@@ -59,6 +59,9 @@ export const getLobby = async (req: Request, res: Response): Promise<void> => {
     const id = parseInt(req.params.id, 10);
     const lobby = await prisma.lobby.findUniqueOrThrow({
       where: { lobbyId: id },
+      include: {
+        ControllerBrand: true,
+      },
     });
     if (!lobby) {
       res.status(404).json({ error: "Portaria não encontrada" });

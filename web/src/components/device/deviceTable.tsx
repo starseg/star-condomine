@@ -64,10 +64,12 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
               <TableHead>Ramal</TableHead>
               <TableHead>Descrição</TableHead>
               <TableHead>Modelo</TableHead>
+              <TableHead>Login</TableHead>
+              <TableHead>Senha</TableHead>
               <TableHead>Ações</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody className="uppercase">
+          <TableBody>
             {devices.map((device) => (
               <TableRow key={device.deviceId}>
                 <TableCell>{device.name}</TableCell>
@@ -75,6 +77,8 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
                 <TableCell>{device.ramal}</TableCell>
                 <TableCell>{device.description}</TableCell>
                 <TableCell>{device.deviceModel.model}</TableCell>
+                <TableCell>{device.login}</TableCell>
+                <TableCell>{device.password}</TableCell>
                 <TableCell className="flex gap-4 text-2xl">
                   <Link
                     href={`device/update?lobby=${device.lobbyId}&id=${device.deviceId}`}
@@ -93,7 +97,7 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell className="text-right" colSpan={6}>
+              <TableCell className="text-right" colSpan={8}>
                 Total de registros: {devices.length}
               </TableCell>
             </TableRow>

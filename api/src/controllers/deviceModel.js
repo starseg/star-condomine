@@ -34,9 +34,9 @@ const getDeviceModels = async (req, res) => {
 exports.getDeviceModels = getDeviceModels;
 const createDeviceModel = async (req, res) => {
     try {
-        const { model, brand, description } = req.body;
+        const { model, brand, description, isFacial } = req.body;
         const device = await db_1.default.deviceModel.create({
-            data: { model, brand, description },
+            data: { model, brand, description, isFacial },
         });
         res.status(201).json(device);
     }
@@ -48,10 +48,10 @@ exports.createDeviceModel = createDeviceModel;
 const updateDeviceModel = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const { model, brand, description } = req.body;
+        const { model, brand, description, isFacial } = req.body;
         const device = await db_1.default.deviceModel.update({
             where: { deviceModelId: id },
-            data: { model, brand, description },
+            data: { model, brand, description, isFacial },
         });
         res.status(200).json(device);
     }

@@ -34,9 +34,18 @@ const getDevice = async (req, res) => {
 exports.getDevice = getDevice;
 const createDevice = async (req, res) => {
     try {
-        const { name, ip, ramal, description, deviceModelId, lobbyId } = req.body;
+        const { name, ip, ramal, description, login, password, deviceModelId, lobbyId, } = req.body;
         const device = await db_1.default.device.create({
-            data: { name, ip, ramal, description, deviceModelId, lobbyId },
+            data: {
+                name,
+                ip,
+                ramal,
+                description,
+                login,
+                password,
+                deviceModelId,
+                lobbyId,
+            },
         });
         res.status(201).json(device);
     }
@@ -48,10 +57,19 @@ exports.createDevice = createDevice;
 const updateDevice = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const { name, ip, ramal, description, deviceModelId, lobbyId } = req.body;
+        const { name, ip, ramal, description, login, password, deviceModelId, lobbyId, } = req.body;
         const device = await db_1.default.device.update({
             where: { deviceId: id },
-            data: { name, ip, ramal, description, deviceModelId, lobbyId },
+            data: {
+                name,
+                ip,
+                ramal,
+                description,
+                login,
+                password,
+                deviceModelId,
+                lobbyId,
+            },
         });
         res.status(200).json(device);
     }

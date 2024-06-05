@@ -37,9 +37,9 @@ export const createDeviceModel = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { model, brand, description } = req.body;
+    const { model, brand, description, isFacial } = req.body;
     const device = await prisma.deviceModel.create({
-      data: { model, brand, description },
+      data: { model, brand, description, isFacial },
     });
     res.status(201).json(device);
   } catch (error) {
@@ -53,10 +53,10 @@ export const updateDeviceModel = async (
 ): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
-    const { model, brand, description } = req.body;
+    const { model, brand, description, isFacial } = req.body;
     const device = await prisma.deviceModel.update({
       where: { deviceModelId: id },
-      data: { model, brand, description },
+      data: { model, brand, description, isFacial },
     });
     res.status(200).json(device);
   } catch (error) {

@@ -35,6 +35,8 @@ const FormSchema = z.object({
   ramal: z.string(),
   description: z.string(),
   model: z.number(),
+  login: z.string(),
+  password: z.string(),
 });
 
 interface Values {
@@ -43,6 +45,8 @@ interface Values {
   ramal: string;
   description: string;
   model: number;
+  login: string;
+  password: string;
 }
 
 export function DeviceUpdateForm({
@@ -55,19 +59,12 @@ export function DeviceUpdateForm({
     defaultValues: preloadedValues,
   });
 
-  interface deviceModel {
-    deviceModelId: number;
-    model: string;
-    brand: string;
-    description: string;
-  }
-
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
 
-  const [deviceModel, setDeviceModel] = useState([]);
+  const [deviceModel, setDeviceModel] = useState<DeviceModel[]>([]);
 
   useEffect(() => {
     const fetchModels = async () => {
@@ -92,7 +89,7 @@ export function DeviceUpdateForm({
   }
   let items: item[] = [];
 
-  deviceModel.map((model: deviceModel) =>
+  deviceModel.map((model: DeviceModel) =>
     items.push({
       value: model.deviceModelId,
       label: model.model + " - " + model.brand,
@@ -102,8 +99,6 @@ export function DeviceUpdateForm({
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
-    const lobbyParam = params.get("lobby");
-    const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
     const id = params.get("id");
 
     const info = {
@@ -112,6 +107,8 @@ export function DeviceUpdateForm({
       ramal: parseInt(data.ramal),
       description: data.description,
       deviceModelId: data.model,
+      login: data.login,
+      password: data.password,
     };
     try {
       await api.put("device/" + id, info, {
@@ -198,6 +195,44 @@ export function DeviceUpdateForm({
                 <Input
                   type="text"
                   placeholder="Digite a descrição do dispositivo"
+                  autoComplete="off"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="login"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Login</FormLabel>
+              <FormControl>
+                <Input
+                  type="text"
+                  placeholder="Login do dispositivo"
+                  autoComplete="off"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Senha</FormLabel>
+              <FormControl>
+                <Input
+                  type="text"
+                  placeholder="Senha do dispositivo"
                   autoComplete="off"
                   {...field}
                 />

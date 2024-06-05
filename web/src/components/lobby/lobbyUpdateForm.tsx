@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
 import { MaskedInput } from "../maskedInput";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { deleteFile, handleFileUpload } from "@/lib/firebase-upload";
 import { Checkbox } from "../ui/checkbox";
 import {
@@ -28,6 +28,20 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Check, ChevronsUpDown } from "lucide-react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+import { cn } from "@/lib/utils";
 
 const FormSchema = z.object({
   type: z.enum(["CONDOMINIUM", "COMPANY"]),
@@ -49,6 +63,7 @@ const FormSchema = z.object({
   code: z.string().min(6, {
     message: "O código deve ter 6 números.",
   }),
+  brand: z.number(),
 });
 
 interface Values {
@@ -69,6 +84,7 @@ interface Values {
   complement: string;
   datasheet: File;
   code: string;
+  brand: number;
 }
 
 export function LobbyUpdateForm({
@@ -88,6 +104,37 @@ export function LobbyUpdateForm({
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const id = params.get("id");
+
+  const [brands, setBrands] = useState<Brand[]>([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get("brand", {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setBrands(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+    };
+
+    fetchData();
+  }, [session]);
+
+  interface item {
+    value: number;
+    label: string;
+  }
+  let items: item[] = [];
+
+  brands.map((brand: Brand) =>
+    items.push({
+      value: brand.controllerBrandId,
+      label: brand.name,
+    })
+  );
 
   const [removeFile, setRemoveFile] = useState(false);
   const [isSending, setIsSendind] = useState(false);
@@ -129,6 +176,7 @@ export function LobbyUpdateForm({
         complement: data.complement,
         datasheet: file,
         code: Number(data.code),
+        controllerBrandId: data.brand,
       };
       await api.put("lobby/" + id, info, {
         headers: {
@@ -373,6 +421,64 @@ export function LobbyUpdateForm({
                   </InputOTPGroup>
                 </InputOTP>
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="brand"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Marca dos dispositivos</FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className={cn(
+                        "justify-between",
+                        !field.value && "text-muted-foreground"
+                      )}
+                    >
+                      {field.value
+                        ? items.find((item) => item.value === field.value)
+                            ?.label
+                        : "Selecione uma marca"}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="p-0 max-h-[60vh] overflow-x-auto">
+                  <Command className="w-full">
+                    <CommandInput placeholder="Buscar marca..." />
+                    <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
+                    <CommandGroup>
+                      {items.map((item) => (
+                        <CommandItem
+                          value={item.label}
+                          key={item.value}
+                          onSelect={() => {
+                            form.setValue("brand", item.value);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              item.value === field.value
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                          {item.label}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </Command>
+                </PopoverContent>
+              </Popover>
               <FormMessage />
             </FormItem>
           )}

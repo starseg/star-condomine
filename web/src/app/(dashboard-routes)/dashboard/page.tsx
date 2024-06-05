@@ -33,7 +33,10 @@ export default async function Dashboard() {
             <p>Com problemas</p>
           </div>
         </div>
-        <div className="p-4 flex gap-4">
+        <h3 className="text-xl p-4">
+          Configurações dos dispositivos de acesso
+        </h3>
+        <div className="px-4 flex gap-4">
           <Link href="controllers-config">
             <Button
               title="Configurações"

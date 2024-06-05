@@ -26,6 +26,7 @@ export default function UpdateLobby() {
     complement: string;
     datasheet: File;
     code: string;
+    brand: number;
   }
 
   const { data: session } = useSession();
@@ -71,6 +72,7 @@ export default function UpdateLobby() {
         complement: lobby?.complement || "",
         datasheet: new File([], ""),
         code: lobby?.code?.toString() || "",
+        brand: lobby?.controllerBrandId || 0,
       });
       // console.log("data:");
       // console.log(data);

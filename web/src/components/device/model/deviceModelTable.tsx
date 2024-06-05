@@ -9,7 +9,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import api from "@/lib/axios";
-import { PencilLine, Trash } from "@phosphor-icons/react/dist/ssr";
+import {
+  Check,
+  Checks,
+  PencilLine,
+  Trash,
+  X,
+} from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -54,6 +60,7 @@ export default function DeviceModelTable() {
               <TableHead>Modelo</TableHead>
               <TableHead>Marca</TableHead>
               <TableHead>Descrição</TableHead>
+              <TableHead>Facial</TableHead>
               <TableHead>Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -63,10 +70,17 @@ export default function DeviceModelTable() {
                 <TableCell>{model.model}</TableCell>
                 <TableCell>{model.brand}</TableCell>
                 <TableCell>{model.description}</TableCell>
+                <TableCell className="text-xl">
+                  {model.isFacial === "true" ? (
+                    <Check className="text-green-500" />
+                  ) : (
+                    <X className="text-red-400" />
+                  )}
+                </TableCell>
                 <TableCell className="flex gap-4 text-2xl">
-                  {/* <Link href={`deviceModel/update?id=${model.deviceModelId}`}>
+                  <Link href={`deviceModel/update?id=${model.deviceModelId}`}>
                     <PencilLine />
-                  </Link> */}
+                  </Link>
                   <button
                     onClick={() => deleteDeviceModel(model.deviceModelId)}
                     title="Excluir"
