@@ -3,35 +3,12 @@ import { AccessUpdateForm } from "@/components/access/accessUpdateForm";
 import LoadingIcon from "@/components/loadingIcon";
 import { Menu } from "@/components/menu";
 import api from "@/lib/axios";
-import { format, parse } from "date-fns";
+import { format } from "date-fns";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function UpdateAccess() {
-  interface Access {
-    accessId: number;
-    startTime: string;
-    endTime: string;
-    local: string;
-    reason: string;
-    comments: string;
-    status: "ACTIVE" | "INACTIVE" | undefined;
-    createdAt: string;
-    updatedAt: string;
-    memberId: number;
-    visitorId: number;
-    lobbyId: number;
-    operatorId: number;
-    visitor: {
-      name: string;
-      cpf: string;
-    };
-    member: {
-      name: string;
-      cpf: string;
-    };
-  }
   interface Values {
     startTime: string;
     endTime: string;
@@ -72,10 +49,10 @@ export default function UpdateAccess() {
   }
 
   let realEndDate = "";
-  if (access?.startTime !== "" && access !== null) {
-    const dateObject = new Date(access.startTime);
+  if (access?.endTime !== "" && access?.endTime !== null && access !== null) {
+    const dateObject = new Date(access.endTime);
     dateObject.setHours(dateObject.getHours());
-    realStartDate = format(dateObject, "yyyy-MM-dd'T'HH:mm");
+    realEndDate = format(dateObject, "yyyy-MM-dd'T'HH:mm");
   }
 
   useEffect(() => {
