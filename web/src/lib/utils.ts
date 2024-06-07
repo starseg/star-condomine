@@ -54,3 +54,16 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
   }
   return [currentPage - 1, currentPage, currentPage + 1, "...", totalPages];
 };
+
+export function secondsToHHMM(seconds: number) {
+  // Calcula as horas, minutos e segundos
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+
+  // Formata cada componente para ter sempre 2 dígitos
+  const formattedHours = String(hours).padStart(2, "0");
+  const formattedMinutes = String(minutes).padStart(2, "0");
+
+  // Retorna o resultado no formato "HH:MM:SS"
+  return `${formattedHours}:${formattedMinutes}`;
+}

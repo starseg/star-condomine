@@ -1,5 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
+import dotenv from "dotenv";
+import helmet from "helmet";
 import { logging } from "./middlewares/logging";
 import { verifyToken } from "./middlewares/permissions";
 import { authenticateOperator } from "./middlewares/auth";
@@ -21,10 +23,10 @@ import loggingRouter from "./routes/loggingRouter";
 import feedbackRouter from "./routes/feedbackRouter";
 import notificationRouter from "./routes/notificationRouter";
 import guestRouter from "./routes/guestRouter";
-import dotenv from "dotenv";
-import helmet from "helmet";
 import generalDataRouter from "./routes/generalDataRouter";
 import brandRouter from "./routes/controllerBrandRouter";
+import timeSpanRouter from "./routes/timeSpanRouter";
+import timeZoneRouter from "./routes/timeZoneRouter";
 dotenv.config();
 
 const app = express();
@@ -74,6 +76,8 @@ app.use("/scheduling", schedulingRouter);
 app.use("/schedulingList", schedulingListRouter);
 app.use("/tag", tagRouter);
 app.use("/telephone", telephoneRouter);
+app.use("/timeSpan", timeSpanRouter);
+app.use("/timeZone", timeZoneRouter);
 app.use("/vehicle", vehicleRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
