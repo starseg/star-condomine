@@ -116,7 +116,7 @@ export function AccessesByLobbyChart(data: AccessByLobbyChartProps[]) {
       chartType="BarChart"
       data={chartData}
       options={options}
-      height={"700px"}
+      height={"800px"}
       width={"800px"}
     />
   );

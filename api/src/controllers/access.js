@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateReport = exports.getFilteredAccess = exports.getAccessByLobby = exports.deleteAccess = exports.updateAccess = exports.createAccess = exports.getAccess = exports.getAllAccess = void 0;
 const db_1 = __importDefault(require("../db"));
+const date_fns_1 = require("date-fns");
 const getAllAccess = async (req, res) => {
     try {
         const access = await db_1.default.access.findMany();
@@ -116,8 +117,14 @@ exports.deleteAccess = deleteAccess;
 const getAccessByLobby = async (req, res) => {
     try {
         const lobby = parseInt(req.params.lobby, 10);
+        const oneMonthAgo = (0, date_fns_1.subDays)(new Date(), 31);
         const access = await db_1.default.access.findMany({
-            where: { lobbyId: lobby },
+            where: {
+                lobbyId: lobby,
+                startTime: {
+                    gte: oneMonthAgo,
+                },
+            },
             include: {
                 visitor: {
                     select: {

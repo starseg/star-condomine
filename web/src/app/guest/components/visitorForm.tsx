@@ -1,5 +1,4 @@
 "use client";
-
 import * as z from "zod";
 import api from "@/lib/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,9 +22,13 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { handleFileUpload } from "@/lib/firebase-upload";
 import { decrypt } from "@/lib/crypto";
 import Image from "next/image";
+import { Checkbox } from "@/components/ui/checkbox";
+import Link from "next/link";
 
 const FormSchema = z.object({
-  profileUrl: z.instanceof(File),
+  profileUrl: z.instanceof(File).refine((file) => file.size > 0, {
+    message: "Um arquivo deve ser selecionado",
+  }),
   name: z.string().min(5, {
     message: "Por favor, insira o nome completo",
   }),
@@ -45,6 +48,7 @@ const FormSchema = z.object({
   comments: z.string().min(1, {
     message: "Preencha o este campo",
   }),
+  terms: z.boolean(),
 });
 
 export function VisitorForm() {
@@ -59,6 +63,7 @@ export function VisitorForm() {
       type: "1",
       relation: "",
       comments: "",
+      terms: false,
     },
   });
 
@@ -313,7 +318,38 @@ export function VisitorForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full text-lg" disabled={isSendind}>
+        <FormField
+          control={form.control}
+          name="terms"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel>
+                  Aceito as{" "}
+                  <Link
+                    href="/Politicas_privacidade_Star_Seg.pdf"
+                    target="_blank"
+                  >
+                    políticas de privacidade
+                  </Link>{" "}
+                  da empresa, regidas a partir da Lei Nº 13.709 (Lei Geral de
+                  Proteção de Dados).
+                </FormLabel>
+              </div>
+            </FormItem>
+          )}
+        />
+        <Button
+          type="submit"
+          className="w-full text-lg"
+          disabled={form.getValues("terms") === false || isSendind}
+        >
           Registrar
         </Button>
       </form>

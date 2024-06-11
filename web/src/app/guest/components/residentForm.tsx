@@ -37,9 +37,13 @@ import { PlusCircle, Trash } from "@phosphor-icons/react/dist/ssr";
 import { handleFileUpload } from "@/lib/firebase-upload";
 import { decrypt } from "@/lib/crypto";
 import Image from "next/image";
+import { Checkbox } from "@/components/ui/checkbox";
+import Link from "next/link";
 
 const FormSchema = z.object({
-  profileUrl: z.instanceof(File),
+  profileUrl: z.instanceof(File).refine((file) => file.size > 0, {
+    message: "Um arquivo deve ser selecionado",
+  }),
   name: z.string().min(5, {
     message: "Digite seu nome completo",
   }),
@@ -55,6 +59,7 @@ const FormSchema = z.object({
     message: "Digite o endereço",
   }),
   telephone: z.string(),
+  terms: z.boolean(),
 });
 
 export function ResidentForm() {
@@ -69,6 +74,7 @@ export function ResidentForm() {
       addressType: 0,
       address: "",
       telephone: "",
+      terms: false,
     },
   });
 
@@ -76,6 +82,8 @@ export function ResidentForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+
+  // const [terms, setTerms] = useState(false);
 
   const [addressType, setAddressType] = useState([]);
   useEffect(() => {
@@ -414,7 +422,39 @@ export function ResidentForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full text-lg" disabled={isSendind}>
+        <FormField
+          control={form.control}
+          name="terms"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel>
+                  Aceito as{" "}
+                  <Link
+                    className="underline"
+                    href="/Politicas_privacidade_Star_Seg.pdf"
+                    target="_blank"
+                  >
+                    políticas de privacidade
+                  </Link>{" "}
+                  da empresa, regidas a partir da Lei Nº 13.709 (Lei Geral de
+                  Proteção de Dados).
+                </FormLabel>
+              </div>
+            </FormItem>
+          )}
+        />
+        <Button
+          type="submit"
+          className="w-full text-lg"
+          disabled={form.getValues("terms") === false || isSendind}
+        >
           Cadastrar
         </Button>
         <p className="my-2">

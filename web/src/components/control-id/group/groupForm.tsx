@@ -23,20 +23,16 @@ import { useSession } from "next-auth/react";
 
 const FormSchema = z.object({
   name: z.string().min(2, {
-    message: "Digite o nome da regra.",
+    message: "Digite o nome do grupo.",
   }),
-  type: z.string(),
-  priority: z.string(),
 });
 
-export default function AccessRuleForm() {
+export default function GroupForm() {
   const { triggerUpdate } = useControliDUpdate();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: "",
-      type: "",
-      priority: "0",
     },
   });
   const { data: session } = useSession();
@@ -45,23 +41,19 @@ export default function AccessRuleForm() {
     try {
       const info = {
         name: data.name,
-        type: Number(data.type),
-        priority: Number(data.priority),
       };
 
-      const response = await api.post(`accessRule`, info, {
+      const response = await api.post(`group`, info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
       if (response.status === 201) {
-        toast.success("Regra registrada!", {
+        toast.success("Grupo registrado!", {
           theme: "colored",
         });
         form.reset({
           name: "",
-          type: "",
-          priority: "0",
         });
         triggerUpdate();
       }
@@ -77,15 +69,13 @@ export default function AccessRuleForm() {
     <Sheet>
       <SheetTrigger asChild>
         <Button className="flex gap-2">
-          <FilePlus2Icon /> Criar regra de acesso
+          <FilePlus2Icon /> Criar grupo
         </Button>
       </SheetTrigger>
       <SheetContent side={"right"}>
         <SheetHeader>
-          <SheetTitle>Criar regra de acesso</SheetTitle>
-          <SheetDescription>
-            Cadastre aqui uma nova regra de acesso.
-          </SheetDescription>
+          <SheetTitle>Criar grupo</SheetTitle>
+          <SheetDescription>Cadastre aqui um novo grupo.</SheetDescription>
         </SheetHeader>
         <Form {...form}>
           <form
@@ -95,22 +85,8 @@ export default function AccessRuleForm() {
             <InputItem
               control={form.control}
               name="name"
-              label="Nome da regra de acesso"
-              placeholder="Digite o nome da regra de acesso"
-            />
-            <InputItem
-              control={form.control}
-              type="number"
-              name="type"
-              label="Tipo"
-              placeholder="0 = bloqueio | 1 = permissão"
-            />
-            <InputItem
-              control={form.control}
-              type="number"
-              name="priority"
-              label="Prioridade"
-              placeholder="Padrão = 0"
+              label="Nome do grupo"
+              placeholder="Digite o nome do grupo"
             />
             <SheetFooter>
               <SheetClose asChild>

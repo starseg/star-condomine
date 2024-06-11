@@ -7,6 +7,8 @@ import TimeZoneForm from "@/components/control-id/time-zone/timeZoneForm";
 import TimeZoneTable from "@/components/control-id/time-zone/timeZoneTable";
 import AccessRuleForm from "@/components/control-id/access-rule/accessRuleForm";
 import AccessRuleTable from "@/components/control-id/access-rule/accessRuleTable";
+import GroupForm from "@/components/control-id/group/groupForm";
+import GroupTable from "@/components/control-id/group/groupTable";
 
 export default async function ControliD() {
   return (
@@ -30,7 +32,12 @@ export default async function ControliD() {
           <h2 className="text-xl">Regras de acesso</h2>
           <AccessRuleForm />
         </div>
-        {/* <AccessRuleTable /> */}
+        <AccessRuleTable />
+        <div className="w-full flex justify-between items-end mt-4 pb-2">
+          <h2 className="text-xl">Grupos</h2>
+          <GroupForm />
+        </div>
+        <GroupTable />
       </section>
     </ControliDUpdateProvider>
   );

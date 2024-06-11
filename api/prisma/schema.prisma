@@ -94,6 +94,7 @@ model Member {
   vehicle        Vehicle[]
   access         Access[]
   schedulingList SchedulingList[]
+  MemberGroup    MemberGroup[]
 }
 
 model Telephone {
@@ -369,6 +370,41 @@ model ControllerBrand {
   iconUrl           String?
 
   lobby Lobby[]
+}
+
+model AccessRule {
+  accessRuleId Int    @id @default(autoincrement())
+  name         String
+  type         Int
+  priority     Int
+
+  GroupAccessRule GroupAccessRule[]
+}
+
+model Group {
+  groupId Int    @id @default(autoincrement())
+  name    String
+
+  MemberGroup     MemberGroup[]
+  GroupAccessRule GroupAccessRule[]
+}
+
+model MemberGroup {
+  memberGroupId Int @id @default(autoincrement())
+  memberId      Int
+  groupId       Int
+
+  member Member @relation(fields: [memberId], references: [memberId])
+  group  Group  @relation(fields: [groupId], references: [groupId])
+}
+
+model GroupAccessRule {
+  groupAccessRuleId Int @id @default(autoincrement())
+  accessRuleId      Int
+  groupId           Int
+
+  accessRule AccessRule @relation(fields: [accessRuleId], references: [accessRuleId])
+  group      Group      @relation(fields: [groupId], references: [groupId])
 }
 
 enum Status {

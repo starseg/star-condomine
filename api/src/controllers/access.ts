@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../db";
+import { subDays } from "date-fns";
 
 export const getAllAccess = async (
   req: Request,
@@ -143,8 +144,15 @@ export const getAccessByLobby = async (
 ): Promise<void> => {
   try {
     const lobby = parseInt(req.params.lobby, 10);
+    const oneMonthAgo = subDays(new Date(), 31);
+
     const access = await prisma.access.findMany({
-      where: { lobbyId: lobby },
+      where: {
+        lobbyId: lobby,
+        startTime: {
+          gte: oneMonthAgo,
+        },
+      },
       include: {
         visitor: {
           select: {
