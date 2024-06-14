@@ -25,7 +25,7 @@ const getAllSchedulingLists = async (req, res) => {
                     },
                 },
             },
-            orderBy: [{ status: "asc" }, { lobby: { name: "asc" } }],
+            orderBy: [{ status: "asc" }, { createdAt: "desc" }],
         });
         res.json(schedulingList);
     }
@@ -154,7 +154,7 @@ const getFilteredSchedulingLists = async (req, res) => {
                     },
                 },
             },
-            orderBy: [{ status: "asc" }, { lobby: { name: "asc" } }],
+            orderBy: [{ status: "asc" }, { createdAt: "desc" }],
         });
         if (!schedulingList) {
             res.status(404).json({ error: "Nenhum acesso encontrado" });

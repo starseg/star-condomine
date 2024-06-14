@@ -24,7 +24,7 @@ export const getAllSchedulingLists = async (
           },
         },
       },
-      orderBy: [{ status: "asc" }, { lobby: { name: "asc" } }],
+      orderBy: [{ status: "asc" }, { createdAt: "desc" }],
     });
     res.json(schedulingList);
   } catch (error) {
@@ -165,7 +165,7 @@ export const getFilteredSchedulingLists = async (
           },
         },
       },
-      orderBy: [{ status: "asc" }, { lobby: { name: "asc" } }],
+      orderBy: [{ status: "asc" }, { createdAt: "desc" }],
     });
     if (!schedulingList) {
       res.status(404).json({ error: "Nenhum acesso encontrado" });

@@ -323,7 +323,7 @@ model Notification {
 
 model SchedulingList {
   schedulingListId Int      @id @default(autoincrement())
-  description      String   @db.VarChar(1000)
+  description      String   @db.VarChar(2000)
   url              String?  @db.VarChar(255)
   status           Status   @default(ACTIVE)
   createdAt        DateTime @default(now())
