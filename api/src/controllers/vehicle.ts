@@ -163,6 +163,11 @@ export const getVehiclesByLobby = async (
       include: {
         member: true,
         vehicleType: true,
+        lobby: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
     res.json(vehicle);

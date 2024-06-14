@@ -131,6 +131,11 @@ const getVehiclesByLobby = async (req, res) => {
             include: {
                 member: true,
                 vehicleType: true,
+                lobby: {
+                    select: {
+                        name: true,
+                    },
+                },
             },
         });
         res.json(vehicle);

@@ -9,7 +9,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import api from "@/lib/axios";
-import { PencilLine, Trash } from "@phosphor-icons/react/dist/ssr";
+import {
+  FilePlus,
+  FileSearch,
+  PencilLine,
+  Trash,
+} from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -22,6 +27,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import { VehiclesPDF } from "./vehiclesPDF";
+import { buttonVariants } from "../ui/button";
 
 export default function VehicleTable({ lobby }: { lobby: string }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -62,70 +69,97 @@ export default function VehicleTable({ lobby }: { lobby: string }) {
       {isLoading ? (
         <SkeletonTable />
       ) : (
-        <Table className="max-h-[60vh] overflow-y-auto overflow-x-hidden">
-          <TableHeader className="bg-stone-800 font-semibold">
-            <TableRow>
-              <TableHead>Tipo</TableHead>
-              <TableHead>Placa</TableHead>
-              <TableHead>Tag</TableHead>
-              <TableHead>Marca - Modelo - Cor</TableHead>
-              <TableHead>Proprietário</TableHead>
-              <TableHead>Observação</TableHead>
-              <TableHead>Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody className="uppercase">
-            {vehicles.map((vehicle) => {
-              return (
-                <TableRow key={vehicle.vehicleId}>
-                  <TableCell>{vehicle.vehicleType.description}</TableCell>
-                  <TableCell>{vehicle.licensePlate}</TableCell>
-                  <TableCell>{vehicle.tag}</TableCell>
-                  <TableCell>
-                    {vehicle.brand} {vehicle.model} {vehicle.color}
-                  </TableCell>
-                  <TableCell>{vehicle.member.name}</TableCell>
-                  <TableCell>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button className="max-w-[15ch] text-ellipsis overflow-hidden whitespace-nowrap">
-                            {vehicle.comments ? vehicle.comments : "Nenhuma"}
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-[300px] border-primary bg-stone-800 p-4 break-words">
-                          <p>
-                            {vehicle.comments ? vehicle.comments : "Nenhuma"}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </TableCell>
-                  <TableCell className="flex gap-4 text-2xl">
-                    <Link
-                      href={`vehicle/update?id=${vehicle.vehicleId}&lobby=${lobby}`}
-                    >
-                      <PencilLine />
-                    </Link>
-                    <button
-                      onClick={() => deleteVehicle(vehicle.vehicleId)}
-                      title="Excluir"
-                    >
-                      <Trash />
-                    </button>
+        <>
+          <div className="max-h-[60vh] overflow-x-auto">
+            <Table>
+              <TableHeader className="bg-stone-800 font-semibold">
+                <TableRow>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead>Placa</TableHead>
+                  <TableHead>Tag</TableHead>
+                  <TableHead>Marca - Modelo - Cor</TableHead>
+                  <TableHead>Proprietário</TableHead>
+                  <TableHead>Observação</TableHead>
+                  <TableHead>Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="uppercase">
+                {vehicles.map((vehicle) => {
+                  return (
+                    <TableRow key={vehicle.vehicleId}>
+                      <TableCell>{vehicle.vehicleType.description}</TableCell>
+                      <TableCell>{vehicle.licensePlate}</TableCell>
+                      <TableCell>{vehicle.tag}</TableCell>
+                      <TableCell>
+                        {vehicle.brand} {vehicle.model} {vehicle.color}
+                      </TableCell>
+                      <TableCell>{vehicle.member.name}</TableCell>
+                      <TableCell>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button className="max-w-[15ch] text-ellipsis overflow-hidden whitespace-nowrap">
+                                {vehicle.comments
+                                  ? vehicle.comments
+                                  : "Nenhuma"}
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-[300px] border-primary bg-stone-800 p-4 break-words">
+                              <p>
+                                {vehicle.comments
+                                  ? vehicle.comments
+                                  : "Nenhuma"}
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </TableCell>
+                      <TableCell className="flex gap-4 text-2xl">
+                        <Link
+                          href={`vehicle/update?id=${vehicle.vehicleId}&lobby=${lobby}`}
+                        >
+                          <PencilLine />
+                        </Link>
+                        <button
+                          onClick={() => deleteVehicle(vehicle.vehicleId)}
+                          title="Excluir"
+                        >
+                          <Trash />
+                        </button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TableCell className="text-right" colSpan={9}>
+                    Total de registros: {vehicles.length}
                   </TableCell>
                 </TableRow>
-              );
-            })}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TableCell className="text-right" colSpan={9}>
-                Total de registros: {vehicles.length}
-              </TableCell>
-            </TableRow>
-          </TableFooter>
-        </Table>
+              </TableFooter>
+            </Table>
+          </div>
+          <div className="mt-6 flex gap-4 items-center">
+            <Link
+              href={`vehicle/new?lobby=${lobby}`}
+              className={buttonVariants({ variant: "default" })}
+            >
+              <p className="flex gap-2 text-xl items-center">
+                <FilePlus size={24} /> Registrar veículo
+              </p>
+            </Link>
+            <Link
+              href={`resident?lobby=${lobby}`}
+              className={buttonVariants({ variant: "default" })}
+            >
+              <p className="flex gap-2 text-xl items-center">
+                <FileSearch size={24} /> Moradores
+              </p>
+            </Link>
+            <VehiclesPDF data={vehicles} />
+          </div>
+        </>
       )}
     </>
   );

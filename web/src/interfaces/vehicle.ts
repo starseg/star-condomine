@@ -14,4 +14,8 @@ interface Vehicle {
     memberId: number;
     name: string;
   };
+  lobbyId: number;
+  lobby: {
+    name: string;
+  };
 }
