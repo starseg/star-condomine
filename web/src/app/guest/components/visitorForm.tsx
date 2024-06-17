@@ -335,6 +335,7 @@ export function VisitorForm() {
                   <Link
                     href="/Politicas_privacidade_Star_Seg.pdf"
                     target="_blank"
+                    className="underline text-primary"
                   >
                     políticas de privacidade
                   </Link>{" "}

@@ -1,5 +1,4 @@
-import AccessTable from "@/components/access/accessTable";
-import NewAccessTable from "@/components/access/newTable";
+import OldAccessTable from "@/components/access/oldTable";
 import { Menu } from "@/components/menu";
 import Search from "@/components/search";
 import { buttonVariants } from "@/components/ui/button";
@@ -29,7 +28,35 @@ export default async function Access({
         <div className="flex justify-end mb-4">
           <Search placeholder="Buscar..." pagination={false} />
         </div>
-        <NewAccessTable lobby={lobby} />
+        <div className="max-h-[60vh] overflow-x-auto">
+          <OldAccessTable lobby={lobby} />
+        </div>
+        <div className="mt-4 flex gap-4 items-center">
+          <Link
+            href={`access/new?lobby=${lobby}&c=${control}`}
+            className={buttonVariants({ variant: "default" })}
+          >
+            <p className="flex gap-2 text-xl items-center">
+              <FilePlus size={24} /> Registrar Acesso
+            </p>
+          </Link>
+          <Link
+            href={`scheduling?lobby=${lobby}&c=${control}`}
+            className={buttonVariants({ variant: "default" })}
+          >
+            <p className="flex gap-2 text-xl items-center">
+              <FileSearch size={24} /> Agendamentos
+            </p>
+          </Link>
+          <Link
+            href={`visitor?lobby=${lobby}&c=${control}`}
+            className={buttonVariants({ variant: "default" })}
+          >
+            <p className="flex gap-2 text-xl items-center">
+              <FileSearch size={24} /> Visitantes
+            </p>
+          </Link>
+        </div>
       </section>
     </>
   );

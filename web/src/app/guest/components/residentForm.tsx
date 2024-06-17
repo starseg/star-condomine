@@ -437,9 +437,9 @@ export function ResidentForm() {
                 <FormLabel>
                   Aceito as{" "}
                   <Link
-                    className="underline"
                     href="/Politicas_privacidade_Star_Seg.pdf"
                     target="_blank"
+                    className="underline text-primary"
                   >
                     políticas de privacidade
                   </Link>{" "}
