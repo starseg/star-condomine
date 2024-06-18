@@ -1,15 +1,15 @@
 import { Request, Response } from "express";
 import prisma from "../db";
 
-export const getAllGroupAccessRules = async (
+export const getAllAreaAccessRules = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const groupAccessRule = await prisma.groupAccessRule.findMany({
-      orderBy: [{ groupAccessRuleId: "asc" }],
+    const areaAccessRule = await prisma.areaAccessRule.findMany({
+      orderBy: [{ areaAccessRuleId: "asc" }],
       include: {
-        group: {
+        lobby: {
           select: { name: true },
         },
         accessRule: {
@@ -17,22 +17,22 @@ export const getAllGroupAccessRules = async (
         },
       },
     });
-    res.json(groupAccessRule);
+    res.json(areaAccessRule);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar os grupos" });
   }
 };
 
-export const getGroupAccessRule = async (
+export const getAreaAccessRule = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
-    const groupAccessRule = await prisma.groupAccessRule.findUniqueOrThrow({
-      where: { groupAccessRuleId: id },
+    const areaAccessRule = await prisma.areaAccessRule.findUniqueOrThrow({
+      where: { areaAccessRuleId: id },
       include: {
-        group: {
+        lobby: {
           select: { name: true },
         },
         accessRule: {
@@ -40,56 +40,56 @@ export const getGroupAccessRule = async (
         },
       },
     });
-    if (!groupAccessRule) {
+    if (!areaAccessRule) {
       res.status(404).json({ error: "grupo não encontrado" });
       return;
     }
-    res.json(groupAccessRule);
+    res.json(areaAccessRule);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar o grupo" });
   }
 };
 
-export const createGroupAccessRule = async (
+export const createAreaAccessRule = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const { accessRuleId, groupId } = req.body;
-    const groupAccessRule = await prisma.groupAccessRule.create({
-      data: { accessRuleId, groupId },
+    const { accessRuleId, areaId } = req.body;
+    const areaAccessRule = await prisma.areaAccessRule.create({
+      data: { accessRuleId, areaId },
     });
-    res.status(201).json(groupAccessRule);
+    res.status(201).json(areaAccessRule);
   } catch (error) {
     res.status(500).json({ error: "Erro ao criar o grupo" });
   }
 };
 
-export const updateGroupAccessRule = async (
+export const updateAreaAccessRule = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
-    const { accessRuleId, groupId } = req.body;
-    const groupAccessRule = await prisma.groupAccessRule.update({
-      where: { groupAccessRuleId: id },
-      data: { accessRuleId, groupId },
+    const { accessRuleId, areaId } = req.body;
+    const areaAccessRule = await prisma.areaAccessRule.update({
+      where: { areaAccessRuleId: id },
+      data: { accessRuleId, areaId },
     });
-    res.status(200).json(groupAccessRule);
+    res.status(200).json(areaAccessRule);
   } catch (error) {
     res.status(500).json({ error: "Erro ao atualizar o grupo" });
   }
 };
 
-export const deleteGroupAccessRule = async (
+export const deleteAreaAccessRule = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
-    await prisma.groupAccessRule.delete({
-      where: { groupAccessRuleId: id },
+    await prisma.areaAccessRule.delete({
+      where: { areaAccessRuleId: id },
     });
     res.json({ message: "grupo excluído com sucesso" });
   } catch (error) {

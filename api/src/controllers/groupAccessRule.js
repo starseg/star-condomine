@@ -9,6 +9,14 @@ const getAllGroupAccessRules = async (req, res) => {
     try {
         const groupAccessRule = await db_1.default.groupAccessRule.findMany({
             orderBy: [{ groupAccessRuleId: "asc" }],
+            include: {
+                group: {
+                    select: { name: true },
+                },
+                accessRule: {
+                    select: { name: true },
+                },
+            },
         });
         res.json(groupAccessRule);
     }
@@ -22,6 +30,14 @@ const getGroupAccessRule = async (req, res) => {
         const id = parseInt(req.params.id, 10);
         const groupAccessRule = await db_1.default.groupAccessRule.findUniqueOrThrow({
             where: { groupAccessRuleId: id },
+            include: {
+                group: {
+                    select: { name: true },
+                },
+                accessRule: {
+                    select: { name: true },
+                },
+            },
         });
         if (!groupAccessRule) {
             res.status(404).json({ error: "grupo não encontrado" });

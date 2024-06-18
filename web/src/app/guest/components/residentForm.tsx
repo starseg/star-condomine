@@ -58,7 +58,9 @@ const FormSchema = z.object({
   address: z.string().min(1, {
     message: "Digite o endereço",
   }),
-  telephone: z.string(),
+  telephone: z.string().min(10, {
+    message: "Preencha o telefone corretamente",
+  }),
   terms: z.boolean(),
 });
 

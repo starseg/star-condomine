@@ -31,6 +31,8 @@ import groupRouter from "./routes/groupRouter";
 import accessRuleRouter from "./routes/accessRuleRouter";
 import memberGroupRouter from "./routes/memberGroupRouter";
 import groupAccessRuleRouter from "./routes/groupAccessRuleRouter";
+import areaAccessRuleRouter from "./routes/areaAccessRuleRouter";
+import accessRuleTimeZoneRouter from "./routes/accessRuleTimeZoneRouter";
 dotenv.config();
 
 const app = express();
@@ -66,6 +68,8 @@ app.use("/visitor", visitorRouter);
 app.use("/operator", operatorRouter);
 app.use("/access", accessRouter);
 app.use("/accessRule", accessRuleRouter);
+app.use("/accessRuleTimeZone", accessRuleTimeZoneRouter);
+app.use("/areaAccessRule", areaAccessRuleRouter);
 app.use("/brand", brandRouter);
 app.use("/device", deviceRouter);
 app.use("/deviceModel", deviceModelRouter);

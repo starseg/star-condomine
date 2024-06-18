@@ -55,7 +55,10 @@ export default function EmployeeDetails({ id }: { id: number }) {
             ) : (
               ""
             )}
-            <DetailItem label="Nome" content={member.name} />
+            <DetailItem
+              label="Nome"
+              content={member.name + " - " + member.memberId.toString()}
+            />
             <DetailItem
               label="Status"
               content={member.status === "ACTIVE" ? "✅ Ativo" : "❌ Inativo"}

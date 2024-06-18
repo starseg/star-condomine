@@ -20,25 +20,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import LoadingIcon from "@/components/loadingIcon";
 
-interface LobbyProps {
-  lobbyId: number;
-  cnpj: string;
-  name: string;
-  responsible: string;
-  telephone: string;
-  cep: string;
-  city: string;
-  complement: string;
-  neighborhood: string;
-  number: string;
-  procedures: string;
-  scheduling: string;
-  state: string;
-  street: string;
-  type: string;
-  exitControl: "ACTIVE" | "INACTIVE";
-}
-
 interface CalendarProps {
   lobbyCalendarId: number;
   date: string;
@@ -46,7 +27,7 @@ interface CalendarProps {
 }
 
 export default function LobbyDetails() {
-  const [lobby, setLobby] = useState<LobbyProps | null>(null);
+  const [lobby, setLobby] = useState<Lobby | null>(null);
   const [calendar, setCalendar] = useState<CalendarProps[] | null>(null);
 
   const { data: session } = useSession();
@@ -200,6 +181,14 @@ export default function LobbyDetails() {
               <Notepad />
               Relatórios
             </Link>
+            {lobby.ControllerBrand.name === "Control iD" && (
+              <Link
+                href={`actions/control-id?lobby=${id}`}
+                className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
+              >
+                Control iD
+              </Link>
+            )}
           </div>
         </section>
       ) : (

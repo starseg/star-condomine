@@ -8,6 +8,14 @@ export const getAllMemberGroups = async (
   try {
     const memberGroup = await prisma.memberGroup.findMany({
       orderBy: [{ memberGroupId: "asc" }],
+      include: {
+        member: {
+          select: { name: true },
+        },
+        group: {
+          select: { name: true },
+        },
+      },
     });
     res.json(memberGroup);
   } catch (error) {
@@ -23,6 +31,14 @@ export const getMemberGroup = async (
     const id = parseInt(req.params.id, 10);
     const memberGroup = await prisma.memberGroup.findUniqueOrThrow({
       where: { memberGroupId: id },
+      include: {
+        member: {
+          select: { name: true },
+        },
+        group: {
+          select: { name: true },
+        },
+      },
     });
     if (!memberGroup) {
       res.status(404).json({ error: "relação não encontrada" });

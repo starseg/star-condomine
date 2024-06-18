@@ -55,7 +55,10 @@ export default function VisitorDetails({ id }: { id: number }) {
             ) : (
               ""
             )}
-            <DetailItem label="Nome" content={visitor.name} />
+            <DetailItem
+              label="Nome"
+              content={visitor.name + " - " + visitor.visitorId.toString()}
+            />
             <DetailItem
               label="Status"
               content={visitor.status === "ACTIVE" ? "✅ Ativo" : "❌ Inativo"}

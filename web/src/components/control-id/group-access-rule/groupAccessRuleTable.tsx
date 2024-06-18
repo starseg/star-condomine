@@ -16,21 +16,22 @@ import { useSession } from "next-auth/react";
 import { deleteAction } from "@/lib/delete-action";
 import { SkeletonTable } from "@/components/_skeletons/skeleton-table";
 
-export default function GroupTable() {
+export default function GroupAccessRuleTable() {
   const { data: session } = useSession();
   const { update } = useControliDUpdate();
-  const [groups, setGroups] = useState<Group[]>([]);
+  const [groupAccessRules, setGroupAccessRules] = useState<GroupAccessRule[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState(true);
   const fetchData = async () => {
     if (session) {
       try {
-        const response = await api.get(`group`, {
+        const response = await api.get(`groupAccessRule`, {
           headers: {
             Authorization: `Bearer ${session.token.user.token}`,
           },
         });
-        setGroups(response.data);
-
+        setGroupAccessRules(response.data);
         setIsLoading(false);
       } catch (error) {
         console.log(error);
@@ -42,7 +43,7 @@ export default function GroupTable() {
   }, [session, update]);
 
   const deleteItem = async (id: number) => {
-    deleteAction(session, "grupo", `group/${id}`, fetchData);
+    deleteAction(session, "relação", `groupAccessRule/${id}`, fetchData);
   };
 
   return (
@@ -54,22 +55,26 @@ export default function GroupTable() {
           <Table className="w-full border">
             <TableHeader>
               <TableRow className="bg-secondary hover:bg-secondary">
-                <TableHead>ID</TableHead>
                 <TableHead>Grupo</TableHead>
+                <TableHead>Regra de acesso</TableHead>
                 <TableHead>Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {groups && groups.length > 0 ? (
-                groups.map((group) => (
-                  <TableRow key={group.groupId}>
-                    <TableCell>{group.groupId}</TableCell>
-                    <TableCell>{group.name}</TableCell>
+              {groupAccessRules && groupAccessRules.length > 0 ? (
+                groupAccessRules.map((item) => (
+                  <TableRow key={item.groupAccessRuleId}>
+                    <TableCell>
+                      {item.groupId} - {item.group.name}
+                    </TableCell>
+                    <TableCell>
+                      {item.accessRuleId} - {item.accessRule.name}
+                    </TableCell>
                     <TableCell>
                       <Button
                         variant={"ghost"}
                         className="p-0 aspect-square"
-                        onClick={() => deleteItem(group.groupId)}
+                        onClick={() => deleteItem(item.groupAccessRuleId)}
                       >
                         <Trash2Icon />
                       </Button>

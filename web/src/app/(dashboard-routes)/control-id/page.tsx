@@ -9,6 +9,8 @@ import AccessRuleForm from "@/components/control-id/access-rule/accessRuleForm";
 import AccessRuleTable from "@/components/control-id/access-rule/accessRuleTable";
 import GroupForm from "@/components/control-id/group/groupForm";
 import GroupTable from "@/components/control-id/group/groupTable";
+import GroupAccessRuleForm from "@/components/control-id/group-access-rule/groupAccessRuleForm";
+import GroupAccessRuleTable from "@/components/control-id/group-access-rule/groupAccessRuleTable";
 
 export default async function ControliD() {
   return (
@@ -38,6 +40,11 @@ export default async function ControliD() {
           <GroupForm />
         </div>
         <GroupTable />
+        <div className="w-full flex justify-between items-end mt-4 pb-2">
+          <h2 className="text-xl">Grupos x Regras de acesso</h2>
+          <GroupAccessRuleForm />
+        </div>
+        <GroupAccessRuleTable />
       </section>
     </ControliDUpdateProvider>
   );

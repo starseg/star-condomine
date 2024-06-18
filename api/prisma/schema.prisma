@@ -58,6 +58,7 @@ model Lobby {
   visitor        Visitor[]
   vehicle        Vehicle[]
   schedulingList SchedulingList[]
+  AreaAccessRule AreaAccessRule[]
 }
 
 model Member {
@@ -340,9 +341,10 @@ model SchedulingList {
 }
 
 model TimeZone {
-  timeZoneId Int        @id @default(autoincrement())
-  name       String
-  timeSpan   TimeSpan[]
+  timeZoneId         Int                  @id @default(autoincrement())
+  name               String
+  timeSpan           TimeSpan[]
+  AccessRuleTimeZone AccessRuleTimeZone[]
 }
 
 model TimeSpan {
@@ -378,7 +380,9 @@ model AccessRule {
   type         Int
   priority     Int
 
-  GroupAccessRule GroupAccessRule[]
+  GroupAccessRule    GroupAccessRule[]
+  AccessRuleTimeZone AccessRuleTimeZone[]
+  AreaAccessRule     AreaAccessRule[]
 }
 
 model Group {
@@ -405,6 +409,25 @@ model GroupAccessRule {
 
   accessRule AccessRule @relation(fields: [accessRuleId], references: [accessRuleId])
   group      Group      @relation(fields: [groupId], references: [groupId])
+}
+
+model AccessRuleTimeZone {
+  accessRuleTimeZoneId Int @id @default(autoincrement())
+  accessRuleId         Int
+  timeZoneId           Int
+
+  accessRule AccessRule @relation(fields: [accessRuleId], references: [accessRuleId])
+  timeZone   TimeZone   @relation(fields: [timeZoneId], references: [timeZoneId])
+}
+
+model AreaAccessRule {
+  // Lobby - Access Rule
+  areaAccessRuleId Int @id @default(autoincrement())
+  areaId           Int
+  accessRuleId     Int
+
+  lobby      Lobby      @relation(fields: [areaId], references: [lobbyId])
+  accessRule AccessRule @relation(fields: [accessRuleId], references: [accessRuleId])
 }
 
 enum Status {
