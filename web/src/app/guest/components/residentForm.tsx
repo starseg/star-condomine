@@ -117,15 +117,6 @@ export function ResidentForm() {
     })
   );
 
-  const [phoneNumber, setPhoneNumber] = useState<string[]>([]);
-  const addTelephone = (value: string) => {
-    setPhoneNumber((prev) => [...prev, value]);
-    form.setValue("telephone", "");
-  };
-  const deleteTelephone = (value: string) => {
-    setPhoneNumber(phoneNumber.filter((item) => item !== value));
-  };
-
   const [isSendind, setIsSending] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSending(true);
@@ -160,14 +151,12 @@ export function ResidentForm() {
       // console.log(response.data);
 
       // REGISTRA OS NÚMEROS DE TELEFONE
-      if (phoneNumber[0] != "") {
+      if (data.telephone !== "") {
         try {
-          for (let i = 0; i < phoneNumber.length; i++) {
-            await api.post("guest/telephone", {
-              number: phoneNumber[i],
-              memberId: response.data.memberId,
-            });
-          }
+          await api.post("guest/telephone", {
+            number: data.telephone,
+            memberId: response.data.memberId,
+          });
         } catch (error) {
           console.error("(Telefone) Erro ao enviar dados para a API:", error);
           throw error;
@@ -295,49 +284,15 @@ export function ResidentForm() {
             <FormItem>
               <FormLabel>Telefone</FormLabel>
               <FormControl>
-                <div className="flex w-full items-center space-x-2">
-                  <MaskedInput
-                    mask="(99) 99999-9999"
-                    type="text"
-                    placeholder="Digite o número do seu telefone"
-                    autoComplete="off"
-                    {...field}
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="aspect-square p-1"
-                    onClick={() => addTelephone(field.value)}
-                  >
-                    <PlusCircle size={"32px"} />
-                  </Button>
-                </div>
+                <MaskedInput
+                  mask="(99) 99999-9999"
+                  type="text"
+                  placeholder="Digite o número do seu telefone"
+                  autoComplete="off"
+                  {...field}
+                />
               </FormControl>
-              <div className="flex gap-2 flex-wrap">
-                {phoneNumber.map((telephone, index) => {
-                  return (
-                    <div
-                      key={index}
-                      className="text-lg py-2 px-4 mt-2 rounded-md bg-muted flex justify-between items-center gap-2"
-                    >
-                      <p>{telephone}</p>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="aspect-square p-1"
-                        onClick={() => deleteTelephone(telephone)}
-                      >
-                        <Trash size={"24px"} />
-                      </Button>
-                    </div>
-                  );
-                })}
-              </div>
               <FormMessage />
-              <FormDescription>
-                Clique no ícone de "+" para adicionar o telefone. Pode ser
-                inserido mais de um, caso você tenha.
-              </FormDescription>
             </FormItem>
           )}
         />
