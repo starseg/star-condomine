@@ -11,6 +11,8 @@ import GroupForm from "@/components/control-id/group/groupForm";
 import GroupTable from "@/components/control-id/group/groupTable";
 import GroupAccessRuleForm from "@/components/control-id/group-access-rule/groupAccessRuleForm";
 import GroupAccessRuleTable from "@/components/control-id/group-access-rule/groupAccessRuleTable";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 
 export default async function ControliD() {
   return (
@@ -20,6 +22,12 @@ export default async function ControliD() {
         <h1 className="flex gap-2 items-center text-4xl pb-4">
           <Gear /> Configurações Control iD
         </h1>
+        <Link
+          href={"control-id/accessRule"}
+          className={buttonVariants({ variant: "default" })}
+        >
+          Definir regra de acesso
+        </Link>
         <div className="w-full flex justify-between items-end pb-2">
           <h2 className="text-xl">Horários</h2>
           <TimeZoneForm />
