@@ -68,47 +68,60 @@ export default function FeedbackList() {
         <SkeletonCard />
       ) : (
         <section className="flex justify-center flex-wrap gap-4">
-          {feedbacks.map((item) => (
-            <div
-              key={item.feedbackId}
-              className="w-[45%] flex justify-between p-4 border border-primary rounded-md"
-            >
-              <div className="w-[90%]">
-                {item.status === "ACTIVE" ? (
-                  <p className="text-blue-300 text-sm uppercase">Nova</p>
-                ) : (
-                  <p className="text-green-300 text-sm uppercase">
-                    Visualizada
-                  </p>
-                )}
-                <p className="text-primary">Nome: {item.name}</p>
-                <p>Assunto: {item.subject}</p>
-                <p className="py-4">Mensagem: {item.message}</p>
-                <p className="text-primary">{formatDate(item.createdAt)}</p>
-              </div>
-              <div className="flex flex-col gap-4 text-2xl">
-                {/* <Link href={`feedback/update?id=${item.feedbackId}`}>
+          {feedbacks.length > 0 ? (
+            feedbacks.map((item) => (
+              <div
+                key={item.feedbackId}
+                className="w-[45%] flex justify-between p-4 border border-primary rounded-md"
+              >
+                <div className="w-[90%]">
+                  {item.status === "ACTIVE" ? (
+                    <p className="text-blue-300 text-sm uppercase">Nova</p>
+                  ) : (
+                    <p className="text-green-300 text-sm uppercase">
+                      Visualizada
+                    </p>
+                  )}
+                  <p className="text-primary">Nome: {item.name}</p>
+                  <p>Assunto: {item.subject}</p>
+                  <p className="py-4">Mensagem: {item.message}</p>
+                  <p className="text-primary">{formatDate(item.createdAt)}</p>
+                </div>
+                <div className="flex flex-col gap-4 text-2xl">
+                  {/* <Link href={`feedback/update?id=${item.feedbackId}`}>
               <MagnifyingGlass />
             </Link> */}
-                {item.status === "ACTIVE" ? (
+                  {item.status === "ACTIVE" ? (
+                    <button
+                      onClick={() => updateFeedback(item.feedbackId)}
+                      title="Marcar como lido"
+                    >
+                      <CheckCircle />
+                    </button>
+                  ) : (
+                    <CheckCircle className="text-muted" />
+                  )}
                   <button
-                    onClick={() => updateFeedback(item.feedbackId)}
-                    title="Marcar como lido"
+                    onClick={() => deleteFeedback(item.feedbackId)}
+                    title="Excluir"
                   >
-                    <CheckCircle />
+                    <Trash />
                   </button>
-                ) : (
-                  <CheckCircle className="text-muted" />
-                )}
-                <button
-                  onClick={() => deleteFeedback(item.feedbackId)}
-                  title="Excluir"
-                >
-                  <Trash />
-                </button>
+                </div>
               </div>
+            ))
+          ) : (
+            <div className="flex flex-col items-center justify-center p-4 space-y-2">
+              <img
+                className="w-64"
+                src="undraw_location_search.svg"
+                alt="Not found"
+              />
+              <p className="text-primary text-xl">
+                Sem feedbacks por enquanto...
+              </p>
             </div>
-          ))}
+          )}
         </section>
       )}
     </>
