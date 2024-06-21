@@ -11,14 +11,16 @@ import NewLobbyButton from "@/components/lobby/newLobbyButton";
 import FeedbackButton from "@/components/feedback/feedbackButton";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import UserData from "@/components/userData";
 
 export default async function Dashboard() {
   return (
     <>
       <Menu url="bell" />
       <section className="max-w-5xl mx-auto mb-12">
+        <UserData />
         <div className="flex items-center justify-between mb-2 flex-wrap flex-col md:flex-row w-[95%] ml-[5%]">
-          <h1 className="flex gap-2 items-center text-stone-50 text-4xl pb-4">
+          <h1 className="flex gap-2 items-center text-stone-50 text-4xl">
             <DoorOpen /> Portarias
           </h1>
           <Search placeholder="Buscar..." pagination={false} />

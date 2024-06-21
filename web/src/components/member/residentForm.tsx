@@ -216,7 +216,6 @@ export function ResidentForm() {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      // console.log(response.data);
 
       // REGISTRA OS NÚMEROS DE TELEFONE
       if (phoneNumber[0] != "") {
@@ -649,7 +648,6 @@ export function ResidentForm() {
               </FormControl>
               <div className="flex gap-2 flex-wrap">
                 {cardNumber.map((num, index) => {
-                  // // console.log("TAG NUMBER: ", tagNumber);
                   return (
                     <div
                       key={index}

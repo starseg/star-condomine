@@ -16,10 +16,8 @@ export default function ResidentFullList({ lobby }: { lobby: string }) {
       let path;
       if (!params.get("query")) {
         path = "member/lobby/" + lobby;
-        // console.log(path);
       } else {
         path = `member/filtered/${lobby}?query=${params.get("query")}`;
-        // console.log(path);
       }
       const response = await api.get(path, {
         headers: {

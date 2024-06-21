@@ -148,7 +148,6 @@ export function EmployeeForm() {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      // console.log(response.data);
 
       // REGISTRA TAGS DO FUNCIONARIO
       if (tagNumber[0] != "") {

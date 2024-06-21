@@ -28,7 +28,6 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
       let path;
       if (!params.get("query")) {
         path = "device/lobby/" + lobby;
-        // console.log(path);
       } else {
         path = `device/filtered/${lobby}?query=${params.get("query")}`;
       }

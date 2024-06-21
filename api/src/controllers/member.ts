@@ -204,6 +204,7 @@ export const getFilteredMembers = async (
       ? {
           OR: [
             { cpf: { contains: query as string } },
+            { rg: { contains: query as string } },
             { name: { contains: query as string } },
             { address: { contains: query as string } },
           ],

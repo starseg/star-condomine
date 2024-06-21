@@ -55,8 +55,6 @@ export default function UpdateProblem() {
         description: calendar?.description || "",
         date: formattedDate,
       });
-      // console.log("data:");
-      // console.log(data);
     }
   }, [calendar]);
 

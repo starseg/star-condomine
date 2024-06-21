@@ -56,8 +56,6 @@ export default function UpdateOperator() {
         type: operator.type || "USER",
         status: operator.status || "ACTIVE",
       });
-      // console.log("data:");
-      // console.log(data);
     }
   }, [operator]);
 

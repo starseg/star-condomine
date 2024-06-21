@@ -95,8 +95,6 @@ export default function UpdateResident() {
         comments: member?.comments || "",
         status: member?.status || "INACTIVE",
       });
-      // console.log("data:");
-      // console.log(data);
     }
   }, [member]);
 

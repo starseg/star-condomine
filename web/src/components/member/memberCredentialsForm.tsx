@@ -217,7 +217,6 @@ export default function MemberCredentialsForm({
                 </FormControl>
                 <div className="flex flex-col">
                   {tagNumber.map((num, index) => {
-                    // // console.log("TAG NUMBER: ", tagNumber);
                     return (
                       <div
                         key={index}

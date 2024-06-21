@@ -66,8 +66,6 @@ export default function UpdateProblem() {
         date: realDate,
         status: problem?.status || "ACTIVE",
       });
-      // console.log("data:");
-      // console.log(data);
     }
   }, [problem]);
 

@@ -41,7 +41,6 @@ export default function VehicleTable({ lobby }: { lobby: string }) {
       let path;
       if (!params.get("query")) {
         path = "vehicle/lobby/" + lobby;
-        // console.log(path);
       } else {
         path = `vehicle/filtered/${lobby}?query=${params.get("query")}`;
       }

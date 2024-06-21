@@ -38,7 +38,6 @@ export default function ReportTable({ lobby }: { lobby: string }) {
       let path;
       if (!params.get("from") || !params.get("to")) {
         path = "access/report/" + lobby;
-        // console.log(path);
       } else {
         path = `access/report/${lobby}?from=${from}&to=${to}`;
       }

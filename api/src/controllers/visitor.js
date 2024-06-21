@@ -172,6 +172,7 @@ const getFilteredVisitors = async (req, res) => {
             ? {
                 OR: [
                     { cpf: { contains: query } },
+                    { rg: { contains: query } },
                     { name: { contains: query } },
                 ],
                 AND: { lobbyId: lobby },

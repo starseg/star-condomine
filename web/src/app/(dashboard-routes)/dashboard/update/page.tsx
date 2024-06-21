@@ -74,8 +74,6 @@ export default function UpdateLobby() {
         code: lobby?.code?.toString() || "",
         brand: lobby?.controllerBrandId || 0,
       });
-      // console.log("data:");
-      // console.log(data);
     }
   }, [lobby]);
 

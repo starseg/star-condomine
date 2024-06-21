@@ -65,7 +65,7 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
         <Table className="border border-stone-800 rouded-lg">
           <TableHeader className="bg-stone-800 font-semibold">
             <TableRow>
-              <TableHead>CPF/CNPJ</TableHead>
+              <TableHead>Documentos</TableHead>
               <TableHead>Nome</TableHead>
               <TableHead>Tipo</TableHead>
               <TableHead>Agendamento</TableHead>
@@ -80,7 +80,10 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
                 visitor.lobby.exitControl === "ACTIVE";
               return (
                 <TableRow key={visitor.visitorId}>
-                  <TableCell>{visitor.cpf}</TableCell>
+                  <TableCell>
+                    {visitor.cpf.length > 0 && visitor.cpf} <br />
+                    {visitor.rg.length > 0 && visitor.rg}
+                  </TableCell>
                   <TableCell>
                     {openAccess ? (
                       <p className="text-red-400 font-semibold">

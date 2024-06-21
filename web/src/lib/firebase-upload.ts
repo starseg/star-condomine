@@ -47,7 +47,7 @@ export const deleteFile: DeleteFunction = async (fileUrl) => {
     await getMetadata(fileRef);
     // Se chegou até aqui, o arquivo existe e pode ser excluído
     await deleteObject(fileRef);
-    // console.log("Arquivo excluído com sucesso!");
+    // Arquivo excluído com sucesso!
   } catch (error) {
     if (
       error instanceof StorageError &&

@@ -90,7 +90,6 @@ export function LobbyForm() {
     const validacep = /^\d{5}-\d{3}$/;
     if (validacep.test(cep)) {
       const address = await searchCEP(cep);
-      // console.log(address);
 
       if (!address.erro) {
         if (address.uf != "") form.setValue("state", address.uf);

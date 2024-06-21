@@ -150,7 +150,6 @@ export function ResidentForm() {
         lobbyId: decrypt(lobby),
       };
       const response = await api.post("guest/member", info);
-      // console.log(response.data);
 
       // REGISTRA OS NÚMEROS DE TELEFONE
       if (data.telephone !== "") {

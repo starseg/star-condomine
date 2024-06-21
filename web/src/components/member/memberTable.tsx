@@ -34,10 +34,8 @@ export default function MemberTable({ lobby }: { lobby: string }) {
       let path;
       if (!params.get("query")) {
         path = "member/lobby/" + lobby;
-        // console.log(path);
       } else {
         path = `member/filtered/${lobby}?query=${params.get("query")}`;
-        // console.log(path);
       }
       const response = await api.get(path, {
         headers: {
@@ -68,7 +66,13 @@ export default function MemberTable({ lobby }: { lobby: string }) {
           <TableHeader className="bg-stone-800 font-semibold">
             <TableRow>
               <TableHead>Nome</TableHead>
-              <TableHead>CPF</TableHead>
+              <TableHead>
+                {members[0]
+                  ? members[0].type === "RESIDENT"
+                    ? "Documentos"
+                    : "CPF"
+                  : ""}
+              </TableHead>
               <TableHead>
                 {members[0]
                   ? members[0].type === "RESIDENT"
@@ -109,7 +113,16 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                       <p className="text-stone-400">{member.name} - inativo</p>
                     )}
                   </TableCell>
-                  <TableCell>{member.cpf}</TableCell>
+                  <TableCell>
+                    {type === "resident" ? (
+                      <>
+                        {member.cpf.length > 0 && member.cpf} <br />
+                        {member.rg.length > 0 && member.rg}
+                      </>
+                    ) : (
+                      member.cpf
+                    )}
+                  </TableCell>
                   <TableCell>
                     {type === "resident"
                       ? member.address

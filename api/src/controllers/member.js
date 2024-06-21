@@ -158,6 +158,7 @@ const getFilteredMembers = async (req, res) => {
             ? {
                 OR: [
                     { cpf: { contains: query } },
+                    { rg: { contains: query } },
                     { name: { contains: query } },
                     { address: { contains: query } },
                 ],

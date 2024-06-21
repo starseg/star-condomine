@@ -196,7 +196,6 @@ export function VisitorForm() {
               Authorization: `Bearer ${session?.token.user.token}`,
             },
           });
-          // console.log(res.data);
         } catch (error) {
           console.error("Erro ao enviar dados para a API:", error);
           throw error;
