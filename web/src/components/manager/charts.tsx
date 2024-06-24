@@ -169,8 +169,8 @@ export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
 export function AccessesPerHourChart(data: AccessPerHourChartProps) {
   const chartData: any = [];
   chartData.push(["Hora", "Acessos"]);
-  for (let i = 0; i < Object.keys(data).length; i++) {
-    const hour = data.hourlyCounts[i].hour.toString();
+  for (let i = 0; i < Object.keys(data.hourlyCounts).length; i++) {
+    const hour = data.hourlyCounts[i].hour.toString().concat("h");
     const count = data.hourlyCounts[i].count;
     chartData.push([hour, count]);
   }

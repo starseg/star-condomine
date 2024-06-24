@@ -116,10 +116,6 @@ export default function ManagementPanel() {
             <AccessesByLobbyChart {...accessesByLobby} />
             <AccessesByOperatorChart {...accessesByOperator} />
             <AccessesPerHourChart {...accessesPerHour} />
-            <p className="p-2 rounded-lg bg-stone-800">
-              Média de acessos por hora:{" "}
-              {accessesPerHour.averageAccessesPerHour}
-            </p>
           </div>
           {/* COUNTS */}
           <div className="flex flex-wrap gap-4 items-center justify-center">
