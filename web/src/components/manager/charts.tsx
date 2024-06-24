@@ -170,7 +170,7 @@ export function AccessesPerHourChart(data: AccessPerHourChartProps) {
   const chartData: any = [];
   chartData.push(["Hora", "Acessos"]);
   for (let i = 0; i < Object.keys(data).length; i++) {
-    const hour = data.hourlyCounts[i].hour;
+    const hour = data.hourlyCounts[i].hour.toString();
     const count = data.hourlyCounts[i].count;
     chartData.push([hour, count]);
   }
