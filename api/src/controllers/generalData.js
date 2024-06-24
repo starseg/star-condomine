@@ -3,8 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.countAccessesPerHour = exports.problemsByLobby = exports.accessesByLobby = exports.count = void 0;
+exports.countAccessesPerHour = exports.accessesByOperator = exports.problemsByLobby = exports.accessesByLobby = exports.count = void 0;
 const db_1 = __importDefault(require("../db"));
+const client_1 = require("@prisma/client");
 const count = async (req, res) => {
     try {
         const [lobbies, members, visitors, accesses, schedulings, vehicles, devices, problems, solvedProblems,] = await Promise.all([
@@ -92,22 +93,61 @@ const problemsByLobby = async (req, res) => {
     }
 };
 exports.problemsByLobby = problemsByLobby;
-const countAccessesPerHour = async (req, res) => {
-    const { day, from, to } = req.query;
-    const dayObj = day ? new Date(day) : undefined;
-    if (dayObj && isNaN(dayObj.getTime())) {
-        res.status(400).json({ error: "A data fornecida não é válida" });
-        return;
+const accessesByOperator = async (req, res) => {
+    try {
+        const count = await db_1.default.access.groupBy({
+            by: ["operatorId"],
+            _count: true,
+        });
+        const operators = await db_1.default.operator.findMany({
+            select: {
+                operatorId: true,
+                name: true,
+            },
+        });
+        const accesses = [];
+        count.map((item) => {
+            accesses.push({
+                operator: operators.find((i) => i.operatorId === item.operatorId)?.name,
+                count: item._count,
+            });
+        });
+        res.json(accesses);
     }
-    const logs = await db_1.default.logging.findMany({
-        where: {
-            url: { startsWith: "/access" },
-        },
-    });
-    logs.map((log) => {
-        let hour = log.date.getHours() - 3;
-        if (hour) {
-        }
-    });
+    catch (error) {
+        res.status(500).json({ error: "Erro ao buscar os dados" });
+    }
+};
+exports.accessesByOperator = accessesByOperator;
+const countAccessesPerHour = async (req, res) => {
+    try {
+        // Ajustar o fuso horário (UTC -3)
+        const adjustedTimeQuery = client_1.Prisma.sql `DATE_SUB(startTime, INTERVAL 3 HOUR)`;
+        // Agrupar por hora e contar acessos
+        const results = await db_1.default.$queryRaw(client_1.Prisma.sql `
+      SELECT 
+        EXTRACT(HOUR FROM ${adjustedTimeQuery}) as hour, 
+        COUNT(*) as count
+      FROM Access
+      GROUP BY EXTRACT(HOUR FROM ${adjustedTimeQuery})
+      ORDER BY hour
+    `);
+        // Converting BigInt counts to number
+        const totalAccesses = results.reduce((sum, record) => sum + Number(record.count), 0);
+        const numberOfHours = results.length;
+        const averageAccessesPerHour = numberOfHours > 0 ? totalAccesses / numberOfHours : 0;
+        // Enviar resposta
+        res.json({
+            averageAccessesPerHour,
+            hourlyCounts: results.map((result) => ({
+                ...result,
+                count: Number(result.count),
+            })),
+        });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).send("Server error");
+    }
 };
 exports.countAccessesPerHour = countAccessesPerHour;

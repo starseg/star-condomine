@@ -9,4 +9,6 @@ const generalDataRouter = express_1.default.Router();
 generalDataRouter.get("/count", generalData_1.count);
 generalDataRouter.get("/accessesByLobby", generalData_1.accessesByLobby);
 generalDataRouter.get("/problemsByLobby", generalData_1.problemsByLobby);
+generalDataRouter.get("/accessesByOperator", generalData_1.accessesByOperator);
+generalDataRouter.get("/countAccessesPerHour", generalData_1.countAccessesPerHour);
 exports.default = generalDataRouter;

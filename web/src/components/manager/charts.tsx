@@ -121,3 +121,88 @@ export function AccessesByLobbyChart(data: AccessByLobbyChartProps[]) {
     />
   );
 }
+
+export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
+  const chartData: any = [];
+  chartData.push(["Monitor(a)", "Registros de acesso"]);
+  for (let i = 0; i < Object.keys(data).length; i++) {
+    const operatorName = data[i].operator.split(" ");
+    const operator = operatorName[0]
+      .concat(" ")
+      .concat(operatorName[operatorName.length - 1]);
+    const count = data[i].count;
+    chartData.push([operator, count]);
+  }
+
+  const options = {
+    title: "Atendimentos por monitor(a)",
+    backgroundColor: "#0c0a09",
+    colors: ["#eb3f5c"],
+    titleTextStyle: {
+      color: "white",
+      fontSize: 18,
+    },
+    hAxis: {
+      textStyle: {
+        color: "white", // Cor do texto no eixo horizontal
+      },
+    },
+    vAxis: {
+      textStyle: {
+        color: "white", // Cor do texto no eixo vertical
+      },
+    },
+    legend: "none",
+  };
+
+  return (
+    <Chart
+      chartType="BarChart"
+      data={chartData}
+      options={options}
+      height={"800px"}
+      width={"800px"}
+    />
+  );
+}
+
+export function AccessesPerHourChart(data: AccessPerHourChartProps) {
+  const chartData: any = [];
+  chartData.push(["Hora", "Acessos"]);
+  for (let i = 0; i < Object.keys(data).length; i++) {
+    const hour = data.hourlyCounts[i].hour;
+    const count = data.hourlyCounts[i].count;
+    chartData.push([hour, count]);
+  }
+
+  const options = {
+    title: "Acessos por hora",
+    backgroundColor: "#0c0a09",
+    colors: ["#358de6"],
+    titleTextStyle: {
+      color: "white",
+      fontSize: 18,
+    },
+    hAxis: {
+      textStyle: {
+        color: "white", // Cor do texto no eixo horizontal
+      },
+    },
+    vAxis: {
+      textStyle: {
+        color: "white", // Cor do texto no eixo vertical
+      },
+    },
+    legend: "none",
+  };
+
+  return (
+    <Chart
+      chartType="BarChart"
+      data={chartData}
+      options={options}
+      height={"800px"}
+      width={"800px"}
+    />
+  );
+}

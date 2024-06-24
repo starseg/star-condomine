@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../db";
+import { Prisma } from "@prisma/client";
 
 export const count = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -114,26 +115,79 @@ export const problemsByLobby = async (
   }
 };
 
+export const accessesByOperator = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const count = await prisma.access.groupBy({
+      by: ["operatorId"],
+      _count: true,
+    });
+
+    const operators = await prisma.operator.findMany({
+      select: {
+        operatorId: true,
+        name: true,
+      },
+    });
+
+    interface AccessResponseInterface {
+      operator: string | undefined;
+      count: number;
+    }
+    const accesses: AccessResponseInterface[] = [];
+    count.map((item) => {
+      accesses.push({
+        operator: operators.find((i) => i.operatorId === item.operatorId)?.name,
+        count: item._count,
+      });
+    });
+    res.json(accesses);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os dados" });
+  }
+};
+
 export const countAccessesPerHour = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { day, from, to } = req.query;
+  try {
+    // Ajustar o fuso horário (UTC -3)
+    const adjustedTimeQuery = Prisma.sql`DATE_SUB(startTime, INTERVAL 3 HOUR)`;
 
-  const dayObj = day ? new Date(day as string) : undefined;
+    // Agrupar por hora e contar acessos
+    const results = await prisma.$queryRaw<
+      { hour: number; count: bigint }[]
+    >(Prisma.sql`
+      SELECT 
+        EXTRACT(HOUR FROM ${adjustedTimeQuery}) as hour, 
+        COUNT(*) as count
+      FROM Access
+      GROUP BY EXTRACT(HOUR FROM ${adjustedTimeQuery})
+      ORDER BY hour
+    `);
 
-  if (dayObj && isNaN(dayObj.getTime())) {
-    res.status(400).json({ error: "A data fornecida não é válida" });
-    return;
+    // Converting BigInt counts to number
+    const totalAccesses = results.reduce(
+      (sum, record) => sum + Number(record.count),
+      0
+    );
+    const numberOfHours = results.length;
+    const averageAccessesPerHour =
+      numberOfHours > 0 ? totalAccesses / numberOfHours : 0;
+
+    // Enviar resposta
+    res.json({
+      averageAccessesPerHour,
+      hourlyCounts: results.map((result) => ({
+        ...result,
+        count: Number(result.count),
+      })),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
   }
-  const logs = await prisma.logging.findMany({
-    where: {
-      url: { startsWith: "/access" },
-    },
-  });
-  logs.map((log) => {
-    let hour = log.date.getHours() - 3;
-    if (hour) {
-    }
-  });
 };

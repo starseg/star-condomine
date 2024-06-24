@@ -6,6 +6,8 @@ import LoadingIcon from "../loadingIcon";
 import Card from "./card";
 import {
   AccessesByLobbyChart,
+  AccessesByOperatorChart,
+  AccessesPerHourChart,
   ProblemByLobbyChart,
   ProblemChart,
 } from "./charts";
@@ -15,10 +17,16 @@ export default function ManagementPanel() {
   const [accessesByLobby, setAccessesByLobby] = useState<
     AccessByLobbyChartProps[]
   >([]);
+  const [accessesByOperator, setAccessesByOperator] = useState<
+    AccessByOperatorChartProps[]
+  >([]);
   const [problemsByLobby, setProblemsByLobby] = useState<
     AccessByLobbyChartProps[]
   >([]);
+  const [accessesPerHour, setAccessesPerHour] =
+    useState<AccessPerHourChartProps>();
   const { data: session } = useSession();
+
   const fetchCount = async () => {
     try {
       const response = await api.get("generalData/count", {
@@ -43,6 +51,18 @@ export default function ManagementPanel() {
       console.error("Erro ao obter dados:", error);
     }
   };
+  const fetchAccessesByOperator = async () => {
+    try {
+      const response = await api.get("generalData/accessesByOperator", {
+        headers: {
+          Authorization: `Bearer ${session?.token.user.token}`,
+        },
+      });
+      setAccessesByOperator(response.data);
+    } catch (error) {
+      console.error("Erro ao obter dados:", error);
+    }
+  };
   const fetchProblemsByLobby = async () => {
     try {
       const response = await api.get("generalData/problemsByLobby", {
@@ -55,15 +75,34 @@ export default function ManagementPanel() {
       console.error("Erro ao obter dados:", error);
     }
   };
+  const fetchAccessesPerHour = async () => {
+    try {
+      const response = await api.get("generalData/countAccessesPerHour", {
+        headers: {
+          Authorization: `Bearer ${session?.token.user.token}`,
+        },
+      });
+      setAccessesPerHour(response.data);
+    } catch (error) {
+      console.error("Erro ao obter dados:", error);
+    }
+  };
+
   useEffect(() => {
     fetchCount();
     fetchAccessesByLobby();
+    fetchAccessesByOperator();
     fetchProblemsByLobby();
+    fetchAccessesPerHour();
   }, [session]);
 
   return (
     <div className="mt-8">
-      {counts && problemsByLobby && accessesByLobby ? (
+      {counts &&
+      problemsByLobby &&
+      accessesByLobby &&
+      accessesByOperator &&
+      accessesPerHour ? (
         <>
           {/* GRÁFICOS */}
           <div className="flex flex-col gap-4 justify-center items-center mb-8">
@@ -75,6 +114,12 @@ export default function ManagementPanel() {
               <ProblemByLobbyChart {...problemsByLobby} />
             </div>
             <AccessesByLobbyChart {...accessesByLobby} />
+            <AccessesByOperatorChart {...accessesByOperator} />
+            <AccessesPerHourChart {...accessesPerHour} />
+            <p className="p-2 rounded-lg bg-stone-800">
+              Média de acessos por hora:{" "}
+              {accessesPerHour.averageAccessesPerHour}
+            </p>
           </div>
           {/* COUNTS */}
           <div className="flex flex-wrap gap-4 items-center justify-center">
