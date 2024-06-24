@@ -13,17 +13,18 @@ export default function FeedbackList() {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const { data: session } = useSession();
   const fetchData = async () => {
-    try {
-      const response = await api.get("feedback", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setFeedbacks(response.data);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("feedback", {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setFeedbacks(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
   useEffect(() => {
     fetchData();

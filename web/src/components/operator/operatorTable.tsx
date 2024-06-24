@@ -21,17 +21,18 @@ export default function OperatorTable() {
   const [operators, setOperators] = useState<Operator[]>([]);
   const { data: session } = useSession();
   const fetchData = async () => {
-    try {
-      const response = await api.get("operator", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setOperators(response.data);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("operator", {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setOperators(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
   useEffect(() => {
     fetchData();

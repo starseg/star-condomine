@@ -33,16 +33,17 @@ export default function UpdateOperator() {
   const [data, setData] = useState<Values>();
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await api.get("operator/find/" + params.get("id"), {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
-        setOperator(response.data);
-      } catch (error) {
-        console.error("(operator) Erro ao obter dados:", error);
-      }
+      if (session)
+        try {
+          const response = await api.get("operator/find/" + params.get("id"), {
+            headers: {
+              Authorization: `Bearer ${session?.token.user.token}`,
+            },
+          });
+          setOperator(response.data);
+        } catch (error) {
+          console.error("(operator) Erro ao obter dados:", error);
+        }
     };
     fetchData();
   }, [session]);

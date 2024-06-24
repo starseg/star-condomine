@@ -36,19 +36,20 @@ export default function LobbyDetails() {
   const lobbyId = params.get("id") || "";
 
   const fetchData = async () => {
-    try {
-      const path = "lobby/find/" + lobbyId;
-      const response = await api.get(path, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      if (response.data) {
-        setLobby(response.data);
+    if (session)
+      try {
+        const path = "lobby/find/" + lobbyId;
+        const response = await api.get(path, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        if (response.data) {
+          setLobby(response.data);
+        }
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
       }
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
   };
 
   const fetchCalendar = async () => {

@@ -108,16 +108,17 @@ export function LobbyUpdateForm({
   const [brands, setBrands] = useState<Brand[]>([]);
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await api.get("brand", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
-        setBrands(response.data);
-      } catch (error) {
-        console.error("Erro ao obter dados:", error);
-      }
+      if (session)
+        try {
+          const response = await api.get("brand", {
+            headers: {
+              Authorization: `Bearer ${session?.token.user.token}`,
+            },
+          });
+          setBrands(response.data);
+        } catch (error) {
+          console.error("Erro ao obter dados:", error);
+        }
     };
 
     fetchData();

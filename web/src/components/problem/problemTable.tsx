@@ -31,23 +31,24 @@ export default function ProblemTable({ lobby }: { lobby: string }) {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const fetchData = async () => {
-    try {
-      let path;
-      if (!params.get("query")) {
-        path = "lobbyProblem/lobby/" + lobby;
-      } else {
-        path = `lobbyProblem/filtered/${lobby}?query=${params.get("query")}`;
+    if (session)
+      try {
+        let path;
+        if (!params.get("query")) {
+          path = "lobbyProblem/lobby/" + lobby;
+        } else {
+          path = `lobbyProblem/filtered/${lobby}?query=${params.get("query")}`;
+        }
+        const response = await api.get(path, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setProblems(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
       }
-      const response = await api.get(path, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setProblems(response.data);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
   };
   useEffect(() => {
     fetchData();

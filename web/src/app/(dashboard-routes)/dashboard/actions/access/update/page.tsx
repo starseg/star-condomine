@@ -27,16 +27,17 @@ export default function UpdateAccess() {
   const [data, setData] = useState<Values>();
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await api.get("access/find/" + params.get("id"), {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
-        setAccess(response.data);
-      } catch (error) {
-        console.error("(Access) Erro ao obter dados:", error);
-      }
+      if (session)
+        try {
+          const response = await api.get("access/find/" + params.get("id"), {
+            headers: {
+              Authorization: `Bearer ${session?.token.user.token}`,
+            },
+          });
+          setAccess(response.data);
+        } catch (error) {
+          console.error("(Access) Erro ao obter dados:", error);
+        }
     };
     fetchData();
   }, [session]);

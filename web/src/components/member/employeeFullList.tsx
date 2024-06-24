@@ -10,24 +10,25 @@ export default function ResidentFullList({ lobby }: { lobby: string }) {
   const [members, setMembers] = useState<Member[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
   const fetchData = async () => {
-    const params = new URLSearchParams(searchParams);
-    try {
-      let path;
-      if (!params.get("query")) {
-        path = "member/lobby/" + lobby;
-      } else {
-        path = `member/filtered/${lobby}?query=${params.get("query")}`;
+    if (session)
+      try {
+        let path;
+        if (!params.get("query")) {
+          path = "member/lobby/" + lobby;
+        } else {
+          path = `member/filtered/${lobby}?query=${params.get("query")}`;
+        }
+        const response = await api.get(path, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setMembers(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
       }
-      const response = await api.get(path, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setMembers(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
   };
   useEffect(() => {
     fetchData();

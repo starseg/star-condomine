@@ -21,17 +21,18 @@ export default function LoggingTable() {
   const [logs, setLogs] = useState<Log[]>([]);
   const { data: session } = useSession();
   const fetchData = async () => {
-    try {
-      const response = await api.get("log", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setLogs(response.data);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("log", {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setLogs(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
   useEffect(() => {
     fetchData();

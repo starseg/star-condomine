@@ -39,19 +39,20 @@ export default function UpdateSchedulingList() {
   const [data, setData] = useState<Values>();
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await api.get(
-          "schedulingList/find/" + params.get("id"),
-          {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          }
-        );
-        setList(response.data);
-      } catch (error) {
-        console.error("(Scheduling List) Erro ao obter dados:", error);
-      }
+      if (session)
+        try {
+          const response = await api.get(
+            "schedulingList/find/" + params.get("id"),
+            {
+              headers: {
+                Authorization: `Bearer ${session?.token.user.token}`,
+              },
+            }
+          );
+          setList(response.data);
+        } catch (error) {
+          console.error("(Scheduling List) Erro ao obter dados:", error);
+        }
     };
     fetchData();
   }, [session]);

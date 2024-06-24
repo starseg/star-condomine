@@ -29,17 +29,18 @@ export default function DeviceModelTable() {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const fetchData = async () => {
-    try {
-      const response = await api.get("deviceModel", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setDeviceModels(response.data);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("deviceModel", {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setDeviceModels(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
   useEffect(() => {
     fetchData();

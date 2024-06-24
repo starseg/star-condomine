@@ -48,16 +48,20 @@ export default function UpdateScheduling() {
   const [data, setData] = useState<Values>();
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await api.get("scheduling/find/" + params.get("id"), {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
-        setScheduling(response.data);
-      } catch (error) {
-        console.error("(Scheduling) Erro ao obter dados:", error);
-      }
+      if (session)
+        try {
+          const response = await api.get(
+            "scheduling/find/" + params.get("id"),
+            {
+              headers: {
+                Authorization: `Bearer ${session?.token.user.token}`,
+              },
+            }
+          );
+          setScheduling(response.data);
+        } catch (error) {
+          console.error("(Scheduling) Erro ao obter dados:", error);
+        }
     };
     fetchData();
   }, [session]);

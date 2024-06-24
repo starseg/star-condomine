@@ -32,17 +32,18 @@ export default function CredentialsTable() {
   const id = params.get("id");
 
   const fetchData = async () => {
-    try {
-      const response = await api.get(`tag/member/${id}`, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setTags(response.data);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get(`tag/member/${id}`, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setTags(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
   useEffect(() => {
     fetchData();

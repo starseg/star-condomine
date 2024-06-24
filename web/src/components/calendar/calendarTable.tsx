@@ -25,23 +25,24 @@ export default function CalendarTable({ lobby }: { lobby: string }) {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const fetchData = async () => {
-    try {
-      let path;
-      if (!params.get("query")) {
-        path = "lobbyCalendar/lobby/" + lobby;
-      } else {
-        path = `lobbyCalendar/filtered/${lobby}?query=${params.get("query")}`;
+    if (session)
+      try {
+        let path;
+        if (!params.get("query")) {
+          path = "lobbyCalendar/lobby/" + lobby;
+        } else {
+          path = `lobbyCalendar/filtered/${lobby}?query=${params.get("query")}`;
+        }
+        const response = await api.get(path, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setCalendar(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
       }
-      const response = await api.get(path, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setCalendar(response.data);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
   };
   useEffect(() => {
     fetchData();

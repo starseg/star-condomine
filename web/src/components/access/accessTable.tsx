@@ -40,24 +40,25 @@ export default function AccessTable({ lobby }: { lobby: string }) {
   const control = params.get("c");
 
   const fetchData = async () => {
-    try {
-      let path;
-      if (!params.get("query")) {
-        path = "access/lobby/" + lobby;
-      } else {
-        path = `access/filtered/${lobby}?query=${params.get("query")}`;
+    if (session)
+      try {
+        let path;
+        if (!params.get("query")) {
+          path = "access/lobby/" + lobby;
+        } else {
+          path = `access/filtered/${lobby}?query=${params.get("query")}`;
+        }
+        const response = await api.get(path, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setAccess(response.data);
+        setPaginatedAccess(response.data.slice(0, itemsPerPage));
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
       }
-      const response = await api.get(path, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setAccess(response.data);
-      setPaginatedAccess(response.data.slice(0, itemsPerPage));
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
   };
   useEffect(() => {
     fetchData();

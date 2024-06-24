@@ -86,16 +86,17 @@ export function ResidentForm() {
   const [addressType, setAddressType] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await api.get("member/address", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
-        setAddressType(response.data);
-      } catch (error) {
-        console.error("Erro ao obter dados:", error);
-      }
+      if (session)
+        try {
+          const response = await api.get("member/address", {
+            headers: {
+              Authorization: `Bearer ${session?.token.user.token}`,
+            },
+          });
+          setAddressType(response.data);
+        } catch (error) {
+          console.error("Erro ao obter dados:", error);
+        }
     };
 
     fetchData();

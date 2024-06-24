@@ -24,16 +24,17 @@ export default function NotificationList() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const { data: session } = useSession();
   const fetchData = async () => {
-    try {
-      const response = await api.get("notification/active", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setNotifications(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("notification/active", {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setNotifications(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
   useEffect(() => {
     fetchData();

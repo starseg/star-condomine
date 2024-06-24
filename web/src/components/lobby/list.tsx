@@ -13,24 +13,26 @@ export default function List() {
   const searchParams = useSearchParams();
   useEffect(() => {
     const fetchData = async () => {
-      const params = new URLSearchParams(searchParams);
-      try {
-        let path;
-        if (params.size == 0) {
-          path = "lobby/filtered";
-        } else {
-          path = "lobby/filtered?query=" + params.get("query");
-        }
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+      if (session) {
+        const params = new URLSearchParams(searchParams);
+        try {
+          let path;
+          if (params.size == 0) {
+            path = "lobby/filtered";
+          } else {
+            path = "lobby/filtered?query=" + params.get("query");
+          }
+          const response = await api.get(path, {
+            headers: {
+              Authorization: `Bearer ${session?.token.user.token}`,
+            },
+          });
 
-        setLobbies(response.data);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Erro ao obter dados:", error);
+          setLobbies(response.data);
+          setIsLoading(false);
+        } catch (error) {
+          console.error("Erro ao obter dados:", error);
+        }
       }
     };
 

@@ -90,12 +90,13 @@ export function ResidentForm() {
   const [addressType, setAddressType] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await api.get("guest/address");
-        setAddressType(response.data);
-      } catch (error) {
-        console.error("Erro ao obter dados:", error);
-      }
+      if (session)
+        try {
+          const response = await api.get("guest/address");
+          setAddressType(response.data);
+        } catch (error) {
+          console.error("Erro ao obter dados:", error);
+        }
     };
 
     fetchData();

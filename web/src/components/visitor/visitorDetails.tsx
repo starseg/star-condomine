@@ -18,16 +18,17 @@ export default function VisitorDetails({ id }: { id: number }) {
   const params = new URLSearchParams(searchParams);
   const control = params.get("c");
   const fetchData = async () => {
-    try {
-      const response = await api.get("visitor/find/" + id, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setVisitor(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("visitor/find/" + id, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setVisitor(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
   useEffect(() => {
     fetchData();

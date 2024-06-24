@@ -25,16 +25,17 @@ export default function UpdateDevice() {
   const [data, setData] = useState<Values>();
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await api.get("device/find/" + params.get("id"), {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
-        setDevice(response.data);
-      } catch (error) {
-        console.error("(Device) Erro ao obter dados:", error);
-      }
+      if (session)
+        try {
+          const response = await api.get("device/find/" + params.get("id"), {
+            headers: {
+              Authorization: `Bearer ${session?.token.user.token}`,
+            },
+          });
+          setDevice(response.data);
+        } catch (error) {
+          console.error("(Device) Erro ao obter dados:", error);
+        }
     };
     fetchData();
   }, [session]);

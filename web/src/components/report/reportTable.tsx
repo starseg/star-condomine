@@ -34,23 +34,24 @@ export default function ReportTable({ lobby }: { lobby: string }) {
   let to = params.get("to") || "";
   let period = { from: from, to: to };
   const fetchData = async () => {
-    try {
-      let path;
-      if (!params.get("from") || !params.get("to")) {
-        path = "access/report/" + lobby;
-      } else {
-        path = `access/report/${lobby}?from=${from}&to=${to}`;
+    if (session)
+      try {
+        let path;
+        if (!params.get("from") || !params.get("to")) {
+          path = "access/report/" + lobby;
+        } else {
+          path = `access/report/${lobby}?from=${from}&to=${to}`;
+        }
+        const response = await api.get(path, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setAccess(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
       }
-      const response = await api.get(path, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setAccess(response.data);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
   };
   useEffect(() => {
     fetchData();

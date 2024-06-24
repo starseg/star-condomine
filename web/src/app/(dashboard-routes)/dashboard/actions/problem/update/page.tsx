@@ -34,19 +34,20 @@ export default function UpdateProblem() {
   const [data, setData] = useState<Values>();
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await api.get(
-          "lobbyProblem/find/" + params.get("id"),
-          {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          }
-        );
-        setProblem(response.data);
-      } catch (error) {
-        console.error("(Problem) Erro ao obter dados:", error);
-      }
+      if (session)
+        try {
+          const response = await api.get(
+            "lobbyProblem/find/" + params.get("id"),
+            {
+              headers: {
+                Authorization: `Bearer ${session?.token.user.token}`,
+              },
+            }
+          );
+          setProblem(response.data);
+        } catch (error) {
+          console.error("(Problem) Erro ao obter dados:", error);
+        }
     };
     fetchData();
   }, [session]);

@@ -65,16 +65,17 @@ export default function UpdateResident() {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await api.get("member/find/" + params.get("id"), {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
-        setMember(response.data);
-      } catch (error) {
-        console.error("(Member) Erro ao obter dados:", error);
-      }
+      if (session)
+        try {
+          const response = await api.get("member/find/" + params.get("id"), {
+            headers: {
+              Authorization: `Bearer ${session?.token.user.token}`,
+            },
+          });
+          setMember(response.data);
+        } catch (error) {
+          console.error("(Member) Erro ao obter dados:", error);
+        }
     };
     fetchData();
   }, [session]);

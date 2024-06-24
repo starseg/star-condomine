@@ -62,16 +62,17 @@ export function DeviceForm() {
   const [deviceModel, setDeviceModel] = useState<DeviceModel[]>([]);
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await api.get("deviceModel", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
-        setDeviceModel(response.data);
-      } catch (error) {
-        console.error("Erro ao obter dados:", error);
-      }
+      if (session)
+        try {
+          const response = await api.get("deviceModel", {
+            headers: {
+              Authorization: `Bearer ${session?.token.user.token}`,
+            },
+          });
+          setDeviceModel(response.data);
+        } catch (error) {
+          console.error("Erro ao obter dados:", error);
+        }
     };
 
     fetchData();

@@ -30,23 +30,24 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
   const params = new URLSearchParams(searchParams);
   const control = params.get("c");
   const fetchData = async () => {
-    try {
-      let path;
-      if (!params.get("query")) {
-        path = "visitor/lobby/" + lobby;
-      } else {
-        path = `visitor/filtered/${lobby}?query=${params.get("query")}`;
+    if (session)
+      try {
+        let path;
+        if (!params.get("query")) {
+          path = "visitor/lobby/" + lobby;
+        } else {
+          path = `visitor/filtered/${lobby}?query=${params.get("query")}`;
+        }
+        const response = await api.get(path, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setVisitors(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
       }
-      const response = await api.get(path, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setVisitors(response.data);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
   };
   useEffect(() => {
     fetchData();

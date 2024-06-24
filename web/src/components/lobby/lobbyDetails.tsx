@@ -17,16 +17,17 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
   const [details, setDetails] = useState<Lobby>();
   const { data: session } = useSession();
   const fetchData = async () => {
-    try {
-      const response = await api.get("lobby/find/" + lobby, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setDetails(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("lobby/find/" + lobby, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setDetails(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
   useEffect(() => {
     fetchData();

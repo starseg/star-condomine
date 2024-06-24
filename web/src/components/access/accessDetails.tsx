@@ -14,16 +14,17 @@ export default function AccessDetails({ id }: { id: number }) {
   const params = new URLSearchParams(searchParams);
   const control = params.get("c");
   const fetchData = async () => {
-    try {
-      const response = await api.get("access/find/" + id, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setAccess(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("access/find/" + id, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setAccess(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
   useEffect(() => {
     fetchData();

@@ -38,16 +38,17 @@ export default function UpdateLobby() {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await api.get("lobby/find/" + params.get("id"), {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
-        setLobby(response.data);
-      } catch (error) {
-        console.error("(Lobby) Erro ao obter dados:", error);
-      }
+      if (session)
+        try {
+          const response = await api.get("lobby/find/" + params.get("id"), {
+            headers: {
+              Authorization: `Bearer ${session?.token.user.token}`,
+            },
+          });
+          setLobby(response.data);
+        } catch (error) {
+          console.error("(Lobby) Erro ao obter dados:", error);
+        }
     };
     fetchData();
   }, [session]);

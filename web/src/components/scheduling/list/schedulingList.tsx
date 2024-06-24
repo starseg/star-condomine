@@ -22,23 +22,24 @@ export default function SchedulingListItems() {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const fetchData = async () => {
-    try {
-      let path;
-      if (!params.get("query")) {
-        path = "schedulingList";
-      } else {
-        path = `schedulingList/filtered?query=${params.get("query")}`;
+    if (session)
+      try {
+        let path;
+        if (!params.get("query")) {
+          path = "schedulingList";
+        } else {
+          path = `schedulingList/filtered?query=${params.get("query")}`;
+        }
+        const response = await api.get(path, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setSchedulingList(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
       }
-      const response = await api.get(path, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setSchedulingList(response.data);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
   };
   useEffect(() => {
     fetchData();

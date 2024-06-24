@@ -30,19 +30,20 @@ export default function CredentialsFullTable() {
   const lobby = params.get("lobby");
 
   const fetchData = async () => {
-    try {
-      let query = "";
-      if (params.get("query")) query = `?query=${params.get("query")}`;
-      const response = await api.get(`tag/lobby/${lobby}${query}`, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setTags(response.data);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        let query = "";
+        if (params.get("query")) query = `?query=${params.get("query")}`;
+        const response = await api.get(`tag/lobby/${lobby}${query}`, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setTags(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
   useEffect(() => {
     fetchData();

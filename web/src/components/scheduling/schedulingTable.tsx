@@ -32,23 +32,24 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
   const control = params.get("c");
   const router = useRouter();
   const fetchData = async () => {
-    try {
-      let path;
-      if (!params.get("query")) {
-        path = "scheduling/lobby/" + lobby;
-      } else {
-        path = `scheduling/filtered/${lobby}?query=${params.get("query")}`;
+    if (session)
+      try {
+        let path;
+        if (!params.get("query")) {
+          path = "scheduling/lobby/" + lobby;
+        } else {
+          path = `scheduling/filtered/${lobby}?query=${params.get("query")}`;
+        }
+        const response = await api.get(path, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setScheduling(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
       }
-      const response = await api.get(path, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setScheduling(response.data);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
   };
   useEffect(() => {
     fetchData();
