@@ -24,9 +24,7 @@ export default async function VisitorList({
         <div className="flex justify-end mb-4">
           <Search placeholder="Buscar..." pagination={false} />
         </div>
-        <div className="max-h-[60vh] overflow-x-auto">
-          <VisitorFullList lobby={lobby} />
-        </div>
+        <VisitorFullList lobby={lobby} />
       </section>
     </>
   );

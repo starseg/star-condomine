@@ -48,6 +48,7 @@ const FormSchema = z.object({
   comments: z.string().min(1, {
     message: "Preencha o este campo",
   }),
+  facial: z.boolean(),
   terms: z.boolean(),
 });
 
@@ -63,6 +64,7 @@ export function VisitorForm() {
       type: "1",
       relation: "",
       comments: "",
+      facial: false,
       terms: false,
     },
   });
@@ -117,9 +119,12 @@ export function VisitorForm() {
         phone: data.phone,
         visitorTypeId: Number(data.type),
         relation: data.relation,
-        comments: data.comments,
+        comments: data.facial
+          ? "FACIAL AUTORIZADA - ".concat(data.comments)
+          : "FACIAL NÃO AUTORIZADA - ".concat(data.comments),
         startDate: null,
         endDate: null,
+        status: "INACTIVE",
         lobbyId: decrypt(lobby),
       };
       await api.post("guest/visitor", info);
@@ -302,19 +307,44 @@ export function VisitorForm() {
           name="comments"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
-                Endereço do proprietário ( Lote | Apto | Título | Gleba )
-              </FormLabel>
+              <FormLabel>Nome e endereço do proprietário</FormLabel>
               <FormControl>
                 <Input
                   type="text"
-                  placeholder="Escreva aqui qual é o endereço do proprietário"
+                  placeholder="Escreva aqui qual é o nome completo e o endereço do proprietário"
                   autoComplete="off"
                   {...field}
                 />
               </FormControl>
               <FormMessage />
-              <FormDescription>Exemplo: LOTE 32</FormDescription>
+              <FormDescription>Exemplo: João Silva, LOTE 32</FormDescription>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="facial"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel>
+                  Autorizar acesso facial, confirmando ciência do{" "}
+                  <Link
+                    href="/Termo_de_responsabilidade_de_cadastro_de_visitante.pdf"
+                    target="_blank"
+                    className="underline text-primary"
+                  >
+                    termo de responsabilidade
+                  </Link>
+                  .
+                </FormLabel>
+              </div>
             </FormItem>
           )}
         />

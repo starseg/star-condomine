@@ -92,6 +92,7 @@ export const createVisitor = async (
       endDate,
       relation,
       comments,
+      status,
       visitorTypeId,
       lobbyId,
     } = req.body;
@@ -106,6 +107,7 @@ export const createVisitor = async (
         endDate,
         relation,
         comments,
+        status,
         visitorTypeId,
         lobbyId,
       },
