@@ -25,11 +25,15 @@ export const getScheduling = async (
         visitor: {
           select: {
             name: true,
+            cpf: true,
+            rg: true,
           },
         },
         member: {
           select: {
             name: true,
+            cpf: true,
+            rg: true,
           },
         },
         operator: {
@@ -151,12 +155,14 @@ export const getSchedulingsByLobby = async (
           select: {
             name: true,
             cpf: true,
+            rg: true,
           },
         },
         member: {
           select: {
             name: true,
             cpf: true,
+            rg: true,
           },
         },
       },
@@ -192,12 +198,14 @@ export const getFilteredSchedulings = async (
           select: {
             name: true,
             cpf: true,
+            rg: true,
           },
         },
         member: {
           select: {
             name: true,
             cpf: true,
+            rg: true,
           },
         },
       },
@@ -226,6 +234,6 @@ export const getActiveSchedulingsByVisitor = async (
     });
     res.json(scheduling);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao buscar os acessos" });
+    res.status(500).json({ error: "Erro ao buscar os agendamentos" });
   }
 };

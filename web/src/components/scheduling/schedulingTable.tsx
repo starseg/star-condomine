@@ -113,7 +113,15 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
               return (
                 <TableRow key={item.schedulingId}>
                   <TableCell>
-                    <p className="max-w-[25ch]">{item.visitor.name}</p>
+                    {item.visitor.cpf === "" ||
+                    item.visitor.rg === "" ||
+                    item.visitor.name.split(" ").length < 2 ? (
+                      <p className="max-w-[25ch] text-amber-400">
+                        ⚠ {item.visitor.name}
+                      </p>
+                    ) : (
+                      <p className="max-w-[25ch]">{item.visitor.name}</p>
+                    )}
                   </TableCell>
                   <TableCell>
                     <p className="max-w-[25ch]">{item.member.name}</p>

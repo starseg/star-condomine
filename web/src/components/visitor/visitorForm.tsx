@@ -21,7 +21,7 @@ import { MaskedInput } from "../maskedInput";
 import { useEffect, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -32,6 +32,16 @@ import {
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Textarea } from "../ui/textarea";
 import { handleFileUpload } from "@/lib/firebase-upload";
+import { format, addDays } from "date-fns";
+import { Calendar } from "../ui/calendar";
+import { ptBR } from "date-fns/locale";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -53,6 +63,14 @@ const FormSchema = z.object({
   reason: z.string().optional(),
   local: z.string().optional(),
   comments: z.string().optional(),
+
+  schedule: z.boolean(),
+  scheduleHost: z.number().optional(),
+  scheduleReason: z.string().optional(),
+  scheduleLocation: z.string().optional(),
+  scheduleComments: z.string().optional(),
+  startDate: z.date(),
+  endDate: z.date(),
 });
 
 export function VisitorForm() {
@@ -72,6 +90,13 @@ export function VisitorForm() {
       reason: "",
       local: "",
       comments: "",
+      schedule: false,
+      scheduleHost: 0,
+      scheduleReason: "",
+      scheduleLocation: "",
+      scheduleComments: "",
+      startDate: undefined,
+      endDate: undefined,
     },
   });
 
@@ -139,12 +164,14 @@ export function VisitorForm() {
   });
 
   const [isAccessing, setIsAccessing] = useState(false);
+  const [scheduling, setScheduling] = useState(false);
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
     // PEGA O ID DA PORTARIA
     const lobbyParam = params.get("lobby");
     const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
+    const operator = session?.payload.user.id || null;
 
     // FAZ O UPLOAD DA FOTO
     let file;
@@ -180,7 +207,6 @@ export function VisitorForm() {
 
       if (isAccessing) {
         try {
-          const operator = session?.payload.user.id || null;
           const access = {
             memberId: Number(data.host),
             visitorId: Number(response.data.visitorId),
@@ -199,14 +225,37 @@ export function VisitorForm() {
         } catch (error) {
           console.error("Erro ao enviar dados para a API:", error);
           throw error;
-        } finally {
-          setIsSendind(false);
+        }
+      }
+      if (scheduling) {
+        const info = {
+          startDate: data.startDate.toISOString(),
+          endDate: data.endDate.toISOString(),
+          location: data.scheduleLocation,
+          reason: data.scheduleReason,
+          comments: data.scheduleComments,
+          memberId: Number(data.scheduleHost),
+          visitorId: Number(response.data.visitorId),
+          operatorId: Number(operator),
+          lobbyId: Number(lobby),
+        };
+        try {
+          await api.post("scheduling", info, {
+            headers: {
+              Authorization: `Bearer ${session?.token.user.token}`,
+            },
+          });
+        } catch (error) {
+          console.error("Erro ao enviar dados para a API:", error);
+          throw error;
         }
       }
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
       throw error;
+    } finally {
+      setIsSendind(false);
     }
   };
 
@@ -507,6 +556,257 @@ export function VisitorForm() {
               <FormField
                 control={form.control}
                 name="comments"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Observações</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Alguma informação adicional..."
+                        autoComplete="off"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="schedule"
+            onClick={() => {
+              setScheduling(!scheduling);
+            }}
+          />
+          <label
+            htmlFor="schedule"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            Registrar agendamento?
+          </label>
+        </div>
+
+        <div>
+          {scheduling && (
+            <div className="space-y-6">
+              <FormField
+                control={form.control}
+                name="scheduleHost"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Visitado</FormLabel>
+                    <FormControl>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                "justify-between",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value
+                                ? items.find(
+                                    (item) => item.value === field.value
+                                  )?.label
+                                : "Selecione a pessoa visitada"}
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="p-0 max-h-[60vh] overflow-x-auto">
+                          <Command className="w-full">
+                            <CommandInput placeholder="Buscar pessoa..." />
+                            <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
+                            <CommandGroup>
+                              {items.map((item) => (
+                                <CommandItem
+                                  value={item.label}
+                                  key={item.value}
+                                  onSelect={() => {
+                                    form.setValue("scheduleHost", item.value);
+                                  }}
+                                  className={cn(
+                                    item.comments.length > 0 &&
+                                      "text-yellow-400 font-semibold"
+                                  )}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      item.value === field.value
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                  {item.label}
+                                  {item.address ? (
+                                    <>
+                                      {" "}
+                                      - {item.addressType} {item.address}
+                                    </>
+                                  ) : (
+                                    ""
+                                  )}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="scheduleReason"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Motivo</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="Por que está sendo feito esse agendamento?"
+                        autoComplete="off"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="scheduleLocation"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Local da visita</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="Para onde está indo? Casa, Salão de Festas..."
+                        autoComplete="off"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex gap-2">
+                <FormField
+                  control={form.control}
+                  name="startDate"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Validade do acesso</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-[240px] pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP", { locale: ptBR })
+                              ) : (
+                                <span>Data de início</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            locale={ptBR}
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="endDate"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel className="text-transparent">a</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-[240px] pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP", { locale: ptBR })
+                              ) : (
+                                <span>Data de fim</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          className="w-auto p-2 space-y-2"
+                          align="start"
+                        >
+                          <Select
+                            onValueChange={(value) =>
+                              form.setValue(
+                                "endDate",
+                                addDays(new Date(), parseInt(value))
+                              )
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione" />
+                            </SelectTrigger>
+                            <SelectContent position="popper">
+                              <SelectItem value="1">Amanhã</SelectItem>
+                              <SelectItem value="7">Em uma semana</SelectItem>
+                              <SelectItem value="30">Em um mês</SelectItem>
+                              <SelectItem value="365">Em um ano</SelectItem>
+                              <SelectItem value="3650">Em 10 anos</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <div className="rounded-md border">
+                            <Calendar
+                              locale={ptBR}
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              initialFocus
+                            />
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="scheduleComments"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Observações</FormLabel>

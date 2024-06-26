@@ -292,7 +292,7 @@ export function SchedulingForm() {
               <FormControl>
                 <Input
                   type="text"
-                  placeholder="Por que está sendo feita essa visita?"
+                  placeholder="Por que está sendo feito esse agendamento?"
                   autoComplete="off"
                   {...field}
                 />

@@ -12,10 +12,14 @@ interface Scheduling {
   memberId: number;
   member: {
     name: string;
+    cpf: string;
+    rg: string;
   };
   visitorId: number;
   visitor: {
     name: string;
+    cpf: string;
+    rg: string;
   };
   operatorId: number;
   operator: {
