@@ -3,7 +3,6 @@ import * as z from "zod";
 import api from "@/lib/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Form,
@@ -69,7 +68,6 @@ export function VisitorForm() {
     },
   });
 
-  const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
@@ -92,7 +90,7 @@ export function VisitorForm() {
 
   useEffect(() => {
     fetchVisitorTypes();
-  }, [session]);
+  }, []);
 
   const [isSendind, setIsSending] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {

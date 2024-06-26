@@ -4,7 +4,6 @@ import * as z from "zod";
 import api from "@/lib/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Form,
@@ -33,7 +32,6 @@ import {
   CommandInput,
   CommandItem,
 } from "@/components/ui/command";
-import { PlusCircle, Trash } from "@phosphor-icons/react/dist/ssr";
 import { handleFileUpload } from "@/lib/firebase-upload";
 import { decrypt } from "@/lib/crypto";
 import Image from "next/image";
@@ -80,7 +78,6 @@ export function ResidentForm() {
     },
   });
 
-  const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
@@ -90,17 +87,16 @@ export function ResidentForm() {
   const [addressType, setAddressType] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
-      if (session)
-        try {
-          const response = await api.get("guest/address");
-          setAddressType(response.data);
-        } catch (error) {
-          console.error("Erro ao obter dados:", error);
-        }
+      try {
+        const response = await api.get("guest/address");
+        setAddressType(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
     };
 
     fetchData();
-  }, [session]);
+  }, []);
 
   interface item {
     value: number;
