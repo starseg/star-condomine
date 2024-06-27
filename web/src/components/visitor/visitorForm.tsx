@@ -69,8 +69,8 @@ const FormSchema = z.object({
   scheduleReason: z.string().optional(),
   scheduleLocation: z.string().optional(),
   scheduleComments: z.string().optional(),
-  startDate: z.date(),
-  endDate: z.date(),
+  startDate: z.date().optional(),
+  endDate: z.date().optional(),
 });
 
 export function VisitorForm() {
@@ -227,7 +227,11 @@ export function VisitorForm() {
           throw error;
         }
       }
-      if (scheduling) {
+      if (
+        scheduling &&
+        data.startDate !== undefined &&
+        data.endDate !== undefined
+      ) {
         const info = {
           startDate: data.startDate.toISOString(),
           endDate: data.endDate.toISOString(),
