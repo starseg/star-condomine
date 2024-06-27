@@ -81,11 +81,18 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
                 visitor.lobby.exitControl === "ACTIVE";
               return (
                 <TableRow key={visitor.visitorId}>
-                  <TableCell>
-                    {visitor.cpf.length > 0 && visitor.cpf} <br />
-                    {visitor.rg.length > 0 && visitor.rg}
+                  <TableCell className="flex flex-col">
+                    {visitor.cpf.length > 0 && <p>{visitor.cpf}</p>}
+                    {visitor.rg.length > 0 && <p>{visitor.rg}</p>}
                   </TableCell>
                   <TableCell>
+                    {visitor.cpf === "" ||
+                    visitor.rg === "" ||
+                    visitor.name.split(" ").length < 2 ? (
+                      <p className="text-amber-400 text-lg">⚠</p>
+                    ) : (
+                      ""
+                    )}
                     {openAccess ? (
                       <p className="text-red-400 font-semibold">
                         {visitor.name}
