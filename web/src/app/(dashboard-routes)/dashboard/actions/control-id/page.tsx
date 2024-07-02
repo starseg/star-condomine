@@ -1,7 +1,9 @@
 import MemberGroupForm from "@/components/control-id/member-group/memberGroupForm";
 import MemberGroupTable from "@/components/control-id/member-group/memberGroupTable";
 import { Menu } from "@/components/menu";
+import { Button } from "@/components/ui/button";
 import { ControliDUpdateProvider } from "@/contexts/control-id-update-context";
+import { ArrowsClockwise } from "@phosphor-icons/react/dist/ssr";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -26,6 +28,11 @@ export default async function ControliDConfig({
           <MemberGroupForm />
         </div>
         <MemberGroupTable />
+        <div className="mt-4">
+          <Button className="flex items-center gap-2">
+            <ArrowsClockwise size={22} /> Sincronizar
+          </Button>
+        </div>
       </section>
     </ControliDUpdateProvider>
   );

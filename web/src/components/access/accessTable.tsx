@@ -3,7 +3,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -38,6 +37,7 @@ export default function AccessTable({ lobby }: { lobby: string }) {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const control = params.get("c");
+  const itemsPerPage = 10;
 
   const fetchData = async () => {
     if (session)
@@ -64,7 +64,6 @@ export default function AccessTable({ lobby }: { lobby: string }) {
     fetchData();
   }, [session, searchParams]);
 
-  const itemsPerPage = 10;
   const totalOfPages = Math.ceil(access.length / itemsPerPage);
 
   useEffect(() => {

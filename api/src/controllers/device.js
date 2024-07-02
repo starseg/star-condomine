@@ -7,7 +7,15 @@ exports.getDeviceModels = exports.getFilteredDevices = exports.getDeviceByLobby 
 const db_1 = __importDefault(require("../db"));
 const getAllDevices = async (req, res) => {
     try {
-        const device = await db_1.default.device.findMany();
+        const device = await db_1.default.device.findMany({
+            include: {
+                lobby: {
+                    select: {
+                        name: true,
+                    },
+                },
+            },
+        });
         res.json(device);
     }
     catch (error) {

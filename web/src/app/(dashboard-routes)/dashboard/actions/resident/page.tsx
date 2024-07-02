@@ -29,13 +29,11 @@ export default async function Member({
     <>
       <Menu url={`/dashboard/actions?id=${lobby}`} />
       <section className="max-w-5xl mx-auto mb-24">
-        <h1 className="text-4xl text-center">Moradores</h1>
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-between mb-4">
+          <h1 className="text-4xl text-center">Moradores</h1>
           <Search placeholder="Buscar..." pagination={false} />
         </div>
-        <div className="max-h-[60vh] overflow-x-auto">
-          <MemberTable lobby={lobby} />
-        </div>
+        <MemberTable lobby={lobby} />
         <div className="mt-6 flex gap-4 items-center">
           <Link
             href={`resident/new?lobby=${lobby}`}

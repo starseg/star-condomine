@@ -6,7 +6,15 @@ export const getAllDevices = async (
   res: Response
 ): Promise<void> => {
   try {
-    const device = await prisma.device.findMany();
+    const device = await prisma.device.findMany({
+      include: {
+        lobby: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
     res.json(device);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar os dispositivos" });

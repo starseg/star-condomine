@@ -19,8 +19,8 @@ export default async function Access({
     <>
       <Menu url={`/dashboard/actions?id=${lobby}`} />
       <section className="max-w-5xl mx-auto mb-24">
-        <h1 className="text-4xl text-center">Acessos</h1>
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-between mb-4">
+          <h1 className="text-4xl text-center">Acessos</h1>
           <Search placeholder="Buscar..." pagination={false} />
         </div>
         <AccessTable lobby={lobby} />

@@ -25,8 +25,8 @@ export default async function Member({
     <>
       <Menu url={`/dashboard/actions?id=${lobby}`} />
       <section className="max-w-5xl mx-auto mb-24">
-        <h1 className="text-4xl text-center">Funcionários</h1>
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-between mb-4">
+          <h1 className="text-4xl text-center">Funcionários</h1>
           <Search placeholder="Buscar..." pagination={false} />
         </div>
         <div className="max-h-[60vh] overflow-x-auto">

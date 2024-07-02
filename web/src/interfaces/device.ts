@@ -11,4 +11,7 @@ interface Device {
   deviceModel: {
     model: string;
   };
+  lobby: {
+    name: string;
+  };
 }

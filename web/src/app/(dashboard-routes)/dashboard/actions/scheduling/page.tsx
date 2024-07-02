@@ -24,19 +24,11 @@ export default async function Scheduling({
     <>
       <Menu url={`/dashboard/actions?id=${lobby}`} />
       <section className="max-w-5xl mx-auto mb-24">
-        <h1 className="text-4xl text-center">Agendamentos</h1>
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-between mb-4">
+          <h1 className="text-4xl text-center">Agendamentos</h1>
           <Search placeholder="Buscar..." pagination={false} />
         </div>
-        <div className="max-h-[60vh] overflow-x-auto">
-          <SchedulingTable lobby={lobby} />
-        </div>
-        <div className="mt-4 flex items-center gap-2  text-stone-400 font-medium">
-          <div className="rounded-full w-6 h-6 bg-amber-500 text-stone-900 text-center">
-            ⚠
-          </div>
-          : cadastro incompleto
-        </div>
+        <SchedulingTable lobby={lobby} />
         <div className="mt-4 flex gap-4 items-center">
           <Link
             href={`scheduling/new?lobby=${lobby}`}

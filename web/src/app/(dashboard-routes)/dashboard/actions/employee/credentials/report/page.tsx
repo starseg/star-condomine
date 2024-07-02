@@ -12,10 +12,10 @@ export default async function CredentialsReport() {
     <>
       <Menu />
       <section className="max-w-5xl mx-auto mb-24">
-        <h1 className="text-4xl text-center mb-2">
-          Credenciais dos proprietários
-        </h1>
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-between mb-4">
+          <h1 className="text-4xl text-center mb-2">
+            Credenciais dos proprietários
+          </h1>
           <Search placeholder="Buscar..." pagination={false} />
         </div>
         <div>

@@ -71,7 +71,7 @@ export default function VehicleTable({ lobby }: { lobby: string }) {
       ) : (
         <>
           <div className="max-h-[60vh] overflow-x-auto">
-            <Table>
+            <Table className="border border-stone-800">
               <TableHeader className="bg-stone-800 font-semibold">
                 <TableRow>
                   <TableHead>Tipo</TableHead>
