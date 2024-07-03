@@ -32,6 +32,7 @@ import {
 } from "../ui/command";
 import { PlusCircle, Trash } from "@phosphor-icons/react/dist/ssr";
 import { handleFileUpload } from "@/lib/firebase-upload";
+import InputImage from "../form/inputImage";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -301,25 +302,7 @@ export function ResidentForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
       >
-        <FormField
-          control={form.control}
-          name="profileUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Foto</FormLabel>
-              <FormControl>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) =>
-                    field.onChange(e.target.files ? e.target.files[0] : null)
-                  }
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <InputImage control={form.control} name="profileUrl" />
         <FormField
           control={form.control}
           name="name"

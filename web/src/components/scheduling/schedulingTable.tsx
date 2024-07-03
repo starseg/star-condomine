@@ -225,7 +225,7 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
               </TableBody>
             </Table>
           </div>
-          <div className="flex justify-between mr-4">
+          <div className="flex justify-between mr-4 mt-2">
             <div className="flex items-center gap-2  text-stone-400 font-medium">
               <div className="rounded-full w-6 h-6 bg-amber-500 text-stone-900 text-center">
                 ⚠

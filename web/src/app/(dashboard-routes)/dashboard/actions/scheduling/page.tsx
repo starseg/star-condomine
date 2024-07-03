@@ -29,7 +29,7 @@ export default async function Scheduling({
           <Search placeholder="Buscar..." pagination={false} />
         </div>
         <SchedulingTable lobby={lobby} />
-        <div className="mt-4 flex gap-4 items-center">
+        <div className="mt-2 flex gap-4 items-center">
           <Link
             href={`scheduling/new?lobby=${lobby}`}
             className={buttonVariants({ variant: "default" })}
