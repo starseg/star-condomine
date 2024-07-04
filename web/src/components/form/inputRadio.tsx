@@ -12,7 +12,7 @@ interface RadioInputProps {
   name: string;
   label: string;
   object: any[];
-  idExtractor: (item: any) => number;
+  idExtractor: (item: any) => number | string;
   descriptionExtractor: (item: any) => string;
 }
 

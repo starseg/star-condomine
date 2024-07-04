@@ -2,9 +2,6 @@
 
 import * as z from "zod";
 import api from "@/lib/axios";
-import { initializeApp } from "firebase/app";
-import { firebaseConfig } from "@/firebase";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
@@ -17,15 +14,16 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "../ui/textarea";
-import { MaskedInput } from "../maskedInput";
 import { useState } from "react";
 import { PlusCircle } from "@phosphor-icons/react/dist/ssr";
 import { handleFileUpload } from "@/lib/firebase-upload";
 import InputImage from "../form/inputImage";
+import MaskInput from "../form/inputMask";
+import DefaultTextarea from "../form/textareaDefault";
+import DefaultCheckbox from "../form/checkboxDefault";
+import DefaultInput from "../form/inputDefault";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -77,16 +75,17 @@ export function EmployeeForm() {
   }
   const [tagTypes, setTagTypes] = useState<ITagTypes[]>([]);
   const fetchTagTypes = async () => {
-    try {
-      const types = await api.get("tag/types", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setTagTypes(types.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const types = await api.get("tag/types", {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setTagTypes(types.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
   fetchTagTypes();
   // RETORNA O ID DO TIPO DA TAG
@@ -213,145 +212,60 @@ export function EmployeeForm() {
         className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
       >
         <InputImage control={form.control} name="profileUrl" />
-        <FormField
+
+        <DefaultInput
           control={form.control}
           name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite o nome do funcionário"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="cpf"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>CPF</FormLabel>
-              <FormControl>
-                <MaskedInput
-                  mask="999.999.999/99"
-                  placeholder="Digite o CPF do funcionário"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="rg"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>RG</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Digite o RG do funcionário"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="position"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Cargo</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite o cargo do funcionário"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="accessPeriod"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Período de acesso</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Descreva os dias da semana e os horários"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Nome"
+          placeholder="Digite o nome do funcionário"
         />
 
-        <FormField
+        <MaskInput
+          control={form.control}
+          mask="999.999.999/99"
+          name="cpf"
+          label="CPF"
+          placeholder="Digite o CPF do funcionário"
+        />
+
+        <DefaultInput
+          control={form.control}
+          name="rg"
+          label="RG"
+          placeholder="Digite o RG do funcionário"
+        />
+
+        <DefaultInput
+          control={form.control}
+          name="position"
+          label="Cargo"
+          placeholder="Digite o cargo do funcionário"
+        />
+
+        <DefaultTextarea
+          control={form.control}
+          name="accessPeriod"
+          label="Período de acesso"
+          placeholder="Descreva os dias da semana e os horários"
+        />
+
+        <DefaultCheckbox
           control={form.control}
           name="faceAccess"
-          render={({ field }) => (
-            <div className="flex flex-col gap-4">
-              <FormLabel>Formas de acesso</FormLabel>
-              <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <FormLabel className="font-normal">Facial</FormLabel>
-                <FormMessage />
-              </FormItem>
-            </div>
-          )}
+          title="Formas de acesso"
+          label="Facial"
         />
-        <FormField
+
+        <DefaultCheckbox
           control={form.control}
           name="biometricAccess"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <FormLabel className="font-normal">Biometria</FormLabel>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Biometria"
         />
-        <FormField
+
+        <DefaultCheckbox
           control={form.control}
           name="remoteControlAccess"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <FormLabel className="font-normal">Controle remoto</FormLabel>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Controle remoto"
         />
 
         <FormField
@@ -432,41 +346,18 @@ export function EmployeeForm() {
           )}
         />
 
-        <FormField
+        <DefaultInput
           control={form.control}
           name="passwordAccess"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Senha</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Senha numérica"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Senha"
+          placeholder="Senha numérica"
         />
 
-        <FormField
+        <DefaultTextarea
           control={form.control}
           name="comments"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Observações</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Alguma informação adicional..."
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Observações"
+          placeholder="Alguma informação adicional..."
         />
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
           {isSending ? "Registrando..." : "Registrar"}

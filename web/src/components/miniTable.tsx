@@ -17,7 +17,9 @@ export default function MiniTable({
       </h2>
       <div className="grid grid-cols-7 bg-stone-800 rounded-b py-1 px-4">
         {cols.map((col) => (
-          <p className="col-span-2">{col}</p>
+          <p key={Math.random()} className="col-span-2">
+            {col}
+          </p>
         ))}
         <p>Ações</p>
       </div>

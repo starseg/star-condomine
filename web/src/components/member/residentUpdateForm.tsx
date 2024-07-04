@@ -33,6 +33,13 @@ import {
 import { PlusCircle, Trash, UserCircle } from "@phosphor-icons/react/dist/ssr";
 import { deleteFile, handleFileUpload } from "@/lib/firebase-upload";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import InputImage from "../form/inputImage";
+import DefaultInput from "../form/inputDefault";
+import MaskInput from "../form/inputMask";
+import DefaultCombobox from "../form/comboboxDefault";
+import DefaultCheckbox from "../form/checkboxDefault";
+import DefaultTextarea from "../form/textareaDefault";
+import RadioInput from "../form/inputRadio";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -52,7 +59,6 @@ const FormSchema = z.object({
 
   status: z.enum(["ACTIVE", "INACTIVE"]),
 });
-
 interface Member {
   memberId: number;
   type: string;
@@ -146,16 +152,17 @@ export function ResidentUpdateForm({
   }, []);
 
   const fetchAddressData = async () => {
-    try {
-      const response = await api.get("member/address", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setAddressType(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("member/address", {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setAddressType(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
 
   useEffect(() => {
@@ -178,6 +185,17 @@ export function ResidentUpdateForm({
   const deleteTelephone = (value: string) => {
     setPhoneNumber(phoneNumber.filter((item) => item !== value));
   };
+
+  const status = [
+    {
+      value: "ACTIVE",
+      label: "Ativo",
+    },
+    {
+      value: "INACTIVE",
+      label: "Inativo",
+    },
+  ];
 
   const [removeFile, setRemoveFile] = useState(false);
   const [isSending, setIsSendind] = useState(false);
@@ -294,30 +312,8 @@ export function ResidentUpdateForm({
             </div>
           )}
           <div className="w-10/12">
-            <FormField
-              control={form.control}
-              name="profileUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nova foto</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.files ? e.target.files[0] : null
-                        )
-                      }
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Não preencha esse campo se quiser manter o arquivo anterior
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <InputImage control={form.control} name="profileUrl" />
+
             <div className="flex items-center space-x-2 mt-2">
               <Checkbox
                 id="check"
@@ -334,76 +330,35 @@ export function ResidentUpdateForm({
             </div>
           </div>
         </div>
-        <FormField
+
+        <DefaultInput
           control={form.control}
           name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite o nome do morador"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Nome completo"
+          placeholder="Digite o nome completo do morador"
         />
-        <FormField
+
+        <MaskInput
           control={form.control}
+          mask="999.999.999/99"
           name="cpf"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>CPF</FormLabel>
-              <FormControl>
-                <MaskedInput
-                  mask="999.999.999/99"
-                  placeholder="Digite o CPF do morador"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="CPF"
+          placeholder="Digite o CPF do morador"
         />
-        <FormField
+
+        <DefaultInput
           control={form.control}
           name="rg"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>RG</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Digite o RG do morador"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="RG"
+          placeholder="Digite o RG do morador"
         />
-        <FormField
+
+        <DefaultInput
           control={form.control}
+          type="email"
           name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>E-mail</FormLabel>
-              <FormControl>
-                <Input
-                  type="email"
-                  placeholder="Digite o email do morador"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="E-mail"
+          placeholder="Digite o e-mail do morador"
         />
 
         <FormField
@@ -455,200 +410,67 @@ export function ResidentUpdateForm({
             </FormItem>
           )}
         />
-        <FormField
+
+        <DefaultCombobox
           control={form.control}
           name="addressType"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Tipo de endereço</FormLabel>
-              <FormControl>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                          "justify-between",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value
-                          ? items.find((item) => item.value === field.value)
-                              ?.label
-                          : "Selecione o tipo do endereço"}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="p-0 max-h-[60vh] overflow-x-auto">
-                    <Command className="w-full">
-                      <CommandInput placeholder="Buscar tipo..." />
-                      <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
-                      <CommandGroup>
-                        {items.map((item) => (
-                          <CommandItem
-                            value={item.label}
-                            key={item.value}
-                            onSelect={() => {
-                              form.setValue("addressType", item.value);
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                item.value === field.value
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                            {item.label}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="address"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Descrição do endereço</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite o endereço do morador"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Tipo de endereço"
+          object={items}
+          selectLabel="Selecione o tipo do endereço"
+          searchLabel="Buscar tipo..."
+          onSelect={(value: number) => {
+            form.setValue("addressType", value);
+          }}
         />
 
-        <FormField
+        <DefaultInput
+          control={form.control}
+          name="address"
+          label="Descrição do endereço"
+          placeholder="Digite o endereço do morador"
+        />
+
+        <DefaultCheckbox
           control={form.control}
           name="faceAccess"
-          render={({ field }) => (
-            <div className="flex flex-col gap-4">
-              <FormLabel>Formas de acesso</FormLabel>
-              <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <FormLabel className="font-normal">Facial</FormLabel>
-                <FormMessage />
-              </FormItem>
-            </div>
-          )}
+          title="Formas de acesso"
+          label="Facial"
         />
-        <FormField
+
+        <DefaultCheckbox
           control={form.control}
           name="biometricAccess"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <FormLabel className="font-normal">Biometria</FormLabel>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Biometria"
         />
-        <FormField
+
+        <DefaultCheckbox
           control={form.control}
           name="remoteControlAccess"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <FormLabel className="font-normal">Controle remoto</FormLabel>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Controle remoto"
         />
-        <FormField
+        <DefaultInput
           control={form.control}
           name="passwordAccess"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Senha</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite a senha do morador"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Senha"
+          placeholder="Senha numérica"
         />
-        <FormField
-          control={form.control}
-          name="comments"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Observações</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Alguma informação adicional..."
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
+
+        <RadioInput
           control={form.control}
           name="status"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Status</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="ACTIVE" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Ativo</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="INACTIVE" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Inativo</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Status"
+          object={status}
+          idExtractor={(item) => item.value}
+          descriptionExtractor={(item) => item.label}
         />
+
+        <DefaultTextarea
+          control={form.control}
+          name="comments"
+          label="Observações"
+          placeholder="Alguma informação adicional..."
+        />
+
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
           {isSending ? "Atualizando..." : "Atualizar"}
         </Button>

@@ -6,24 +6,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { MaskedInput } from "../maskedInput";
 import { useEffect, useState } from "react";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { Textarea } from "../ui/textarea";
 import { deleteFile, handleFileUpload } from "@/lib/firebase-upload";
 import { Checkbox } from "../ui/checkbox";
 import { UserCircle } from "@phosphor-icons/react/dist/ssr";
+import InputImage from "../form/inputImage";
+import DefaultInput from "../form/inputDefault";
+import MaskInput from "../form/inputMask";
+import RadioInput from "../form/inputRadio";
+import DefaultTextarea from "../form/textareaDefault";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -36,7 +29,6 @@ const FormSchema = z.object({
   comments: z.string().optional(),
   status: z.enum(["ACTIVE", "INACTIVE"]),
 });
-
 interface Visitor {
   visitorId: number;
   profileUrl: string;
@@ -89,21 +81,33 @@ export function VisitorUpdateForm({
 
   const [visitorType, setVisitorType] = useState<VisitorTypes[]>([]);
   const fetchVisitorTypes = async () => {
-    try {
-      const response = await api.get("visitor/types", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setVisitorType(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("visitor/types", {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setVisitorType(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
 
   useEffect(() => {
     fetchVisitorTypes();
   }, [session]);
+
+  const status = [
+    {
+      value: "ACTIVE",
+      label: "Ativo",
+    },
+    {
+      value: "INACTIVE",
+      label: "Inativo",
+    },
+  ];
 
   const [removeFile, setRemoveFile] = useState(false);
   const [isSending, setIsSendind] = useState(false);
@@ -175,30 +179,8 @@ export function VisitorUpdateForm({
             </div>
           )}
           <div className="w-10/12">
-            <FormField
-              control={form.control}
-              name="profileUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nova foto</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.files ? e.target.files[0] : null
-                        )
-                      }
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Não preencha esse campo se quiser manter o arquivo anterior
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <InputImage control={form.control} name="profileUrl" />
+
             <div className="flex items-center space-x-2 mt-2">
               <Checkbox
                 id="check"
@@ -215,179 +197,68 @@ export function VisitorUpdateForm({
             </div>
           </div>
         </div>
-        <FormField
+
+        <DefaultInput
           control={form.control}
           name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome completo</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite o nome do visitante"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Nome completo"
+          placeholder="Digite o nome e sobrenome do visitante"
         />
-        <FormField
+
+        <DefaultInput
           control={form.control}
           name="cpf"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>CPF/CNPJ</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Digite o CPF ou CNPJ do visitante"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="CPF/CNPJ"
+          placeholder="Digite o CPF ou CNPJ do visitante"
         />
-        <FormField
+
+        <DefaultInput
           control={form.control}
           name="rg"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>RG</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Digite o RG do visitante"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Telefone</FormLabel>
-              <FormControl>
-                <MaskedInput
-                  mask="(99) 99999-9999"
-                  type="text"
-                  placeholder="Digite o telefone do visitante"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="RG"
+          placeholder="Digite o RG do visitante"
         />
 
-        <FormField
+        <MaskInput
+          control={form.control}
+          mask="(99) 99999-9999"
+          name="phone"
+          label="Telefone"
+          placeholder="Digite o telefone do visitante"
+        />
+
+        <RadioInput
           control={form.control}
           name="type"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tipo de visitante</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  {visitorType.map((type) => {
-                    return (
-                      <FormItem
-                        className="flex items-center space-x-3 space-y-0"
-                        key={type.visitorTypeId}
-                      >
-                        <FormControl>
-                          <RadioGroupItem
-                            value={type.visitorTypeId.toString()}
-                          />
-                        </FormControl>
-                        <FormLabel className="font-normal">
-                          {type.description}
-                        </FormLabel>
-                      </FormItem>
-                    );
-                  })}
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Tipo de visitante"
+          object={visitorType}
+          idExtractor={(item) => item.visitorTypeId}
+          descriptionExtractor={(item) => item.description}
         />
 
-        <FormField
+        <DefaultInput
           control={form.control}
           name="relation"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Relação / Empresa</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Qual é a relação desse visitante com a portaria?"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Relação / Empresa"
+          placeholder="Qual é a relação desse visitante com a portaria?"
         />
 
-        <FormField
+        <RadioInput
           control={form.control}
           name="status"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Status</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="ACTIVE" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Ativo</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="INACTIVE" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Bloqueado</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Status"
+          object={status}
+          idExtractor={(item) => item.value}
+          descriptionExtractor={(item) => item.label}
         />
-        <FormField
+
+        <DefaultTextarea
           control={form.control}
           name="comments"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Observações</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Alguma informação adicional..."
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Observações"
+          placeholder="Alguma informação adicional..."
         />
+
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
           {isSending ? "Atualizando..." : "Atualizar"}
         </Button>

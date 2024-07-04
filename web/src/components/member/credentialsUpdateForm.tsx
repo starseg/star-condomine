@@ -4,32 +4,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import api from "@/lib/axios";
 import { useEffect, useState } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown } from "lucide-react";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "../ui/command";
 import { useSearchParams } from "next/navigation";
-import { Textarea } from "../ui/textarea";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import DefaultCombobox from "../form/comboboxDefault";
+import DefaultInput from "../form/inputDefault";
+import DefaultTextarea from "../form/textareaDefault";
+import RadioInput from "../form/inputRadio";
 
 const FormSchema = z.object({
   type: z.number(),
@@ -95,6 +79,17 @@ export function CredentialsUpdateForm({
     })
   );
 
+  const status = [
+    {
+      value: "ACTIVE",
+      label: "Ativo",
+    },
+    {
+      value: "INACTIVE",
+      label: "Inativo",
+    },
+  ];
+
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
@@ -127,128 +122,39 @@ export function CredentialsUpdateForm({
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
       >
-        <FormField
+        <DefaultCombobox
           control={form.control}
           name="type"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Tipo</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        "justify-between",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value
-                        ? items.find((item) => item.value === field.value)
-                            ?.label
-                        : "Selecione um tipo"}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="p-0 max-h-[60vh] overflow-x-auto">
-                  <Command className="w-full">
-                    <CommandInput placeholder="Buscar tipo..." />
-                    <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
-                    <CommandGroup>
-                      {items.map((item) => (
-                        <CommandItem
-                          value={item.label}
-                          key={item.value}
-                          onSelect={() => {
-                            form.setValue("type", item.value);
-                          }}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              item.value === field.value
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                          {item.label}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Tipo"
+          object={items}
+          selectLabel="Selecione um tipo"
+          searchLabel="Buscar tipo..."
+          onSelect={(value: number) => {
+            form.setValue("type", value);
+          }}
         />
 
-        <FormField
+        <DefaultInput
           control={form.control}
           name="value"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Valor</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Valor da credencial"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Valor"
+          placeholder="Valor da credencial"
         />
 
-        <FormField
+        <DefaultTextarea
           control={form.control}
           name="comments"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Observações</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Adicione aqui qualquer informação adicional relevante"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Observações"
+          placeholder="Adicione aqui qualquer informação adicional relevante"
         />
 
-        <FormField
+        <RadioInput
           control={form.control}
           name="status"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Status</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="ACTIVE" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Ativo</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="INACTIVE" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Inativo</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Status"
+          object={status}
+          idExtractor={(item) => item.value}
+          descriptionExtractor={(item) => item.label}
         />
 
         <Button type="submit" className="w-full text-lg" disabled={isSending}>

@@ -84,16 +84,17 @@ export default function UpdateResident() {
       }
   };
   const fetchTelephoneData = async () => {
-    try {
-      const response = await api.get("telephone/member/" + params.get("id"), {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setPhones(response.data);
-    } catch (error) {
-      console.error("(Phone) Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("telephone/member/" + params.get("id"), {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setPhones(response.data);
+      } catch (error) {
+        console.error("(Phone) Erro ao obter dados:", error);
+      }
   };
 
   useEffect(() => {

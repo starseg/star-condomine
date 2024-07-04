@@ -14,25 +14,18 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "../ui/textarea";
 import { MaskedInput } from "../maskedInput";
 import { useEffect, useState } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown } from "lucide-react";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "../ui/command";
 import { PlusCircle, Trash } from "@phosphor-icons/react/dist/ssr";
 import { handleFileUpload } from "@/lib/firebase-upload";
 import InputImage from "../form/inputImage";
+import DefaultInput from "../form/inputDefault";
+import MaskInput from "../form/inputMask";
+import DefaultCombobox from "../form/comboboxDefault";
+import DefaultCheckbox from "../form/checkboxDefault";
+import DefaultTextarea from "../form/textareaDefault";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -125,16 +118,17 @@ export function ResidentForm() {
   }
   const [tagTypes, setTagTypes] = useState<ITagTypes[]>([]);
   const fetchTagTypes = async () => {
-    try {
-      const types = await api.get("tag/types", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setTagTypes(types.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const types = await api.get("tag/types", {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setTagTypes(types.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
   fetchTagTypes();
   // RETORNA O ID DO TIPO DA TAG
@@ -303,76 +297,35 @@ export function ResidentForm() {
         className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
       >
         <InputImage control={form.control} name="profileUrl" />
-        <FormField
+
+        <DefaultInput
           control={form.control}
           name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite o nome do morador"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Nome completo"
+          placeholder="Digite o nome completo do morador"
         />
-        <FormField
+
+        <MaskInput
           control={form.control}
+          mask="999.999.999/99"
           name="cpf"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>CPF</FormLabel>
-              <FormControl>
-                <MaskedInput
-                  mask="999.999.999/99"
-                  placeholder="Digite o CPF do morador"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="CPF"
+          placeholder="Digite o CPF do morador"
         />
-        <FormField
+
+        <DefaultInput
           control={form.control}
           name="rg"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>RG</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Digite o RG do morador"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="RG"
+          placeholder="Digite o RG do morador"
         />
-        <FormField
+
+        <DefaultInput
           control={form.control}
+          type="email"
           name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>E-mail</FormLabel>
-              <FormControl>
-                <Input
-                  type="email"
-                  placeholder="Digite o email do morador"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="E-mail"
+          placeholder="Digite o e-mail do morador"
         />
 
         <FormField
@@ -424,134 +377,43 @@ export function ResidentForm() {
             </FormItem>
           )}
         />
-        <FormField
+
+        <DefaultCombobox
           control={form.control}
           name="addressType"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Tipo de endereço</FormLabel>
-              <FormControl>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                          "justify-between",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value
-                          ? items.find((item) => item.value === field.value)
-                              ?.label
-                          : "Selecione o tipo do endereço"}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="p-0 max-h-[60vh] overflow-x-auto">
-                    <Command className="w-full">
-                      <CommandInput placeholder="Buscar tipo..." />
-                      <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
-                      <CommandGroup>
-                        {items.map((item) => (
-                          <CommandItem
-                            value={item.label}
-                            key={item.value}
-                            onSelect={() => {
-                              form.setValue("addressType", item.value);
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                item.value === field.value
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                            {item.label}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="address"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Descrição do endereço</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite o endereço do morador"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Tipo de endereço"
+          object={items}
+          selectLabel="Selecione o tipo do endereço"
+          searchLabel="Buscar tipo..."
+          onSelect={(value: number) => {
+            form.setValue("addressType", value);
+          }}
         />
 
-        <FormField
+        <DefaultInput
+          control={form.control}
+          name="address"
+          label="Descrição do endereço"
+          placeholder="Digite o endereço do morador"
+        />
+
+        <DefaultCheckbox
           control={form.control}
           name="faceAccess"
-          render={({ field }) => (
-            <div className="flex flex-col gap-4">
-              <FormLabel>Formas de acesso</FormLabel>
-              <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <FormLabel className="font-normal">Facial</FormLabel>
-                <FormMessage />
-              </FormItem>
-            </div>
-          )}
+          title="Formas de acesso"
+          label="Facial"
         />
-        <FormField
+
+        <DefaultCheckbox
           control={form.control}
           name="biometricAccess"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <FormLabel className="font-normal">Biometria</FormLabel>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Biometria"
         />
-        <FormField
+
+        <DefaultCheckbox
           control={form.control}
           name="remoteControlAccess"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <FormLabel className="font-normal">Controle remoto</FormLabel>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Controle remoto"
         />
 
         <FormField
@@ -652,42 +514,20 @@ export function ResidentForm() {
           )}
         />
 
-        <FormField
+        <DefaultInput
           control={form.control}
           name="passwordAccess"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Senha</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Senha numérica"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Senha"
+          placeholder="Senha numérica"
         />
 
-        <FormField
+        <DefaultTextarea
           control={form.control}
           name="comments"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Observações</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Alguma informação adicional..."
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Observações"
+          placeholder="Alguma informação adicional..."
         />
+
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
           {isSending ? "Registrando..." : "Registrar"}
         </Button>

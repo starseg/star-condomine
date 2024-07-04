@@ -173,7 +173,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                       </TableCell>
                       <TableCell className="space-x-4">
                         <Link
-                          href={`${type}/vehicles?id=${member.memberId}`}
+                          href={`${type}/vehicles?id=${member.memberId}&lobby=${member.lobbyId}`}
                           className="px-3 py-1 border rounded-md hover:border-stone-50 transition-all"
                         >
                           Veículos

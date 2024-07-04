@@ -54,7 +54,10 @@ export default function VisitorFullList({ lobby }: { lobby: string }) {
     <>
       <section className="max-h-[60vh] overflow-x-auto">
         {visitors.map((visitor) => (
-          <div className="bg-stone-850 my-2 border border-primary rounded-md p-4 flex gap-6 items-center">
+          <div
+            key={visitor.visitorId}
+            className="bg-stone-850 my-2 border border-primary rounded-md p-4 flex gap-6 items-center"
+          >
             {visitor.profileUrl ? (
               <img
                 src={visitor.profileUrl}

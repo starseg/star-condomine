@@ -54,7 +54,10 @@ export default function ResidentFullList({ lobby }: { lobby: string }) {
     <>
       <section className="max-h-[60vh] overflow-x-auto mb-4">
         {members.map((member) => (
-          <div className="bg-stone-850 my-2 border border-primary rounded-md p-4 flex gap-6 items-center">
+          <div
+            key={member.memberId}
+            className="bg-stone-850 my-2 border border-primary rounded-md p-4 flex gap-6 items-center"
+          >
             {member.profileUrl ? (
               <img
                 src={member.profileUrl}
@@ -78,7 +81,10 @@ export default function ResidentFullList({ lobby }: { lobby: string }) {
               <p className="flex gap-2 items-center">
                 Telefone:{" "}
                 {member.telephone.map((tel) => (
-                  <span className="p-1 bg-stone-700 rounded-md">
+                  <span
+                    key={tel.telephoneId}
+                    className="p-1 bg-stone-700 rounded-md"
+                  >
                     {tel.number}
                   </span>
                 ))}

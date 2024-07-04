@@ -28,7 +28,7 @@ export default async function Vehicles({
         <div className="max-h-[60vh] overflow-x-auto mb-4">
           <MemberVehicleTable lobby={lobby} member={id} />
         </div>
-        <Link href={`/dashboard/actions/vehicle/new?lobby=${lobby}`}>
+        <Link href={`/dashboard/actions/vehicle/new?lobby=${lobby}&id=${id}`}>
           <Button className="text-lg flex gap-2">
             <FilePlus />
             Registrar novo

@@ -75,7 +75,7 @@ export default function DefaultCombobox({
                           onSelect(item.value);
                         }}
                         className={cn(
-                          item.comments.length > 0 &&
+                          item.comments?.length > 0 &&
                             "text-yellow-400 font-semibold"
                         )}
                       >

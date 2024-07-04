@@ -91,7 +91,10 @@ export default function VisitorDetails({ id }: { id: number }) {
           {visitor.access && (
             <MiniTable title="Acessos" cols={["Entrada", "Saída", "Visitado"]}>
               {visitor.access.map((access) => (
-                <div className="grid grid-cols-7 px-4 border-b border-stone-700 py-1">
+                <div
+                  key={access.accessId}
+                  className="grid grid-cols-7 px-4 border-b border-stone-700 py-1"
+                >
                   <p className="col-span-2">{formatDate(access.startTime)}</p>
                   <p className="col-span-2">
                     {access.endTime ? formatDate(access.endTime) : "Não saiu"}
@@ -122,7 +125,10 @@ export default function VisitorDetails({ id }: { id: number }) {
               cols={["Início", "Fim", "Visitado"]}
             >
               {visitor.scheduling.map((scheduling) => (
-                <div className="grid grid-cols-7 px-4 border-b border-stone-700 py-1">
+                <div
+                  key={scheduling.schedulingId}
+                  className="grid grid-cols-7 px-4 border-b border-stone-700 py-1"
+                >
                   <p className="col-span-2">
                     {simpleDateFormat(scheduling.startDate)}
                   </p>

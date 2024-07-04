@@ -41,8 +41,8 @@ export function Menu({ url = "" }: { url?: string }) {
       <Image
         src="/logo.svg"
         alt="Logo Star Condomine"
-        width={419}
-        height={68}
+        width={417}
+        height={36}
         priority={true}
         className="max-w-[80%] hidden md:block"
       />

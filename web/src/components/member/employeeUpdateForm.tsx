@@ -24,6 +24,12 @@ import { useState } from "react";
 import { deleteFile, handleFileUpload } from "@/lib/firebase-upload";
 import { UserCircle } from "@phosphor-icons/react/dist/ssr";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import InputImage from "../form/inputImage";
+import DefaultInput from "../form/inputDefault";
+import MaskInput from "../form/inputMask";
+import DefaultTextarea from "../form/textareaDefault";
+import DefaultCheckbox from "../form/checkboxDefault";
+import RadioInput from "../form/inputRadio";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -95,6 +101,17 @@ export function EmployeeUpdateForm({
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+
+  const status = [
+    {
+      value: "ACTIVE",
+      label: "Ativo",
+    },
+    {
+      value: "INACTIVE",
+      label: "Inativo",
+    },
+  ];
 
   const [removeFile, setRemoveFile] = useState(false);
   const [isSending, setIsSendind] = useState(false);
@@ -170,30 +187,7 @@ export function EmployeeUpdateForm({
             </div>
           )}
           <div className="w-10/12">
-            <FormField
-              control={form.control}
-              name="profileUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nova foto</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.files ? e.target.files[0] : null
-                        )
-                      }
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Não preencha esse campo se quiser manter o arquivo anterior
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <InputImage control={form.control} name="profileUrl" />
             <div className="flex items-center space-x-2 mt-2">
               <Checkbox
                 id="check"
@@ -210,211 +204,85 @@ export function EmployeeUpdateForm({
             </div>
           </div>
         </div>
-        <FormField
+
+        <DefaultInput
           control={form.control}
           name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite o nome do funcionário"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="cpf"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>CPF</FormLabel>
-              <FormControl>
-                <MaskedInput
-                  mask="999.999.999/99"
-                  placeholder="Digite o CPF do funcionário"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="rg"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>RG</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Digite o RG do funcionário"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="position"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Cargo</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite o cargo do funcionário"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="accessPeriod"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Período de acesso</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Descreva os dias da semana e os horários"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Nome"
+          placeholder="Digite o nome do funcionário"
         />
 
-        <FormField
+        <MaskInput
+          control={form.control}
+          mask="999.999.999/99"
+          name="cpf"
+          label="CPF"
+          placeholder="Digite o CPF do funcionário"
+        />
+
+        <DefaultInput
+          control={form.control}
+          name="rg"
+          label="RG"
+          placeholder="Digite o RG do funcionário"
+        />
+
+        <DefaultInput
+          control={form.control}
+          name="position"
+          label="Cargo"
+          placeholder="Digite o cargo do funcionário"
+        />
+
+        <DefaultTextarea
+          control={form.control}
+          name="accessPeriod"
+          label="Período de acesso"
+          placeholder="Descreva os dias da semana e os horários"
+        />
+
+        <DefaultCheckbox
           control={form.control}
           name="faceAccess"
-          render={({ field }) => (
-            <div className="flex flex-col gap-4">
-              <FormLabel>Formas de acesso</FormLabel>
-              <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <FormLabel className="font-normal">Facial</FormLabel>
-                <FormMessage />
-              </FormItem>
-            </div>
-          )}
+          title="Formas de acesso"
+          label="Facial"
         />
-        <FormField
+
+        <DefaultCheckbox
           control={form.control}
           name="biometricAccess"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <FormLabel className="font-normal">Biometria</FormLabel>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Biometria"
         />
-        <FormField
+
+        <DefaultCheckbox
           control={form.control}
           name="remoteControlAccess"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <FormLabel className="font-normal">Controle remoto</FormLabel>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Controle remoto"
         />
-        <FormField
+
+        <DefaultInput
           control={form.control}
           name="passwordAccess"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Senha</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite a senha do morador"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Senha"
+          placeholder="Senha numérica"
         />
-        <FormField
+
+        <DefaultTextarea
           control={form.control}
           name="comments"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Observações</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Alguma informação adicional..."
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Observações"
+          placeholder="Alguma informação adicional..."
         />
-        <FormField
+
+        <RadioInput
           control={form.control}
           name="status"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Status</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="ACTIVE" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Ativo</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="INACTIVE" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Inativo</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Status"
+          object={status}
+          idExtractor={(item) => item.value}
+          descriptionExtractor={(item) => item.label}
         />
+
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
           {isSending ? "Atualizando..." : "Atualizar"}
         </Button>
