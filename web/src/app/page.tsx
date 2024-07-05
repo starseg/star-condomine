@@ -11,8 +11,8 @@ export default function Home() {
         <Image
           src="/logo.svg"
           alt="Logo Star Condomine"
-          width={453}
-          height={74}
+          width={417}
+          height={36}
           priority={true}
           className="mt-2 mb-4"
         />

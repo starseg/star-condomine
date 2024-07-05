@@ -40,6 +40,10 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Textarea } from "../ui/textarea";
+import DefaultCombobox from "../form/comboboxDefault";
+import DefaultInput from "../form/inputDefault";
+import RadioInput from "../form/inputRadio";
+import DefaultTextarea from "../form/textareaDefault";
 const FormSchema = z.object({
   visitor: z.number(),
   member: z.number(),
@@ -88,30 +92,32 @@ export function SchedulingUpdateForm({
 
   const [visitors, setVisitors] = useState([]);
   const fetchVisitors = async () => {
-    try {
-      const response = await api.get("visitor/lobby/" + params.get("lobby"), {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setVisitors(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("visitor/lobby/" + params.get("lobby"), {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setVisitors(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
 
   const [members, setMembers] = useState([]);
   const fetchMembers = async () => {
-    try {
-      const response = await api.get("member/lobby/" + params.get("lobby"), {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setMembers(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("member/lobby/" + params.get("lobby"), {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setMembers(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
 
   useEffect(() => {
@@ -140,14 +146,16 @@ export function SchedulingUpdateForm({
     })
   );
 
-  const setStringDate = (time: string) => {
-    if (time !== "") {
-      const dateObject = new Date(time);
-      return format(dateObject, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    } else {
-      return null;
-    }
-  };
+  const status = [
+    {
+      value: "ACTIVE",
+      label: "Ativo",
+    },
+    {
+      value: "INACTIVE",
+      label: "Inativo",
+    },
+  ];
 
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
@@ -170,7 +178,7 @@ export function SchedulingUpdateForm({
       lobbyId: lobby,
     };
     try {
-      const response = await api.put("scheduling/" + id, info, {
+      await api.put("scheduling/" + id, info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
@@ -190,157 +198,42 @@ export function SchedulingUpdateForm({
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
       >
-        <FormField
+        <DefaultCombobox
           control={form.control}
           name="visitor"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Visitante</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        "justify-between",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value
-                        ? visitorItems.find(
-                            (item) => item.value === field.value
-                          )?.label
-                        : "Selecione o visitante que está acessando"}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="p-0 max-h-[60vh] overflow-x-auto">
-                  <Command className="w-full">
-                    <CommandInput placeholder="Buscar visitante..." />
-                    <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
-                    <CommandGroup>
-                      {visitorItems.map((item) => (
-                        <CommandItem
-                          value={item.label}
-                          key={item.value}
-                          onSelect={() => {
-                            form.setValue("visitor", item.value);
-                          }}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              item.value === field.value
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                          {item.label}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Visitante"
+          object={visitorItems}
+          selectLabel="Selecione o visitante que está acessando"
+          searchLabel="Buscar visitante..."
+          onSelect={(value: number) => {
+            form.setValue("visitor", value);
+          }}
         />
 
-        <FormField
+        <DefaultCombobox
           control={form.control}
           name="member"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Morador visitado / colaborador acionado</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        "justify-between",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value
-                        ? memberItems.find((item) => item.value === field.value)
-                            ?.label
-                        : "Selecione quem está sendo visitado"}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="p-0 max-h-[60vh] overflow-x-auto">
-                  <Command className="w-full">
-                    <CommandInput placeholder="Buscar pessoa..." />
-                    <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
-                    <CommandGroup>
-                      {memberItems.map((item) => (
-                        <CommandItem
-                          value={item.label}
-                          key={item.value}
-                          onSelect={() => {
-                            form.setValue("member", item.value);
-                          }}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              item.value === field.value
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                          {item.label}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Morador visitado / colaborador acionado"
+          object={memberItems}
+          selectLabel="Selecione quem está sendo visitado"
+          searchLabel="Buscar pessoa..."
+          onSelect={(value: number) => {
+            form.setValue("member", value);
+          }}
         />
-        <FormField
+
+        <DefaultInput
           control={form.control}
           name="reason"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Motivo</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Por que está sendo feita essa visita?"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Motivo"
+          placeholder="Por que está sendo feita essa visita?"
         />
-        <FormField
+
+        <DefaultInput
           control={form.control}
           name="location"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Local da visita</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Para onde está indo? Casa, Salão de Festas..."
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Local da visita"
+          placeholder="Para onde está indo? Casa, Salão de Festas..."
         />
         <div className="flex gap-2">
           <FormField
@@ -445,52 +338,19 @@ export function SchedulingUpdateForm({
             )}
           />
         </div>
-        <FormField
+        <RadioInput
           control={form.control}
           name="status"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Status</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="ACTIVE" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Ativo</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="INACTIVE" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Inativo</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Status"
+          object={status}
+          idExtractor={(item) => item.value}
+          descriptionExtractor={(item) => item.label}
         />
-        <FormField
+        <DefaultTextarea
           control={form.control}
           name="comments"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Observações</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Alguma informação adicional..."
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Observações"
+          placeholder="Alguma informação adicional..."
         />
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
           {isSending ? "Atualizando..." : "Atualizar"}

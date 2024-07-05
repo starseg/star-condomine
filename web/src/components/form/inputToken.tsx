@@ -5,23 +5,21 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Textarea } from "../ui/textarea";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
 
-interface DefaultTextareaProps {
+interface TokenInputProps {
   control: any;
   name: string;
   label: string;
-  placeholder: string;
-  rows?: number;
+  size: number;
 }
 
-export default function DefaultTextarea({
+export default function TokenInput({
   control,
   name,
   label,
-  placeholder,
-  rows,
-}: DefaultTextareaProps) {
+  size,
+}: TokenInputProps) {
   return (
     <FormField
       control={control}
@@ -30,7 +28,13 @@ export default function DefaultTextarea({
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Textarea placeholder={placeholder} rows={rows} {...field} />
+            <InputOTP maxLength={size} {...field}>
+              <InputOTPGroup>
+                {Array.from({ length: size }, (_, index) => (
+                  <InputOTPSlot key={index} index={index} />
+                ))}
+              </InputOTPGroup>
+            </InputOTP>
           </FormControl>
           <FormMessage />
         </FormItem>

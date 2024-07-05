@@ -4,23 +4,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import api from "@/lib/axios";
 import { useSearchParams } from "next/navigation";
-import { Textarea } from "../ui/textarea";
-import { Checkbox } from "../ui/checkbox";
 import { format } from "date-fns";
 import { useState } from "react";
+import DefaultInput from "../form/inputDefault";
+import DefaultTextarea from "../form/textareaDefault";
+import DefaultCheckbox from "../form/checkboxDefault";
 
 const FormSchema = z.object({
   title: z.string(),
@@ -88,76 +81,32 @@ export function ProblemForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
       >
-        <FormField
+        <DefaultInput
           control={form.control}
           name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Título</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Uma breve descrição do problema..."
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Título"
+          placeholder="Uma breve descrição do problema..."
         />
-        <FormField
+        <DefaultTextarea
           control={form.control}
           name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Descrição</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Descreva detalhadamente o problema ocorrido..."
-                  rows={10}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Descrição"
+          placeholder="Descreva detalhadamente o problema ocorrido..."
+          rows={10}
         />
-        <FormField
+        <DefaultInput
           control={form.control}
           name="date"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Data e hora</FormLabel>
-              <FormControl>
-                <Input
-                  type="datetime-local"
-                  placeholder="Data e hora"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Data e hora"
+          placeholder="Data e hora"
+          type="datetime-local"
         />
-        <FormField
+        <DefaultCheckbox
           control={form.control}
           name="currentDate"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <FormLabel className="font-normal">
-                Utilizar data e hora atuais
-              </FormLabel>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Utilizar data e hora atuais"
         />
+
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
           {isSending ? "Registrando..." : "Registrar"}
         </Button>

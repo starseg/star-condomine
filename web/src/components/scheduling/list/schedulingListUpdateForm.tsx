@@ -33,6 +33,9 @@ import { Textarea } from "../../ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
 import { handleFileUpload } from "@/lib/firebase-upload";
+import InputFile from "@/components/form/inputFile";
+import DefaultTextarea from "@/components/form/textareaDefault";
+import RadioInput from "@/components/form/inputRadio";
 
 const FormSchema = z.object({
   lobby: z.number(),
@@ -143,6 +146,18 @@ export function SchedulingListUpdateForm({
       lobbyId: member.lobbyId,
     })
   );
+
+  const status = [
+    {
+      value: "ACTIVE",
+      label: "Pendente",
+    },
+    {
+      value: "INACTIVE",
+      label: "Agendada",
+    },
+  ];
+
   const id = Number(params.get("id"));
 
   const [isSending, setIsSendind] = useState(false);
@@ -255,75 +270,26 @@ export function SchedulingListUpdateForm({
             </FormItem>
           )}
         />
-        <FormField
+        <DefaultTextarea
           control={form.control}
           name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Descrição</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Adicione aqui os detalhes passados pelo proprietário"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Descrição"
+          placeholder="Adicione aqui os detalhes passados pelo proprietário"
         />
 
-        <FormField
+        <InputFile
           control={form.control}
           name="url"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Arquivo</FormLabel>
-              <FormControl>
-                <Input
-                  type="file"
-                  onChange={(e) =>
-                    field.onChange(e.target.files ? e.target.files[0] : null)
-                  }
-                />
-              </FormControl>
-              <FormMessage />
-              <FormDescription>
-                Caso você não queira alterar o arquivo previamente registrado,
-                não preencha esse campo.
-              </FormDescription>
-            </FormItem>
-          )}
+          description="Caso você não queira alterar o arquivo previamente registrado, não preencha esse campo."
         />
-        <FormField
+
+        <RadioInput
           control={form.control}
           name="status"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Status</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="ACTIVE" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Pendente</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="INACTIVE" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Agendada</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Status"
+          object={status}
+          idExtractor={(item) => item.value}
+          descriptionExtractor={(item) => item.label}
         />
 
         <Button type="submit" className="w-full text-lg" disabled={isSending}>

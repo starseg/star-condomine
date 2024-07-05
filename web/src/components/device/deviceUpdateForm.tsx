@@ -4,30 +4,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import api from "@/lib/axios";
 import { useEffect, useState } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown } from "lucide-react";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "../ui/command";
 import { useSearchParams } from "next/navigation";
+import DefaultInput from "../form/inputDefault";
+import DefaultCombobox from "../form/comboboxDefault";
 
 const FormSchema = z.object({
   name: z.string(),
@@ -131,173 +115,55 @@ export function DeviceUpdateForm({
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
       >
-        <FormField
+        <DefaultInput
           control={form.control}
           name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Identificação do dispositivo"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Nome"
+          placeholder="Identificação do dispositivo"
         />
-        <FormField
+        <DefaultInput
           control={form.control}
           name="ip"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>IP</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite o IP do dispositivo. Ex: 192.168.0.1"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="IP"
+          placeholder="Digite o IP do dispositivo. Ex: 192.168.0.1"
         />
-        <FormField
+        <DefaultInput
           control={form.control}
+          type="number"
           name="ramal"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Número do ramal</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  placeholder="Digite o número do ramal"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Número do ramal"
+          placeholder="Digite o número do ramal"
         />
-        <FormField
+        <DefaultInput
           control={form.control}
           name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Descrição</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite a descrição do dispositivo"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Descrição"
+          placeholder="Digite a descrição do dispositivo"
         />
-
-        <FormField
+        <DefaultInput
           control={form.control}
           name="login"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Login</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Login do dispositivo"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Login"
+          placeholder="Login do dispositivo"
         />
 
-        <FormField
+        <DefaultInput
           control={form.control}
           name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Senha</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Senha do dispositivo"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Senha"
+          placeholder="Senha do dispositivo"
         />
 
-        <FormField
+        <DefaultCombobox
           control={form.control}
           name="model"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Modelo do dispositivo</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        "justify-between",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value
-                        ? items.find((item) => item.value === field.value)
-                            ?.label
-                        : "Selecione um modelo"}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="p-0 max-h-[60vh] overflow-x-auto">
-                  <Command className="w-full">
-                    <CommandInput placeholder="Buscar modelo..." />
-                    <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
-                    <CommandGroup>
-                      {items.map((item) => (
-                        <CommandItem
-                          value={item.label}
-                          key={item.value}
-                          onSelect={() => {
-                            form.setValue("model", item.value);
-                          }}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              item.value === field.value
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                          {item.label}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Modelo do dispositivo"
+          object={items}
+          selectLabel="Selecione um modelo"
+          searchLabel="Buscar modelo..."
+          onSelect={(value: number) => {
+            form.setValue("model", value);
+          }}
         />
 
         <Button type="submit" className="w-full text-lg" disabled={isSending}>

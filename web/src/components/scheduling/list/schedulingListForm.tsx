@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -27,9 +26,9 @@ import {
   CommandInput,
   CommandItem,
 } from "../../ui/command";
-import { Textarea } from "../../ui/textarea";
 import { handleFileUpload } from "@/lib/firebase-upload";
-import { Input } from "@/components/ui/input";
+import DefaultTextarea from "@/components/form/textareaDefault";
+import InputFile from "@/components/form/inputFile";
 
 const FormSchema = z.object({
   lobby: z.number(),
@@ -64,30 +63,32 @@ export function SchedulingListForm() {
 
   const [lobbies, setLobbies] = useState([]);
   const fetchLobbies = async () => {
-    try {
-      const response = await api.get("lobby", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setLobbies(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("lobby", {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setLobbies(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
 
   const [members, setMembers] = useState([]);
   const fetchMembers = async () => {
-    try {
-      const response = await api.get("member", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setMembers(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("member", {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setMembers(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
 
   useEffect(() => {
@@ -298,45 +299,19 @@ export function SchedulingListForm() {
             </FormItem>
           )}
         />
-        <FormField
+
+        <DefaultTextarea
           control={form.control}
           name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Descrição</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Adicione aqui os detalhes passados pelo proprietário"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Descrição"
+          placeholder="Adicione aqui os detalhes passados pelo proprietário"
         />
 
-        <FormField
+        <InputFile
           control={form.control}
           name="url"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Arquivo (opcional)</FormLabel>
-              <FormControl>
-                <Input
-                  type="file"
-                  onChange={(e) =>
-                    field.onChange(e.target.files ? e.target.files[0] : null)
-                  }
-                />
-              </FormControl>
-              <FormMessage />
-              <FormDescription>
-                Se for adicionado um arquivo com a lista, informar na descrição
-                e relacionar as datas de agendamento.
-              </FormDescription>
-            </FormItem>
-          )}
+          complement="(opcional)"
+          description="Se for adicionado um arquivo com a lista, informar na descrição e relacionar as datas de agendamento."
         />
 
         <Button type="submit" className="w-full text-lg" disabled={isSending}>

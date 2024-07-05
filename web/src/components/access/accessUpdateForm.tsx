@@ -31,6 +31,9 @@ import {
 import { useSearchParams } from "next/navigation";
 import { Textarea } from "../ui/textarea";
 import { format } from "date-fns";
+import DefaultCombobox from "../form/comboboxDefault";
+import DefaultInput from "../form/inputDefault";
+import DefaultTextarea from "../form/textareaDefault";
 
 const FormSchema = z.object({
   visitor: z.number(),
@@ -71,30 +74,32 @@ export function AccessUpdateForm({
 
   const [visitors, setVisitors] = useState<Visitor[]>([]);
   const fetchVisitors = async () => {
-    try {
-      const response = await api.get("visitor/lobby/" + params.get("lobby"), {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setVisitors(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("visitor/lobby/" + params.get("lobby"), {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setVisitors(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
 
   const [members, setMembers] = useState<Member[]>([]);
   const fetchMembers = async () => {
-    try {
-      const response = await api.get("member/lobby/" + params.get("lobby"), {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setMembers(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("member/lobby/" + params.get("lobby"), {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setMembers(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
 
   useEffect(() => {
@@ -177,215 +182,70 @@ export function AccessUpdateForm({
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
       >
-        <FormField
+        <DefaultCombobox
           control={form.control}
           name="visitor"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Visitante</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        "justify-between",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value
-                        ? visitorItems.find(
-                            (item) => item.value === field.value
-                          )?.label
-                        : "Selecione o visitante que está acessando"}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="p-0 max-h-[60vh] overflow-x-auto">
-                  <Command className="w-full">
-                    <CommandInput placeholder="Buscar visitante..." />
-                    <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
-                    <CommandGroup>
-                      {visitorItems.map((item) => (
-                        <CommandItem
-                          value={item.label}
-                          key={item.value}
-                          onSelect={() => {
-                            form.setValue("visitor", item.value);
-                          }}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              item.value === field.value
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                          {item.label}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Visitante"
+          object={visitorItems}
+          selectLabel="Selecione o visitante que está acessando"
+          searchLabel="Buscar visitante..."
+          onSelect={(value: number) => {
+            form.setValue("visitor", value);
+          }}
         />
 
-        <FormField
+        <DefaultCombobox
           control={form.control}
           name="member"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Morador visitado / colaborador acionado</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        "justify-between",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value
-                        ? memberItems.find((item) => item.value === field.value)
-                            ?.label
-                        : "Selecione quem está sendo visitado"}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="p-0 max-h-[60vh] overflow-x-auto">
-                  <Command className="w-full">
-                    <CommandInput placeholder="Buscar pessoa..." />
-                    <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
-                    <CommandGroup>
-                      {memberItems.map((item) => (
-                        <CommandItem
-                          value={item.label}
-                          key={item.value}
-                          onSelect={() => {
-                            form.setValue("member", item.value);
-                          }}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              item.value === field.value
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                          {item.label}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Morador visitado / colaborador acionado"
+          object={memberItems}
+          selectLabel="Selecione quem está sendo visitado"
+          searchLabel="Buscar pessoa..."
+          onSelect={(value: number) => {
+            form.setValue("member", value);
+          }}
         />
-        <FormField
+
+        <DefaultInput
           control={form.control}
           name="reason"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Motivo</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Por que está sendo feita essa visita?"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Motivo"
+          placeholder="Por que está sendo feita essa visita?"
         />
-        <FormField
+
+        <DefaultInput
           control={form.control}
           name="local"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Local da visita</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Para onde está indo? Casa, Salão de Festas..."
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Local da visita"
+          placeholder="Para onde está indo? Casa, Salão de Festas..."
         />
-        <FormField
+
+        <DefaultInput
           control={form.control}
           name="startTime"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Data e hora do acesso</FormLabel>
-              <FormControl>
-                <Input
-                  type="datetime-local"
-                  placeholder="Data e hora"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Data e hora do acesso"
+          type="datetime-local"
+          placeholder="Data e hora"
         />
         {control === "S" ? (
-          <FormField
+          <DefaultInput
             control={form.control}
             name="endTime"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Data e hora da saída</FormLabel>
-                <FormControl>
-                  <Input
-                    type="datetime-local"
-                    placeholder="Data e hora"
-                    autoComplete="off"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Data e hora da saída"
+            type="datetime-local"
+            placeholder="Data e hora"
           />
         ) : (
           ""
         )}
-        <FormField
+
+        <DefaultTextarea
           control={form.control}
           name="comments"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Observações</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Alguma informação adicional. Exemplo: Placa do veículo"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Observações"
+          placeholder="Alguma informação adicional. Exemplo: Placa do veículo"
         />
+
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
           {isSending ? "Atualizando..." : "Atualizar"}
         </Button>

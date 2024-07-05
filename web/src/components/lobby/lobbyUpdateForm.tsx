@@ -6,42 +6,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "../ui/textarea";
-import { MaskedInput } from "../maskedInput";
+import { Form } from "@/components/ui/form";
 import { useEffect, useState } from "react";
 import { deleteFile, handleFileUpload } from "@/lib/firebase-upload";
 import { Checkbox } from "../ui/checkbox";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Check, ChevronsUpDown } from "lucide-react";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import { cn } from "@/lib/utils";
+import InputFile from "../form/inputFile";
+import DefaultInput from "../form/inputDefault";
+import DefaultCombobox from "../form/comboboxDefault";
+import TokenInput from "../form/inputToken";
+import DefaultTextarea from "../form/textareaDefault";
+import RadioInput from "../form/inputRadio";
+import MaskInput from "../form/inputMask";
+import { Button } from "../ui/button";
 
 const FormSchema = z.object({
   type: z.enum(["CONDOMINIUM", "COMPANY"]),
@@ -137,6 +113,28 @@ export function LobbyUpdateForm({
     })
   );
 
+  const lobbyTypes = [
+    {
+      value: "CONDOMINIUM",
+      label: "Condomínio",
+    },
+    {
+      value: "COMPANY",
+      label: "Empresa",
+    },
+  ];
+
+  const exitControlOptions = [
+    {
+      value: "ACTIVE",
+      label: "Sim",
+    },
+    {
+      value: "INACTIVE",
+      label: "Não",
+    },
+  ];
+
   const [removeFile, setRemoveFile] = useState(false);
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
@@ -199,195 +197,72 @@ export function LobbyUpdateForm({
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
       >
-        <FormField
+        <RadioInput
           control={form.control}
           name="type"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tipo de portaria</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="CONDOMINIUM" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Condomínio</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="COMPANY" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Empresa</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Tipo de portaria"
+          object={lobbyTypes}
+          idExtractor={(item) => item.value}
+          descriptionExtractor={(item) => item.label}
         />
 
-        <FormField
+        <MaskInput
           control={form.control}
+          mask="99.999.999/9999-99"
           name="cnpj"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>CNPJ</FormLabel>
-              <FormControl>
-                <MaskedInput
-                  mask="99.999.999/9999-99"
-                  placeholder="Digite o CNPJ da empresa"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="CNPJ"
+          placeholder="Digite o CNPJ da empresa"
         />
-        <FormField
+
+        <DefaultInput
           control={form.control}
           name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite o nome da empresa"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Nome"
+          placeholder="Digite o nome da portaria"
         />
-        <FormField
+
+        <DefaultInput
           control={form.control}
           name="responsible"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Responsável</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite o nome do responsável da empresa"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Responsável"
+          placeholder="Digite o nome do responsável da portaria"
         />
 
-        <FormField
+        <DefaultInput
           control={form.control}
           name="telephone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Telefone</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite o telefone da empresa"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="schedules"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Horários</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Quais são os horários do monitoramento?"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="exitControl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Controle de saída</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="ACTIVE" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Sim</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="INACTIVE" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Não</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="procedures"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Procedimentos gerais</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Quais são os procedimentos a seguir com essa portaria?"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Telefone"
+          placeholder="Digite o telefone da empresa"
         />
 
-        <FormField
+        <DefaultInput
+          control={form.control}
+          name="schedules"
+          label="Horários"
+          placeholder="Quais são os horários do monitoramento?"
+        />
+
+        <RadioInput
+          control={form.control}
+          name="exitControl"
+          label="Controle de saída"
+          object={exitControlOptions}
+          idExtractor={(item) => item.value}
+          descriptionExtractor={(item) => item.label}
+        />
+
+        <DefaultTextarea
+          control={form.control}
+          name="procedures"
+          label="Procedimentos gerais"
+          placeholder="Quais são os procedimentos a seguir com essa portaria?"
+        />
+
+        <InputFile
           control={form.control}
           name="datasheet"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Ficha técnica</FormLabel>
-              <FormControl>
-                <Input
-                  type="file"
-                  onChange={(e) =>
-                    field.onChange(e.target.files ? e.target.files[0] : null)
-                  }
-                />
-              </FormControl>
-              <FormDescription>
-                Não preencha esse campo se quiser manter o arquivo anterior
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+          complement="para ficha técnica"
+          description="Não preencha esse campo se quiser manter o arquivo anterior"
         />
         <div className="flex items-center space-x-2 mt-2">
           <Checkbox
@@ -404,218 +279,74 @@ export function LobbyUpdateForm({
           </label>
         </div>
 
-        <FormField
+        <TokenInput
           control={form.control}
           name="code"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Código de acesso</FormLabel>
-              <FormControl>
-                <InputOTP maxLength={6} {...field}>
-                  <InputOTPGroup>
-                    <InputOTPSlot index={0} />
-                    <InputOTPSlot index={1} />
-                    <InputOTPSlot index={2} />
-                    <InputOTPSlot index={3} />
-                    <InputOTPSlot index={4} />
-                    <InputOTPSlot index={5} />
-                  </InputOTPGroup>
-                </InputOTP>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Crie um código de acesso"
+          size={6}
         />
 
-        <FormField
+        <DefaultCombobox
           control={form.control}
           name="brand"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Marca dos dispositivos</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        "justify-between",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value
-                        ? items.find((item) => item.value === field.value)
-                            ?.label
-                        : "Selecione uma marca"}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="p-0 max-h-[60vh] overflow-x-auto">
-                  <Command className="w-full">
-                    <CommandInput placeholder="Buscar marca..." />
-                    <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
-                    <CommandGroup>
-                      {items.map((item) => (
-                        <CommandItem
-                          value={item.label}
-                          key={item.value}
-                          onSelect={() => {
-                            form.setValue("brand", item.value);
-                          }}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              item.value === field.value
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                          {item.label}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Marca dos dispositivos"
+          object={items}
+          selectLabel="Selecione uma marca"
+          searchLabel="Buscar marca..."
+          onSelect={(value: number) => {
+            form.setValue("brand", value);
+          }}
         />
 
-        <FormField
+        <MaskInput
           control={form.control}
+          mask="99999-999"
           name="cep"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>CEP</FormLabel>
-              <FormControl>
-                <MaskedInput
-                  mask="99999-999"
-                  type="text"
-                  placeholder="Digite o CEP da portaria"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="CEP"
+          placeholder="Digite o CEP da portaria"
         />
-        <FormField
+
+        <DefaultInput
           control={form.control}
           name="state"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Estado</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite o Estado da portaria"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Estado"
+          placeholder="Digite o Estado da portaria"
         />
 
-        <FormField
+        <DefaultInput
           control={form.control}
           name="city"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Cidade</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite a cidade da portaria"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Cidade"
+          placeholder="Digite a cidade da portaria"
         />
 
-        <FormField
+        <DefaultInput
           control={form.control}
           name="neighborhood"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Bairro</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite o bairro da portaria"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Bairro"
+          placeholder="Digite o bairro da portaria"
         />
 
-        <FormField
+        <DefaultInput
           control={form.control}
           name="street"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Rua</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite a rua da portaria"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Rua"
+          placeholder="Digite a rua da portaria"
         />
 
-        <FormField
+        <DefaultInput
           control={form.control}
+          type="number"
           name="number"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Número</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  placeholder="Digite o número da portaria"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Número"
+          placeholder="Digite o número da portaria"
         />
 
-        <FormField
+        <DefaultInput
           control={form.control}
           name="complement"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Complemento</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Alguma informação adicional do endereço"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Complemento"
+          placeholder="Alguma informação adicional do endereço"
         />
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
           {isSending ? "Atualizando..." : "Atualizar"}

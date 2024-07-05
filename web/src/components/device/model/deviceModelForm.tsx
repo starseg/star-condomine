@@ -3,22 +3,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import api from "@/lib/axios";
 import { useState } from "react";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import DefaultInput from "@/components/form/inputDefault";
+import RadioInput from "@/components/form/inputRadio";
 
 const FormSchema = z.object({
   model: z.string(),
@@ -40,6 +32,17 @@ export function DeviceModelForm() {
 
   const { data: session } = useSession();
   const router = useRouter();
+
+  const facialOptions = [
+    {
+      value: "true",
+      label: "Sim",
+    },
+    {
+      value: "false",
+      label: "Não",
+    },
+  ];
 
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
@@ -66,87 +69,34 @@ export function DeviceModelForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
       >
-        <FormField
+        <DefaultInput
           control={form.control}
           name="model"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Modelo</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite o modelo do dispositivo"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Modelo"
+          placeholder="Digite o modelo do dispositivo"
         />
-        <FormField
+        <DefaultInput
           control={form.control}
           name="brand"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Marca</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite a marca do dispositivo"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Marca"
+          placeholder="Digite a marca do dispositivo"
         />
-        <FormField
+        <DefaultInput
           control={form.control}
           name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Descrição</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite a descrição do dispositivo"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Descrição"
+          placeholder="Digite a descrição do dispositivo"
         />
-        <FormField
+
+        <RadioInput
           control={form.control}
           name="isFacial"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Facial</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="true" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Sim</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="false" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Não</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Facial"
+          object={facialOptions}
+          idExtractor={(item) => item.value}
+          descriptionExtractor={(item) => item.label}
         />
+
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
           {isSending ? "Registrando..." : "Registrar"}
         </Button>
