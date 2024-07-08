@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteFeedback = exports.updateFeedback = exports.createFeedback = exports.getFeedback = exports.getAllFeedbacks = void 0;
+exports.countNewFeedbacks = exports.deleteFeedback = exports.updateFeedback = exports.createFeedback = exports.getFeedback = exports.getAllFeedbacks = void 0;
 const db_1 = __importDefault(require("../db"));
 const getAllFeedbacks = async (req, res) => {
     try {
@@ -75,3 +75,15 @@ const deleteFeedback = async (req, res) => {
     }
 };
 exports.deleteFeedback = deleteFeedback;
+const countNewFeedbacks = async (req, res) => {
+    try {
+        const feedback = await db_1.default.feedback.count({
+            where: { status: "ACTIVE" },
+        });
+        res.json(feedback);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao buscar os feedbacks" });
+    }
+};
+exports.countNewFeedbacks = countNewFeedbacks;

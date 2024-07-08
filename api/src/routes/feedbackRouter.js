@@ -9,6 +9,7 @@ const permissions_1 = require("../middlewares/permissions");
 const feedbackRouter = express_1.default.Router();
 feedbackRouter.get("/", feedback_1.getAllFeedbacks);
 feedbackRouter.get("/find/:id", feedback_1.getFeedback);
+feedbackRouter.get("/new", feedback_1.countNewFeedbacks);
 feedbackRouter.post("/", feedback_1.createFeedback);
 feedbackRouter.put("/:id", feedback_1.updateFeedback);
 feedbackRouter.delete("/:id", permissions_1.checkAdminPermission, feedback_1.deleteFeedback);

@@ -24,9 +24,29 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
 import NotificationList from "./notification/notificationList";
+import { useEffect, useState } from "react";
+import api from "@/lib/axios";
 
 export function Menu({ url = "" }: { url?: string }) {
+  const [feedbacks, setFeedbacks] = useState<Number>(0);
   const { data: session } = useSession();
+  const fetchFeedbacks = async () => {
+    if (session)
+      try {
+        const response = await api.get("feedback/new", {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setFeedbacks(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+  };
+  useEffect(() => {
+    fetchFeedbacks();
+  }, [session]);
+
   return (
     <header className="flex flex-row w-full justify-between md:justify-around items-center p-4">
       {url === "" ? (
@@ -105,6 +125,9 @@ export function Menu({ url = "" }: { url?: string }) {
               className="flex justify-center items-center gap-2"
             >
               <Envelope size={"24px"} /> Feedbacks
+              <p className="text-xs font-bold flex items-center justify-center w-5 h-5 rounded-full bg-yellow-500 text-stone-950">
+                {feedbacks.toString()}
+              </p>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>

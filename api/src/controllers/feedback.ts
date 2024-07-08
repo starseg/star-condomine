@@ -80,3 +80,17 @@ export const deleteFeedback = async (
     res.status(500).json({ error: "Erro ao excluir o feedback" });
   }
 };
+
+export const countNewFeedbacks = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const feedback = await prisma.feedback.count({
+      where: { status: "ACTIVE" },
+    });
+    res.json(feedback);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os feedbacks" });
+  }
+};

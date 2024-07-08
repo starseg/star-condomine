@@ -18,6 +18,8 @@ import { useSession } from "next-auth/react";
 import api from "@/lib/axios";
 import { Textarea } from "../ui/textarea";
 import { useState } from "react";
+import DefaultInput from "../form/inputDefault";
+import DefaultTextarea from "../form/textareaDefault";
 
 const FormSchema = z.object({
   name: z.string(),
@@ -68,58 +70,24 @@ export function FeedbackForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
       >
-        <FormField
+        <DefaultInput
           control={form.control}
           name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite seu nome"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Nome"
+          placeholder="Digite seu nome"
         />
-        <FormField
+        <DefaultInput
           control={form.control}
           name="subject"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Assunto *</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Do que se trata esse contato"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Assunto *"
+          placeholder="Do que se trata esse contato"
         />
-        <FormField
+        <DefaultTextarea
           control={form.control}
           name="message"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Mensagem *</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Deixe aqui sua mensagem"
-                  rows={10}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Mensagem *"
+          placeholder="Deixe aqui sua mensagem"
+          rows={10}
         />
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
           Enviar

@@ -62,30 +62,32 @@ export default function MemberGroupForm() {
 
   const [members, setMembers] = useState<Member[]>([]);
   const fetchMembers = async () => {
-    try {
-      const response = await api.get(`member/lobby/${params.get("lobby")}`, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setMembers(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get(`member/lobby/${params.get("lobby")}`, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setMembers(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
 
   const [groups, setGroups] = useState<Group[]>([]);
   const fetchGroups = async () => {
-    try {
-      const response = await api.get("group", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setGroups(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("group", {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setGroups(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
 
   useEffect(() => {

@@ -5,19 +5,12 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import api from "@/lib/axios";
 import { useState } from "react";
+import DefaultInput from "../form/inputDefault";
 
 const FormSchema = z.object({
   name: z.string(),
@@ -70,39 +63,17 @@ export function BrandUpdateForm({
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
       >
-        <FormField
+        <DefaultInput
           control={form.control}
           name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite o nome da marca"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Nome"
+          placeholder="Digite o nome da marca"
         />
-        <FormField
+        <DefaultInput
           control={form.control}
           name="iconUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Logo</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Insira o link do logo"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Logo"
+          placeholder="Insira o link do logo"
         />
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
           {isSending ? "Atualizando..." : "Atualizar"}

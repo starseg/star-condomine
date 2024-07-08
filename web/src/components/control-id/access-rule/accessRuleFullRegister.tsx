@@ -1,10 +1,3 @@
-/*
- 1 - access_rule -> name        (nome)
- 2 - group_access_rule          (quem)
- 3 - access_rule_time_zone      (quando)
- 4 - area_access_rule -> lobby  (onde)
- 5 - save procedure
-*/
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -61,44 +54,47 @@ export function AccessRuleFullRegister() {
 
   const [groups, setGroups] = useState<Group[]>([]);
   const fetchGroups = async () => {
-    try {
-      const response = await api.get("group", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setGroups(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("group", {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setGroups(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
 
   const [timeZones, setTimeZones] = useState<TimeZone[]>([]);
   const fetchTimeZones = async () => {
-    try {
-      const response = await api.get("timeZone", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setTimeZones(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("timeZone", {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setTimeZones(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
 
   const [lobbies, setLobbies] = useState<Lobby[]>([]);
   const fetchLobbies = async () => {
-    try {
-      const response = await api.get("lobby", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setLobbies(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("lobby", {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setLobbies(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
 
   useEffect(() => {

@@ -40,7 +40,6 @@ import { useControliDUpdate } from "@/contexts/control-id-update-context";
 import { useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 
 const FormSchema = z.object({
   groupId: z.number(),
@@ -60,30 +59,32 @@ export default function GroupAccessRuleForm() {
 
   const [groups, setGroups] = useState<Group[]>([]);
   const fetchGroups = async () => {
-    try {
-      const response = await api.get("group", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setGroups(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get("group", {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setGroups(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
 
   const [accessRules, setAccessRules] = useState<AccessRule[]>([]);
   const fetchAccessRules = async () => {
-    try {
-      const response = await api.get(`accessRule`, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      setAccessRules(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
+    if (session)
+      try {
+        const response = await api.get(`accessRule`, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setAccessRules(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
   };
 
   useEffect(() => {
