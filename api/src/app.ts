@@ -33,6 +33,7 @@ import memberGroupRouter from "./routes/memberGroupRouter";
 import groupAccessRuleRouter from "./routes/groupAccessRuleRouter";
 import areaAccessRuleRouter from "./routes/areaAccessRuleRouter";
 import accessRuleTimeZoneRouter from "./routes/accessRuleTimeZoneRouter";
+import controliDRouter from "./routes/controliDRouter";
 dotenv.config();
 
 const app = express();
@@ -58,11 +59,11 @@ app.get("/", (request: Request, response: Response) => {
 });
 
 app.use("/guest", guestRouter);
+app.use("/control-id", controliDRouter);
 
 app.post("/auth", authenticateOperator);
 
 app.use(verifyToken, logging);
-// app.use();
 
 app.use("/visitor", visitorRouter);
 app.use("/operator", operatorRouter);

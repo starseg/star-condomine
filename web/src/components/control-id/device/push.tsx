@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 
 export default function Push() {
@@ -24,7 +25,7 @@ export default function Push() {
             push_server: {
               push_request_timeout: "5000",
               push_request_period: "15",
-              push_remote_address: "http://192.168.1.53:3000",
+              push_remote_address: "http://192.168.1.53:3333/control-id",
             },
           }
         );
@@ -52,7 +53,7 @@ export default function Push() {
   }
 
   return (
-    <div>
+    <div className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-4">
       <Button onClick={() => setPush()}>
         {!isActive ? "Ativar push" : "Desativar push"}
       </Button>

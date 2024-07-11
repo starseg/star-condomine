@@ -38,6 +38,7 @@ const memberGroupRouter_1 = __importDefault(require("./routes/memberGroupRouter"
 const groupAccessRuleRouter_1 = __importDefault(require("./routes/groupAccessRuleRouter"));
 const areaAccessRuleRouter_1 = __importDefault(require("./routes/areaAccessRuleRouter"));
 const accessRuleTimeZoneRouter_1 = __importDefault(require("./routes/accessRuleTimeZoneRouter"));
+const controliDRouter_1 = __importDefault(require("./routes/controliDRouter"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
@@ -58,9 +59,9 @@ app.get("/", (request, response) => {
     response.json({ message: "API DO SISTEMA STAR CONDOMINE" });
 });
 app.use("/guest", guestRouter_1.default);
+app.use("/control-id", controliDRouter_1.default);
 app.post("/auth", auth_1.authenticateOperator);
 app.use(permissions_1.verifyToken, logging_1.logging);
-// app.use();
 app.use("/visitor", visitorRouter_1.default);
 app.use("/operator", operatorRouter_1.default);
 app.use("/access", accessRouter_1.default);
