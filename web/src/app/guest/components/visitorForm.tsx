@@ -7,22 +7,22 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { MaskedInput } from "@/components/maskedInput";
 import { useEffect, useState } from "react";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { handleFileUpload } from "@/lib/firebase-upload";
 import { decrypt } from "@/lib/crypto";
 import Image from "next/image";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
+import InputImage from "@/components/form/inputImage";
+import DefaultInput from "@/components/form/inputDefault";
+import MaskInput from "@/components/form/inputMask";
+import RadioInput from "@/components/form/inputRadio";
+import DefaultTextarea from "@/components/form/textareaDefault";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File).refine((file) => file.size > 0, {
@@ -142,183 +142,71 @@ export function VisitorForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
       >
-        <FormField
-          control={form.control}
-          name="profileUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Foto</FormLabel>
-              <Image
-                src="/photo-guide.jpeg"
-                alt="Requisitos de foto"
-                width={967}
-                height={911}
-                priority={true}
-                className="rounded-md"
-              />
-              <FormControl>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) =>
-                    field.onChange(e.target.files ? e.target.files[0] : null)
-                  }
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+        <Image
+          src="/photo-guide.jpeg"
+          alt="Requisitos de foto"
+          width={967}
+          height={911}
+          priority={true}
+          className="rounded-md"
         />
-        <FormField
+        <p>
+          Adicione uma foto 3x4, sem óculos e outros acessórios e com fundo
+          neutro
+        </p>
+        <InputImage control={form.control} name="profileUrl" />
+        <DefaultInput
           control={form.control}
           name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome completo</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite o nome do visitante"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Nome completo"
+          placeholder="Digite o nome e sobrenome do visitante"
         />
-        <FormField
+        <MaskInput
           control={form.control}
+          mask="999.999.999/99"
           name="cpf"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>CPF</FormLabel>
-              <FormControl>
-                <MaskedInput
-                  mask="999.999.999/99"
-                  placeholder="Digite o CPF do visitante"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="CPF"
+          placeholder="Digite o CPF do visitante"
         />
-        <FormField
+
+        <DefaultInput
           control={form.control}
           name="rg"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>RG</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Digite o RG do visitante"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Telefone</FormLabel>
-              <FormControl>
-                <MaskedInput
-                  mask="(99) 99999-9999"
-                  type="text"
-                  placeholder="Digite o telefone do visitante"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="RG"
+          placeholder="Digite o RG do visitante"
         />
 
-        <FormField
+        <MaskInput
+          control={form.control}
+          mask="(99) 99999-9999"
+          name="phone"
+          label="Telefone"
+          placeholder="Digite o telefone do visitante"
+        />
+
+        <RadioInput
           control={form.control}
           name="type"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tipo de visitante</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  {visitorType.map((type) => {
-                    return (
-                      <FormItem
-                        className="flex items-center space-x-3 space-y-0"
-                        key={type.visitorTypeId}
-                      >
-                        <FormControl>
-                          <RadioGroupItem
-                            value={type.visitorTypeId.toString()}
-                          />
-                        </FormControl>
-                        <FormLabel className="font-normal">
-                          {type.description}
-                        </FormLabel>
-                      </FormItem>
-                    );
-                  })}
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Tipo de visitante"
+          object={visitorType}
+          idExtractor={(item) => item.visitorTypeId}
+          descriptionExtractor={(item) => item.description}
         />
 
-        <FormField
+        <DefaultInput
           control={form.control}
           name="relation"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Relação / Empresa</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Qual é a relação desse visitante com a portaria?"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-              <FormDescription>
-                Exemplo: familiar, filho de proprietário, jardineiro...
-              </FormDescription>
-            </FormItem>
-          )}
+          label="Relação / Empresa"
+          placeholder="Qual é a relação desse visitante com a portaria?"
         />
 
-        <FormField
+        <DefaultTextarea
           control={form.control}
           name="comments"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome e endereço do proprietário</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Escreva aqui qual é o nome completo e o endereço do proprietário"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-              <FormDescription>Exemplo: João Silva, LOTE 32</FormDescription>
-            </FormItem>
-          )}
+          label="Nome e endereço do proprietário"
+          placeholder="Escreva aqui qual é o nome completo e o endereço do proprietário"
         />
+
         <FormField
           control={form.control}
           name="facial"

@@ -11,32 +11,18 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-  FormDescription,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { MaskedInput } from "@/components/maskedInput";
 import { useEffect, useState } from "react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown } from "lucide-react";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
 import { handleFileUpload } from "@/lib/firebase-upload";
 import { decrypt } from "@/lib/crypto";
 import Image from "next/image";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
+import InputImage from "@/components/form/inputImage";
+import DefaultInput from "@/components/form/inputDefault";
+import MaskInput from "@/components/form/inputMask";
+import DefaultCombobox from "@/components/form/comboboxDefault";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File).refine((file) => file.size > 0, {
@@ -176,204 +162,70 @@ export function ResidentForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="px-4 w-full md:w-3/4 lg:w-1/2 2xl:w-1/3 space-y-6"
       >
-        <FormField
-          control={form.control}
-          name="profileUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Foto</FormLabel>
-              <Image
-                src="/photo-guide.jpeg"
-                alt="Requisitos de foto"
-                width={967}
-                height={911}
-                priority={true}
-                className="rounded-md"
-              />
-              <FormControl>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) =>
-                    field.onChange(e.target.files ? e.target.files[0] : null)
-                  }
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+        <Image
+          src="/photo-guide.jpeg"
+          alt="Requisitos de foto"
+          width={967}
+          height={911}
+          priority={true}
+          className="rounded-md"
         />
-        <FormField
+        <p>
+          Adicione uma foto 3x4, sem óculos e outros acessórios e com fundo
+          neutro
+        </p>
+        <InputImage control={form.control} name="profileUrl" />
+        <DefaultInput
           control={form.control}
           name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite seu nome"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Nome completo"
+          placeholder="Digite seu nome completo"
         />
-        <FormField
+        <MaskInput
           control={form.control}
+          mask="999.999.999/99"
           name="cpf"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>CPF</FormLabel>
-              <FormControl>
-                <MaskedInput
-                  mask="999.999.999/99"
-                  placeholder="Digite seu CPF"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="CPF"
+          placeholder="Digite seu CPF"
         />
-        <FormField
+        <DefaultInput
           control={form.control}
           name="rg"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>RG</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Digite seu RG"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>E-mail</FormLabel>
-              <FormControl>
-                <Input
-                  type="email"
-                  placeholder="Digite seu e-mail"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="RG"
+          placeholder="Digite seu RG"
         />
 
-        <FormField
+        <DefaultInput
           control={form.control}
-          name="telephone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Telefone</FormLabel>
-              <FormControl>
-                <MaskedInput
-                  mask="(99) 99999-9999"
-                  type="text"
-                  placeholder="Digite o número do seu telefone"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          type="email"
+          name="email"
+          label="E-mail"
+          placeholder="Digite seu e-mail"
         />
-        <FormField
+        <MaskInput
+          control={form.control}
+          mask="(99) 99999-9999"
+          name="telephone"
+          label="Telefone"
+          placeholder="Digite o número do seu telefone"
+        />
+        <DefaultCombobox
           control={form.control}
           name="addressType"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Tipo de endereço</FormLabel>
-              <FormControl>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                          "justify-between",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value
-                          ? items.find((item) => item.value === field.value)
-                              ?.label
-                          : "Selecione o tipo do seu endereço"}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="p-0 max-h-[60vh] overflow-x-auto">
-                    <Command className="w-full">
-                      <CommandInput placeholder="Buscar tipo..." />
-                      <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
-                      <CommandGroup>
-                        {items.map((item) => (
-                          <CommandItem
-                            value={item.label}
-                            key={item.value}
-                            onSelect={() => {
-                              form.setValue("addressType", item.value);
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                item.value === field.value
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                            {item.label}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Tipo de endereço"
+          object={items}
+          selectLabel="Selecione o tipo do seu endereço"
+          searchLabel="Buscar tipo..."
+          onSelect={(value: number) => {
+            form.setValue("addressType", value);
+          }}
         />
-        <FormField
+        <DefaultInput
           control={form.control}
           name="address"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Descrição do endereço</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite seu endereço"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-              <FormDescription>
-                Exemplo: Selecionei o tipo "LOTE", e coloco na descrição o
-                número dele "01".
-              </FormDescription>
-            </FormItem>
-          )}
+          label="Descrição do endereço"
+          placeholder="Digite seu endereço"
+          description="Exemplo: Selecionei o tipo 'LOTE', e coloco na descrição o número dele '01'."
         />
         <FormField
           control={form.control}

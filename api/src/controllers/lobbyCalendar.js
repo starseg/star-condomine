@@ -78,6 +78,7 @@ const getCalendarByLobby = async (req, res) => {
         const lobby = parseInt(req.params.lobby, 10);
         const lobbyCalendar = await db_1.default.lobbyCalendar.findMany({
             where: { lobbyId: lobby },
+            orderBy: [{ date: "asc" }],
         });
         res.json(lobbyCalendar);
     }

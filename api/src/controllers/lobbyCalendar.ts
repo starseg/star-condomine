@@ -87,6 +87,7 @@ export const getCalendarByLobby = async (
     const lobby = parseInt(req.params.lobby, 10);
     const lobbyCalendar = await prisma.lobbyCalendar.findMany({
       where: { lobbyId: lobby },
+      orderBy: [{ date: "asc" }],
     });
     res.json(lobbyCalendar);
   } catch (error) {

@@ -12,10 +12,5 @@ export const push = async (req: Request, res: Response): Promise<void> => {
 
 export const result = async (req: Request, res: Response): Promise<void> => {
   console.log(req.body);
-  res.json({
-    verb: "POST",
-    endpoint: "load_objects",
-    body: { object: "users" },
-    contentType: "application/json",
-  });
+  res.json();
 };

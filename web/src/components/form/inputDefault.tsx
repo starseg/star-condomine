@@ -1,5 +1,6 @@
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -13,6 +14,7 @@ interface DefaultInputProps {
   label: string;
   placeholder: string;
   type?: string;
+  description?: string;
 }
 
 export default function DefaultInput({
@@ -21,6 +23,7 @@ export default function DefaultInput({
   label,
   placeholder,
   type = "text",
+  description,
 }: DefaultInputProps) {
   return (
     <FormField
@@ -38,6 +41,7 @@ export default function DefaultInput({
             />
           </FormControl>
           <FormMessage />
+          <FormDescription>{description}</FormDescription>
         </FormItem>
       )}
     />
