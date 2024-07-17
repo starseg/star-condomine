@@ -14,7 +14,7 @@ export default async function ControliDDevices() {
       <Menu />
       <section className="flex flex-col justify-center items-center gap-4 mb-12">
         <h1 className="text-4xl text-center">Sincronizar dispositivo</h1>
-        <Login />
+        {/* <Login /> */}
         <Push />
       </section>
     </ControliDUpdateProvider>

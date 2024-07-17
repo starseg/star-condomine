@@ -59,6 +59,7 @@ export default function Login() {
         if (response.data.session_is_valid) {
           setStatus(`Conectado a ${device?.ip}`);
           localStorage.setItem("device_ip", device ? device.ip : "0.0.0.0");
+          localStorage.setItem("device_id", device ? device.name : "");
           return;
         }
       } catch (error) {
@@ -77,6 +78,7 @@ export default function Login() {
           const session = response.data.session;
           localStorage.setItem("session", session);
           localStorage.setItem("device_ip", device?.ip || "0.0.0.0");
+          localStorage.setItem("device_id", device ? device.name : "");
           setStatus(`Conectado a ${device?.ip}`);
         } else {
           setStatus("Tentando conectar...");
