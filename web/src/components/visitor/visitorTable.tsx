@@ -3,13 +3,13 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import api from "@/lib/axios";
 import {
+  CaretDown,
   CaretLeft,
   CaretRight,
   MagnifyingGlass,
@@ -24,17 +24,25 @@ import { SkeletonTable } from "../_skeletons/skeleton-table";
 import { deleteAction } from "@/lib/delete-action";
 import { deleteFile } from "@/lib/firebase-upload";
 import { Button } from "../ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function VisitorTable({ lobby }: { lobby: string }) {
   const [isLoading, setIsLoading] = useState(true);
   const [visitors, setVisitors] = useState<Visitor[]>([]);
+  const [itemsPerPage, setItemsPerPage] = useState(50);
   const [page, setPage] = useState(1);
   const [paginatedVisitors, setPaginatedVisitors] = useState<Visitor[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const control = params.get("c");
-  const itemsPerPage = 10;
 
   const fetchData = async () => {
     if (session)
@@ -61,13 +69,14 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
     fetchData();
   }, [session, searchParams]);
 
+  const itemsPerPageOptions = [5, 10, 25, 50, 100];
   const totalOfPages = Math.ceil(visitors.length / itemsPerPage);
 
   useEffect(() => {
     const begin = (page - 1) * itemsPerPage;
     const end = page * itemsPerPage;
     setPaginatedVisitors(visitors.slice(begin, end));
-  }, [page, visitors]);
+  }, [page, visitors, itemsPerPage]);
 
   const changePage = (operation: string) => {
     setPage((prevPage) => {
@@ -78,6 +87,11 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
       }
       return prevPage;
     });
+  };
+
+  const changeItemsPerPage = (amount: number) => {
+    setItemsPerPage(amount);
+    setPage(1);
   };
 
   const deleteVisitor = async (id: number, url: string) => {
@@ -193,6 +207,29 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
               <p className="bg-stone-800 p-2 rounded">
                 {visitors.length} registros
               </p>
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <CaretDown />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>Itens por página</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {itemsPerPageOptions.map((item) => {
+                    return (
+                      <DropdownMenuItem
+                        key={item}
+                        onClick={() => {
+                          changeItemsPerPage(item);
+                        }}
+                        className="flex items-center justify-center"
+                      >
+                        {item} itens
+                      </DropdownMenuItem>
+                    );
+                  })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
               <p>
                 Página {page} de {totalOfPages}
               </p>
