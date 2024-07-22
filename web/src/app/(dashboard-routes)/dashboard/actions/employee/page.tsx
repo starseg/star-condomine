@@ -33,9 +33,7 @@ export default async function Member({
           <h1 className="text-4xl text-center">Funcionários</h1>
           <Search placeholder="Buscar..." pagination={false} />
         </div>
-        <div className="max-h-[60vh] overflow-x-auto">
-          <MemberTable lobby={lobby} />
-        </div>
+        <MemberTable lobby={lobby} />
         <div className="mt-6 flex gap-4 items-center">
           <Link
             href={`employee/new?lobby=${lobby}&c=${control}`}
