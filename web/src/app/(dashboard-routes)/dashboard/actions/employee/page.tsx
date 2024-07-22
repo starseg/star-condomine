@@ -1,7 +1,9 @@
+import CopyButton from "@/components/copyButton";
 import MemberTable from "@/components/member/memberTable";
 import { Menu } from "@/components/menu";
 import Search from "@/components/search";
 import { buttonVariants } from "@/components/ui/button";
+import { encrypt } from "@/lib/crypto";
 import { FilePlus, FileSearch, LockKey } from "@phosphor-icons/react/dist/ssr";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -20,6 +22,8 @@ export default async function Member({
 }) {
   const lobby = searchParams?.lobby || "";
   const control = searchParams?.c || "";
+
+  const encryptedLobby = encrypt(Number(lobby));
 
   return (
     <>
@@ -65,6 +69,9 @@ export default async function Member({
               <LockKey size={24} /> Credenciais
             </p>
           </Link>
+          <CopyButton
+            text={`https://starcondomine.starseg.com/guest/employee?lobby=${encryptedLobby}`}
+          />
         </div>
       </section>
     </>
