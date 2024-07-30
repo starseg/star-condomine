@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PlusCircle } from "@phosphor-icons/react/dist/ssr";
 import { handleFileUpload } from "@/lib/firebase-upload";
 import InputImage from "../form/inputImage";
@@ -24,6 +24,12 @@ import MaskInput from "../form/inputMask";
 import DefaultTextarea from "../form/textareaDefault";
 import DefaultCheckbox from "../form/checkboxDefault";
 import DefaultInput from "../form/inputDefault";
+import {
+  createUserCommand,
+  createUserGroupRelationCommand,
+  setUserFaceCommand,
+} from "../control-id/device/commands";
+import DefaultCombobox from "../form/comboboxDefault";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -41,6 +47,9 @@ const FormSchema = z.object({
 
   tag: z.string(),
   card: z.string(),
+
+  sendToFacial: z.boolean().default(false),
+  groupId: z.number(),
 });
 
 export function EmployeeForm() {
@@ -60,6 +69,8 @@ export function EmployeeForm() {
       comments: "",
       tag: "",
       card: "",
+      sendToFacial: false,
+      groupId: 0,
     },
   });
 
@@ -67,6 +78,9 @@ export function EmployeeForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+  // PEGA O ID DA PORTARIA
+  const lobbyParam = params.get("lobby");
+  const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
 
   // BUSCA OS TIPOS DE TAG
   interface ITagTypes {
@@ -87,7 +101,6 @@ export function EmployeeForm() {
         console.error("Erro ao obter dados:", error);
       }
   };
-  fetchTagTypes();
   // RETORNA O ID DO TIPO DA TAG
   let tag = 0;
   let card = 0;
@@ -108,15 +121,75 @@ export function EmployeeForm() {
     form.setValue("card", "");
   };
 
+  const [lobbyData, setLobbyData] = useState<Lobby>();
+  async function fetchLobbyData() {
+    if (session)
+      try {
+        const getLobby = await api.get(`/lobby/find/${lobby}`, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setLobbyData(getLobby.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+  }
+
+  const [groups, setGroups] = useState<Group[]>([]);
+  const fetchGroups = async () => {
+    if (session)
+      try {
+        const response = await api.get("group", {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setGroups(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+  };
+
+  interface item {
+    value: number;
+    label: string;
+  }
+  let groupItems: item[] = [];
+
+  groups.map((group: Group) =>
+    groupItems.push({
+      value: group.groupId,
+      label: group.name,
+    })
+  );
+
+  useEffect(() => {
+    fetchTagTypes();
+    fetchLobbyData();
+    fetchGroups();
+  }, [session]);
+
+  async function sendControliDCommand(command: object): Promise<void> {
+    try {
+      if (lobbyData && lobbyData.ControllerBrand.name === "Control iD") {
+        lobbyData.device.map(async (device) => {
+          await api.post(`/control-id/add-command?id=${device.name}`, command);
+        });
+      } else {
+        console.log("Não é uma portaria com Control iD");
+      }
+    } catch (error) {
+      console.error("Error sending command:", error);
+    }
+  }
+
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
-    // PEGA O ID DA PORTARIA
-    const lobbyParam = params.get("lobby");
-    const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
-
     // FAZ O UPLOAD DA FOTO
     let file;
+    let base64image: string = "";
     if (data.profileUrl instanceof File && data.profileUrl.size > 0) {
       const timestamp = new Date().toISOString();
       const fileExtension = data.profileUrl.name.split(".").pop();
@@ -124,6 +197,12 @@ export function EmployeeForm() {
         data.profileUrl,
         `pessoas/foto-perfil-${timestamp}.${fileExtension}`
       );
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        base64image = result.split("data:image/jpeg;base64,")[1];
+      };
+      reader.readAsDataURL(data.profileUrl);
     } else file = "";
 
     // REGISTRA O funcionário
@@ -172,7 +251,6 @@ export function EmployeeForm() {
           throw error;
         }
       }
-
       // REGISTRA CARTÕES DO FUNCIONARIO
       if (cardNumber[0] != "") {
         try {
@@ -196,6 +274,35 @@ export function EmployeeForm() {
           throw error;
         }
       }
+
+      if (data.sendToFacial) {
+        const timestamp = ~~(Date.now() / 1000);
+        await sendControliDCommand(
+          createUserCommand(response.data.memberId, data.name)
+        );
+        // console.log(base64image);
+        if (base64image) {
+          await sendControliDCommand(
+            setUserFaceCommand(base64image, response.data.memberId, timestamp)
+          );
+        }
+
+        if (data.groupId !== 0) {
+          const info = {
+            memberId: response.data.memberId,
+            groupId: data.groupId,
+          };
+          await api.post(`memberGroup`, info, {
+            headers: {
+              Authorization: `Bearer ${session?.token.user.token}`,
+            },
+          });
+          await sendControliDCommand(
+            createUserGroupRelationCommand(response.data.memberId, data.groupId)
+          );
+        }
+      }
+
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
@@ -359,6 +466,29 @@ export function EmployeeForm() {
           label="Observações"
           placeholder="Alguma informação adicional..."
         />
+
+        <DefaultCheckbox
+          control={form.control}
+          name="sendToFacial"
+          label="Cadastrar nos dispositivos de reconhecimento facial"
+        />
+
+        {form.getValues("sendToFacial") === true && (
+          <div>
+            <DefaultCombobox
+              control={form.control}
+              name="groupId"
+              label="Grupo de acesso"
+              object={groupItems}
+              selectLabel="Selecione o grupo relacionado"
+              searchLabel="Buscar grupo..."
+              onSelect={(value: number) => {
+                form.setValue("groupId", value);
+              }}
+            />
+          </div>
+        )}
+
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
           {isSending ? "Registrando..." : "Registrar"}
         </Button>

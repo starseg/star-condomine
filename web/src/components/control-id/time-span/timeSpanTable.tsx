@@ -21,13 +21,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Trash2Icon } from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { cn, secondsToHHMM } from "@/lib/utils";
 import { useControliDUpdate } from "@/contexts/control-id-update-context";
 import { useSession } from "next-auth/react";
 import { deleteAction } from "@/lib/delete-action";
 import { SkeletonTable } from "@/components/_skeletons/skeleton-table";
 import { Check, X } from "@phosphor-icons/react/dist/ssr";
+import TimeSpanUpdateForm from "./timeSpanUpdateForm";
 
 export default function TimeSpanTable() {
   const { data: session } = useSession();
@@ -146,35 +147,31 @@ export default function TimeSpanTable() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <AlertDialog>
-                        <AlertDialogTrigger
-                          className={cn(
-                            buttonVariants({ variant: "ghost" }),
-                            "aspect-square p-0"
-                          )}
-                        >
-                          <Trash2Icon />
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Tem certeza que você deseja excluir este
-                              intervalo?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Esta ação não poderá ser desfeita.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => deleteItem(timeSpan.timeSpanId)}
-                            >
-                              Confirmar
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                      <Button
+                        onClick={() => deleteItem(timeSpan.timeSpanId)}
+                        className="aspect-square p-0"
+                        variant={"ghost"}
+                      >
+                        <Trash2Icon />
+                      </Button>
+                      <TimeSpanUpdateForm
+                        id={timeSpan.timeSpanId}
+                        time_zone_id={timeSpan.timeZoneId}
+                        start_hour={secondsToHHMM(timeSpan.start).split(":")[0]}
+                        start_min={secondsToHHMM(timeSpan.start).split(":")[1]}
+                        end_hour={secondsToHHMM(timeSpan.end).split(":")[0]}
+                        end_min={secondsToHHMM(timeSpan.end).split(":")[1]}
+                        sun={timeSpan.sun === 1 ? true : false}
+                        mon={timeSpan.mon === 1 ? true : false}
+                        tue={timeSpan.tue === 1 ? true : false}
+                        wed={timeSpan.wed === 1 ? true : false}
+                        thu={timeSpan.thu === 1 ? true : false}
+                        fri={timeSpan.fri === 1 ? true : false}
+                        sat={timeSpan.sat === 1 ? true : false}
+                        hol1={timeSpan.hol1 === 1 ? true : false}
+                        hol2={timeSpan.hol2 === 1 ? true : false}
+                        hol3={timeSpan.hol3 === 1 ? true : false}
+                      />
                     </TableCell>
                   </TableRow>
                 ))

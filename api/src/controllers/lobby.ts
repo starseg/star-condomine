@@ -61,6 +61,7 @@ export const getLobby = async (req: Request, res: Response): Promise<void> => {
       where: { lobbyId: id },
       include: {
         ControllerBrand: true,
+        device: true,
       },
     });
     if (!lobby) {

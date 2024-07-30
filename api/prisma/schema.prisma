@@ -398,8 +398,8 @@ model MemberGroup {
   memberId      Int
   groupId       Int
 
-  member Member @relation(fields: [memberId], references: [memberId])
-  group  Group  @relation(fields: [groupId], references: [groupId])
+  member Member @relation(fields: [memberId], references: [memberId], onDelete: Cascade)
+  group  Group  @relation(fields: [groupId], references: [groupId], onDelete: Cascade)
 }
 
 model GroupAccessRule {
@@ -407,8 +407,8 @@ model GroupAccessRule {
   accessRuleId      Int
   groupId           Int
 
-  accessRule AccessRule @relation(fields: [accessRuleId], references: [accessRuleId])
-  group      Group      @relation(fields: [groupId], references: [groupId])
+  accessRule AccessRule @relation(fields: [accessRuleId], references: [accessRuleId], onDelete: Cascade)
+  group      Group      @relation(fields: [groupId], references: [groupId], onDelete: Cascade)
 }
 
 model AccessRuleTimeZone {
@@ -416,8 +416,8 @@ model AccessRuleTimeZone {
   accessRuleId         Int
   timeZoneId           Int
 
-  accessRule AccessRule @relation(fields: [accessRuleId], references: [accessRuleId])
-  timeZone   TimeZone   @relation(fields: [timeZoneId], references: [timeZoneId])
+  accessRule AccessRule @relation(fields: [accessRuleId], references: [accessRuleId], onDelete: Cascade)
+  timeZone   TimeZone   @relation(fields: [timeZoneId], references: [timeZoneId], onDelete: Cascade)
 }
 
 model AreaAccessRule {
@@ -426,8 +426,8 @@ model AreaAccessRule {
   areaId           Int
   accessRuleId     Int
 
-  lobby      Lobby      @relation(fields: [areaId], references: [lobbyId])
-  accessRule AccessRule @relation(fields: [accessRuleId], references: [accessRuleId])
+  lobby      Lobby      @relation(fields: [areaId], references: [lobbyId], onDelete: Cascade)
+  accessRule AccessRule @relation(fields: [accessRuleId], references: [accessRuleId], onDelete: Cascade)
 }
 
 enum Status {

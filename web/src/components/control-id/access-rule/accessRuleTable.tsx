@@ -15,6 +15,7 @@ import { useControliDUpdate } from "@/contexts/control-id-update-context";
 import { useSession } from "next-auth/react";
 import { deleteAction } from "@/lib/delete-action";
 import { SkeletonTable } from "@/components/_skeletons/skeleton-table";
+import AccessRuleUpdateForm from "./accessRuleUpdateForm";
 
 export default function AccessRuleTable() {
   const { data: session } = useSession();
@@ -77,6 +78,12 @@ export default function AccessRuleTable() {
                       >
                         <Trash2Icon />
                       </Button>
+                      <AccessRuleUpdateForm
+                        id={accessRule.accessRuleId}
+                        name={accessRule.name}
+                        priority={accessRule.priority.toString()}
+                        type={accessRule.type.toString()}
+                      />
                     </TableCell>
                   </TableRow>
                 ))

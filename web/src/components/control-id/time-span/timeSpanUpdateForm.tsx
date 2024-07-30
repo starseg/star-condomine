@@ -16,12 +16,12 @@ import {
 } from "@/components/ui/sheet";
 import { toast } from "react-toastify";
 import api from "@/lib/axios";
-import { FilePlus2Icon } from "lucide-react";
 import { useControliDUpdate } from "@/contexts/control-id-update-context";
 import { CheckboxItem, InputItem } from "@/components/form-item";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { PencilLine } from "@phosphor-icons/react/dist/ssr";
 import DefaultCombobox from "@/components/form/comboboxDefault";
+import { useEffect, useState } from "react";
 
 const FormSchema = z.object({
   time_zone_id: z.number(),
@@ -41,26 +41,60 @@ const FormSchema = z.object({
   hol3: z.boolean(),
 });
 
-export default function TimeSpanForm() {
+export default function TimeSpanUpdateForm({
+  id,
+  time_zone_id,
+  start_hour,
+  start_min,
+  end_hour,
+  end_min,
+  sun,
+  mon,
+  tue,
+  wed,
+  thu,
+  fri,
+  sat,
+  hol1,
+  hol2,
+  hol3,
+}: {
+  id: number;
+  time_zone_id: number;
+  start_hour: string;
+  start_min: string;
+  end_hour: string;
+  end_min: string;
+  sun: boolean;
+  mon: boolean;
+  tue: boolean;
+  wed: boolean;
+  thu: boolean;
+  fri: boolean;
+  sat: boolean;
+  hol1: boolean;
+  hol2: boolean;
+  hol3: boolean;
+}) {
   const { triggerUpdate } = useControliDUpdate();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      time_zone_id: 0,
-      start_hour: "0",
-      start_min: "0",
-      end_hour: "0",
-      end_min: "0",
-      sun: true,
-      mon: true,
-      tue: true,
-      wed: true,
-      thu: true,
-      fri: true,
-      sat: true,
-      hol1: true,
-      hol2: true,
-      hol3: true,
+      time_zone_id: time_zone_id,
+      start_hour: start_hour,
+      start_min: start_min,
+      end_hour: end_hour,
+      end_min: end_min,
+      sun: sun,
+      mon: mon,
+      tue: tue,
+      wed: wed,
+      thu: thu,
+      fri: fri,
+      sat: sat,
+      hol1: hol1,
+      hol2: hol2,
+      hol3: hol3,
     },
   });
   const { data: session } = useSession();
@@ -105,7 +139,7 @@ export default function TimeSpanForm() {
       const end_time = Number(data.end_hour) * 3600 + Number(data.end_min) * 60;
 
       const info = {
-        timeZoneId: data.time_zone_id,
+        timeZoneId: Number(data.time_zone_id),
         start: start_time,
         end: end_time,
         sun: data.sun === true ? 1 : 0,
@@ -120,31 +154,14 @@ export default function TimeSpanForm() {
         hol3: data.hol3 === true ? 1 : 0,
       };
 
-      const response = await api.post(`timeSpan`, info, {
+      const response = await api.put(`timeSpan/${id}`, info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
-      if (response.status === 201) {
-        toast.success("Intervalo registrado!", {
+      if (response.status === 200) {
+        toast.success("Intervalo atualizado!", {
           theme: "colored",
-        });
-        form.reset({
-          time_zone_id: 0,
-          start_hour: "0",
-          start_min: "0",
-          end_hour: "0",
-          end_min: "0",
-          sun: true,
-          mon: true,
-          tue: true,
-          wed: true,
-          thu: true,
-          fri: true,
-          sat: true,
-          hol1: true,
-          hol2: true,
-          hol3: true,
         });
         triggerUpdate();
       }
@@ -159,14 +176,14 @@ export default function TimeSpanForm() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button className="flex gap-2">
-          <FilePlus2Icon /> Criar intervalo
+        <Button className="aspect-square p-0" variant={"ghost"}>
+          <PencilLine size={24} />
         </Button>
       </SheetTrigger>
       <SheetContent side={"right"}>
         <SheetHeader>
-          <SheetTitle>Criar intervalo</SheetTitle>
-          <SheetDescription>Cadastre aqui um novo intervalo.</SheetDescription>
+          <SheetTitle>Editar intervalo</SheetTitle>
+          <SheetDescription>Atualize este intervalo.</SheetDescription>
         </SheetHeader>
         <Form {...form}>
           <form

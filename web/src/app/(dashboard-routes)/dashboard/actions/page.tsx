@@ -19,6 +19,7 @@ import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import LoadingIcon from "@/components/loadingIcon";
+import { OpenDoorButton } from "@/components/control-id/device/openDoorButton";
 
 interface CalendarProps {
   lobbyCalendarId: number;
@@ -191,6 +192,7 @@ export default function LobbyDetails() {
               </Link>
             )}
           </div>
+          <OpenDoorButton />
         </section>
       ) : (
         <div className="flex items-center justify-center my-8">

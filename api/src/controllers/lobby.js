@@ -58,6 +58,7 @@ const getLobby = async (req, res) => {
             where: { lobbyId: id },
             include: {
                 ControllerBrand: true,
+                device: true,
             },
         });
         if (!lobby) {

@@ -3,7 +3,11 @@ import { Button } from "@/components/ui/button";
 import api from "@/lib/axios";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { createUserCommand, listUsersCommand } from "./commands";
+import {
+  createUserCommand,
+  listAccessRulesCommand,
+  listUsersCommand,
+} from "./commands";
 import {
   Select,
   SelectContent,
@@ -14,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useSession } from "next-auth/react";
+import { Broom } from "@phosphor-icons/react/dist/ssr";
 
 interface User {
   id: number;
@@ -158,22 +163,25 @@ export default function Push() {
           </SelectGroup>
         </SelectContent>
       </Select>
-      <div className="flex flex-wrap justify-between gap-2">
+      <div className="flex flex-wrap justify-between gap-4">
         {/* <Button onClick={setPush} className="w-[30%]">
           {!isActive ? "Ativar push" : "Desativar push"}
         </Button> */}
-        <Button onClick={clearResults} className="w-[30%]">
-          Limpar
+        <Button onClick={clearResults} title="Limpar">
+          <Broom size={24} />
         </Button>
-        <Button
-          onClick={() => sendCommand(listUsersCommand)}
-          className="w-[30%]"
-        >
+        <Button onClick={() => sendCommand(listUsersCommand)}>
           Listar usuários
         </Button>
+        <Button onClick={() => sendCommand(listAccessRulesCommand)}>
+          Listar regras
+        </Button>
         <Button
-          onClick={() => sendCommand(createUserCommand("Edson"))}
-          className="w-[30%]"
+          onClick={() =>
+            sendCommand(
+              createUserCommand(Math.floor(Math.random() * 1000), "Edson")
+            )
+          }
         >
           Criar usuário
         </Button>

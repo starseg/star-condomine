@@ -15,6 +15,7 @@ import { useControliDUpdate } from "@/contexts/control-id-update-context";
 import { useSession } from "next-auth/react";
 import { deleteAction } from "@/lib/delete-action";
 import { SkeletonTable } from "@/components/_skeletons/skeleton-table";
+import GroupUpdateForm from "./groupUpdateForm";
 
 export default function GroupTable() {
   const { data: session } = useSession();
@@ -73,6 +74,7 @@ export default function GroupTable() {
                       >
                         <Trash2Icon />
                       </Button>
+                      <GroupUpdateForm id={group.groupId} name={group.name} />
                     </TableCell>
                   </TableRow>
                 ))

@@ -42,31 +42,31 @@ import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
 const FormSchema = z.object({
-  areaId: z.number(),
   accessRuleId: z.number(),
+  timeZoneId: z.number(),
 });
 
-export default function AreaAccessRuleForm() {
+export default function AccessRuleTimeZoneForm() {
   const { triggerUpdate } = useControliDUpdate();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      areaId: 0,
       accessRuleId: 0,
+      timeZoneId: 0,
     },
   });
   const { data: session } = useSession();
 
-  const [areas, setAreas] = useState<Lobby[]>([]);
-  const fetchAreas = async () => {
+  const [timeZones, setTimeZones] = useState<TimeZone[]>([]);
+  const fetchTimeZones = async () => {
     if (session)
       try {
-        const response = await api.get(`lobby`, {
+        const response = await api.get("timeZone", {
           headers: {
             Authorization: `Bearer ${session?.token.user.token}`,
           },
         });
-        setAreas(response.data);
+        setTimeZones(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
       }
@@ -88,18 +88,18 @@ export default function AreaAccessRuleForm() {
   };
 
   useEffect(() => {
-    fetchAreas();
     fetchAccessRules();
+    fetchTimeZones();
   }, [session]);
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       const info = {
-        areaId: data.areaId,
+        timeZoneId: data.timeZoneId,
         accessRuleId: data.accessRuleId,
       };
 
-      const response = await api.post(`areaAccessRule`, info, {
+      const response = await api.post(`accessRuleTimeZone`, info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
@@ -109,7 +109,7 @@ export default function AreaAccessRuleForm() {
           theme: "colored",
         });
         form.reset({
-          areaId: 0,
+          timeZoneId: 0,
           accessRuleId: 0,
         });
         triggerUpdate();
@@ -139,64 +139,6 @@ export default function AreaAccessRuleForm() {
             onSubmit={form.handleSubmit(onSubmit)}
             className="w-full space-y-4"
           >
-            <FormField
-              control={form.control}
-              name="areaId"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Portaria</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          className={cn(
-                            "justify-between",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value
-                            ? areas.find(
-                                (lobby) => lobby.lobbyId === field.value
-                              )?.name
-                            : "Selecione uma portaria"}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="p-0 max-h-[60vh] overflow-x-auto">
-                      <Command className="w-full">
-                        <CommandInput placeholder="Buscar portaria..." />
-                        <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
-                        <CommandGroup>
-                          {areas.map((lobby) => (
-                            <CommandItem
-                              value={lobby.name}
-                              key={lobby.lobbyId}
-                              onSelect={() => {
-                                form.setValue("areaId", lobby.lobbyId);
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  lobby.lobbyId === field.value
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                              />
-                              {lobby.name}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <FormField
               control={form.control}
               name="accessRuleId"
@@ -249,6 +191,68 @@ export default function AreaAccessRuleForm() {
                                 )}
                               />
                               {accessRule.name}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="timeZoneId"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Horário</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value
+                            ? timeZones.find(
+                                (timeZone) =>
+                                  timeZone.timeZoneId === field.value
+                              )?.name
+                            : "Selecione um horário"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="p-0 max-h-[60vh] overflow-x-auto">
+                      <Command className="w-full">
+                        <CommandInput placeholder="Buscar portaria..." />
+                        <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
+                        <CommandGroup>
+                          {timeZones.map((timeZone) => (
+                            <CommandItem
+                              value={timeZone.name}
+                              key={timeZone.timeZoneId}
+                              onSelect={() => {
+                                form.setValue(
+                                  "timeZoneId",
+                                  timeZone.timeZoneId
+                                );
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  timeZone.timeZoneId === field.value
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {timeZone.name}
                             </CommandItem>
                           ))}
                         </CommandGroup>

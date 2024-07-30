@@ -12,7 +12,14 @@ import GroupTable from "@/components/control-id/group/groupTable";
 import GroupAccessRuleForm from "@/components/control-id/group-access-rule/groupAccessRuleForm";
 import GroupAccessRuleTable from "@/components/control-id/group-access-rule/groupAccessRuleTable";
 import Link from "next/link";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import SyncDevice from "@/components/control-id/device/syncDevice";
+import AreaAccessRuleTable from "@/components/control-id/area-access-rule/areaAccessRuleTable";
+import AccessRuleTimeZoneTable from "@/components/control-id/access-rule-time-zone/accessRuleTimeZoneTable";
+import AreaAccessRuleForm from "@/components/control-id/area-access-rule/areaAccessRuleForm";
+import AccessRuleTimeZoneForm from "@/components/control-id/access-rule-time-zone/accessRuleTimeZoneForm";
 
 export default async function ControliD() {
   return (
@@ -23,12 +30,12 @@ export default async function ControliD() {
           <Gear /> Configurações Control iD
         </h1>
         <div className="flex gap-4">
+          <SyncDevice />
           <Link
             href={"control-id/device"}
             className={buttonVariants({ variant: "default" })}
           >
-            <ArrowsClockwise size={22} className="mr-2" /> Sincronizar
-            dispositivo
+            Testes em dispositivos
           </Link>
           <Link
             href={"control-id/accessRule"}
@@ -62,7 +69,18 @@ export default async function ControliD() {
           <GroupAccessRuleForm />
         </div>
         <GroupAccessRuleTable />
+        <div className="w-full flex justify-between items-end mt-4 pb-2">
+          <h2 className="text-xl">Portarias x Regras de acesso</h2>
+          <AreaAccessRuleForm />
+        </div>
+        <AreaAccessRuleTable />
+        <div className="w-full flex justify-between items-end mt-4 pb-2">
+          <h2 className="text-xl">Regras de acesso x Horários</h2>
+          <AccessRuleTimeZoneForm />
+        </div>
+        <AccessRuleTimeZoneTable />
       </section>
+      <ToastContainer position="bottom-right" autoClose={2500} />
     </ControliDUpdateProvider>
   );
 }
