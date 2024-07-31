@@ -1,6 +1,7 @@
 interface Visitor {
   visitorId: number;
   profileUrl: string;
+  documentUrl: string | null;
   name: string;
   rg: string;
   cpf: string;
@@ -28,6 +29,7 @@ interface Visitor {
 interface VisitorFull {
   visitorId: number;
   profileUrl: string;
+  documentUrl: string | null;
   name: string;
   rg: string;
   cpf: string;

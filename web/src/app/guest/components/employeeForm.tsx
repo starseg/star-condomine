@@ -43,6 +43,9 @@ const FormSchema = z.object({
   accessPeriod: z.string().min(5, {
     message: "Preencha o período de acesso corretamente",
   }),
+  documentUrl: z.instanceof(File).refine((file) => file.size > 0, {
+    message: "Um arquivo deve ser selecionado",
+  }),
   terms: z.boolean(),
 });
 
@@ -56,6 +59,7 @@ export function EmployeeForm() {
       rg: "",
       position: "",
       accessPeriod: "",
+      documentUrl: new File([], ""),
       terms: false,
     },
   });
@@ -83,11 +87,23 @@ export function EmployeeForm() {
       );
     } else file = "";
 
+    // FAZ O UPLOAD DO DOCUMENTO
+    let document;
+    if (data.documentUrl instanceof File && data.documentUrl.size > 0) {
+      const timestamp = new Date().toISOString();
+      const fileExtension = data.documentUrl.name.split(".").pop();
+      document = await handleFileUpload(
+        data.documentUrl,
+        `pessoas/foto-documento-funcionario-${timestamp}.${fileExtension}`
+      );
+    } else document = "";
+
     // REGISTRA O MORADOR
     try {
       const info = {
         type: "EMPLOYEE",
         profileUrl: file,
+        documentUrl: document,
         name: data.name,
         cpf: data.cpf,
         rg: data.rg,
@@ -159,6 +175,11 @@ export function EmployeeForm() {
           placeholder="Descreva os dias da semana e os horários"
         />
 
+        <div>
+          <p className="mb-1 text-sm">Documento com foto (RG/CPF ou CNH)</p>
+          <InputImage control={form.control} name="documentUrl" />
+        </div>
+
         <FormField
           control={form.control}
           name="terms"
@@ -192,7 +213,7 @@ export function EmployeeForm() {
           className="w-full text-lg"
           disabled={form.getValues("terms") === false || isSendind}
         >
-          Cadastrar
+          {isSendind ? "Cadastrando..." : "Cadastrar"}
         </Button>
         <p className="my-2">
           Lembre-se de conferir todos os dados antes de enviar!

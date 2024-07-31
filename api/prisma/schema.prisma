@@ -65,6 +65,7 @@ model Member {
   memberId            Int          @id @default(autoincrement())
   type                MemberType
   profileUrl          String?
+  documentUrl         String?
   name                String
   rg                  String
   cpf                 String
@@ -167,19 +168,20 @@ model VisitorType {
 }
 
 model Visitor {
-  visitorId  Int       @id @default(autoincrement())
-  profileUrl String?
-  name       String
-  rg         String
-  cpf        String
-  phone      String
-  startDate  DateTime?
-  endDate    DateTime?
-  status     Status    @default(ACTIVE)
-  relation   String?
-  comments   String?   @db.VarChar(1000)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  visitorId   Int       @id @default(autoincrement())
+  profileUrl  String?
+  documentUrl String?
+  name        String
+  rg          String
+  cpf         String
+  phone       String
+  startDate   DateTime?
+  endDate     DateTime?
+  status      Status    @default(ACTIVE)
+  relation    String?
+  comments    String?   @db.VarChar(1000)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   visitorType   VisitorType @relation(fields: [visitorTypeId], references: [visitorTypeId])
   visitorTypeId Int

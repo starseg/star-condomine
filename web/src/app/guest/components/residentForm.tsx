@@ -45,6 +45,9 @@ const FormSchema = z.object({
   telephone: z.string().min(10, {
     message: "Preencha o telefone corretamente",
   }),
+  documentUrl: z.instanceof(File).refine((file) => file.size > 0, {
+    message: "Um arquivo deve ser selecionado",
+  }),
   terms: z.boolean(),
 });
 
@@ -60,6 +63,7 @@ export function ResidentForm() {
       addressType: 0,
       address: "",
       telephone: "",
+      documentUrl: new File([], ""),
       terms: false,
     },
   });
@@ -119,11 +123,23 @@ export function ResidentForm() {
       );
     } else file = "";
 
+    // FAZ O UPLOAD DO DOCUMENTO
+    let document;
+    if (data.documentUrl instanceof File && data.documentUrl.size > 0) {
+      const timestamp = new Date().toISOString();
+      const fileExtension = data.documentUrl.name.split(".").pop();
+      document = await handleFileUpload(
+        data.documentUrl,
+        `pessoas/foto-documento-proprietario-${timestamp}.${fileExtension}`
+      );
+    } else document = "";
+
     // REGISTRA O MORADOR
     try {
       const info = {
         type: "RESIDENT",
         profileUrl: file,
+        documentUrl: document,
         name: data.name,
         cpf: data.cpf,
         rg: data.rg,
@@ -227,6 +243,12 @@ export function ResidentForm() {
           placeholder="Digite seu endereço"
           description="Exemplo: Selecionei o tipo 'LOTE', e coloco na descrição o número dele '01'."
         />
+        <div>
+          <p className="mb-1 text-sm">
+            Documento com foto do proprietário do endereço (RG/CPF ou CNH)
+          </p>
+          <InputImage control={form.control} name="documentUrl" />
+        </div>
         <FormField
           control={form.control}
           name="terms"
@@ -260,7 +282,7 @@ export function ResidentForm() {
           className="w-full text-lg"
           disabled={form.getValues("terms") === false || isSendind}
         >
-          Cadastrar
+          {isSendind ? "Cadastrando..." : "Cadastrar"}
         </Button>
         <p className="my-2">
           Lembre-se de conferir todos os dados antes de enviar!

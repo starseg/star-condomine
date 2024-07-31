@@ -9,6 +9,7 @@ export const createMember = async (
     const {
       type,
       profileUrl,
+      documentUrl,
       name,
       rg,
       cpf,
@@ -28,6 +29,7 @@ export const createMember = async (
       data: {
         type,
         profileUrl,
+        documentUrl,
         name,
         rg,
         cpf,
@@ -84,6 +86,7 @@ export const createVisitor = async (
   try {
     const {
       profileUrl,
+      documentUrl,
       name,
       rg,
       cpf,
@@ -99,6 +102,7 @@ export const createVisitor = async (
     const visitor = await prisma.visitor.create({
       data: {
         profileUrl,
+        documentUrl,
         name,
         rg,
         cpf,

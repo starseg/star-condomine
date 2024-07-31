@@ -192,7 +192,7 @@ export default function LobbyDetails() {
               </Link>
             )}
           </div>
-          <OpenDoorButton />
+          {lobby.ControllerBrand.name === "Control iD" && <OpenDoorButton />}
         </section>
       ) : (
         <div className="flex items-center justify-center my-8">

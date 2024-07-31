@@ -76,6 +76,19 @@ export default function EmployeeDetails({ id }: { id: number }) {
               content={member.comments ? member.comments : "Nenhuma observação"}
             />
 
+            {member.documentUrl && member.documentUrl.length > 0 ? (
+              <>
+                <p className="text-lg mb-2">Documento</p>
+                <img
+                  src={member.documentUrl}
+                  alt="Documento"
+                  className="mx-auto"
+                />
+              </>
+            ) : (
+              ""
+            )}
+
             <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
             <div className="flex flex-col justify-center gap-2 mb-4">
               <label className="text-lg">Formas de acesso:</label>

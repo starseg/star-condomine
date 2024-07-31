@@ -40,6 +40,7 @@ import DefaultCombobox from "../form/comboboxDefault";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
+  documentUrl: z.instanceof(File),
   name: z
     .string()
     .min(6, {
@@ -73,6 +74,7 @@ export function VisitorForm() {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       profileUrl: new File([], ""),
+      documentUrl: new File([], ""),
       name: "",
       cpf: "",
       rg: "",
@@ -182,10 +184,22 @@ export function VisitorForm() {
       );
     } else file = "";
 
+    // FAZ O UPLOAD DO DOCUMENTO
+    let document;
+    if (data.documentUrl instanceof File && data.documentUrl.size > 0) {
+      const timestamp = new Date().toISOString();
+      const fileExtension = data.documentUrl.name.split(".").pop();
+      document = await handleFileUpload(
+        data.documentUrl,
+        `pessoas/foto-documento-proprietario-${timestamp}.${fileExtension}`
+      );
+    } else document = "";
+
     // REGISTRA O visitante
     try {
       const info = {
         profileUrl: file,
+        documentUrl: document,
         name: data.name,
         cpf: data.cpf,
         rg: data.rg,
@@ -321,6 +335,13 @@ export function VisitorForm() {
           label="Observações"
           placeholder="Alguma informação adicional..."
         />
+
+        <div>
+          <p className="mb-1 text-sm">
+            Documento com foto do proprietário responsável (opcional)
+          </p>
+          <InputImage control={form.control} name="documentUrl" />
+        </div>
 
         <div className="flex items-center space-x-2">
           <Checkbox

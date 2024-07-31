@@ -82,6 +82,16 @@ export default function ResidentFullList({ lobby }: { lobby: string }) {
             <p>Data de registro: {formatDate(member.createdAt)}</p>
             <p>Última atualização: {formatDate(member.updatedAt)}</p>
           </div>
+          {member.documentUrl && member.documentUrl.length > 0 && (
+            <div className="w-1/4">
+              <p className="text-lg mb-2">Documento</p>
+              <img
+                src={member.documentUrl}
+                alt="Documento"
+                className="mx-auto"
+              />
+            </div>
+          )}
         </div>
       ))}
     </section>

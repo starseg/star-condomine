@@ -29,6 +29,7 @@ import DefaultTextarea from "../form/textareaDefault";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
+  documentUrl: z.instanceof(File),
   name: z.string().min(5).trim(),
   cpf: z.string(),
   rg: z.string(),
@@ -52,6 +53,7 @@ export function ResidentForm() {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       profileUrl: new File([], ""),
+      documentUrl: new File([], ""),
       name: "",
       cpf: "",
       rg: "",
@@ -186,11 +188,23 @@ export function ResidentForm() {
       );
     } else file = "";
 
+    // FAZ O UPLOAD DO DOCUMENTO
+    let document;
+    if (data.documentUrl instanceof File && data.documentUrl.size > 0) {
+      const timestamp = new Date().toISOString();
+      const fileExtension = data.documentUrl.name.split(".").pop();
+      document = await handleFileUpload(
+        data.documentUrl,
+        `pessoas/foto-documento-proprietario-${timestamp}.${fileExtension}`
+      );
+    } else document = "";
+
     // REGISTRA O MORADOR
     try {
       const info = {
         type: "RESIDENT",
         profileUrl: file,
+        documentUrl: document,
         name: data.name,
         cpf: data.cpf,
         rg: data.rg,
@@ -296,7 +310,10 @@ export function ResidentForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
       >
-        <InputImage control={form.control} name="profileUrl" />
+        <div>
+          <p className="mb-1 text-sm">Foto de perfil</p>
+          <InputImage control={form.control} name="profileUrl" />
+        </div>
 
         <DefaultInput
           control={form.control}
@@ -520,6 +537,11 @@ export function ResidentForm() {
           label="Senha"
           placeholder="Senha numérica"
         />
+
+        <div>
+          <p className="mb-1 text-sm">Documento com foto (RG/CPF ou CNH)</p>
+          <InputImage control={form.control} name="documentUrl" />
+        </div>
 
         <DefaultTextarea
           control={form.control}

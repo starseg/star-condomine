@@ -78,6 +78,19 @@ export default function VisitorDetails({ id }: { id: number }) {
               content={visitor.comments ? visitor.comments : "Sem observações"}
             />
 
+            {visitor.documentUrl && visitor.documentUrl.length > 0 ? (
+              <>
+                <p className="text-lg mb-2">Documento do proprietário</p>
+                <img
+                  src={visitor.documentUrl}
+                  alt="Documento"
+                  className="mx-auto"
+                />
+              </>
+            ) : (
+              ""
+            )}
+
             <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
             <DetailItem
               label="Data do registro"

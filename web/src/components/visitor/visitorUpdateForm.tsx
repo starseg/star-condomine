@@ -20,6 +20,7 @@ import DefaultTextarea from "../form/textareaDefault";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
+  documentUrl: z.instanceof(File),
   name: z.string().trim(),
   cpf: z.string(),
   rg: z.string(),
@@ -32,6 +33,7 @@ const FormSchema = z.object({
 interface Visitor {
   visitorId: number;
   profileUrl: string;
+  documentUrl: string | null;
   name: string;
   rg: string;
   cpf: string;
@@ -49,6 +51,7 @@ interface Visitor {
 }
 interface Values {
   profileUrl: File;
+  documentUrl: File;
   name: string;
   rg: string;
   cpf: string;
@@ -131,10 +134,28 @@ export function VisitorUpdateForm({
     } else if (visitor?.profileUrl) file = visitor.profileUrl;
     else file = "";
 
+    // FAZ O UPLOAD DO DOCUMENTO
+    let document;
+    if (removeFile) {
+      document = "";
+      if (visitor.documentUrl && visitor.documentUrl.length > 0) {
+        deleteFile(visitor.documentUrl);
+      }
+    } else if (data.documentUrl instanceof File && data.documentUrl.size > 0) {
+      const timestamp = new Date().toISOString();
+      const fileExtension = data.documentUrl.name.split(".").pop();
+      document = await handleFileUpload(
+        data.documentUrl,
+        `pessoas/foto-perfil-visita-${timestamp}.${fileExtension}`
+      );
+    } else if (visitor?.documentUrl) document = visitor.documentUrl;
+    else document = "";
+
     // REGISTRA O visitante
     try {
       const info = {
         profileUrl: file,
+        documentUrl: document,
         name: data.name,
         cpf: data.cpf,
         rg: data.rg,
@@ -242,6 +263,40 @@ export function VisitorUpdateForm({
           label="Relação / Empresa"
           placeholder="Qual é a relação desse visitante com a portaria?"
         />
+
+        <div className="flex gap-4 items-center justify-center">
+          {visitor.documentUrl && visitor.documentUrl.length > 0 ? (
+            <div className="flex flex-col justify-center items-center">
+              <img src={visitor.documentUrl} alt="Foto de perfil" width={80} />
+              <p className="text-sm text-center mt-2">Foto atual</p>
+            </div>
+          ) : (
+            <div className="flex flex-col justify-center items-center">
+              <UserCircle className="w-20 h-20" />
+              <p className="text-sm text-center mt-2">
+                Nenhuma foto <br /> cadastrada
+              </p>
+            </div>
+          )}
+          <div className="w-10/12">
+            <InputImage control={form.control} name="documentUrl" />
+
+            <div className="flex items-center space-x-2 mt-2">
+              <Checkbox
+                id="check"
+                onClick={() => {
+                  setRemoveFile(!removeFile);
+                }}
+              />
+              <label
+                htmlFor="check"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Remover foto - {removeFile ? "sim" : "não"}
+              </label>
+            </div>
+          </div>
+        </div>
 
         <RadioInput
           control={form.control}

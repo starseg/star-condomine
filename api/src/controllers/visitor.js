@@ -43,10 +43,11 @@ const getVisitor = async (req, res) => {
 exports.getVisitor = getVisitor;
 const createVisitor = async (req, res) => {
     try {
-        const { profileUrl, name, rg, cpf, phone, startDate, endDate, relation, comments, visitorTypeId, lobbyId, } = req.body;
+        const { profileUrl, documentUrl, name, rg, cpf, phone, startDate, endDate, relation, comments, visitorTypeId, lobbyId, } = req.body;
         const visitor = await db_1.default.visitor.create({
             data: {
                 profileUrl,
+                documentUrl,
                 name,
                 rg,
                 cpf,
@@ -69,11 +70,12 @@ exports.createVisitor = createVisitor;
 const updateVisitor = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const { profileUrl, name, rg, cpf, phone, startDate, endDate, relation, comments, status, visitorTypeId, } = req.body;
+        const { profileUrl, documentUrl, name, rg, cpf, phone, startDate, endDate, relation, comments, status, visitorTypeId, } = req.body;
         const visitor = await db_1.default.visitor.update({
             where: { visitorId: id },
             data: {
                 profileUrl,
+                documentUrl,
                 name,
                 rg,
                 cpf,

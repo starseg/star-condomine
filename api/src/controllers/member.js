@@ -66,11 +66,12 @@ const getMember = async (req, res) => {
 exports.getMember = getMember;
 const createMember = async (req, res) => {
     try {
-        const { type, profileUrl, name, rg, cpf, email, comments, faceAccess, biometricAccess, remoteControlAccess, passwordAccess, address, addressTypeId, accessPeriod, position, lobbyId, } = req.body;
+        const { type, profileUrl, documentUrl, name, rg, cpf, email, comments, faceAccess, biometricAccess, remoteControlAccess, passwordAccess, address, addressTypeId, accessPeriod, position, lobbyId, } = req.body;
         const member = await db_1.default.member.create({
             data: {
                 type,
                 profileUrl,
+                documentUrl,
                 name,
                 rg,
                 cpf,
@@ -97,12 +98,13 @@ exports.createMember = createMember;
 const updateMember = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const { type, profileUrl, name, rg, cpf, email, comments, status, faceAccess, biometricAccess, remoteControlAccess, passwordAccess, address, addressTypeId, accessPeriod, position, lobbyId, } = req.body;
+        const { type, profileUrl, documentUrl, name, rg, cpf, email, comments, status, faceAccess, biometricAccess, remoteControlAccess, passwordAccess, address, addressTypeId, accessPeriod, position, lobbyId, } = req.body;
         const member = await db_1.default.member.update({
             where: { memberId: id },
             data: {
                 type,
                 profileUrl,
+                documentUrl,
                 name,
                 rg,
                 cpf,

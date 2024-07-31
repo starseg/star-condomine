@@ -7,11 +7,12 @@ exports.getLobby = exports.getVisitorTypes = exports.createVisitor = exports.get
 const db_1 = __importDefault(require("../db"));
 const createMember = async (req, res) => {
     try {
-        const { type, profileUrl, name, rg, cpf, email, comments, faceAccess, biometricAccess, remoteControlAccess, passwordAccess, address, addressTypeId, accessPeriod, position, lobbyId, } = req.body;
+        const { type, profileUrl, documentUrl, name, rg, cpf, email, comments, faceAccess, biometricAccess, remoteControlAccess, passwordAccess, address, addressTypeId, accessPeriod, position, lobbyId, } = req.body;
         const member = await db_1.default.member.create({
             data: {
                 type,
                 profileUrl,
+                documentUrl,
                 name,
                 rg,
                 cpf,
@@ -60,10 +61,11 @@ const getAddressTypes = async (req, res) => {
 exports.getAddressTypes = getAddressTypes;
 const createVisitor = async (req, res) => {
     try {
-        const { profileUrl, name, rg, cpf, phone, startDate, endDate, relation, comments, status, visitorTypeId, lobbyId, } = req.body;
+        const { profileUrl, documentUrl, name, rg, cpf, phone, startDate, endDate, relation, comments, status, visitorTypeId, lobbyId, } = req.body;
         const visitor = await db_1.default.visitor.create({
             data: {
                 profileUrl,
+                documentUrl,
                 name,
                 rg,
                 cpf,

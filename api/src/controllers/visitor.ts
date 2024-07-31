@@ -48,6 +48,7 @@ export const createVisitor = async (
   try {
     const {
       profileUrl,
+      documentUrl,
       name,
       rg,
       cpf,
@@ -62,6 +63,7 @@ export const createVisitor = async (
     const visitor = await prisma.visitor.create({
       data: {
         profileUrl,
+        documentUrl,
         name,
         rg,
         cpf,
@@ -88,6 +90,7 @@ export const updateVisitor = async (
     const id = parseInt(req.params.id, 10);
     const {
       profileUrl,
+      documentUrl,
       name,
       rg,
       cpf,
@@ -103,6 +106,7 @@ export const updateVisitor = async (
       where: { visitorId: id },
       data: {
         profileUrl,
+        documentUrl,
         name,
         rg,
         cpf,

@@ -2,6 +2,7 @@ interface Member {
   memberId: number;
   type: string;
   profileUrl: string;
+  documentUrl: string | null;
   name: string;
   rg: string;
   cpf: string;
@@ -33,6 +34,7 @@ interface MemberFull {
   memberId: number;
   type: string;
   profileUrl: string;
+  documentUrl: string | null;
   name: string;
   rg: string;
   cpf: string;

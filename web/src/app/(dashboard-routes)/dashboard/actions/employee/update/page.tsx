@@ -12,6 +12,7 @@ export default function UpdateResident() {
     memberId: number;
     type: string;
     profileUrl: string;
+    documentUrl: string | null;
     name: string;
     rg: string;
     cpf: string;
@@ -40,6 +41,7 @@ export default function UpdateResident() {
   }
   interface Values {
     profileUrl: File;
+    documentUrl: File;
     name: string;
     cpf: string;
     rg: string;
@@ -84,6 +86,7 @@ export default function UpdateResident() {
     if (member) {
       setData({
         profileUrl: new File([], ""),
+        documentUrl: new File([], ""),
         name: member?.name || "",
         cpf: member?.cpf || "",
         rg: member?.rg || "",

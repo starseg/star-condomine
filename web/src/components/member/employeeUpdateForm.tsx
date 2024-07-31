@@ -6,24 +6,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "../ui/textarea";
-import { MaskedInput } from "../maskedInput";
 import { useState } from "react";
 import { deleteFile, handleFileUpload } from "@/lib/firebase-upload";
 import { UserCircle } from "@phosphor-icons/react/dist/ssr";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import InputImage from "../form/inputImage";
 import DefaultInput from "../form/inputDefault";
 import MaskInput from "../form/inputMask";
@@ -33,6 +21,7 @@ import RadioInput from "../form/inputRadio";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
+  documentUrl: z.instanceof(File),
   name: z.string().min(5).trim(),
   cpf: z.string(),
   rg: z.string(),
@@ -52,6 +41,7 @@ interface Member {
   memberId: number;
   type: string;
   profileUrl: string;
+  documentUrl: string | null;
   name: string;
   rg: string;
   cpf: string;
@@ -72,6 +62,7 @@ interface Member {
 }
 interface Values {
   profileUrl: File;
+  documentUrl: File;
   name: string;
   cpf: string;
   rg: string;
@@ -135,10 +126,28 @@ export function EmployeeUpdateForm({
     } else if (member?.profileUrl) file = member.profileUrl;
     else file = "";
 
+    // FAZ O UPLOAD DO DOCUMENTO
+    let document;
+    if (removeFile) {
+      document = "";
+      if (member.documentUrl && member.documentUrl.length > 0) {
+        deleteFile(member.documentUrl);
+      }
+    } else if (data.documentUrl instanceof File && data.documentUrl.size > 0) {
+      const timestamp = new Date().toISOString();
+      const fileExtension = data.documentUrl.name.split(".").pop();
+      document = await handleFileUpload(
+        data.documentUrl,
+        `pessoas/foto-perfil-${timestamp}.${fileExtension}`
+      );
+    } else if (member?.documentUrl) document = member.documentUrl;
+    else document = "";
+
     // REGISTRA O FUNCIONARIO
     try {
       const info = {
         profileUrl: file,
+        documentUrl: document,
         name: data.name,
         cpf: data.cpf,
         rg: data.rg,
@@ -273,6 +282,41 @@ export function EmployeeUpdateForm({
           label="Observações"
           placeholder="Alguma informação adicional..."
         />
+
+        <div className="flex gap-4 items-center justify-center">
+          {member.documentUrl && member.documentUrl.length > 0 ? (
+            <div className="flex flex-col justify-center items-center">
+              <img src={member.documentUrl} alt="Foto de perfil" width={80} />
+              <p className="text-sm text-center mt-2">Foto atual</p>
+              {/* {member.documentUrl} */}
+            </div>
+          ) : (
+            <div className="flex flex-col justify-center items-center">
+              <UserCircle className="w-20 h-20" />
+              <p className="text-sm text-center mt-2">
+                Nenhuma foto <br /> cadastrada
+              </p>
+            </div>
+          )}
+          <div className="w-10/12">
+            <InputImage control={form.control} name="documentUrl" />
+
+            <div className="flex items-center space-x-2 mt-2">
+              <Checkbox
+                id="check"
+                onClick={() => {
+                  setRemoveFile(!removeFile);
+                }}
+              />
+              <label
+                htmlFor="check"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Remover foto - {removeFile ? "sim" : "não"}
+              </label>
+            </div>
+          </div>
+        </div>
 
         <RadioInput
           control={form.control}

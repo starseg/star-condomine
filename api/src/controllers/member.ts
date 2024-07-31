@@ -71,6 +71,7 @@ export const createMember = async (
     const {
       type,
       profileUrl,
+      documentUrl,
       name,
       rg,
       cpf,
@@ -90,6 +91,7 @@ export const createMember = async (
       data: {
         type,
         profileUrl,
+        documentUrl,
         name,
         rg,
         cpf,
@@ -121,6 +123,7 @@ export const updateMember = async (
     const {
       type,
       profileUrl,
+      documentUrl,
       name,
       rg,
       cpf,
@@ -142,6 +145,7 @@ export const updateMember = async (
       data: {
         type,
         profileUrl,
+        documentUrl,
         name,
         rg,
         cpf,

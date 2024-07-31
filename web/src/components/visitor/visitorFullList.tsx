@@ -67,7 +67,7 @@ export default function VisitorFullList({ lobby }: { lobby: string }) {
             ) : (
               <UserCircle className="w-20 h-20" />
             )}
-            <div className="flex flex-col gap-1 font-bold">
+            <div className="w-1/5 flex flex-col gap-1 font-bold">
               <p>ID: {visitor.visitorId}</p>
               <p>{visitor.name}</p>
               <p>
@@ -77,17 +77,27 @@ export default function VisitorFullList({ lobby }: { lobby: string }) {
               <p>CPF/CNPJ: {visitor.cpf}</p>
               <p>RG: {visitor.rg}</p>
             </div>
-            <div className="flex flex-col gap-1 font-bold">
+            <div className="w-1/3 flex flex-col gap-1 font-bold">
               <p>Telefone: {visitor.phone}</p>
               <p>Tipo: {visitor.visitorType.description}</p>
               <p>Relação: {visitor.relation}</p>
               <p>Data de registro: {formatDate(visitor.createdAt)}</p>
               <p>Última atualização: {formatDate(visitor.updatedAt)}</p>
             </div>
-            <div className="flex flex-col gap-1 font-bold">
+            <div className="w-1/4 text-sm font-bold">
               <p>
                 Observações: {visitor.comments ? visitor.comments : "Nenhuma"}
               </p>
+              {visitor.documentUrl && visitor.documentUrl.length > 0 && (
+                <div className="">
+                  <p className="my-2">Documento do proprietário</p>
+                  <img
+                    src={visitor.documentUrl}
+                    alt="Documento"
+                    className="mx-auto"
+                  />
+                </div>
+              )}
             </div>
           </div>
         ))}

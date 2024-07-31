@@ -47,6 +47,9 @@ const FormSchema = z.object({
   comments: z.string().min(1, {
     message: "Preencha o este campo",
   }),
+  documentUrl: z.instanceof(File).refine((file) => file.size > 0, {
+    message: "Um arquivo deve ser selecionado",
+  }),
   facial: z.boolean(),
   terms: z.boolean(),
 });
@@ -63,6 +66,7 @@ export function VisitorForm() {
       type: "1",
       relation: "",
       comments: "",
+      documentUrl: new File([], ""),
       facial: false,
       terms: false,
     },
@@ -107,10 +111,22 @@ export function VisitorForm() {
       );
     } else file = "";
 
+    // FAZ O UPLOAD DO DOCUMENTO
+    let document;
+    if (data.documentUrl instanceof File && data.documentUrl.size > 0) {
+      const timestamp = new Date().toISOString();
+      const fileExtension = data.documentUrl.name.split(".").pop();
+      document = await handleFileUpload(
+        data.documentUrl,
+        `pessoas/foto-documento-proprietario-${timestamp}.${fileExtension}`
+      );
+    } else document = "";
+
     // REGISTRA O visitante
     try {
       const info = {
         profileUrl: file,
+        documentUrl: document,
         name: data.name,
         cpf: data.cpf,
         rg: data.rg,
@@ -207,6 +223,13 @@ export function VisitorForm() {
           placeholder="Escreva aqui qual é o nome completo e o endereço do proprietário"
         />
 
+        <div>
+          <p className="mb-1 text-sm">
+            Documento com foto do proprietário (RG/CPF ou CNH)
+          </p>
+          <InputImage control={form.control} name="documentUrl" />
+        </div>
+
         <FormField
           control={form.control}
           name="facial"
@@ -267,7 +290,7 @@ export function VisitorForm() {
           className="w-full text-lg"
           disabled={form.getValues("terms") === false || isSendind}
         >
-          Registrar
+          {isSendind ? "Cadastrando..." : "Cadastrar"}
         </Button>
       </form>
     </Form>

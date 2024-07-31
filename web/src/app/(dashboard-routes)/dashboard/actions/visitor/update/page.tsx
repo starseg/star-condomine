@@ -11,6 +11,7 @@ export default function UpdateVisitor() {
   interface Visitor {
     visitorId: number;
     profileUrl: string;
+    documentUrl: string | null;
     name: string;
     rg: string;
     cpf: string;
@@ -28,6 +29,7 @@ export default function UpdateVisitor() {
   }
   interface Values {
     profileUrl: File;
+    documentUrl: File;
     name: string;
     rg: string;
     cpf: string;
@@ -64,6 +66,7 @@ export default function UpdateVisitor() {
     if (visitor) {
       setData({
         profileUrl: new File([], ""),
+        documentUrl: new File([], ""),
         name: visitor?.name || "",
         cpf: visitor?.cpf || "",
         rg: visitor?.rg || "",
