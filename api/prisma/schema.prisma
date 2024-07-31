@@ -64,8 +64,8 @@ model Lobby {
 model Member {
   memberId            Int          @id @default(autoincrement())
   type                MemberType
-  profileUrl          String?
-  documentUrl         String?
+  profileUrl          String?      @db.VarChar(255)
+  documentUrl         String?      @db.VarChar(255)
   name                String
   rg                  String
   cpf                 String
@@ -169,8 +169,8 @@ model VisitorType {
 
 model Visitor {
   visitorId   Int       @id @default(autoincrement())
-  profileUrl  String?
-  documentUrl String?
+  profileUrl  String?   @db.VarChar(255)
+  documentUrl String?   @db.VarChar(255)
   name        String
   rg          String
   cpf         String
