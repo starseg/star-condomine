@@ -144,7 +144,7 @@ export default function AccessTable({ lobby }: { lobby: string }) {
       ) : (
         <>
           <div className="max-h-[60vh] overflow-x-auto">
-            <Table className="border border-stone-800 rouded-lg">
+            <Table className="border-stone-800 border rouded-lg">
               <TableHeader className="bg-stone-800 font-semibold">
                 <TableRow>
                   <TableHead>Visitante</TableHead>
@@ -230,12 +230,12 @@ export default function AccessTable({ lobby }: { lobby: string }) {
             </Table>
           </div>
           <div className="flex justify-between items-center">
-            <div className="mt-4 flex gap-4 items-center">
+            <div className="flex items-center gap-4 mt-4">
               <Link
                 href={`access/new?lobby=${lobby}&c=${control}`}
                 className={buttonVariants({ variant: "default" })}
               >
-                <p className="flex gap-2 text-xl items-center">
+                <p className="flex items-center gap-2 text-xl">
                   <FilePlus size={24} /> Registrar Acesso
                 </p>
               </Link>
@@ -243,7 +243,7 @@ export default function AccessTable({ lobby }: { lobby: string }) {
                 href={`scheduling?lobby=${lobby}&c=${control}`}
                 className={buttonVariants({ variant: "default" })}
               >
-                <p className="flex gap-2 text-xl items-center">
+                <p className="flex items-center gap-2 text-xl">
                   <FileSearch size={24} /> Agendamentos
                 </p>
               </Link>
@@ -251,7 +251,7 @@ export default function AccessTable({ lobby }: { lobby: string }) {
                 href={`visitor?lobby=${lobby}&c=${control}`}
                 className={buttonVariants({ variant: "default" })}
               >
-                <p className="flex gap-2 text-xl items-center">
+                <p className="flex items-center gap-2 text-xl">
                   <FileSearch size={24} /> Visitantes
                 </p>
               </Link>
@@ -263,7 +263,7 @@ export default function AccessTable({ lobby }: { lobby: string }) {
               <p>
                 Página {page} de {totalOfPages}
               </p>
-              <div className="flex items-center text-xl gap-4">
+              <div className="flex items-center gap-4 text-xl">
                 <Button
                   variant={"outline"}
                   className="p-0 aspect-square"

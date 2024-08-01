@@ -34,7 +34,7 @@ export default function AccessDetails({ id }: { id: number }) {
     <div>
       {access ? (
         <>
-          <div className="max-w-2xl mx-auto border border-primary py-4 px-12 rounded-md mt-4">
+          <div className="border-primary mx-auto mt-4 px-12 py-4 border rounded-md max-w-2xl">
             <DetailItem label="Visitante" content={access.visitor.name} />
             <DetailItem label="Visitado" content={access.member.name} />
             <DetailItem
@@ -62,7 +62,7 @@ export default function AccessDetails({ id }: { id: number }) {
               content={access.comments ? access.comments : "Sem observações"}
             />
 
-            <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
+            <div className="bg-primary mt-8 mb-4 w-full h-[1px]"></div>
             <DetailItem
               label="Data do registro"
               content={formatDate(access.createdAt)}
@@ -75,7 +75,7 @@ export default function AccessDetails({ id }: { id: number }) {
           </div>
         </>
       ) : (
-        <div className="w-full flex items-center justify-center">
+        <div className="flex justify-center items-center w-full">
           <LoadingIcon />
         </div>
       )}
