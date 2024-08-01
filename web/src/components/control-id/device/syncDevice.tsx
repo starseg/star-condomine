@@ -26,8 +26,10 @@ import {
   createAccessRuleCommand,
   createAccessRuleTimeZoneRelationCommand,
   createAreaAccessRuleRelationCommand,
+  createAreaCommand,
   createGroupAccessRuleRelationCommand,
   createGroupCommand,
+  createPortalAccessRuleRelationCommand,
   createTimeSpanCommand,
   createTimeZoneCommand,
 } from "./commands";
@@ -180,6 +182,14 @@ export default function SyncDevice() {
                   accessRule.priority
                 )
               );
+              // relaciona a regra de acesso com a área padrão
+              await api.post(
+                `/control-id/add-command?id=${device.name}`,
+                createPortalAccessRuleRelationCommand(
+                  1,
+                  accessRule.accessRuleId
+                )
+              );
             });
           }
         }
@@ -209,7 +219,7 @@ export default function SyncDevice() {
           // Enviar areas para o dispositivo
           await api.post(
             `/control-id/add-command?id=${device.name}`,
-            createGroupCommand(device.lobbyId, device.lobby.name)
+            createAreaCommand(device.lobbyId, device.lobby.name)
           );
         }
         if (data.groupAccessRules) {
@@ -283,8 +293,8 @@ export default function SyncDevice() {
                 await api.post(
                   `/control-id/add-command?id=${device.name}`,
                   createAccessRuleTimeZoneRelationCommand(
-                    AccessRuleTimeZone.timeZoneId,
-                    AccessRuleTimeZone.accessRuleId
+                    AccessRuleTimeZone.accessRuleId,
+                    AccessRuleTimeZone.timeZoneId
                   )
                 );
               }
@@ -307,14 +317,14 @@ export default function SyncDevice() {
         </Button>
       </SheetTrigger>
       <SheetContent side={"top"}>
-        <SheetHeader className="w-full max-w-lg mx-auto">
+        <SheetHeader className="mx-auto w-full max-w-lg">
           <SheetTitle>Sincronizar dispositivo</SheetTitle>
           <SheetDescription>Envie dados para um dispositivo.</SheetDescription>
         </SheetHeader>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="w-full max-w-lg mx-auto space-y-2 mt-4"
+            className="space-y-2 mx-auto mt-4 w-full max-w-lg"
           >
             <DefaultCombobox
               control={form.control}

@@ -94,16 +94,18 @@ export default function AccessRuleTimeZoneForm() {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      const info = {
-        timeZoneId: data.timeZoneId,
-        accessRuleId: data.accessRuleId,
-      };
-
-      const response = await api.post(`accessRuleTimeZone`, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
+      const response = await api.post(
+        `accessRuleTimeZone`,
+        {
+          timeZoneId: data.timeZoneId,
+          accessRuleId: data.accessRuleId,
         },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        }
+      );
       if (response.status === 201) {
         toast.success("Relação registrada!", {
           theme: "colored",
@@ -137,7 +139,7 @@ export default function AccessRuleTimeZoneForm() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="w-full space-y-4"
+            className="space-y-4 w-full"
           >
             <FormField
               control={form.control}
@@ -162,7 +164,7 @@ export default function AccessRuleTimeZoneForm() {
                                   accessRule.accessRuleId === field.value
                               )?.name
                             : "Selecione uma regra"}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          <ChevronsUpDown className="opacity-50 ml-2 w-4 h-4 shrink-0" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
@@ -224,7 +226,7 @@ export default function AccessRuleTimeZoneForm() {
                                   timeZone.timeZoneId === field.value
                               )?.name
                             : "Selecione um horário"}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          <ChevronsUpDown className="opacity-50 ml-2 w-4 h-4 shrink-0" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>

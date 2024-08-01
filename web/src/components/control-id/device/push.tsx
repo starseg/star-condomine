@@ -6,6 +6,12 @@ import { useState, useEffect } from "react";
 import {
   createUserCommand,
   listAccessRulesCommand,
+  listAccessRuleTimeZonesCommand,
+  listAreasCommand,
+  listGroupsCommand,
+  listPortalsCommand,
+  listTimeSpansCommand,
+  listTimeZonesCommand,
   listUsersCommand,
 } from "./commands";
 import {
@@ -148,7 +154,7 @@ export default function Push() {
   }
 
   return (
-    <div className="w-3/4 lg:w-[40%] 2xl:w-1/3 flex flex-col gap-4">
+    <div className="flex flex-col gap-4 w-3/4 lg:w-[40%] 2xl:w-1/3">
       <Select value={id} onValueChange={setId}>
         <SelectTrigger>
           <SelectValue placeholder="Selecione um dispositivo" />
@@ -163,10 +169,7 @@ export default function Push() {
           </SelectGroup>
         </SelectContent>
       </Select>
-      <div className="flex flex-wrap justify-between gap-4">
-        {/* <Button onClick={setPush} className="w-[30%]">
-          {!isActive ? "Ativar push" : "Desativar push"}
-        </Button> */}
+      <div className="flex flex-wrap justify-center gap-2">
         <Button onClick={clearResults} title="Limpar">
           <Broom size={24} />
         </Button>
@@ -175,6 +178,24 @@ export default function Push() {
         </Button>
         <Button onClick={() => sendCommand(listAccessRulesCommand)}>
           Listar regras
+        </Button>
+        <Button onClick={() => sendCommand(listAccessRuleTimeZonesCommand)}>
+          Listar regras x horários
+        </Button>
+        <Button onClick={() => sendCommand(listTimeZonesCommand)}>
+          Listar horários
+        </Button>
+        <Button onClick={() => sendCommand(listTimeSpansCommand)}>
+          Listar intervalos
+        </Button>
+        <Button onClick={() => sendCommand(listAreasCommand)}>
+          Listar áreas
+        </Button>
+        <Button onClick={() => sendCommand(listGroupsCommand)}>
+          Listar grupos
+        </Button>
+        <Button onClick={() => sendCommand(listPortalsCommand)}>
+          Listar portais
         </Button>
         <Button
           onClick={() =>
@@ -188,11 +209,11 @@ export default function Push() {
       </div>
       {users && users.length > 0 && (
         <>
-          <p className="text-lg font-bold">Usuários</p>
-          <div className="max-h-60 overflow-y-auto space-y-1 p-1 border border-primary/50 rounded-md">
+          <p className="font-bold text-lg">Usuários</p>
+          <div className="space-y-1 border-primary/50 p-1 border rounded-md max-h-60 overflow-y-auto">
             {users.map((user) => {
               return (
-                <div className="border rounded p-2" key={user.id}>
+                <div className="p-2 border rounded" key={user.id}>
                   <p>ID: {user.id}</p>
                   <p>Registro: {user.registration}</p>
                   <p>Nome: {user.name}</p>
@@ -202,7 +223,7 @@ export default function Push() {
           </div>
         </>
       )}
-      <div className="h-8 p-1 rounded-full bg-primary text-stone-900 font-bold flex items-center justify-center">
+      <div className="flex justify-center items-center bg-primary p-1 rounded-full h-8 font-bold text-stone-900">
         Comandos enviados: {commandsCount}
       </div>
     </div>

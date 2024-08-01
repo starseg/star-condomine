@@ -54,19 +54,20 @@ export default function LobbyDetails() {
   };
 
   const fetchCalendar = async () => {
-    try {
-      const path = "lobbyCalendar/today/" + lobbyId;
-      const response = await api.get(path, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
-      if (response.data) {
-        setCalendar(response.data);
+    if (session)
+      try {
+        const path = "lobbyCalendar/today/" + lobbyId;
+        const response = await api.get(path, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        if (response.data) {
+          setCalendar(response.data);
+        }
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
       }
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
   };
 
   let id = 0;
@@ -83,15 +84,15 @@ export default function LobbyDetails() {
     <>
       <Menu url={`/dashboard`} />
       {lobby ? (
-        <section className="max-w-5xl mx-auto mb-24">
+        <section className="mx-auto mb-24 max-w-5xl">
           <div>
             <div className="flex justify-between items-center">
-              <h1 className="text-4xl mt-2 text-primary mb-2 ml-10">
+              <h1 className="mt-2 mb-2 ml-10 text-4xl text-primary">
                 Portaria: {lobby ? lobby.name : "Desconhecida"}
               </h1>
               <Link
                 href={`actions/details?lobby=${id}`}
-                className="flex justify-center gap-2 items-center text-xl mr-10 hover:underline hover:underline-offset-4"
+                className="flex justify-center items-center gap-2 mr-10 text-xl hover:underline hover:underline-offset-4"
               >
                 <MagnifyingGlass />
                 Detalhes
@@ -99,30 +100,30 @@ export default function LobbyDetails() {
             </div>
 
             {calendar && calendar.length > 0 && (
-              <p className="text-xl flex items-center gap-2 ml-10">
+              <p className="flex items-center gap-2 ml-10 text-xl">
                 <Warning size={32} className="text-red-500" /> Verifique as
                 restrições do feriado de hoje no calendário
               </p>
             )}
           </div>
-          <div className="mt-8 flex w-full flex-col flex-wrap items-center justify-center lg:flex-row gap-6">
+          <div className="flex lg:flex-row flex-col flex-wrap justify-center items-center gap-6 mt-8 w-full">
             <Link
               href={`actions/access?lobby=${id}&c=${control}`}
-              className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
+              className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
             >
               <PersonSimpleRun />
               Acessos
             </Link>
             <Link
               href={`actions/scheduling?lobby=${id}&c=${control}`}
-              className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
+              className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
             >
               <CalendarCheck />
               Agendamentos
             </Link>
             <Link
               href={`actions/visitor?lobby=${id}&c=${control}`}
-              className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
+              className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
             >
               <IdentificationCard />
               Visitantes
@@ -131,7 +132,7 @@ export default function LobbyDetails() {
               lobby.type === "COMPANY" ? (
                 <Link
                   href={`actions/employee?lobby=${id}&c=${control}`}
-                  className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
+                  className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
                 >
                   <HouseLine />
                   Funcionários
@@ -139,7 +140,7 @@ export default function LobbyDetails() {
               ) : (
                 <Link
                   href={`actions/resident?lobby=${id}&c=${control}`}
-                  className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
+                  className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
                 >
                   <HouseLine />
                   Moradores
@@ -150,52 +151,54 @@ export default function LobbyDetails() {
             )}
             <Link
               href={`actions/vehicle?lobby=${id}`}
-              className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
+              className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
             >
               <Car />
               Veículos
             </Link>
             <Link
               href={`actions/device?lobby=${id}`}
-              className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
+              className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
             >
               <DeviceMobileCamera />
               Dispositivos
             </Link>
             <Link
               href={`actions/problem?lobby=${id}`}
-              className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
+              className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
             >
               <SealWarning />
               Problemas
             </Link>
             <Link
               href={`actions/calendar?lobby=${id}`}
-              className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
+              className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
             >
               <CalendarBlank />
               Calendário
             </Link>
             <Link
               href={`actions/report?lobby=${id}&c=${control}`}
-              className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
+              className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
             >
               <Notepad />
               Relatórios
             </Link>
             {lobby.ControllerBrand.name === "Control iD" && (
-              <Link
-                href={`actions/control-id?lobby=${id}`}
-                className="w-[300px] flex justify-center gap-2 items-center text-3xl p-4 border border-stone-50 rounded-md hover:bg-stone-850 transition-colors"
-              >
-                Control iD
-              </Link>
+              <div className="flex justify-between px-10 w-full">
+                <Link
+                  href={`actions/control-id?lobby=${id}`}
+                  className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
+                >
+                  Control iD
+                </Link>
+                <OpenDoorButton />
+              </div>
             )}
           </div>
-          {lobby.ControllerBrand.name === "Control iD" && <OpenDoorButton />}
         </section>
       ) : (
-        <div className="flex items-center justify-center my-8">
+        <div className="flex justify-center items-center my-8">
           <LoadingIcon />
         </div>
       )}

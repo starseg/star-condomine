@@ -11,6 +11,42 @@ export const listAccessRulesCommand = {
   body: { object: "access_rules" },
   contentType: "application/json",
 };
+export const listAccessRuleTimeZonesCommand = {
+  verb: "POST",
+  endpoint: "load_objects",
+  body: { object: "access_rule_time_zones" },
+  contentType: "application/json",
+};
+export const listTimeZonesCommand = {
+  verb: "POST",
+  endpoint: "load_objects",
+  body: { object: "time_zones" },
+  contentType: "application/json",
+};
+export const listTimeSpansCommand = {
+  verb: "POST",
+  endpoint: "load_objects",
+  body: { object: "time_spans" },
+  contentType: "application/json",
+};
+export const listAreasCommand = {
+  verb: "POST",
+  endpoint: "load_objects",
+  body: { object: "areas" },
+  contentType: "application/json",
+};
+export const listGroupsCommand = {
+  verb: "POST",
+  endpoint: "load_objects",
+  body: { object: "groups" },
+  contentType: "application/json",
+};
+export const listPortalsCommand = {
+  verb: "POST",
+  endpoint: "load_objects",
+  body: { object: "portals" },
+  contentType: "application/json",
+};
 
 // CREATION COMMANDS
 export const createUserCommand = (
@@ -245,6 +281,25 @@ export const createAccessRuleTimeZoneRelationCommand = (
         {
           access_rule_id: access_rule_id,
           time_zone_id: time_zone_id,
+        },
+      ],
+    },
+    contentType: "application/json",
+  };
+};
+export const createPortalAccessRuleRelationCommand = (
+  portal_id: number,
+  access_rule_id: number
+) => {
+  return {
+    verb: "POST",
+    endpoint: "create_objects",
+    body: {
+      object: "portal_access_rules",
+      values: [
+        {
+          portal_id: portal_id,
+          access_rule_id: access_rule_id,
         },
       ],
     },

@@ -45,7 +45,7 @@ export function OpenDoorButton() {
   }
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="rounded-full bg-primary p-2 text-stone-950 hover:bg-primary/80 transition-colors">
+      <DropdownMenuTrigger className="flex justify-center items-center bg-primary hover:bg-primary/80 p-2 rounded-full w-16 h-16 text-stone-950 transition-colors">
         <LockKeyOpen size={32} />
       </DropdownMenuTrigger>
       <DropdownMenuContent>

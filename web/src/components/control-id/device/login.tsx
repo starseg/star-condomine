@@ -116,8 +116,8 @@ export default function Login() {
   };
 
   return (
-    <div className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-4">
-      <Badge className="max-w-fit mt-2 text-md">{status}</Badge>
+    <div className="space-y-4 w-3/4 lg:w-[40%] 2xl:w-1/3">
+      <Badge className="mt-2 max-w-fit text-md">{status}</Badge>
       <Form {...form}>
         <form
           className="flex items-end gap-2"
@@ -145,7 +145,7 @@ export default function Login() {
                               (device) => device.deviceId === field.value
                             )?.ip
                           : "Selecione um dispositivo"}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        <ChevronsUpDown className="opacity-50 ml-2 w-4 h-4 shrink-0" />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
