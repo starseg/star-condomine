@@ -27,6 +27,9 @@ const result = async (req, res) => {
     console.log("|-<|*RESULT*|>-|");
     console.log(req.body);
     resultLog.push(req.body);
+    if (resultLog.length > 20) {
+        resultLog.shift();
+    }
     res.json();
 };
 exports.result = result;

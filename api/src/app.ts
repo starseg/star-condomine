@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import helmet from "helmet";
+import bodyParser from "body-parser";
 import { logging } from "./middlewares/logging";
 import { verifyToken } from "./middlewares/permissions";
 import { authenticateOperator } from "./middlewares/auth";
@@ -53,6 +54,9 @@ const corsOptions = {
   optionsSuccessStatus: 204,
 };
 app.use(cors(corsOptions));
+
+app.use(bodyParser.json({ limit: "10mb" }));
+app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 
 app.get("/", (request: Request, response: Response) => {
   response.json({ message: "API DO SISTEMA STAR CONDOMINE" });

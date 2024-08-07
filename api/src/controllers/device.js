@@ -104,7 +104,14 @@ const getDeviceByLobby = async (req, res) => {
         const lobby = parseInt(req.params.lobby, 10);
         const device = await db_1.default.device.findMany({
             where: { lobbyId: lobby },
-            include: { deviceModel: true },
+            include: {
+                deviceModel: true,
+                lobby: {
+                    select: {
+                        name: true,
+                    },
+                },
+            },
         });
         if (!device) {
             res.status(404).json({ error: "Dispositivos não encontrados" });

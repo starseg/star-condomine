@@ -3,10 +3,12 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import NextAuthSessionProvider from "@/providers/sessionProvider";
 import { Nunito } from "next/font/google";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const nunito = Nunito({
-  weight: ['400', '600', '700'],
-  subsets: ['latin'],
+  weight: ["400", "600", "700"],
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -28,7 +30,10 @@ export default function RootLayout({
         <link rel="icon" href="favicon.ico" sizes="any" />
       </head>
       <body className={cn(nunito.className, "dark")}>
-        <NextAuthSessionProvider>{children}</NextAuthSessionProvider>
+        <NextAuthSessionProvider>
+          {children}
+          <ToastContainer position="bottom-right" autoClose={2500} />
+        </NextAuthSessionProvider>
       </body>
     </html>
   );

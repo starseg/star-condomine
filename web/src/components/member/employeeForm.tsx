@@ -1,11 +1,6 @@
 "use client";
 
-import * as z from "zod";
-import api from "@/lib/axios";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -14,22 +9,29 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
-import { PlusCircle } from "@phosphor-icons/react/dist/ssr";
+import api from "@/lib/axios";
 import { handleFileUpload } from "@/lib/firebase-upload";
-import InputImage from "../form/inputImage";
-import MaskInput from "../form/inputMask";
-import DefaultTextarea from "../form/textareaDefault";
-import DefaultCheckbox from "../form/checkboxDefault";
-import DefaultInput from "../form/inputDefault";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { PlusCircle } from "@phosphor-icons/react/dist/ssr";
+import { useSession } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 import {
   createUserCommand,
   createUserGroupRelationCommand,
   setUserFaceCommand,
 } from "../control-id/device/commands";
+import { TakeMemberPhoto } from "../control-id/takeMemberPhoto";
+import DefaultCheckbox from "../form/checkboxDefault";
 import DefaultCombobox from "../form/comboboxDefault";
+import DefaultInput from "../form/inputDefault";
+import InputImage from "../form/inputImage";
+import MaskInput from "../form/inputMask";
+import DefaultTextarea from "../form/textareaDefault";
+import { toast } from "react-toastify";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -199,12 +201,14 @@ export function EmployeeForm() {
         data.profileUrl,
         `pessoas/foto-perfil-${timestamp}.${fileExtension}`
       );
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        base64image = result.split("data:image/jpeg;base64,")[1];
-      };
-      reader.readAsDataURL(data.profileUrl);
+      if (data.sendToFacial && base64Photo === "") {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const result = reader.result as string;
+          base64image = result.split("data:image/jpeg;base64,")[1];
+        };
+        reader.readAsDataURL(data.profileUrl);
+      }
     } else file = "";
 
     // FAZ O UPLOAD DO DOCUMENTO
@@ -294,8 +298,15 @@ export function EmployeeForm() {
         await sendControliDCommand(
           createUserCommand(response.data.memberId, data.name)
         );
-        // console.log(base64image);
-        if (base64image) {
+        if (base64Photo) {
+          await sendControliDCommand(
+            setUserFaceCommand(
+              base64Photo.split("data:application/octet-stream;base64,")[1],
+              response.data.memberId,
+              timestamp
+            )
+          );
+        } else if (base64image) {
           await sendControliDCommand(
             setUserFaceCommand(base64image, response.data.memberId, timestamp)
           );
@@ -326,15 +337,33 @@ export function EmployeeForm() {
     }
   };
 
+  function handleSavePhoto(file: File) {
+    form.setValue("profileUrl", file);
+    toast.success("Foto salva", {
+      theme: "colored",
+    });
+  }
+
+  const [base64Photo, setBase64Photo] = useState("");
+  function handleBase64Photo(file: string) {
+    setBase64Photo(file);
+  }
+
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
+        className="space-y-6 w-3/4 lg:w-[40%] 2xl:w-1/3"
       >
         <div>
           <p className="mb-1 text-sm">Foto de perfil</p>
-          <InputImage control={form.control} name="profileUrl" />
+          <div className="flex gap-4">
+            <InputImage control={form.control} name="profileUrl" />
+            <TakeMemberPhoto
+              savePhoto={handleSavePhoto}
+              sendBase64Photo={handleBase64Photo}
+            />
+          </div>
         </div>
 
         <DefaultInput
@@ -399,7 +428,7 @@ export function EmployeeForm() {
             <FormItem>
               <FormLabel>Tag</FormLabel>
               <FormControl>
-                <div className="flex w-full items-center space-x-2">
+                <div className="flex items-center space-x-2 w-full">
                   <Input
                     type="text"
                     placeholder="Número da tag"
@@ -409,18 +438,18 @@ export function EmployeeForm() {
                   <Button
                     type="button"
                     variant="outline"
-                    className="aspect-square p-1"
+                    className="p-1 aspect-square"
                     onClick={() => addTag(field.value)}
                   >
                     <PlusCircle size={"32px"} />
                   </Button>
                 </div>
               </FormControl>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex flex-wrap gap-2">
                 {tagNumber.map((num, index) => (
                   <p
                     key={index}
-                    className="text-normal p-2 mt-2 rounded-md bg-muted"
+                    className="bg-muted mt-2 p-2 rounded-md text-normal"
                   >
                     {num}
                   </p>
@@ -438,7 +467,7 @@ export function EmployeeForm() {
             <FormItem>
               <FormLabel>Cartão</FormLabel>
               <FormControl>
-                <div className="flex w-full items-center space-x-2">
+                <div className="flex items-center space-x-2 w-full">
                   <Input
                     type="text"
                     placeholder="Número do cartão"
@@ -448,18 +477,18 @@ export function EmployeeForm() {
                   <Button
                     type="button"
                     variant="outline"
-                    className="aspect-square p-1"
+                    className="p-1 aspect-square"
                     onClick={() => addCard(field.value)}
                   >
                     <PlusCircle size={"32px"} />
                   </Button>
                 </div>
               </FormControl>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex flex-wrap gap-2">
                 {cardNumber.map((num, index) => (
                   <p
                     key={index}
-                    className="text-normal p-2 mt-2 rounded-md bg-muted"
+                    className="bg-muted mt-2 p-2 rounded-md text-normal"
                   >
                     {num}
                   </p>

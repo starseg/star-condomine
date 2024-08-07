@@ -1,9 +1,4 @@
 "use client";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,17 +8,22 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import api from "@/lib/axios";
-import { useEffect, useState } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
-import { CalendarIcon } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { addDays, format } from "date-fns";
-import { Calendar } from "../ui/calendar";
 import { ptBR } from "date-fns/locale";
+import { CalendarIcon } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import DefaultCombobox from "../form/comboboxDefault";
+import DefaultInput from "../form/inputDefault";
+import DefaultTextarea from "../form/textareaDefault";
+import { Calendar } from "../ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import {
   Select,
   SelectContent,
@@ -31,9 +31,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import DefaultCombobox from "../form/comboboxDefault";
-import DefaultInput from "../form/inputDefault";
-import DefaultTextarea from "../form/textareaDefault";
 
 const FormSchema = z.object({
   visitor: z.number(),
@@ -104,6 +101,14 @@ export function SchedulingForm() {
     label: string;
   }
 
+  interface memberItem {
+    value: number;
+    label: string;
+    addressType: string | null;
+    address: string | null;
+    comments: string;
+  }
+
   let visitorItems: item[] = [];
   visitors.map((visitor: Visitor) => {
     if (visitor.status === "ACTIVE") {
@@ -114,12 +119,16 @@ export function SchedulingForm() {
     }
   });
 
-  let memberItems: item[] = [];
+  let memberItems: memberItem[] = [];
   members.map((member: Member) => {
     if (member.status === "ACTIVE") {
       memberItems.push({
         value: member.memberId,
         label: member.name,
+        addressType:
+          member.addressTypeId !== null ? member.addressType.description : "",
+        address: member.address !== null ? member.address : "",
+        comments: member.comments !== null ? member.comments : "",
       });
     }
   });
@@ -161,7 +170,7 @@ export function SchedulingForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
+        className="space-y-6 w-3/4 lg:w-[40%] 2xl:w-1/3"
       >
         <DefaultCombobox
           control={form.control}
@@ -223,11 +232,11 @@ export function SchedulingForm() {
                         ) : (
                           <span>Data de início</span>
                         )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        <CalendarIcon className="opacity-50 ml-auto w-4 h-4" />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent className="p-0 w-auto" align="start">
                     <Calendar
                       locale={ptBR}
                       mode="single"
@@ -262,12 +271,12 @@ export function SchedulingForm() {
                         ) : (
                           <span>Data de fim</span>
                         )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        <CalendarIcon className="opacity-50 ml-auto w-4 h-4" />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
                   <PopoverContent
-                    className="w-auto p-2 space-y-2"
+                    className="space-y-2 p-2 w-auto"
                     align="start"
                   >
                     <Select
@@ -289,7 +298,7 @@ export function SchedulingForm() {
                         <SelectItem value="3650">Em 10 anos</SelectItem>
                       </SelectContent>
                     </Select>
-                    <div className="rounded-md border">
+                    <div className="border rounded-md">
                       <Calendar
                         locale={ptBR}
                         mode="single"

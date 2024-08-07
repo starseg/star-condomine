@@ -43,24 +43,24 @@ export default function InputImage({ control, name }: InputImageProps) {
     }
   };
   return (
-    <div className="w-full flex gap-2 items-center">
+    <div className="flex items-center gap-2 w-full">
       {selectedImage ? (
         <div className="relative">
           <button
             onClick={removeImage}
-            className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full hover:bg-red-700"
+            className="top-0 right-0 absolute bg-red-500 hover:bg-red-700 p-1 rounded-full text-white"
           >
             <X weight="bold" />
           </button>
           <img
             src={selectedImage}
             alt="Preview"
-            className="w-16 h-16 object-cover rounded-md"
+            className="rounded-md w-16 h-16 object-cover"
           />
         </div>
       ) : (
-        <div className="w-16 h-16 bg-stone-800 flex items-center justify-center text-center rounded-md p-2">
-          <p className="text-xs">Nenhuma imagem selecionada</p>
+        <div className="flex justify-center items-center bg-stone-800 p-2 rounded-md w-16 h-16 text-center">
+          <p className="text-xs">Sem imagem</p>
         </div>
       )}
       <FormField
@@ -68,7 +68,7 @@ export default function InputImage({ control, name }: InputImageProps) {
         name={name}
         render={({ field }) => (
           <FormItem className="w-full">
-            <FormLabel className="w-full items-center justify-center flex gap-4 border border-dashed rounded-lg py-4 cursor-pointer transition-colors hover:bg-card-foreground/10 hover:border-card">
+            <FormLabel className="flex justify-center items-center gap-4 hover:border-card hover:bg-card-foreground/10 py-4 border border-dashed rounded-lg w-full transition-colors cursor-pointer">
               {selectedImage ? (
                 <>
                   <FolderCheck />

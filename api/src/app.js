@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const helmet_1 = __importDefault(require("helmet"));
+const body_parser_1 = __importDefault(require("body-parser"));
 const logging_1 = require("./middlewares/logging");
 const permissions_1 = require("./middlewares/permissions");
 const auth_1 = require("./middlewares/auth");
@@ -55,6 +56,8 @@ const corsOptions = {
     optionsSuccessStatus: 204,
 };
 app.use((0, cors_1.default)(corsOptions));
+app.use(body_parser_1.default.json({ limit: "10mb" }));
+app.use(body_parser_1.default.urlencoded({ limit: "10mb", extended: true }));
 app.get("/", (request, response) => {
     response.json({ message: "API DO SISTEMA STAR CONDOMINE" });
 });

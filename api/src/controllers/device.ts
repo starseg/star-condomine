@@ -128,7 +128,14 @@ export const getDeviceByLobby = async (
     const lobby = parseInt(req.params.lobby, 10);
     const device = await prisma.device.findMany({
       where: { lobbyId: lobby },
-      include: { deviceModel: true },
+      include: {
+        deviceModel: true,
+        lobby: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
     if (!device) {
       res.status(404).json({ error: "Dispositivos não encontrados" });

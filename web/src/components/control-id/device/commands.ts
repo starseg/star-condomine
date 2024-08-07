@@ -209,6 +209,18 @@ export const createAreaCommand = (id: number, name: string) => {
     contentType: "application/json",
   };
 };
+export const takePhotoCommand = {
+  verb: "POST",
+  endpoint: "remote_enroll",
+  body: {
+    type: "face",
+    save: false,
+    sync: true,
+    auto: true,
+    countdown: 5,
+  },
+  contentType: "application/json",
+};
 
 // RELATION COMMANDS
 export const createUserGroupRelationCommand = (

@@ -67,3 +67,34 @@ export function secondsToHHMM(seconds: number) {
   // Retorna o resultado no formato "HH:MM:SS"
   return `${formattedHours}:${formattedMinutes}`;
 }
+
+export function base64ToFile(base64: string, fileName: string): File {
+  // Verifique se a string base64 tem um prefixo e remova-o
+  let base64Data = base64;
+  const mimeMatch = base64.match(/^data:(.*);base64,(.*)$/);
+  let mimeType = "application/octet-stream"; // Tipo padrão
+
+  if (mimeMatch) {
+    mimeType = mimeMatch[1];
+    base64Data = mimeMatch[2];
+  }
+
+  // Decodifique a string base64
+  const byteString = atob(base64Data);
+
+  // Crie um array de bytes
+  const byteNumbers = new Array(byteString.length);
+  for (let i = 0; i < byteString.length; i++) {
+    byteNumbers[i] = byteString.charCodeAt(i);
+  }
+
+  const byteArray = new Uint8Array(byteNumbers);
+
+  // Crie um Blob a partir do array de bytes
+  const blob = new Blob([byteArray], { type: mimeType });
+
+  // Crie um objeto File a partir do Blob
+  const file = new File([blob], fileName, { type: mimeType });
+
+  return file;
+}
