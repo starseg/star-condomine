@@ -76,7 +76,10 @@ export function CredentialsForm() {
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
-
+    if (data.type === 0) {
+      setIsSendind(false);
+      return;
+    }
     const info = {
       tagTypeId: data.type,
       value: data.value,
@@ -102,7 +105,7 @@ export function CredentialsForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
+        className="space-y-6 w-3/4 lg:w-[40%] 2xl:w-1/3"
       >
         <DefaultCombobox
           control={form.control}

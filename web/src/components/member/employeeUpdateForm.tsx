@@ -11,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { deleteFile, handleFileUpload } from "@/lib/firebase-upload";
-import { UserCircle } from "@phosphor-icons/react/dist/ssr";
+import { Image, UserCircle } from "@phosphor-icons/react/dist/ssr";
 import InputImage from "../form/inputImage";
 import DefaultInput from "../form/inputDefault";
 import MaskInput from "../form/inputMask";
@@ -178,19 +178,19 @@ export function EmployeeUpdateForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
+        className="space-y-6 w-3/4 lg:w-[40%] 2xl:w-1/3"
       >
-        <div className="flex gap-4 items-center justify-center">
+        <div className="flex justify-center items-center gap-4">
           {member.profileUrl.length > 0 ? (
             <div className="flex flex-col justify-center items-center">
               <img src={member.profileUrl} alt="Foto de perfil" width={80} />
-              <p className="text-sm text-center mt-2">Foto atual</p>
+              <p className="mt-2 text-center text-sm">Foto atual</p>
               {/* {member.profileUrl} */}
             </div>
           ) : (
             <div className="flex flex-col justify-center items-center">
               <UserCircle className="w-20 h-20" />
-              <p className="text-sm text-center mt-2">
+              <p className="mt-2 text-center text-sm">
                 Nenhuma foto <br /> cadastrada
               </p>
             </div>
@@ -206,7 +206,7 @@ export function EmployeeUpdateForm({
               />
               <label
                 htmlFor="check"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="peer-disabled:opacity-70 font-medium text-sm leading-none peer-disabled:cursor-not-allowed"
               >
                 Remover foto - {removeFile ? "sim" : "não"}
               </label>
@@ -282,38 +282,38 @@ export function EmployeeUpdateForm({
           label="Observações"
           placeholder="Alguma informação adicional..."
         />
+        <div>
+          <p>Documento</p>
+          <div className="flex justify-center items-center gap-4">
+            {member.documentUrl && member.documentUrl.length > 0 ? (
+              <div className="flex flex-col justify-center items-center">
+                <img src={member.documentUrl} alt="Foto de perfil" width={80} />
+                <p className="mt-2 text-center text-sm">Foto atual</p>
+                {/* {member.documentUrl} */}
+              </div>
+            ) : (
+              <div className="flex flex-col justify-center items-center">
+                <Image className="w-16 h-16" />
+                <p className="mt-2 text-center text-xs">Nenhuma foto</p>
+              </div>
+            )}
+            <div className="w-10/12">
+              <InputImage control={form.control} name="documentUrl" />
 
-        <div className="flex gap-4 items-center justify-center">
-          {member.documentUrl && member.documentUrl.length > 0 ? (
-            <div className="flex flex-col justify-center items-center">
-              <img src={member.documentUrl} alt="Foto de perfil" width={80} />
-              <p className="text-sm text-center mt-2">Foto atual</p>
-              {/* {member.documentUrl} */}
-            </div>
-          ) : (
-            <div className="flex flex-col justify-center items-center">
-              <UserCircle className="w-20 h-20" />
-              <p className="text-sm text-center mt-2">
-                Nenhuma foto <br /> cadastrada
-              </p>
-            </div>
-          )}
-          <div className="w-10/12">
-            <InputImage control={form.control} name="documentUrl" />
-
-            <div className="flex items-center space-x-2 mt-2">
-              <Checkbox
-                id="check"
-                onClick={() => {
-                  setRemoveFile(!removeFile);
-                }}
-              />
-              <label
-                htmlFor="check"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                Remover foto - {removeFile ? "sim" : "não"}
-              </label>
+              <div className="flex items-center space-x-2 mt-2">
+                <Checkbox
+                  id="check"
+                  onClick={() => {
+                    setRemoveFile(!removeFile);
+                  }}
+                />
+                <label
+                  htmlFor="check"
+                  className="peer-disabled:opacity-70 font-medium text-sm leading-none peer-disabled:cursor-not-allowed"
+                >
+                  Remover foto - {removeFile ? "sim" : "não"}
+                </label>
+              </div>
             </div>
           </div>
         </div>

@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -18,6 +17,7 @@ import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import * as z from "zod";
 import {
   createUserCommand,
@@ -31,7 +31,6 @@ import DefaultInput from "../form/inputDefault";
 import InputImage from "../form/inputImage";
 import MaskInput from "../form/inputMask";
 import DefaultTextarea from "../form/textareaDefault";
-import { toast } from "react-toastify";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -293,7 +292,11 @@ export function EmployeeForm() {
         }
       }
 
-      if (data.sendToFacial) {
+      if (
+        data.sendToFacial &&
+        lobbyData &&
+        lobbyData.ControllerBrand.name === "Control iD"
+      ) {
         const timestamp = ~~(Date.now() / 1000);
         await sendControliDCommand(
           createUserCommand(response.data.memberId, data.name)
@@ -359,10 +362,12 @@ export function EmployeeForm() {
           <p className="mb-1 text-sm">Foto de perfil</p>
           <div className="flex gap-4">
             <InputImage control={form.control} name="profileUrl" />
-            <TakeMemberPhoto
-              savePhoto={handleSavePhoto}
-              sendBase64Photo={handleBase64Photo}
-            />
+            {lobbyData && lobbyData.ControllerBrand.name === "Control iD" && (
+              <TakeMemberPhoto
+                savePhoto={handleSavePhoto}
+                sendBase64Photo={handleBase64Photo}
+              />
+            )}
           </div>
         </div>
 
