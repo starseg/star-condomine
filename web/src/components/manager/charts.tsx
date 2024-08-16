@@ -116,8 +116,8 @@ export function AccessesByLobbyChart(data: AccessByLobbyChartProps[]) {
       chartType="BarChart"
       data={chartData}
       options={options}
-      height={"900px"}
-      width={"800px"}
+      height={"950px"}
+      width={"950px"}
     />
   );
 }
@@ -160,8 +160,8 @@ export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
       chartType="BarChart"
       data={chartData}
       options={options}
-      height={"800px"}
-      width={"800px"}
+      height={"950px"}
+      width={"950px"}
     />
   );
 }
@@ -201,8 +201,8 @@ export function AccessesPerHourChart(data: AccessPerHourChartProps) {
       chartType="BarChart"
       data={chartData}
       options={options}
-      height={"800px"}
-      width={"800px"}
+      height={"950px"}
+      width={"950px"}
     />
   );
 }

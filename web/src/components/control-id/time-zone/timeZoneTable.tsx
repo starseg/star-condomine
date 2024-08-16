@@ -1,6 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
-import api from "@/lib/axios";
+import { SkeletonTable } from "@/components/_skeletons/skeleton-table";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -9,24 +9,36 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Trash2Icon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useControliDUpdate } from "@/contexts/control-id-update-context";
-import { useSession } from "next-auth/react";
+import api from "@/lib/axios";
 import { deleteAction } from "@/lib/delete-action";
-import { SkeletonTable } from "@/components/_skeletons/skeleton-table";
-import { PencilLine } from "@phosphor-icons/react/dist/ssr";
+import { Trash2Icon } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import {
+  createTimeZoneCommand,
+  destroyObjectCommand,
+} from "../device/commands";
+import { SyncItem } from "../device/syncItem";
 import TimeZoneUpdateForm from "./timeZoneUpdateForm";
+import { DeleteDialog } from "@/components/deleteDialog";
+import { toast } from "react-toastify";
 
 export default function TimeZoneTable() {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const lobbyParam = params.get("lobby");
+  const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
   const { update } = useControliDUpdate();
+
   const [timeZones, setTimeZones] = useState<TimeZone[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const fetchData = async () => {
     if (session) {
       try {
-        const response = await api.get(`timeZone`, {
+        const response = await api.get(`timeZone/lobby/${lobby}`, {
           headers: {
             Authorization: `Bearer ${session.token.user.token}`,
           },
@@ -39,12 +51,49 @@ export default function TimeZoneTable() {
       }
     }
   };
+
   useEffect(() => {
     fetchData();
   }, [session, update]);
 
+  const [devices, setDevices] = useState<Device[]>([]);
+  const fetchDevices = async () => {
+    if (session)
+      try {
+        const response = await api.get(`device/lobby/${lobby}`, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setDevices(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+  };
+
+  useEffect(() => {
+    fetchDevices();
+  }, [session]);
+
   const deleteItem = async (id: number) => {
-    deleteAction(session, "horário", `timeZone/${id}`, fetchData);
+    // deleteAction(session, "horário", `timeZone/${id}`, fetchData);
+    try {
+      await api.delete(`timeZone/${id}`, {
+        headers: {
+          Authorization: `Bearer ${session?.token.user.token}`,
+        },
+      });
+      fetchData();
+      devices.map(async (device) => {
+        await api.post(
+          `/control-id/add-command?id=${device.name}`,
+          destroyObjectCommand("time_zones", { time_zones: { id: id } })
+        );
+      });
+      toast.success("Dado excluído com sucesso!");
+    } catch (error) {
+      console.error("Erro excluir dado:", error);
+    }
   };
 
   return (
@@ -53,7 +102,7 @@ export default function TimeZoneTable() {
         <SkeletonTable />
       ) : (
         <div className="w-full max-h-[60vh] overflow-auto">
-          <Table className="w-full border">
+          <Table className="border w-full">
             <TableHeader>
               <TableRow className="bg-secondary hover:bg-secondary">
                 <TableHead>ID</TableHead>
@@ -68,16 +117,23 @@ export default function TimeZoneTable() {
                     <TableCell>{timeZone.timeZoneId}</TableCell>
                     <TableCell>{timeZone.name}</TableCell>
                     <TableCell>
-                      <Button
-                        onClick={() => deleteItem(timeZone.timeZoneId)}
-                        className="aspect-square p-0"
-                        variant={"ghost"}
-                      >
-                        <Trash2Icon />
-                      </Button>
+                      <DeleteDialog
+                        module="horário"
+                        confirmFunction={() => deleteItem(timeZone.timeZoneId)}
+                      />
                       <TimeZoneUpdateForm
                         id={timeZone.timeZoneId}
                         name={timeZone.name}
+                        lobby={lobby}
+                      />
+                      <SyncItem
+                        lobby={lobby}
+                        sendCommand={() =>
+                          createTimeZoneCommand(
+                            timeZone.timeZoneId,
+                            timeZone.name
+                          )
+                        }
                       />
                     </TableCell>
                   </TableRow>

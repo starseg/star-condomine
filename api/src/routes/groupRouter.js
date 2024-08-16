@@ -9,6 +9,7 @@ const permissions_1 = require("../middlewares/permissions");
 const groupRouter = express_1.default.Router();
 groupRouter.get("/", group_1.getAllGroups);
 groupRouter.get("/find/:id", group_1.getGroup);
+groupRouter.get("/lobby/:lobby", group_1.getGroupsByLobby);
 groupRouter.post("/", group_1.createGroup);
 groupRouter.put("/:id", group_1.updateGroup);
 groupRouter.delete("/:id", permissions_1.checkAdminPermission, group_1.deleteGroup);

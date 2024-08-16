@@ -28,6 +28,13 @@ interface Member {
   createdAt: string;
   updatedAt: string;
   lobbyId: number;
+  MemberGroup: [
+    {
+      group: {
+        name: string;
+      };
+    }
+  ];
 }
 
 interface MemberFull {
@@ -92,6 +99,13 @@ interface MemberFull {
       memberId: number;
       lobbyId: number;
       visitor: {
+        name: string;
+      };
+    }
+  ];
+  MemberGroup: [
+    {
+      group: {
         name: string;
       };
     }

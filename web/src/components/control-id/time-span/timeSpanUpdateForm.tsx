@@ -1,9 +1,16 @@
 "use client";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Form } from "@/components/ui/form";
+import { CheckboxItem, InputItem } from "@/components/form-item";
+import DefaultCombobox from "@/components/form/comboboxDefault";
 import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Sheet,
   SheetClose,
@@ -14,14 +21,16 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { toast } from "react-toastify";
-import api from "@/lib/axios";
 import { useControliDUpdate } from "@/contexts/control-id-update-context";
-import { CheckboxItem, InputItem } from "@/components/form-item";
+import api from "@/lib/axios";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { PencilLine, PlusCircle } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
-import { PencilLine } from "@phosphor-icons/react/dist/ssr";
-import DefaultCombobox from "@/components/form/comboboxDefault";
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { z } from "zod";
+import { modifyObjectCommand } from "../device/commands";
 
 const FormSchema = z.object({
   time_zone_id: z.number(),
@@ -39,6 +48,8 @@ const FormSchema = z.object({
   hol1: z.boolean(),
   hol2: z.boolean(),
   hol3: z.boolean(),
+
+  synchronize: z.boolean(),
 });
 
 export default function TimeSpanUpdateForm({
@@ -58,6 +69,7 @@ export default function TimeSpanUpdateForm({
   hol1,
   hol2,
   hol3,
+  lobby,
 }: {
   id: number;
   time_zone_id: number;
@@ -75,6 +87,7 @@ export default function TimeSpanUpdateForm({
   hol1: boolean;
   hol2: boolean;
   hol3: boolean;
+  lobby: number | null;
 }) {
   const { triggerUpdate } = useControliDUpdate();
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -95,6 +108,7 @@ export default function TimeSpanUpdateForm({
       hol1: hol1,
       hol2: hol2,
       hol3: hol3,
+      synchronize: false,
     },
   });
   const { data: session } = useSession();
@@ -113,7 +127,34 @@ export default function TimeSpanUpdateForm({
         console.error("Erro ao obter dados:", error);
       }
   };
+  const [devices, setDevices] = useState<Device[]>([]);
+  const [deviceId, setDeviceId] = useState("");
+  const fetchDevices = async () => {
+    if (session)
+      try {
+        const response = await api.get(`device/lobby/${lobby}`, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setDevices(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+  };
+  const [deviceList, setDeviceList] = useState<string[]>([]);
+  function addDevice() {
+    const isSetDevice = deviceList.find((device) => device === deviceId);
+    if (deviceId !== "" && !isSetDevice)
+      setDeviceList((prev) => [...prev, deviceId]);
+  }
+
+  function removeDeviceFromList(device: string) {
+    setDeviceList(deviceList.filter((item) => item !== device));
+  }
+
   useEffect(() => {
+    fetchDevices();
     fetchTimeZones();
   }, [session]);
 
@@ -159,6 +200,25 @@ export default function TimeSpanUpdateForm({
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
+
+      if (data.synchronize) {
+        const { timeZoneId, ...rest } = info;
+        const controlIdInfo = {
+          ...rest,
+          time_zone_id: timeZoneId,
+        };
+        if (deviceList.length > 0) {
+          deviceList.map(async (device) => {
+            await api.post(
+              `/control-id/add-command?id=${device}`,
+              modifyObjectCommand("time_spans", controlIdInfo, {
+                time_spans: { id: id },
+              })
+            );
+          });
+        }
+      }
+
       if (response.status === 200) {
         toast.success("Intervalo atualizado!", {
           theme: "colored",
@@ -176,7 +236,7 @@ export default function TimeSpanUpdateForm({
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button className="aspect-square p-0" variant={"ghost"}>
+        <Button className="p-0 aspect-square" variant={"ghost"}>
           <PencilLine size={24} />
         </Button>
       </SheetTrigger>
@@ -188,7 +248,7 @@ export default function TimeSpanUpdateForm({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="w-full space-y-2"
+            className="space-y-2 w-full"
           >
             <DefaultCombobox
               control={form.control}
@@ -201,7 +261,7 @@ export default function TimeSpanUpdateForm({
                 form.setValue("time_zone_id", value);
               }}
             />
-            <div className="flex items-end justify-center gap-2">
+            <div className="flex justify-center items-end gap-2">
               <InputItem
                 control={form.control}
                 type="number"
@@ -218,7 +278,7 @@ export default function TimeSpanUpdateForm({
                 placeholder="00"
               />
             </div>
-            <div className="flex items-end justify-center gap-2">
+            <div className="flex justify-center items-end gap-2">
               <InputItem
                 control={form.control}
                 type="number"
@@ -251,6 +311,65 @@ export default function TimeSpanUpdateForm({
               <CheckboxItem control={form.control} name="hol2" label="Tipo 2" />
               <CheckboxItem control={form.control} name="hol3" label="Tipo 3" />
             </div>
+
+            <CheckboxItem
+              control={form.control}
+              name="synchronize"
+              label="Sincronizar com dispositivos"
+            />
+            {form.getValues("synchronize") && (
+              <>
+                <div className="flex gap-2">
+                  <Select value={deviceId} onValueChange={setDeviceId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione um dispositivo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {devices.map((device) => (
+                          <SelectItem key={device.deviceId} value={device.name}>
+                            {device.ip} - {device.name} - {device.description}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    onClick={addDevice}
+                    className="p-0 text-2xl aspect-square"
+                    title="Adicionar"
+                  >
+                    <PlusCircle />
+                  </Button>
+                </div>
+                <div className="flex gap-2">
+                  {deviceList.map((device) => (
+                    <p
+                      key={device}
+                      className="bg-stone-800 hover:bg-stone-950 p-1 border hover:border-red-700 rounded cursor-pointer"
+                      onClick={() => removeDeviceFromList(device)}
+                    >
+                      {device}
+                    </p>
+                  ))}
+                </div>
+              </>
+            )}
+            {/* <SyncItem
+              lobby={lobby}
+              sendCommand={() =>
+                modifyObjectCommand(
+                  "time_spans",
+                  {
+                    time_zone_id: form.getValues("time_zone_id"),
+                  },
+                  { time_spans: { id: id } }
+                )
+              }
+              triggerLabel="Sincronizar com dispositivos"
+            /> */}
             <SheetFooter>
               <SheetClose asChild>
                 <Button type="submit" className="w-full">

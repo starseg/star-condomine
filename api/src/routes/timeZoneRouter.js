@@ -9,6 +9,7 @@ const permissions_1 = require("../middlewares/permissions");
 const timeZoneRouter = express_1.default.Router();
 timeZoneRouter.get("/", timeZone_1.getAllTimeZones);
 timeZoneRouter.get("/find/:id", timeZone_1.getTimeZone);
+timeZoneRouter.get("/lobby/:lobby", timeZone_1.getTimeZonesByLobby);
 timeZoneRouter.post("/", timeZone_1.createTimeZone);
 timeZoneRouter.put("/:id", timeZone_1.updateTimeZone);
 timeZoneRouter.delete("/:id", permissions_1.checkAdminPermission, timeZone_1.deleteTimeZone);

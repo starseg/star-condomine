@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteGroup = exports.updateGroup = exports.createGroup = exports.getGroup = exports.getAllGroups = void 0;
+exports.deleteGroup = exports.updateGroup = exports.createGroup = exports.getGroupsByLobby = exports.getGroup = exports.getAllGroups = void 0;
 const db_1 = __importDefault(require("../db"));
 const getAllGroups = async (req, res) => {
     try {
@@ -34,11 +34,25 @@ const getGroup = async (req, res) => {
     }
 };
 exports.getGroup = getGroup;
+const getGroupsByLobby = async (req, res) => {
+    try {
+        const lobby = parseInt(req.params.lobby, 10);
+        const group = await db_1.default.group.findMany({
+            where: { lobbyId: lobby },
+            orderBy: [{ groupId: "asc" }],
+        });
+        res.json(group);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao buscar os grupos" });
+    }
+};
+exports.getGroupsByLobby = getGroupsByLobby;
 const createGroup = async (req, res) => {
     try {
-        const { name } = req.body;
+        const { name, lobbyId } = req.body;
         const group = await db_1.default.group.create({
-            data: { name },
+            data: { name, lobbyId },
         });
         res.status(201).json(group);
     }
@@ -50,10 +64,10 @@ exports.createGroup = createGroup;
 const updateGroup = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const { name } = req.body;
+        const { name, lobbyId } = req.body;
         const group = await db_1.default.group.update({
             where: { groupId: id },
-            data: { name },
+            data: { name, lobbyId },
         });
         res.status(200).json(group);
     }

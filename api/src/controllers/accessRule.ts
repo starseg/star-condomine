@@ -34,14 +34,30 @@ export const getAccessRule = async (
   }
 };
 
+export const getAccessRulesByLobby = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const accessRule = await prisma.accessRule.findMany({
+      where: { lobbyId: lobby },
+      orderBy: [{ accessRuleId: "asc" }],
+    });
+    res.json(accessRule);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar regras de acesso" });
+  }
+};
+
 export const createAccessRule = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const { name, type, priority } = req.body;
+    const { name, type, priority, lobbyId } = req.body;
     const accessRule = await prisma.accessRule.create({
-      data: { name, type, priority },
+      data: { name, type, priority, lobbyId },
     });
     res.status(201).json(accessRule);
   } catch (error) {
@@ -55,10 +71,10 @@ export const updateAccessRule = async (
 ): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
-    const { name, type, priority } = req.body;
+    const { name, type, priority, lobbyId } = req.body;
     const accessRule = await prisma.accessRule.update({
       where: { accessRuleId: id },
-      data: { name, type, priority },
+      data: { name, type, priority, lobbyId },
     });
     res.status(200).json(accessRule);
   } catch (error) {

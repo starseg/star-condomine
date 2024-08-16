@@ -58,7 +58,11 @@ model Lobby {
   visitor        Visitor[]
   vehicle        Vehicle[]
   schedulingList SchedulingList[]
-  AreaAccessRule AreaAccessRule[]
+  areaAccessRule AreaAccessRule[]
+  accessRule     AccessRule[]
+  group          Group[]
+  timeZone       TimeZone[]
+  timeSpan       TimeSpan[]
 }
 
 model Member {
@@ -343,8 +347,13 @@ model SchedulingList {
 }
 
 model TimeZone {
-  timeZoneId         Int                  @id @default(autoincrement())
-  name               String
+  timeZoneId Int    @id @default(autoincrement())
+  name       String
+
+  lobbyId Int
+
+  lobby Lobby @relation(fields: [lobbyId], references: [lobbyId])
+
   timeSpan           TimeSpan[]
   AccessRuleTimeZone AccessRuleTimeZone[]
 }
@@ -364,6 +373,10 @@ model TimeSpan {
   hol2       Int
   hol3       Int
 
+  lobbyId Int
+
+  lobby Lobby @relation(fields: [lobbyId], references: [lobbyId])
+
   timeZone   TimeZone @relation(fields: [timeZoneId], references: [timeZoneId])
   timeZoneId Int
 }
@@ -382,6 +395,10 @@ model AccessRule {
   type         Int
   priority     Int
 
+  lobbyId Int
+
+  lobby Lobby @relation(fields: [lobbyId], references: [lobbyId])
+
   GroupAccessRule    GroupAccessRule[]
   AccessRuleTimeZone AccessRuleTimeZone[]
   AreaAccessRule     AreaAccessRule[]
@@ -390,6 +407,10 @@ model AccessRule {
 model Group {
   groupId Int    @id @default(autoincrement())
   name    String
+
+  lobbyId Int
+
+  lobby Lobby @relation(fields: [lobbyId], references: [lobbyId])
 
   MemberGroup     MemberGroup[]
   GroupAccessRule GroupAccessRule[]

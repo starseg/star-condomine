@@ -15,6 +15,22 @@ export const getAllTimeZones = async (
   }
 };
 
+export const getTimeZonesByLobby = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const timeZone = await prisma.timeZone.findMany({
+      where: { lobbyId: lobby },
+      orderBy: [{ timeZoneId: "asc" }],
+    });
+    res.json(timeZone);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os TimeZones" });
+  }
+};
+
 export const getTimeZone = async (
   req: Request,
   res: Response
@@ -39,9 +55,9 @@ export const createTimeZone = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { name } = req.body;
+    const { name, lobbyId } = req.body;
     const timeZone = await prisma.timeZone.create({
-      data: { name },
+      data: { name, lobbyId },
     });
     res.status(201).json(timeZone);
   } catch (error) {
@@ -55,10 +71,10 @@ export const updateTimeZone = async (
 ): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
-    const { name } = req.body;
+    const { name, lobbyId } = req.body;
     const timeZone = await prisma.timeZone.update({
       where: { timeZoneId: id },
-      data: { name },
+      data: { name, lobbyId },
     });
     res.status(200).json(timeZone);
   } catch (error) {

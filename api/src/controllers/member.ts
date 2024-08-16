@@ -24,6 +24,16 @@ export const getMembersByLobby = async (
       include: {
         addressType: true,
         telephone: true,
+        MemberGroup: {
+          select: {
+            groupId: true,
+            group: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
       },
       orderBy: [{ status: "asc" }, { name: "asc" }],
     });
@@ -50,6 +60,16 @@ export const getMember = async (req: Request, res: Response): Promise<void> => {
         },
         scheduling: {
           include: { visitor: { select: { name: true } } },
+        },
+        MemberGroup: {
+          select: {
+            groupId: true,
+            group: {
+              select: {
+                name: true,
+              },
+            },
+          },
         },
       },
     });

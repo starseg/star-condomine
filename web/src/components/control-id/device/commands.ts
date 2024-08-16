@@ -47,6 +47,24 @@ export const listPortalsCommand = {
   body: { object: "portals" },
   contentType: "application/json",
 };
+export const GetUserByIdCommand = (id: number) => {
+  return {
+    verb: "POST",
+    endpoint: "load_objects",
+    body: {
+      object: "users",
+      where: [
+        {
+          object: "users",
+          field: "id",
+          operator: "=",
+          value: id,
+        },
+      ],
+    },
+    contentType: "application/json",
+  };
+};
 
 // CREATION COMMANDS
 export const createUserCommand = (
@@ -319,13 +337,32 @@ export const createPortalAccessRuleRelationCommand = (
   };
 };
 
+// MODIFY OBJECT
+export const modifyObjectCommand = (
+  object: string,
+  values: object,
+  where: object
+) => {
+  return {
+    verb: "POST",
+    endpoint: "modify_objects",
+    body: {
+      object: object,
+      values: values,
+      where: where,
+    },
+    contentType: "application/json",
+  };
+};
+
 //DESTRUCTION COMMAND
-export const destroyObjectCommand = (name: string) => {
+export const destroyObjectCommand = (name: string, where: object = {}) => {
   return {
     verb: "POST",
     endpoint: "destroy_objects",
     body: {
       object: name,
+      where: where,
     },
     contentType: "application/json",
   };

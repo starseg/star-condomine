@@ -31,14 +31,30 @@ export const getGroup = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+export const getGroupsByLobby = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const group = await prisma.group.findMany({
+      where: { lobbyId: lobby },
+      orderBy: [{ groupId: "asc" }],
+    });
+    res.json(group);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os grupos" });
+  }
+};
+
 export const createGroup = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const { name } = req.body;
+    const { name, lobbyId } = req.body;
     const group = await prisma.group.create({
-      data: { name },
+      data: { name, lobbyId },
     });
     res.status(201).json(group);
   } catch (error) {
@@ -52,10 +68,10 @@ export const updateGroup = async (
 ): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
-    const { name } = req.body;
+    const { name, lobbyId } = req.body;
     const group = await prisma.group.update({
       where: { groupId: id },
-      data: { name },
+      data: { name, lobbyId },
     });
     res.status(200).json(group);
   } catch (error) {

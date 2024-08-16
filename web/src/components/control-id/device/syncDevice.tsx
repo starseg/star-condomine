@@ -32,16 +32,25 @@ import {
   createPortalAccessRuleRelationCommand,
   createTimeSpanCommand,
   createTimeZoneCommand,
+  createUserGroupRelationCommand,
 } from "./commands";
 import { CleanDevice } from "./cleanDevice";
+import { useSearchParams } from "next/navigation";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const FormSchema = z.object({
-  device: z.number(),
   timeZone: z.boolean(),
   timeSpan: z.boolean(),
   accessRules: z.boolean(),
   groups: z.boolean(),
-  areas: z.boolean(),
+  memberGroups: z.boolean(),
   groupAccessRules: z.boolean(),
   areaAccessRules: z.boolean(),
   accessRuleTimeZones: z.boolean(),
@@ -51,24 +60,28 @@ export default function SyncDevice() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      device: 0,
       timeZone: true,
       timeSpan: true,
       accessRules: true,
       groups: true,
-      areas: true,
+      memberGroups: true,
       groupAccessRules: true,
       areaAccessRules: true,
       accessRuleTimeZones: true,
     },
   });
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const lobbyParam = params.get("lobby");
+  const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
 
+  const [serialId, setSerialId] = useState("");
   const [devices, setDevices] = useState<Device[]>([]);
   const fetchDevices = async () => {
     if (session)
       try {
-        const response = await api.get("device", {
+        const response = await api.get(`device/lobby/${lobby}`, {
           headers: {
             Authorization: `Bearer ${session?.token.user.token}`,
           },
@@ -83,21 +96,9 @@ export default function SyncDevice() {
     fetchDevices();
   }, [session]);
 
-  interface item {
-    value: number;
-    label: string;
-  }
-  let items: item[] = [];
-  devices.map((device: Device) =>
-    items.push({
-      value: device.deviceId,
-      label: device.ip + " - " + device.name + " - " + device.lobby.name,
-    })
-  );
-
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      const device = devices.find((device) => device.deviceId === data.device);
+      const device = devices.find((device) => device.name === serialId);
       if (device) {
         if (data.timeZone) {
           // Enviar TimeZones para o dispositivo
@@ -215,12 +216,30 @@ export default function SyncDevice() {
             });
           }
         }
-        if (data.areas) {
-          // Enviar areas para o dispositivo
-          await api.post(
-            `/control-id/add-command?id=${device.name}`,
-            createAreaCommand(device.lobbyId, device.lobby.name)
-          );
+        if (data.memberGroups) {
+          let memberGroups = [];
+          try {
+            const response = await api.get(`memberGroup/lobby/${lobby}`, {
+              headers: {
+                Authorization: `Bearer ${session?.token.user.token}`,
+              },
+            });
+            memberGroups = response.data;
+          } catch (error) {
+            console.error("Erro ao obter dados:", error);
+          }
+          // Enviar membros do grupo para o dispositivo
+          if (memberGroups.length > 0) {
+            memberGroups.map(async (memberGroup: MemberGroup) => {
+              await api.post(
+                `/control-id/add-command?id=${device.name}`,
+                createUserGroupRelationCommand(
+                  memberGroup.memberId,
+                  memberGroup.groupId
+                )
+              );
+            });
+          }
         }
         if (data.groupAccessRules) {
           // Enviar groupAccessRules para o dispositivo
@@ -326,7 +345,7 @@ export default function SyncDevice() {
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-2 mx-auto mt-4 w-full max-w-lg"
           >
-            <DefaultCombobox
+            {/* <DefaultCombobox
               control={form.control}
               name="device"
               label="Dispositivo"
@@ -336,7 +355,21 @@ export default function SyncDevice() {
               onSelect={(value: number) => {
                 form.setValue("device", value);
               }}
-            />
+            /> */}
+            <Select value={serialId} onValueChange={setSerialId}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione um dispositivo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {devices.map((device) => (
+                    <SelectItem key={device.deviceId} value={device.name}>
+                      {device.ip} - {device.name} - {device.lobby.name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
             <div className="flex flex-col gap-4 py-2">
               <p className="text-sm">Enviar dados de:</p>
               <CheckboxItem
@@ -359,7 +392,7 @@ export default function SyncDevice() {
                 name="groups"
                 label="Grupos"
               />
-              <CheckboxItem control={form.control} name="areas" label="Áreas" />
+              {/* <CheckboxItem control={form.control} name="areas" label="Áreas" /> */}
               <CheckboxItem
                 control={form.control}
                 name="groupAccessRules"
@@ -367,8 +400,8 @@ export default function SyncDevice() {
               />
               <CheckboxItem
                 control={form.control}
-                name="areaAccessRules"
-                label="Portarias x Regras de acesso"
+                name="memberGroups"
+                label="Membros x Grupos"
               />
               <CheckboxItem
                 control={form.control}

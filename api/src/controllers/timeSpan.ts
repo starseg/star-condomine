@@ -36,6 +36,22 @@ export const getTimeSpan = async (
   }
 };
 
+export const getTimeSpansByLobby = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const timeSpan = await prisma.timeSpan.findMany({
+      where: { lobbyId: lobby },
+      orderBy: [{ timeSpanId: "asc" }],
+    });
+    res.json(timeSpan);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os TimeZones" });
+  }
+};
+
 export const createTimeSpan = async (
   req: Request,
   res: Response
@@ -55,6 +71,7 @@ export const createTimeSpan = async (
       hol2,
       hol3,
       timeZoneId,
+      lobbyId,
     } = req.body;
     const timeSpan = await prisma.timeSpan.create({
       data: {
@@ -71,6 +88,7 @@ export const createTimeSpan = async (
         hol2,
         hol3,
         timeZoneId,
+        lobbyId,
       },
     });
     res.status(201).json(timeSpan);
@@ -99,6 +117,7 @@ export const updateTimeSpan = async (
       hol2,
       hol3,
       timeZoneId,
+      lobbyId,
     } = req.body;
     const timeSpan = await prisma.timeSpan.update({
       where: { timeSpanId: id },
@@ -116,6 +135,7 @@ export const updateTimeSpan = async (
         hol2,
         hol3,
         timeZoneId,
+        lobbyId,
       },
     });
     res.status(200).json(timeSpan);

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteAccessRule = exports.updateAccessRule = exports.createAccessRule = exports.getAccessRule = exports.getAllAccessRules = void 0;
+exports.deleteAccessRule = exports.updateAccessRule = exports.createAccessRule = exports.getAccessRulesByLobby = exports.getAccessRule = exports.getAllAccessRules = void 0;
 const db_1 = __importDefault(require("../db"));
 const getAllAccessRules = async (req, res) => {
     try {
@@ -34,11 +34,25 @@ const getAccessRule = async (req, res) => {
     }
 };
 exports.getAccessRule = getAccessRule;
+const getAccessRulesByLobby = async (req, res) => {
+    try {
+        const lobby = parseInt(req.params.lobby, 10);
+        const accessRule = await db_1.default.accessRule.findMany({
+            where: { lobbyId: lobby },
+            orderBy: [{ accessRuleId: "asc" }],
+        });
+        res.json(accessRule);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao buscar regras de acesso" });
+    }
+};
+exports.getAccessRulesByLobby = getAccessRulesByLobby;
 const createAccessRule = async (req, res) => {
     try {
-        const { name, type, priority } = req.body;
+        const { name, type, priority, lobbyId } = req.body;
         const accessRule = await db_1.default.accessRule.create({
-            data: { name, type, priority },
+            data: { name, type, priority, lobbyId },
         });
         res.status(201).json(accessRule);
     }
@@ -50,10 +64,10 @@ exports.createAccessRule = createAccessRule;
 const updateAccessRule = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const { name, type, priority } = req.body;
+        const { name, type, priority, lobbyId } = req.body;
         const accessRule = await db_1.default.accessRule.update({
             where: { accessRuleId: id },
-            data: { name, type, priority },
+            data: { name, type, priority, lobbyId },
         });
         res.status(200).json(accessRule);
     }

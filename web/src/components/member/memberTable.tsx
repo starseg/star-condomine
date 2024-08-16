@@ -9,10 +9,12 @@ import {
 } from "@/components/ui/table";
 import api from "@/lib/axios";
 import {
+  Car,
   CaretLeft,
   CaretRight,
   MagnifyingGlass,
   PencilLine,
+  Tag,
   Trash,
 } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
@@ -29,6 +31,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
   const [members, setMembers] = useState<Member[]>([]);
   const [page, setPage] = useState(1);
   const [paginatedMembers, setPaginatedMembers] = useState<Member[]>([]);
+  const [lobbyData, setLobbyData] = useState<Lobby>();
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
@@ -55,6 +58,22 @@ export default function MemberTable({ lobby }: { lobby: string }) {
         console.error("Erro ao obter dados:", error);
       }
   };
+  async function fetchLobbyData() {
+    if (session)
+      try {
+        const getLobby = await api.get(`/lobby/find/${lobby}`, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setLobbyData(getLobby.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+  }
+  useEffect(() => {
+    fetchLobbyData();
+  }, [session]);
   useEffect(() => {
     fetchData();
   }, [session, searchParams]);
@@ -90,7 +109,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
       ) : (
         <>
           <div className="max-h-[60vh] overflow-x-auto">
-            <Table className="border border-stone-800 rouded-lg">
+            <Table className="border-stone-800 border rouded-lg">
               <TableHeader className="bg-stone-800 font-semibold">
                 <TableRow>
                   <TableHead>Nome</TableHead>
@@ -115,6 +134,10 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                         : "Cargo"
                       : ""}
                   </TableHead>
+                  {lobbyData &&
+                    lobbyData.ControllerBrand.name === "Control iD" && (
+                      <TableHead>Grupo de acesso</TableHead>
+                    )}
                   <TableHead>Propriedades</TableHead>
                   <TableHead>Ações</TableHead>
                 </TableRow>
@@ -171,23 +194,41 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                           ? member.position
                           : "Cargo não cadastrado"}
                       </TableCell>
-                      <TableCell className="space-x-4">
-                        <Link
-                          href={`${type}/vehicles?id=${member.memberId}&lobby=${member.lobbyId}`}
-                          className="px-3 py-1 border rounded-md hover:border-stone-50 transition-all"
-                        >
-                          Veículos
-                        </Link>
-                        <Link
-                          href={`${type}/credentials/details?id=${member.memberId}`}
-                          className="px-3 py-1 border rounded-md hover:border-stone-50 transition-all"
-                        >
-                          Credenciais
-                        </Link>
+                      {lobbyData &&
+                        lobbyData.ControllerBrand.name === "Control iD" && (
+                          <TableCell>
+                            {member.MemberGroup.length > 0 ? (
+                              <p className="text-green-500">
+                                {member.MemberGroup[0].group.name}
+                              </p>
+                            ) : (
+                              "Não vinculado"
+                            )}
+                          </TableCell>
+                        )}
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Link
+                            href={`${type}/vehicles?id=${member.memberId}&lobby=${member.lobbyId}`}
+                            className="flex justify-center items-center hover:border-stone-50 px-3 p-1 border rounded-md text-2xl transition-all"
+                          >
+                            <button title="Veículos">
+                              <Car />
+                            </button>
+                          </Link>
+                          <Link
+                            href={`${type}/credentials/details?id=${member.memberId}`}
+                            className="flex justify-center items-center hover:border-stone-50 px-3 py-1 border rounded-md text-2xl transition-all"
+                          >
+                            <button title="Credenciais">
+                              <Tag />
+                            </button>
+                          </Link>
+                        </div>
                       </TableCell>
                       <TableCell className="flex gap-4 text-2xl">
                         <Link
-                          href={`${type}/details?id=${member.memberId}&c=${control}`}
+                          href={`${type}/details?id=${member.memberId}&lobby=${lobby}&c=${control}`}
                         >
                           <MagnifyingGlass />
                         </Link>
@@ -212,8 +253,8 @@ export default function MemberTable({ lobby }: { lobby: string }) {
             </Table>
           </div>
           <div className="flex justify-between mr-4">
-            <div className="mt-4 flex items-center gap-2  text-stone-400 font-medium">
-              <div className="rounded-full w-6 h-6 bg-amber-400"></div>: membros
+            <div className="flex items-center gap-2 mt-4 font-medium text-stone-400">
+              <div className="bg-amber-400 rounded-full w-6 h-6"></div>: membros
               com observações registradas
             </div>
             <div className="flex items-center gap-4 mt-2 pr-4">
@@ -223,7 +264,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
               <p>
                 Página {page} de {totalOfPages}
               </p>
-              <div className="flex items-center text-xl gap-4">
+              <div className="flex items-center gap-4 text-xl">
                 <Button
                   variant={"outline"}
                   className="p-0 aspect-square"

@@ -23,6 +23,16 @@ const getMembersByLobby = async (req, res) => {
             include: {
                 addressType: true,
                 telephone: true,
+                MemberGroup: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                            },
+                        },
+                    },
+                },
             },
             orderBy: [{ status: "asc" }, { name: "asc" }],
         });
@@ -50,6 +60,16 @@ const getMember = async (req, res) => {
                 },
                 scheduling: {
                     include: { visitor: { select: { name: true } } },
+                },
+                MemberGroup: {
+                    select: {
+                        groupId: true,
+                        group: {
+                            select: {
+                                name: true,
+                            },
+                        },
+                    },
                 },
             },
         });

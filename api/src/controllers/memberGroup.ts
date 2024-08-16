@@ -50,6 +50,37 @@ export const getMemberGroup = async (
   }
 };
 
+export const getMemberGroupsByLobby = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const memberGroup = await prisma.memberGroup.findMany({
+      orderBy: [{ memberGroupId: "asc" }],
+      include: {
+        member: {
+          select: { name: true },
+        },
+        group: {
+          select: { name: true },
+        },
+      },
+      where: {
+        group: {
+          lobbyId: lobby,
+        },
+        member: {
+          lobbyId: lobby,
+        },
+      },
+    });
+    res.json(memberGroup);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar relações" });
+  }
+};
+
 export const createMemberGroup = async (
   req: Request,
   res: Response

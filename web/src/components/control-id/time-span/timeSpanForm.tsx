@@ -22,6 +22,7 @@ import { CheckboxItem, InputItem } from "@/components/form-item";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import DefaultCombobox from "@/components/form/comboboxDefault";
+import { useSearchParams } from "next/navigation";
 
 const FormSchema = z.object({
   time_zone_id: z.number(),
@@ -64,6 +65,11 @@ export default function TimeSpanForm() {
     },
   });
   const { data: session } = useSession();
+  const { update } = useControliDUpdate();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const lobbyParam = params.get("lobby");
+  const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
 
   const [timeZones, setTimeZones] = useState<TimeZone[]>([]);
   const fetchTimeZones = async () => {
@@ -81,7 +87,7 @@ export default function TimeSpanForm() {
   };
   useEffect(() => {
     fetchTimeZones();
-  }, [session]);
+  }, [session, update]);
 
   interface item {
     value: number;
@@ -118,6 +124,7 @@ export default function TimeSpanForm() {
         hol1: data.hol1 === true ? 1 : 0,
         hol2: data.hol2 === true ? 1 : 0,
         hol3: data.hol3 === true ? 1 : 0,
+        lobbyId: lobby,
       };
 
       const response = await api.post(`timeSpan`, info, {
@@ -171,7 +178,7 @@ export default function TimeSpanForm() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="w-full space-y-2"
+            className="space-y-2 w-full"
           >
             <DefaultCombobox
               control={form.control}
@@ -184,7 +191,7 @@ export default function TimeSpanForm() {
                 form.setValue("time_zone_id", value);
               }}
             />
-            <div className="flex items-end justify-center gap-2">
+            <div className="flex justify-center items-end gap-2">
               <InputItem
                 control={form.control}
                 type="number"
@@ -201,7 +208,7 @@ export default function TimeSpanForm() {
                 placeholder="00"
               />
             </div>
-            <div className="flex items-end justify-center gap-2">
+            <div className="flex justify-center items-end gap-2">
               <InputItem
                 control={form.control}
                 type="number"

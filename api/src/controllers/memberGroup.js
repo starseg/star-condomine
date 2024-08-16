@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteMemberGroup = exports.updateMemberGroup = exports.createMemberGroup = exports.getMemberGroup = exports.getAllMemberGroups = void 0;
+exports.deleteMemberGroup = exports.updateMemberGroup = exports.createMemberGroup = exports.getMemberGroupsByLobby = exports.getMemberGroup = exports.getAllMemberGroups = void 0;
 const db_1 = __importDefault(require("../db"));
 const getAllMemberGroups = async (req, res) => {
     try {
@@ -50,6 +50,35 @@ const getMemberGroup = async (req, res) => {
     }
 };
 exports.getMemberGroup = getMemberGroup;
+const getMemberGroupsByLobby = async (req, res) => {
+    try {
+        const lobby = parseInt(req.params.lobby, 10);
+        const memberGroup = await db_1.default.memberGroup.findMany({
+            orderBy: [{ memberGroupId: "asc" }],
+            include: {
+                member: {
+                    select: { name: true },
+                },
+                group: {
+                    select: { name: true },
+                },
+            },
+            where: {
+                group: {
+                    lobbyId: lobby,
+                },
+                member: {
+                    lobbyId: lobby,
+                },
+            },
+        });
+        res.json(memberGroup);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao buscar relações" });
+    }
+};
+exports.getMemberGroupsByLobby = getMemberGroupsByLobby;
 const createMemberGroup = async (req, res) => {
     try {
         const { memberId, groupId } = req.body;

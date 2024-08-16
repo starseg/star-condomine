@@ -5,6 +5,7 @@ import {
   getAllAccessRules,
   getAccessRule,
   updateAccessRule,
+  getAccessRulesByLobby,
 } from "../controllers/accessRule";
 import { checkAdminPermission } from "../middlewares/permissions";
 
@@ -12,6 +13,7 @@ const accessRuleRouter = express.Router();
 
 accessRuleRouter.get("/", getAllAccessRules);
 accessRuleRouter.get("/find/:id", getAccessRule);
+accessRuleRouter.get("/lobby/:lobby", getAccessRulesByLobby);
 accessRuleRouter.post("/", createAccessRule);
 accessRuleRouter.put("/:id", updateAccessRule);
 accessRuleRouter.delete("/:id", checkAdminPermission, deleteAccessRule);

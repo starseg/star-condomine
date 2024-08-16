@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTimeSpan = exports.updateTimeSpan = exports.createTimeSpan = exports.getTimeSpan = exports.getAllTimeSpans = void 0;
+exports.deleteTimeSpan = exports.updateTimeSpan = exports.createTimeSpan = exports.getTimeSpansByLobby = exports.getTimeSpan = exports.getAllTimeSpans = void 0;
 const db_1 = __importDefault(require("../db"));
 const getAllTimeSpans = async (req, res) => {
     try {
@@ -36,9 +36,23 @@ const getTimeSpan = async (req, res) => {
     }
 };
 exports.getTimeSpan = getTimeSpan;
+const getTimeSpansByLobby = async (req, res) => {
+    try {
+        const lobby = parseInt(req.params.lobby, 10);
+        const timeSpan = await db_1.default.timeSpan.findMany({
+            where: { lobbyId: lobby },
+            orderBy: [{ timeSpanId: "asc" }],
+        });
+        res.json(timeSpan);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao buscar os TimeZones" });
+    }
+};
+exports.getTimeSpansByLobby = getTimeSpansByLobby;
 const createTimeSpan = async (req, res) => {
     try {
-        const { start, end, sun, mon, tue, wed, thu, fri, sat, hol1, hol2, hol3, timeZoneId, } = req.body;
+        const { start, end, sun, mon, tue, wed, thu, fri, sat, hol1, hol2, hol3, timeZoneId, lobbyId, } = req.body;
         const timeSpan = await db_1.default.timeSpan.create({
             data: {
                 start,
@@ -54,6 +68,7 @@ const createTimeSpan = async (req, res) => {
                 hol2,
                 hol3,
                 timeZoneId,
+                lobbyId,
             },
         });
         res.status(201).json(timeSpan);
@@ -66,7 +81,7 @@ exports.createTimeSpan = createTimeSpan;
 const updateTimeSpan = async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
-        const { start, end, sun, mon, tue, wed, thu, fri, sat, hol1, hol2, hol3, timeZoneId, } = req.body;
+        const { start, end, sun, mon, tue, wed, thu, fri, sat, hol1, hol2, hol3, timeZoneId, lobbyId, } = req.body;
         const timeSpan = await db_1.default.timeSpan.update({
             where: { timeSpanId: id },
             data: {
@@ -83,6 +98,7 @@ const updateTimeSpan = async (req, res) => {
                 hol2,
                 hol3,
                 timeZoneId,
+                lobbyId,
             },
         });
         res.status(200).json(timeSpan);

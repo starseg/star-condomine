@@ -20,6 +20,7 @@ import { FilePlus2Icon } from "lucide-react";
 import { useControliDUpdate } from "@/contexts/control-id-update-context";
 import { InputItem } from "@/components/form-item";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 
 const FormSchema = z.object({
   name: z.string().min(2, {
@@ -36,11 +37,16 @@ export default function TimeZoneForm() {
     },
   });
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const lobbyParam = params.get("lobby");
+  const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       const info = {
         name: data.name,
+        lobbyId: lobby,
       };
 
       const response = await api.post(`timeZone`, info, {
@@ -80,7 +86,7 @@ export default function TimeZoneForm() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="w-full space-y-2"
+            className="space-y-2 w-full"
           >
             <InputItem
               control={form.control}
