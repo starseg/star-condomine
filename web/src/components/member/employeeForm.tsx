@@ -301,19 +301,19 @@ export function EmployeeForm() {
         await sendControliDCommand(
           createUserCommand(response.data.memberId, data.name)
         );
-        if (base64Photo) {
-          await sendControliDCommand(
-            setUserFaceCommand(
-              base64Photo.split("data:application/octet-stream;base64,")[1],
-              response.data.memberId,
-              timestamp
-            )
-          );
-        } else if (base64image) {
-          await sendControliDCommand(
-            setUserFaceCommand(base64image, response.data.memberId, timestamp)
-          );
-        }
+        // if (base64Photo) {
+        //   await sendControliDCommand(
+        //     setUserFaceCommand(
+        //       base64Photo.split("data:application/octet-stream;base64,")[1],
+        //       response.data.memberId,
+        //       timestamp
+        //     )
+        //   );
+        // } else if (base64image) {
+        //   await sendControliDCommand(
+        //     setUserFaceCommand(base64image, response.data.memberId, timestamp)
+        //   );
+        // }
 
         if (data.groupId !== 0) {
           const info = {

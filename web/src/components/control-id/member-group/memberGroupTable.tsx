@@ -1,6 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
-import api from "@/lib/axios";
+import { SkeletonTable } from "@/components/_skeletons/skeleton-table";
+import { DeleteDialog } from "@/components/deleteDialog";
 import {
   Table,
   TableBody,
@@ -9,15 +9,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Trash2Icon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useControliDUpdate } from "@/contexts/control-id-update-context";
+import api from "@/lib/axios";
 import { useSession } from "next-auth/react";
-import { deleteAction } from "@/lib/delete-action";
-import { SkeletonTable } from "@/components/_skeletons/skeleton-table";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import {
+  createUserGroupRelationCommand,
+  destroyObjectCommand,
+} from "../device/commands";
+import { SyncItem } from "../device/syncItem";
 
-export default function MemberGroupTable() {
+export default function MemberGroupTable({ devices }: { devices: Device[] }) {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const lobbyParam = params.get("lobby");
+  const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
   const { update } = useControliDUpdate();
   const [memberGroups, setMemberGroups] = useState<MemberGroup[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -40,8 +49,35 @@ export default function MemberGroupTable() {
     fetchData();
   }, [session, update]);
 
-  const deleteItem = async (id: number) => {
-    deleteAction(session, "relação", `memberGroup/${id}`, fetchData);
+  const deleteItem = async (
+    id: number,
+    member_id: number,
+    group_id: number
+  ) => {
+    try {
+      await api.delete(`memberGroup/${id}`, {
+        headers: {
+          Authorization: `Bearer ${session?.token.user.token}`,
+        },
+      });
+      fetchData();
+      devices.map(async (device) => {
+        await api.post(
+          `/control-id/add-command?id=${device.name}`,
+          destroyObjectCommand("member_group", {
+            member_group: {
+              member_id: member_id,
+              group_id: group_id,
+            },
+          })
+        );
+      });
+      toast.success("Dado excluído com sucesso!", {
+        theme: "colored",
+      });
+    } catch (error) {
+      console.error("Erro excluir dado:", error);
+    }
   };
 
   return (
@@ -50,7 +86,7 @@ export default function MemberGroupTable() {
         <SkeletonTable />
       ) : (
         <div className="w-full max-h-[60vh] overflow-auto">
-          <Table className="w-full border">
+          <Table className="border w-full">
             <TableHeader>
               <TableRow className="bg-secondary hover:bg-secondary">
                 <TableHead>Membro</TableHead>
@@ -69,13 +105,25 @@ export default function MemberGroupTable() {
                       {item.groupId} - {item.group.name}
                     </TableCell>
                     <TableCell>
-                      <Button
-                        variant={"ghost"}
-                        className="p-0 aspect-square"
-                        onClick={() => deleteItem(item.memberGroupId)}
-                      >
-                        <Trash2Icon />
-                      </Button>
+                      <DeleteDialog
+                        module="relação"
+                        confirmFunction={() =>
+                          deleteItem(
+                            item.memberGroupId,
+                            item.memberId,
+                            item.groupId
+                          )
+                        }
+                      />
+                      <SyncItem
+                        lobby={lobby}
+                        sendCommand={() =>
+                          createUserGroupRelationCommand(
+                            item.memberId,
+                            item.groupId
+                          )
+                        }
+                      />
                     </TableCell>
                   </TableRow>
                 ))

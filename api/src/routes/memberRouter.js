@@ -14,6 +14,7 @@ memberRouter.get("/count/:lobby", member_1.countMembers);
 memberRouter.get("/lobby/:lobby", member_1.getMembersByLobby);
 memberRouter.get("/tags/:id", member_1.getTagsByMember);
 memberRouter.get("/address", member_1.getAddressTypes);
+memberRouter.get("/find/:id/base64photo", member_1.getMemberPhoto);
 memberRouter.post("/", member_1.createMember);
 memberRouter.put("/:id", member_1.updateMember);
 memberRouter.delete("/:id", permissions_1.checkAdminPermission, member_1.deleteMember);

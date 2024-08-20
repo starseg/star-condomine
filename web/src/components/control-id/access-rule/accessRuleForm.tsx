@@ -1,9 +1,7 @@
 "use client";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Form } from "@/components/ui/form";
+import { InputItem } from "@/components/form-item";
 import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
 import {
   Sheet,
   SheetClose,
@@ -14,12 +12,15 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { toast } from "react-toastify";
-import api from "@/lib/axios";
-import { FilePlus2Icon } from "lucide-react";
 import { useControliDUpdate } from "@/contexts/control-id-update-context";
-import { InputItem } from "@/components/form-item";
+import api from "@/lib/axios";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FilePlus2Icon } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { z } from "zod";
 
 const FormSchema = z.object({
   name: z.string().min(2, {
@@ -36,10 +37,14 @@ export default function AccessRuleForm() {
     defaultValues: {
       name: "",
       type: "",
-      priority: "0",
+      priority: "1",
     },
   });
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const lobbyParam = params.get("lobby");
+  const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
@@ -47,6 +52,7 @@ export default function AccessRuleForm() {
         name: data.name,
         type: Number(data.type),
         priority: Number(data.priority),
+        lobbyId: lobby,
       };
 
       const response = await api.post(`accessRule`, info, {
@@ -90,7 +96,7 @@ export default function AccessRuleForm() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="w-full space-y-2"
+            className="space-y-2 w-full"
           >
             <InputItem
               control={form.control}

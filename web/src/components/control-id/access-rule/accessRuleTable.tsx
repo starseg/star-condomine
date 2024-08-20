@@ -1,6 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
-import api from "@/lib/axios";
+import { SkeletonTable } from "@/components/_skeletons/skeleton-table";
+import { DeleteDialog } from "@/components/deleteDialog";
 import {
   Table,
   TableBody,
@@ -9,16 +9,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Trash2Icon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useControliDUpdate } from "@/contexts/control-id-update-context";
+import api from "@/lib/axios";
 import { useSession } from "next-auth/react";
-import { deleteAction } from "@/lib/delete-action";
-import { SkeletonTable } from "@/components/_skeletons/skeleton-table";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import {
+  createAccessRuleCommand,
+  destroyObjectCommand,
+} from "../device/commands";
+import { SyncItem } from "../device/syncItem";
 import AccessRuleUpdateForm from "./accessRuleUpdateForm";
 
-export default function AccessRuleTable() {
+export default function AccessRuleTable({ devices }: { devices: Device[] }) {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const lobbyParam = params.get("lobby");
+  const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
   const { update } = useControliDUpdate();
   const [accessRules, setAccessRules] = useState<AccessRule[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -43,7 +52,26 @@ export default function AccessRuleTable() {
   }, [session, update]);
 
   const deleteItem = async (id: number) => {
-    deleteAction(session, "regra de acesso", `accessRule/${id}`, fetchData);
+    // deleteAction(session, "regra de acesso", `accessRule/${id}`, fetchData);
+    try {
+      await api.delete(`accessRule/${id}`, {
+        headers: {
+          Authorization: `Bearer ${session?.token.user.token}`,
+        },
+      });
+      fetchData();
+      devices.map(async (device) => {
+        await api.post(
+          `/control-id/add-command?id=${device.name}`,
+          destroyObjectCommand("access_rules", { access_rules: { id: id } })
+        );
+      });
+      toast.success("Dado excluído com sucesso!", {
+        theme: "colored",
+      });
+    } catch (error) {
+      console.error("Erro excluir dado:", error);
+    }
   };
 
   return (
@@ -52,7 +80,7 @@ export default function AccessRuleTable() {
         <SkeletonTable />
       ) : (
         <div className="w-full max-h-[60vh] overflow-auto">
-          <Table className="w-full border">
+          <Table className="border w-full">
             <TableHeader>
               <TableRow className="bg-secondary hover:bg-secondary">
                 <TableHead>ID</TableHead>
@@ -71,18 +99,29 @@ export default function AccessRuleTable() {
                     <TableCell>{accessRule.type}</TableCell>
                     <TableCell>{accessRule.priority}</TableCell>
                     <TableCell>
-                      <Button
-                        variant={"ghost"}
-                        className="p-0 aspect-square"
-                        onClick={() => deleteItem(accessRule.accessRuleId)}
-                      >
-                        <Trash2Icon />
-                      </Button>
+                      <DeleteDialog
+                        module="regra de acesso"
+                        confirmFunction={() =>
+                          deleteItem(accessRule.accessRuleId)
+                        }
+                      />
                       <AccessRuleUpdateForm
                         id={accessRule.accessRuleId}
                         name={accessRule.name}
                         priority={accessRule.priority.toString()}
                         type={accessRule.type.toString()}
+                        devices={devices}
+                      />
+                      <SyncItem
+                        lobby={lobby}
+                        sendCommand={() =>
+                          createAccessRuleCommand(
+                            accessRule.accessRuleId,
+                            accessRule.name,
+                            accessRule.priority,
+                            accessRule.type
+                          )
+                        }
                       />
                     </TableCell>
                   </TableRow>

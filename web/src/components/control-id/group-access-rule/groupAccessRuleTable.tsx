@@ -1,6 +1,7 @@
 "use client";
-import { useState, useEffect } from "react";
-import api from "@/lib/axios";
+import { SkeletonTable } from "@/components/_skeletons/skeleton-table";
+import { DeleteDialog } from "@/components/deleteDialog";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -9,16 +10,31 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Trash2Icon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useControliDUpdate } from "@/contexts/control-id-update-context";
+import api from "@/lib/axios";
+import { Trash2Icon } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { deleteAction } from "@/lib/delete-action";
-import { SkeletonTable } from "@/components/_skeletons/skeleton-table";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import {
+  createGroupAccessRuleRelationCommand,
+  destroyObjectCommand,
+} from "../device/commands";
+import { SyncItem } from "../device/syncItem";
 
-export default function GroupAccessRuleTable() {
+export default function GroupAccessRuleTable({
+  devices,
+}: {
+  devices: Device[];
+}) {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const lobbyParam = params.get("lobby");
+  const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
   const { update } = useControliDUpdate();
+
   const [groupAccessRules, setGroupAccessRules] = useState<GroupAccessRule[]>(
     []
   );
@@ -42,8 +58,35 @@ export default function GroupAccessRuleTable() {
     fetchData();
   }, [session, update]);
 
-  const deleteItem = async (id: number) => {
-    deleteAction(session, "relação", `groupAccessRule/${id}`, fetchData);
+  const deleteItem = async (
+    id: number,
+    group_id: number,
+    access_rule_id: number
+  ) => {
+    try {
+      await api.delete(`groupAccessRule/${id}`, {
+        headers: {
+          Authorization: `Bearer ${session?.token.user.token}`,
+        },
+      });
+      fetchData();
+      devices.map(async (device) => {
+        await api.post(
+          `/control-id/add-command?id=${device.name}`,
+          destroyObjectCommand("group_access_rules", {
+            group_access_rules: {
+              group_id: group_id,
+              access_rule_id: access_rule_id,
+            },
+          })
+        );
+      });
+      toast.success("Dado excluído com sucesso!", {
+        theme: "colored",
+      });
+    } catch (error) {
+      console.error("Erro excluir dado:", error);
+    }
   };
 
   return (
@@ -52,7 +95,7 @@ export default function GroupAccessRuleTable() {
         <SkeletonTable />
       ) : (
         <div className="w-full max-h-[60vh] overflow-auto">
-          <Table className="w-full border">
+          <Table className="border w-full">
             <TableHeader>
               <TableRow className="bg-secondary hover:bg-secondary">
                 <TableHead>Grupo</TableHead>
@@ -71,13 +114,25 @@ export default function GroupAccessRuleTable() {
                       {item.accessRuleId} - {item.accessRule.name}
                     </TableCell>
                     <TableCell>
-                      <Button
-                        variant={"ghost"}
-                        className="p-0 aspect-square"
-                        onClick={() => deleteItem(item.groupAccessRuleId)}
-                      >
-                        <Trash2Icon />
-                      </Button>
+                      <DeleteDialog
+                        module="relação"
+                        confirmFunction={() =>
+                          deleteItem(
+                            item.groupAccessRuleId,
+                            item.groupId,
+                            item.accessRuleId
+                          )
+                        }
+                      />
+                      <SyncItem
+                        lobby={lobby}
+                        sendCommand={() =>
+                          createGroupAccessRuleRelationCommand(
+                            item.groupId,
+                            item.accessRuleId
+                          )
+                        }
+                      />
                     </TableCell>
                   </TableRow>
                 ))

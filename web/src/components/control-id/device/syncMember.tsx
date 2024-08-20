@@ -22,40 +22,39 @@ import api from "@/lib/axios";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { ArrowsClockwise, PlusCircle } from "@phosphor-icons/react/dist/ssr";
+import { createUserCommand, setUserFaceCommand } from "./commands";
 
-export function SyncItem({
+export function SyncMember({
   lobby,
-  sendCommand,
-  sendCommand2,
-  triggerLabel,
+  member,
+  devices,
 }: {
   lobby: number | null;
-  sendCommand: () => void;
-  sendCommand2?: () => void;
-  triggerLabel?: string;
+  member: Member;
+  devices: Device[];
 }) {
   const { data: session } = useSession();
-  const [devices, setDevices] = useState<Device[]>([]);
   const [id, setId] = useState("");
-  const fetchDevices = async () => {
+  const [base64, setBase64] = useState("");
+  const [deviceList, setDeviceList] = useState<string[]>([]);
+
+  const getBase64Photo = async () => {
     if (session)
       try {
-        const response = await api.get(`device/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
-        setDevices(response.data);
+        const response = await api.get(
+          `member/find/${member.memberId}/base64photo`,
+          {
+            headers: {
+              Authorization: `Bearer ${session?.token.user.token}`,
+            },
+          }
+        );
+        setBase64(response.data.base64);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
       }
   };
 
-  useEffect(() => {
-    fetchDevices();
-  }, [session]);
-
-  const [deviceList, setDeviceList] = useState<string[]>([]);
   function addDevice() {
     const isSetDevice = deviceList.find((device) => device === id);
     if (id !== "" && !isSetDevice) setDeviceList((prev) => [...prev, id]);
@@ -65,16 +64,20 @@ export function SyncItem({
     setDeviceList(deviceList.filter((item) => item !== device));
   }
 
-  function sync() {
+  async function synchronize() {
+    getBase64Photo(); // get user photo (base64)
     if (deviceList.length > 0) {
       deviceList.map(async (device) => {
-        await api.post(`/control-id/add-command?id=${device}`, sendCommand());
-        if (sendCommand2 !== undefined) {
-          await api.post(
-            `/control-id/add-command?id=${device}`,
-            sendCommand2()
-          );
-        }
+        // create user
+        await api.post(
+          `/control-id/add-command?id=${device}`,
+          createUserCommand(member.memberId, member.name)
+        );
+        const timestamp = ~~(Date.now() / 1000);
+        await api.post(
+          `/control-id/add-command?id=${device}`,
+          setUserFaceCommand(member.memberId, base64, timestamp)
+        );
       });
     }
   }
@@ -85,15 +88,14 @@ export function SyncItem({
         <Button
           className="p-1 text-2xl aspect-square"
           variant={"ghost"}
-          title="Sincronizar"
+          title="Sincronizar membro"
         >
           <ArrowsClockwise />
-          {triggerLabel && <p className="ml-2 text-base">{triggerLabel}</p>}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Sincronizar dado</AlertDialogTitle>
+          <AlertDialogTitle>Sincronizar membro</AlertDialogTitle>
           <AlertDialogDescription>
             Escolha o(s) dispositivo(s) para onde você deseja enviar e clique no
             (+).
@@ -136,7 +138,10 @@ export function SyncItem({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={sync} disabled={deviceList.length === 0}>
+          <AlertDialogAction
+            onClick={synchronize}
+            disabled={deviceList.length === 0}
+          >
             Confirmar
           </AlertDialogAction>
         </AlertDialogFooter>

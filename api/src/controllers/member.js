@@ -3,8 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTagsByMember = exports.countMembers = exports.getFilteredMembers = exports.getAddressTypes = exports.deleteMember = exports.updateMember = exports.createMember = exports.getMember = exports.getMembersByLobby = exports.getAllMembers = void 0;
+exports.getTagsByMember = exports.countMembers = exports.getFilteredMembers = exports.getAddressTypes = exports.deleteMember = exports.updateMember = exports.createMember = exports.getMemberPhoto = exports.getMember = exports.getMembersByLobby = exports.getAllMembers = void 0;
 const db_1 = __importDefault(require("../db"));
+const functions_1 = require("../utils/functions");
 const getAllMembers = async (req, res) => {
     try {
         const member = await db_1.default.member.findMany();
@@ -84,6 +85,42 @@ const getMember = async (req, res) => {
     }
 };
 exports.getMember = getMember;
+const getMemberPhoto = async (req, res) => {
+    try {
+        const id = parseInt(req.params.id, 10);
+        const member = await db_1.default.member.findUniqueOrThrow({
+            where: { memberId: id },
+            select: { profileUrl: true },
+        });
+        if (!member) {
+            res.status(404).json({ error: "Membro não encontrado" });
+            return;
+        }
+        const url = member.profileUrl;
+        if (url && (0, functions_1.isValidURL)(url)) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error("Falha ao buscar a imagem");
+                }
+                const arrayBuffer = await response.arrayBuffer();
+                const buffer = Buffer.from(arrayBuffer);
+                const base64 = buffer.toString("base64");
+                res.json({ base64 });
+            }
+            catch (error) {
+                res.status(500).json({ error: "Erro ao converter imagem" });
+            }
+        }
+        else {
+            res.status(400).json({ error: "URL inválida ou não encontrada" });
+        }
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao buscar o membro" });
+    }
+};
+exports.getMemberPhoto = getMemberPhoto;
 const createMember = async (req, res) => {
     try {
         const { type, profileUrl, documentUrl, name, rg, cpf, email, comments, faceAccess, biometricAccess, remoteControlAccess, passwordAccess, address, addressTypeId, accessPeriod, position, lobbyId, } = req.body;

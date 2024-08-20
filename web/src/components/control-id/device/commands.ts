@@ -93,8 +93,8 @@ export const createUserCommand = (
   };
 };
 export const setUserFaceCommand = (
-  file: string,
   user: number,
+  file: string,
   timestamp: number
 ) => {
   return {
@@ -102,12 +102,12 @@ export const setUserFaceCommand = (
     endpoint: `user_set_image_list`,
     contentType: "application/json",
     body: {
-      match: false,
+      match: true,
       user_images: [
         {
           user_id: user,
-          timestamp: timestamp,
           image: file,
+          timestamp: timestamp,
         },
       ],
     },

@@ -1,3 +1,4 @@
+"use client";
 import AccessRuleTimeZoneForm from "@/components/control-id/access-rule-time-zone/accessRuleTimeZoneForm";
 import AccessRuleTimeZoneTable from "@/components/control-id/access-rule-time-zone/accessRuleTimeZoneTable";
 import AccessRuleForm from "@/components/control-id/access-rule/accessRuleForm";
@@ -17,12 +18,10 @@ import TimeZoneTable from "@/components/control-id/time-zone/timeZoneTable";
 import { Menu } from "@/components/menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ControliDUpdateProvider } from "@/contexts/control-id-update-context";
+import api from "@/lib/axios";
 import { ArrowsHorizontal } from "@phosphor-icons/react/dist/ssr";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Configurações Control iD",
-};
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 
 export default async function ControliDConfig({
   searchParams,
@@ -31,7 +30,26 @@ export default async function ControliDConfig({
     lobby?: string;
   };
 }) {
+  const { data: session } = useSession();
   const lobby = searchParams?.lobby || "";
+  const [devices, setDevices] = useState<Device[]>([]);
+  const fetchDevices = async () => {
+    if (session)
+      try {
+        const response = await api.get(`device/lobby/${lobby}`, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setDevices(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+  };
+
+  useEffect(() => {
+    fetchDevices();
+  }, [session]);
   return (
     <ControliDUpdateProvider>
       <Menu url={`/dashboard/actions?id=${lobby}`} />
@@ -78,7 +96,7 @@ export default async function ControliDConfig({
               <h2 className="text-xl">Regras de acesso x Horários</h2>
               <AccessRuleTimeZoneForm />
             </div>
-            <AccessRuleTimeZoneTable />
+            <AccessRuleTimeZoneTable devices={devices} />
           </TabsContent>
           <TabsContent
             className="p-4 border rounded w-full"
@@ -88,7 +106,7 @@ export default async function ControliDConfig({
               <h2 className="text-xl">Regras de acesso</h2>
               <AccessRuleForm />
             </div>
-            <AccessRuleTable />
+            <AccessRuleTable devices={devices} />
           </TabsContent>
           <TabsContent
             className="p-4 border rounded w-full"
@@ -98,19 +116,19 @@ export default async function ControliDConfig({
               <h2 className="text-xl">Grupos x Regras de acesso</h2>
               <GroupAccessRuleForm />
             </div>
-            <GroupAccessRuleTable />
+            <GroupAccessRuleTable devices={devices} />
           </TabsContent>
           <TabsContent className="p-4 border rounded w-full" value="groups">
             <div className="flex justify-between items-end pb-2 w-full">
               <h2 className="text-xl">Grupos</h2>
               <GroupForm />
             </div>
-            <GroupTable />
+            <GroupTable devices={devices} />
             <div className="flex justify-between items-end mt-4 pb-2 w-full">
               <h2 className="text-xl">Membros x Grupos</h2>
               <MemberGroupForm />
             </div>
-            <MemberGroupTable />
+            <MemberGroupTable devices={devices} />
           </TabsContent>
         </Tabs>
       </section>

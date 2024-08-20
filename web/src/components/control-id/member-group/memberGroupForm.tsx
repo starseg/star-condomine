@@ -1,7 +1,12 @@
 "use client";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
 import {
   Form,
   FormControl,
@@ -10,7 +15,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Sheet,
   SheetClose,
@@ -21,26 +30,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import { toast } from "react-toastify";
-import api from "@/lib/axios";
-import { Check, ChevronsUpDown, FilePlus2Icon } from "lucide-react";
 import { useControliDUpdate } from "@/contexts/control-id-update-context";
-import { useSession } from "next-auth/react";
+import api from "@/lib/axios";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Check, ChevronsUpDown, FilePlus2Icon } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { z } from "zod";
 
 const FormSchema = z.object({
   memberId: z.number(),
@@ -48,7 +48,7 @@ const FormSchema = z.object({
 });
 
 export default function MemberGroupForm() {
-  const { triggerUpdate } = useControliDUpdate();
+  const { triggerUpdate, update } = useControliDUpdate();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -59,12 +59,14 @@ export default function MemberGroupForm() {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+  const lobbyParam = params.get("lobby");
+  const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
 
   const [members, setMembers] = useState<Member[]>([]);
   const fetchMembers = async () => {
     if (session)
       try {
-        const response = await api.get(`member/lobby/${params.get("lobby")}`, {
+        const response = await api.get(`member/lobby/${lobby}`, {
           headers: {
             Authorization: `Bearer ${session?.token.user.token}`,
           },
@@ -79,7 +81,7 @@ export default function MemberGroupForm() {
   const fetchGroups = async () => {
     if (session)
       try {
-        const response = await api.get("group", {
+        const response = await api.get(`group/lobby/${lobby}`, {
           headers: {
             Authorization: `Bearer ${session?.token.user.token}`,
           },
@@ -93,7 +95,7 @@ export default function MemberGroupForm() {
   useEffect(() => {
     fetchMembers();
     fetchGroups();
-  }, [session]);
+  }, [session, update]);
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
@@ -140,7 +142,7 @@ export default function MemberGroupForm() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="w-full space-y-4"
+            className="space-y-4 w-full"
           >
             <FormField
               control={form.control}
@@ -164,7 +166,7 @@ export default function MemberGroupForm() {
                                 (member) => member.memberId === field.value
                               )?.name
                             : "Selecione uma pessoa"}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          <ChevronsUpDown className="opacity-50 ml-2 w-4 h-4 shrink-0" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
@@ -222,7 +224,7 @@ export default function MemberGroupForm() {
                                 (group) => group.groupId === field.value
                               )?.name
                             : "Selecione um grupo"}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          <ChevronsUpDown className="opacity-50 ml-2 w-4 h-4 shrink-0" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>

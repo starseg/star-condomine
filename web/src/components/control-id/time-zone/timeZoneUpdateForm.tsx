@@ -29,7 +29,6 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
 import { modifyObjectCommand } from "../device/commands";
-import { SyncItem } from "../device/syncItem";
 import { useEffect, useState } from "react";
 
 const FormSchema = z.object({

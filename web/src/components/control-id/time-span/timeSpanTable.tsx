@@ -102,7 +102,9 @@ export default function TimeSpanTable() {
           destroyObjectCommand("time_spans", { time_spans: { id: id } })
         );
       });
-      toast.success("Dado excluído com sucesso!");
+      toast.success("Dado excluído com sucesso!", {
+        theme: "colored",
+      });
     } catch (error) {
       console.error("Erro excluir dado:", error);
     }

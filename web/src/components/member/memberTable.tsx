@@ -24,7 +24,9 @@ import { useSearchParams } from "next/navigation";
 import { SkeletonTable } from "../_skeletons/skeleton-table";
 import { deleteAction } from "@/lib/delete-action";
 import { deleteFile } from "@/lib/firebase-upload";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
+import { cn } from "@/lib/utils";
+import { SyncMember } from "../control-id/device/syncMember";
 
 export default function MemberTable({ lobby }: { lobby: string }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -32,6 +34,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
   const [page, setPage] = useState(1);
   const [paginatedMembers, setPaginatedMembers] = useState<Member[]>([]);
   const [lobbyData, setLobbyData] = useState<Lobby>();
+  const [devices, setDevices] = useState<Device[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
@@ -71,8 +74,22 @@ export default function MemberTable({ lobby }: { lobby: string }) {
         console.error("Erro ao obter dados:", error);
       }
   }
+  async function fetchDevices() {
+    if (session)
+      try {
+        const devices = await api.get(`/device/lobby/${lobby}`, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setDevices(devices.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+  }
   useEffect(() => {
     fetchLobbyData();
+    fetchDevices();
   }, [session]);
   useEffect(() => {
     fetchData();
@@ -226,25 +243,43 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                           </Link>
                         </div>
                       </TableCell>
-                      <TableCell className="flex gap-4 text-2xl">
+                      <TableCell className="flex gap-2 text-2xl">
                         <Link
+                          className={cn(
+                            buttonVariants({ variant: "ghost" }),
+                            "p-1 text-2xl aspect-square"
+                          )}
                           href={`${type}/details?id=${member.memberId}&lobby=${lobby}&c=${control}`}
                         >
                           <MagnifyingGlass />
                         </Link>
                         <Link
+                          className={cn(
+                            buttonVariants({ variant: "ghost" }),
+                            "p-1 text-2xl aspect-square"
+                          )}
                           href={`${type}/update?id=${member.memberId}&lobby=${lobby}&c=${control}`}
                         >
                           <PencilLine />
                         </Link>
-                        <button
+                        <Button
+                          variant={"ghost"}
+                          className="p-1 text-2xl aspect-square"
                           onClick={() =>
                             deleteMember(member.memberId, member.profileUrl)
                           }
                           title="Excluir"
                         >
                           <Trash />
-                        </button>
+                        </Button>
+                        {lobbyData &&
+                          lobbyData.ControllerBrand.name === "Control iD" && (
+                            <SyncMember
+                              lobby={Number(lobby)}
+                              member={member}
+                              devices={devices}
+                            />
+                          )}
                       </TableCell>
                     </TableRow>
                   );

@@ -90,7 +90,9 @@ export default function TimeZoneTable() {
           destroyObjectCommand("time_zones", { time_zones: { id: id } })
         );
       });
-      toast.success("Dado excluído com sucesso!");
+      toast.success("Dado excluído com sucesso!", {
+        theme: "colored",
+      });
     } catch (error) {
       console.error("Erro excluir dado:", error);
     }

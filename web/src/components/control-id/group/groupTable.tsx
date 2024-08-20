@@ -16,16 +16,25 @@ import { useSession } from "next-auth/react";
 import { deleteAction } from "@/lib/delete-action";
 import { SkeletonTable } from "@/components/_skeletons/skeleton-table";
 import GroupUpdateForm from "./groupUpdateForm";
+import { useSearchParams } from "next/navigation";
+import { createGroupCommand, destroyObjectCommand } from "../device/commands";
+import { toast } from "react-toastify";
+import { DeleteDialog } from "@/components/deleteDialog";
+import { SyncItem } from "../device/syncItem";
 
-export default function GroupTable() {
+export default function GroupTable({ devices }: { devices: Device[] }) {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const lobbyParam = params.get("lobby");
+  const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
   const { update } = useControliDUpdate();
   const [groups, setGroups] = useState<Group[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const fetchData = async () => {
     if (session) {
       try {
-        const response = await api.get(`group`, {
+        const response = await api.get(`group/lobby/${lobby}`, {
           headers: {
             Authorization: `Bearer ${session.token.user.token}`,
           },
@@ -43,7 +52,25 @@ export default function GroupTable() {
   }, [session, update]);
 
   const deleteItem = async (id: number) => {
-    deleteAction(session, "grupo", `group/${id}`, fetchData);
+    try {
+      await api.delete(`group/${id}`, {
+        headers: {
+          Authorization: `Bearer ${session?.token.user.token}`,
+        },
+      });
+      fetchData();
+      devices.map(async (device) => {
+        await api.post(
+          `/control-id/add-command?id=${device.name}`,
+          destroyObjectCommand("groups", { groups: { id: id } })
+        );
+      });
+      toast.success("Dado excluído com sucesso!", {
+        theme: "colored",
+      });
+    } catch (error) {
+      console.error("Erro excluir dado:", error);
+    }
   };
 
   return (
@@ -52,7 +79,7 @@ export default function GroupTable() {
         <SkeletonTable />
       ) : (
         <div className="w-full max-h-[60vh] overflow-auto">
-          <Table className="w-full border">
+          <Table className="border w-full">
             <TableHeader>
               <TableRow className="bg-secondary hover:bg-secondary">
                 <TableHead>ID</TableHead>
@@ -67,14 +94,21 @@ export default function GroupTable() {
                     <TableCell>{group.groupId}</TableCell>
                     <TableCell>{group.name}</TableCell>
                     <TableCell>
-                      <Button
-                        variant={"ghost"}
-                        className="p-0 aspect-square"
-                        onClick={() => deleteItem(group.groupId)}
-                      >
-                        <Trash2Icon />
-                      </Button>
-                      <GroupUpdateForm id={group.groupId} name={group.name} />
+                      <DeleteDialog
+                        module="grupo"
+                        confirmFunction={() => deleteItem(group.groupId)}
+                      />
+                      <GroupUpdateForm
+                        id={group.groupId}
+                        name={group.name}
+                        devices={devices}
+                      />
+                      <SyncItem
+                        lobby={lobby}
+                        sendCommand={() =>
+                          createGroupCommand(group.groupId, group.name)
+                        }
+                      />
                     </TableCell>
                   </TableRow>
                 ))

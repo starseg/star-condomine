@@ -98,3 +98,12 @@ export function base64ToFile(base64: string, fileName: string): File {
 
   return file;
 }
+
+export function isValidURL(str: string): boolean {
+  try {
+    new URL(str);
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
