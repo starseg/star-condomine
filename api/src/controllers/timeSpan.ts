@@ -43,6 +43,7 @@ export const getTimeSpansByLobby = async (
   try {
     const lobby = parseInt(req.params.lobby, 10);
     const timeSpan = await prisma.timeSpan.findMany({
+      include: { timeZone: true },
       where: { lobbyId: lobby },
       orderBy: [{ timeSpanId: "asc" }],
     });

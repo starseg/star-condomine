@@ -51,6 +51,40 @@ export const getAccessRuleTimeZone = async (
   }
 };
 
+export const getAccessRuleTimeZonesByLobby = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const accessRuleTimeZone = await prisma.accessRuleTimeZone.findMany({
+      include: {
+        timeZone: {
+          select: { name: true },
+        },
+        accessRule: {
+          select: { name: true },
+        },
+      },
+      where: {
+        accessRule: {
+          lobbyId: lobby,
+        },
+        timeZone: {
+          lobbyId: lobby,
+        },
+      },
+    });
+    if (!accessRuleTimeZone) {
+      res.status(404).json({ error: "grupo não encontrado" });
+      return;
+    }
+    res.json(accessRuleTimeZone);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar o grupo" });
+  }
+};
+
 export const createAccessRuleTimeZone = async (
   req: Request,
   res: Response

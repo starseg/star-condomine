@@ -33,7 +33,7 @@ export default function MemberGroupTable({ devices }: { devices: Device[] }) {
   const fetchData = async () => {
     if (session) {
       try {
-        const response = await api.get(`memberGroup`, {
+        const response = await api.get(`memberGroup/lobby/${lobby}`, {
           headers: {
             Authorization: `Bearer ${session.token.user.token}`,
           },

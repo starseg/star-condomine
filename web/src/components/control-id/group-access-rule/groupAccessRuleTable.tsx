@@ -42,7 +42,7 @@ export default function GroupAccessRuleTable({
   const fetchData = async () => {
     if (session) {
       try {
-        const response = await api.get(`groupAccessRule`, {
+        const response = await api.get(`groupAccessRule/lobby/${lobby}`, {
           headers: {
             Authorization: `Bearer ${session.token.user.token}`,
           },

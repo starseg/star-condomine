@@ -40,6 +40,7 @@ const getTimeSpansByLobby = async (req, res) => {
     try {
         const lobby = parseInt(req.params.lobby, 10);
         const timeSpan = await db_1.default.timeSpan.findMany({
+            include: { timeZone: true },
             where: { lobbyId: lobby },
             orderBy: [{ timeSpanId: "asc" }],
         });

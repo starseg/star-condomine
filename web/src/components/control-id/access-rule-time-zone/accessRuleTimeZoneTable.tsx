@@ -40,7 +40,7 @@ export default function AccessRuleTimeZoneTable({
   const fetchData = async () => {
     if (session) {
       try {
-        const response = await api.get(`accessRuleTimeZone`, {
+        const response = await api.get(`accessRuleTimeZone/lobby/${lobby}`, {
           headers: {
             Authorization: `Bearer ${session.token.user.token}`,
           },

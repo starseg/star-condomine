@@ -50,6 +50,32 @@ export const getGroupAccessRule = async (
   }
 };
 
+export const getGroupAccessRulesByLobby = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const lobby = parseInt(req.params.lobby, 10);
+    const groupAccessRule = await prisma.groupAccessRule.findMany({
+      include: {
+        group: { select: { name: true } },
+        accessRule: { select: { name: true } },
+      },
+      where: {
+        group: { lobbyId: lobby },
+        accessRule: { lobbyId: lobby },
+      },
+    });
+    if (!groupAccessRule) {
+      res.status(404).json({ error: "grupo não encontrado" });
+      return;
+    }
+    res.json(groupAccessRule);
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+};
+
 export const createGroupAccessRule = async (
   req: Request,
   res: Response

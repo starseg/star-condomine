@@ -3,6 +3,7 @@ import AccessRuleTimeZoneForm from "@/components/control-id/access-rule-time-zon
 import AccessRuleTimeZoneTable from "@/components/control-id/access-rule-time-zone/accessRuleTimeZoneTable";
 import AccessRuleForm from "@/components/control-id/access-rule/accessRuleForm";
 import AccessRuleTable from "@/components/control-id/access-rule/accessRuleTable";
+import { Monitor } from "@/components/control-id/device/monitor";
 import SyncDevice from "@/components/control-id/device/syncDevice";
 import GroupAccessRuleForm from "@/components/control-id/group-access-rule/groupAccessRuleForm";
 import GroupAccessRuleTable from "@/components/control-id/group-access-rule/groupAccessRuleTable";
@@ -23,7 +24,7 @@ import { ArrowsHorizontal } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
-export default async function ControliDConfig({
+export default function ControliDConfig({
   searchParams,
 }: {
   searchParams?: {
@@ -131,6 +132,7 @@ export default async function ControliDConfig({
             <MemberGroupTable devices={devices} />
           </TabsContent>
         </Tabs>
+        <Monitor />
       </section>
     </ControliDUpdateProvider>
   );

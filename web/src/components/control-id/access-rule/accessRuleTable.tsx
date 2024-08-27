@@ -34,7 +34,7 @@ export default function AccessRuleTable({ devices }: { devices: Device[] }) {
   const fetchData = async () => {
     if (session) {
       try {
-        const response = await api.get(`accessRule`, {
+        const response = await api.get(`accessRule/lobby/${lobby}`, {
           headers: {
             Authorization: `Bearer ${session.token.user.token}`,
           },

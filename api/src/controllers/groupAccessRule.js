@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteGroupAccessRule = exports.updateGroupAccessRule = exports.createGroupAccessRule = exports.getGroupAccessRule = exports.getAllGroupAccessRules = void 0;
+exports.deleteGroupAccessRule = exports.updateGroupAccessRule = exports.createGroupAccessRule = exports.getGroupAccessRulesByLobby = exports.getGroupAccessRule = exports.getAllGroupAccessRules = void 0;
 const db_1 = __importDefault(require("../db"));
 const getAllGroupAccessRules = async (req, res) => {
     try {
@@ -50,6 +50,30 @@ const getGroupAccessRule = async (req, res) => {
     }
 };
 exports.getGroupAccessRule = getGroupAccessRule;
+const getGroupAccessRulesByLobby = async (req, res) => {
+    try {
+        const lobby = parseInt(req.params.lobby, 10);
+        const groupAccessRule = await db_1.default.groupAccessRule.findMany({
+            include: {
+                group: { select: { name: true } },
+                accessRule: { select: { name: true } },
+            },
+            where: {
+                group: { lobbyId: lobby },
+                accessRule: { lobbyId: lobby },
+            },
+        });
+        if (!groupAccessRule) {
+            res.status(404).json({ error: "grupo não encontrado" });
+            return;
+        }
+        res.json(groupAccessRule);
+    }
+    catch (error) {
+        res.status(500).json({ error: error });
+    }
+};
+exports.getGroupAccessRulesByLobby = getGroupAccessRulesByLobby;
 const createGroupAccessRule = async (req, res) => {
     try {
         const { accessRuleId, groupId } = req.body;

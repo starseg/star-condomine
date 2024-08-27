@@ -208,7 +208,7 @@ export const getFilteredAccess = async (
           },
         },
       },
-      orderBy: [{ status: "asc" }, { endTime: "asc" }, { startTime: "desc" }],
+      orderBy: [{ status: "asc" }, { startTime: "desc" }],
     });
     if (!access) {
       res.status(404).json({ error: "Nenhum acesso encontrado" });

@@ -5,9 +5,9 @@ let commandQueue = [];
 let resultLog = [];
 const push = async (req, res) => {
     const deviceId = req.query.deviceId;
-    console.log("Device ID: ", deviceId);
-    console.log("commandQueue: ", commandQueue);
-    console.log(deviceId, commandQueue[0] ? commandQueue[0].id : "empty");
+    // console.log("Device ID: ", deviceId);
+    // console.log("commandQueue: ", commandQueue);
+    // console.log(deviceId, commandQueue[0] ? commandQueue[0].id : "empty");
     if (commandQueue.length > 0) {
         const compare = commandQueue[0];
         if (deviceId === compare.id) {
@@ -46,8 +46,8 @@ const addCommand = async (req, res) => {
 };
 exports.addCommand = addCommand;
 const results = async (req, res) => {
-    console.log("resultLog");
-    console.log(resultLog);
+    // console.log("resultLog");
+    // console.log(resultLog);
     res.json(resultLog);
 };
 exports.results = results;

@@ -51,7 +51,7 @@ export default function TimeSpanTable() {
   const fetchData = async () => {
     if (session) {
       try {
-        const response = await api.get(`timeSpan`, {
+        const response = await api.get(`timeSpan/lobby/${lobby}`, {
           headers: {
             Authorization: `Bearer ${session.token.user.token}`,
           },

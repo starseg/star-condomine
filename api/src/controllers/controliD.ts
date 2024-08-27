@@ -5,9 +5,9 @@ let resultLog: any[] = [];
 
 export const push = async (req: Request, res: Response): Promise<void> => {
   const deviceId = req.query.deviceId;
-  console.log("Device ID: ", deviceId);
-  console.log("commandQueue: ", commandQueue);
-  console.log(deviceId, commandQueue[0] ? commandQueue[0].id : "empty");
+  // console.log("Device ID: ", deviceId);
+  // console.log("commandQueue: ", commandQueue);
+  // console.log(deviceId, commandQueue[0] ? commandQueue[0].id : "empty");
 
   if (commandQueue.length > 0) {
     const compare = commandQueue[0];
@@ -48,8 +48,8 @@ export const addCommand = async (
 };
 
 export const results = async (req: Request, res: Response): Promise<void> => {
-  console.log("resultLog");
-  console.log(resultLog);
+  // console.log("resultLog");
+  // console.log(resultLog);
   res.json(resultLog);
 };
 

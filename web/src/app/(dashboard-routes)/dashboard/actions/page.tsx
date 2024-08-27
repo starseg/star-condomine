@@ -1,4 +1,6 @@
 "use client";
+import { OpenDoorButton } from "@/components/control-id/device/openDoorButton";
+import LoadingIcon from "@/components/loadingIcon";
 import { Menu } from "@/components/menu";
 import api from "@/lib/axios";
 import {
@@ -15,11 +17,9 @@ import {
   Warning,
 } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import LoadingIcon from "@/components/loadingIcon";
-import { OpenDoorButton } from "@/components/control-id/device/openDoorButton";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface CalendarProps {
   lobbyCalendarId: number;
@@ -72,6 +72,7 @@ export default function LobbyDetails() {
 
   let id = 0;
   let control = "";
+  let brand = "";
   useEffect(() => {
     fetchData();
     fetchCalendar();
@@ -79,6 +80,7 @@ export default function LobbyDetails() {
   if (lobby) {
     id = lobby.lobbyId;
     control = lobby.exitControl === "ACTIVE" ? "S" : "N";
+    brand = lobby.ControllerBrand.name.replace(" ", "-");
   }
   return (
     <>
@@ -122,7 +124,7 @@ export default function LobbyDetails() {
               Agendamentos
             </Link>
             <Link
-              href={`actions/visitor?lobby=${id}&c=${control}`}
+              href={`actions/visitor?lobby=${id}&c=${control}&brand=${brand}`}
               className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
             >
               <IdentificationCard />
@@ -131,7 +133,7 @@ export default function LobbyDetails() {
             {lobby ? (
               lobby.type === "COMPANY" ? (
                 <Link
-                  href={`actions/employee?lobby=${id}&c=${control}`}
+                  href={`actions/employee?lobby=${id}&c=${control}&brand=${brand}`}
                   className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
                 >
                   <HouseLine />
@@ -139,7 +141,7 @@ export default function LobbyDetails() {
                 </Link>
               ) : (
                 <Link
-                  href={`actions/resident?lobby=${id}&c=${control}`}
+                  href={`actions/resident?lobby=${id}&c=${control}&brand=${brand}`}
                   className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
                 >
                   <HouseLine />
@@ -184,7 +186,7 @@ export default function LobbyDetails() {
               <Notepad />
               Relatórios
             </Link>
-            {lobby.ControllerBrand.name === "Control iD" && (
+            {brand === "Control-iD" && (
               <div className="flex justify-between px-10 w-full">
                 <Link
                   href={`actions/control-id?lobby=${id}`}

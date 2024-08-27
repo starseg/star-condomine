@@ -33,12 +33,12 @@ export default function MemberTable({ lobby }: { lobby: string }) {
   const [members, setMembers] = useState<Member[]>([]);
   const [page, setPage] = useState(1);
   const [paginatedMembers, setPaginatedMembers] = useState<Member[]>([]);
-  const [lobbyData, setLobbyData] = useState<Lobby>();
   const [devices, setDevices] = useState<Device[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const control = params.get("c");
+  const brand = params.get("brand");
   const itemsPerPage = 10;
   const fetchData = async () => {
     if (session)
@@ -61,19 +61,6 @@ export default function MemberTable({ lobby }: { lobby: string }) {
         console.error("Erro ao obter dados:", error);
       }
   };
-  async function fetchLobbyData() {
-    if (session)
-      try {
-        const getLobby = await api.get(`/lobby/find/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
-        setLobbyData(getLobby.data);
-      } catch (error) {
-        console.error("Erro ao obter dados:", error);
-      }
-  }
   async function fetchDevices() {
     if (session)
       try {
@@ -88,7 +75,6 @@ export default function MemberTable({ lobby }: { lobby: string }) {
       }
   }
   useEffect(() => {
-    fetchLobbyData();
     fetchDevices();
   }, [session]);
   useEffect(() => {
@@ -151,10 +137,9 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                         : "Cargo"
                       : ""}
                   </TableHead>
-                  {lobbyData &&
-                    lobbyData.ControllerBrand.name === "Control iD" && (
-                      <TableHead>Grupo de acesso</TableHead>
-                    )}
+                  {brand === "Control-iD" && (
+                    <TableHead>Grupo de acesso</TableHead>
+                  )}
                   <TableHead>Propriedades</TableHead>
                   <TableHead>Ações</TableHead>
                 </TableRow>
@@ -211,18 +196,17 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                           ? member.position
                           : "Cargo não cadastrado"}
                       </TableCell>
-                      {lobbyData &&
-                        lobbyData.ControllerBrand.name === "Control iD" && (
-                          <TableCell>
-                            {member.MemberGroup.length > 0 ? (
-                              <p className="text-green-500">
-                                {member.MemberGroup[0].group.name}
-                              </p>
-                            ) : (
-                              "Não vinculado"
-                            )}
-                          </TableCell>
-                        )}
+                      {brand === "Control-iD" && (
+                        <TableCell>
+                          {member.MemberGroup.length > 0 ? (
+                            <p className="text-green-500">
+                              {member.MemberGroup[0].group.name}
+                            </p>
+                          ) : (
+                            "Não vinculado"
+                          )}
+                        </TableCell>
+                      )}
                       <TableCell>
                         <div className="flex gap-2">
                           <Link
@@ -272,14 +256,13 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                         >
                           <Trash />
                         </Button>
-                        {lobbyData &&
-                          lobbyData.ControllerBrand.name === "Control iD" && (
-                            <SyncMember
-                              lobby={Number(lobby)}
-                              member={member}
-                              devices={devices}
-                            />
-                          )}
+                        {brand === "Control-iD" && (
+                          <SyncMember
+                            lobby={Number(lobby)}
+                            member={member}
+                            devices={devices}
+                          />
+                        )}
                       </TableCell>
                     </TableRow>
                   );

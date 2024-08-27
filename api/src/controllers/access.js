@@ -177,7 +177,7 @@ const getFilteredAccess = async (req, res) => {
                     },
                 },
             },
-            orderBy: [{ status: "asc" }, { endTime: "asc" }, { startTime: "desc" }],
+            orderBy: [{ status: "asc" }, { startTime: "desc" }],
         });
         if (!access) {
             res.status(404).json({ error: "Nenhum acesso encontrado" });

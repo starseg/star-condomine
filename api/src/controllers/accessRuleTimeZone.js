@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteAccessRuleTimeZone = exports.updateAccessRuleTimeZone = exports.createAccessRuleTimeZone = exports.getAccessRuleTimeZone = exports.getAllAccessRuleTimeZones = void 0;
+exports.deleteAccessRuleTimeZone = exports.updateAccessRuleTimeZone = exports.createAccessRuleTimeZone = exports.getAccessRuleTimeZonesByLobby = exports.getAccessRuleTimeZone = exports.getAllAccessRuleTimeZones = void 0;
 const db_1 = __importDefault(require("../db"));
 const getAllAccessRuleTimeZones = async (req, res) => {
     try {
@@ -50,6 +50,38 @@ const getAccessRuleTimeZone = async (req, res) => {
     }
 };
 exports.getAccessRuleTimeZone = getAccessRuleTimeZone;
+const getAccessRuleTimeZonesByLobby = async (req, res) => {
+    try {
+        const lobby = parseInt(req.params.lobby, 10);
+        const accessRuleTimeZone = await db_1.default.accessRuleTimeZone.findMany({
+            include: {
+                timeZone: {
+                    select: { name: true },
+                },
+                accessRule: {
+                    select: { name: true },
+                },
+            },
+            where: {
+                accessRule: {
+                    lobbyId: lobby,
+                },
+                timeZone: {
+                    lobbyId: lobby,
+                },
+            },
+        });
+        if (!accessRuleTimeZone) {
+            res.status(404).json({ error: "grupo não encontrado" });
+            return;
+        }
+        res.json(accessRuleTimeZone);
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao buscar o grupo" });
+    }
+};
+exports.getAccessRuleTimeZonesByLobby = getAccessRuleTimeZonesByLobby;
 const createAccessRuleTimeZone = async (req, res) => {
     try {
         const { accessRuleId, timeZoneId } = req.body;
