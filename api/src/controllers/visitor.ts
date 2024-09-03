@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../db";
+import { isValidURL } from "../utils/functions";
 
 export const getAllVisitors = async (
   req: Request,
@@ -36,6 +37,46 @@ export const getVisitor = async (
       return;
     }
     res.json(visitor);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar o visitante" });
+  }
+};
+
+export const getVisitorPhoto = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const visitor = await prisma.visitor.findUniqueOrThrow({
+      where: { visitorId: id },
+      select: { profileUrl: true },
+    });
+
+    if (!visitor) {
+      res.status(404).json({ error: "Visitante não encontrado" });
+      return;
+    }
+
+    const url = visitor.profileUrl;
+    if (url && isValidURL(url)) {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("Falha ao buscar a imagem");
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const base64 = buffer.toString("base64");
+
+        res.json({ base64 });
+      } catch (error) {
+        res.status(500).json({ error: "Erro ao converter imagem" });
+      }
+    } else {
+      res.status(400).json({ error: "URL inválida ou não encontrada" });
+    }
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar o visitante" });
   }

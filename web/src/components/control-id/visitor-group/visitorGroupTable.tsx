@@ -21,24 +21,24 @@ import {
 } from "../device/commands";
 import { SyncItem } from "../device/syncItem";
 
-export default function MemberGroupTable({ devices }: { devices: Device[] }) {
+export default function VisitorGroupTable({ devices }: { devices: Device[] }) {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const lobbyParam = params.get("lobby");
   const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
   const { update } = useControliDUpdate();
-  const [memberGroups, setMemberGroups] = useState<MemberGroup[]>([]);
+  const [visitorGroups, setVisitorGroups] = useState<VisitorGroup[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const fetchData = async () => {
     if (session) {
       try {
-        const response = await api.get(`memberGroup/lobby/${lobby}`, {
+        const response = await api.get(`visitorGroup/lobby/${lobby}`, {
           headers: {
             Authorization: `Bearer ${session.token.user.token}`,
           },
         });
-        setMemberGroups(response.data);
+        setVisitorGroups(response.data);
         setIsLoading(false);
       } catch (error) {
         console.log(error);
@@ -51,11 +51,11 @@ export default function MemberGroupTable({ devices }: { devices: Device[] }) {
 
   const deleteItem = async (
     id: number,
-    member_id: number,
+    visitor_id: number,
     group_id: number
   ) => {
     try {
-      await api.delete(`memberGroup/${id}`, {
+      await api.delete(`visitorGroup/${id}`, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
@@ -66,7 +66,7 @@ export default function MemberGroupTable({ devices }: { devices: Device[] }) {
           `/control-id/add-command?id=${device.name}`,
           destroyObjectCommand("user_groups", {
             user_groups: {
-              user_id: member_id,
+              user_id: visitor_id,
               group_id: group_id,
             },
           })
@@ -95,11 +95,11 @@ export default function MemberGroupTable({ devices }: { devices: Device[] }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {memberGroups && memberGroups.length > 0 ? (
-                memberGroups.map((item) => (
-                  <TableRow key={item.memberGroupId}>
+              {visitorGroups?.length > 0 ? (
+                visitorGroups.map((item) => (
+                  <TableRow key={item.visitorGroupId}>
                     <TableCell>
-                      {item.memberId} - {item.member.name}
+                      {item.visitorId} - {item.visitor.name}
                     </TableCell>
                     <TableCell>
                       {item.groupId} - {item.group.name}
@@ -109,8 +109,8 @@ export default function MemberGroupTable({ devices }: { devices: Device[] }) {
                         module="relação"
                         confirmFunction={() =>
                           deleteItem(
-                            item.memberGroupId,
-                            item.memberId,
+                            item.visitorGroupId,
+                            item.visitorId,
                             item.groupId
                           )
                         }
@@ -119,7 +119,7 @@ export default function MemberGroupTable({ devices }: { devices: Device[] }) {
                         lobby={lobby}
                         sendCommand={() =>
                           createUserGroupRelationCommand(
-                            item.memberId,
+                            item.visitorId + 10000,
                             item.groupId
                           )
                         }

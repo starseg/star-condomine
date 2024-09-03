@@ -16,8 +16,12 @@ import TimeSpanTable from "@/components/control-id/time-span/timeSpanTable";
 import TimeZoneForm from "@/components/control-id/time-zone/timeZoneForm";
 import { TimeZoneSearchInDevice } from "@/components/control-id/time-zone/timeZoneSearchInDevice";
 import TimeZoneTable from "@/components/control-id/time-zone/timeZoneTable";
+import VisitorGroupForm from "@/components/control-id/visitor-group/visitorGroupForm";
+import VisitorGroupTable from "@/components/control-id/visitor-group/visitorGroupTable";
+import MemberTable from "@/components/member/memberTable";
 import { Menu } from "@/components/menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import VisitorTable from "@/components/visitor/visitorTable";
 import { ControliDUpdateProvider } from "@/contexts/control-id-update-context";
 import api from "@/lib/axios";
 import { ArrowsHorizontal } from "@phosphor-icons/react/dist/ssr";
@@ -73,6 +77,10 @@ export default function ControliDConfig({
               <ArrowsHorizontal />
             </TabsTrigger>
             <TabsTrigger value="groups">Grupos</TabsTrigger>
+            <TabsTrigger value="user-group" className="text-xl">
+              <ArrowsHorizontal />
+            </TabsTrigger>
+            <TabsTrigger value="users">Usuários</TabsTrigger>
           </TabsList>
           <TabsContent className="p-4 border rounded w-full" value="times">
             <div className="flex justify-between items-end pb-2 w-full">
@@ -125,11 +133,29 @@ export default function ControliDConfig({
               <GroupForm />
             </div>
             <GroupTable devices={devices} />
+          </TabsContent>
+          <TabsContent className="p-4 border rounded w-full" value="user-group">
             <div className="flex justify-between items-end mt-4 pb-2 w-full">
               <h2 className="text-xl">Membros x Grupos</h2>
               <MemberGroupForm />
             </div>
             <MemberGroupTable devices={devices} />
+            <div className="flex justify-between items-end mt-4 pb-2 w-full">
+              <h2 className="text-xl">Visitantes x Grupos</h2>
+              <VisitorGroupForm />
+            </div>
+            <VisitorGroupTable devices={devices} />
+          </TabsContent>
+          <TabsContent className="p-4 border rounded w-full" value="users">
+            <div className="flex items-end mt-4 pb-2 w-full">
+              <h2 className="text-xl">Membros</h2>
+            </div>
+            <MemberTable lobby={lobby} />
+
+            <div className="flex items-end mt-4 pb-2 w-full">
+              <h2 className="text-xl">Visitantes</h2>
+            </div>
+            <VisitorTable lobby={lobby} />
           </TabsContent>
         </Tabs>
         <Monitor />

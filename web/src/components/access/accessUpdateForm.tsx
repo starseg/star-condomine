@@ -15,6 +15,7 @@ import { format } from "date-fns";
 import DefaultCombobox from "../form/comboboxDefault";
 import DefaultInput from "../form/inputDefault";
 import DefaultTextarea from "../form/textareaDefault";
+import { setStringDate } from "@/lib/utils";
 
 const FormSchema = z.object({
   visitor: z.number(),
@@ -108,16 +109,6 @@ export function AccessUpdateForm({
       label: member.name,
     })
   );
-
-  const setStringDate = (time: string) => {
-    if (time !== "") {
-      const dateObject = new Date(time);
-      dateObject.setHours(dateObject.getHours() + 3);
-      return format(dateObject, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    } else {
-      return null;
-    }
-  };
 
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {

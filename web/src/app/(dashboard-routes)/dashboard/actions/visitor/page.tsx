@@ -7,6 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { FilePlus, FileSearch } from "@phosphor-icons/react/dist/ssr";
 import CopyButton from "@/components/copyButton";
 import { encrypt } from "@/lib/crypto";
+import { Monitor } from "@/components/control-id/device/monitor";
 
 export const metadata: Metadata = {
   title: "Visitantes",
@@ -18,29 +19,31 @@ export default async function Visitor({
   searchParams?: {
     lobby?: string;
     c?: string;
+    brand?: string;
   };
 }) {
   const lobby = searchParams?.lobby || "";
   const control = searchParams?.c || "";
+  const brand = searchParams?.brand || "";
 
   const encryptedLobby = encrypt(Number(lobby));
 
   return (
     <>
       <Menu url={`/dashboard/actions?id=${lobby}`} />
-      <section className="max-w-5xl mx-auto mb-24">
+      <section className="mx-auto mb-24 max-w-5xl">
         <div className="flex justify-between mb-4">
           <h1 className="text-4xl text-center">Visitantes</h1>
           <Search placeholder="Buscar..." pagination={false} />
         </div>
         <VisitorTable lobby={lobby} />
 
-        <div className="mt-4 flex gap-4 items-center">
+        <div className="flex items-center gap-4 mt-4">
           <Link
             href={`visitor/new?lobby=${lobby}`}
             className={buttonVariants({ variant: "default" })}
           >
-            <p className="flex gap-2 text-xl items-center">
+            <p className="flex items-center gap-2 text-xl">
               <FilePlus size={24} /> Registrar Visitante
             </p>
           </Link>
@@ -48,7 +51,7 @@ export default async function Visitor({
             href={`scheduling?lobby=${lobby}&c=${control}`}
             className={buttonVariants({ variant: "default" })}
           >
-            <p className="flex gap-2 text-xl items-center">
+            <p className="flex items-center gap-2 text-xl">
               <FileSearch size={24} /> Agendamentos
             </p>
           </Link>
@@ -56,7 +59,7 @@ export default async function Visitor({
             href={`access?lobby=${lobby}&c=${control}`}
             className={buttonVariants({ variant: "default" })}
           >
-            <p className="flex gap-2 text-xl items-center">
+            <p className="flex items-center gap-2 text-xl">
               <FileSearch size={24} /> Acessos
             </p>
           </Link>
@@ -64,7 +67,7 @@ export default async function Visitor({
             href={`visitor/list?lobby=${lobby}`}
             className={buttonVariants({ variant: "default" })}
           >
-            <p className="flex gap-2 text-xl items-center">
+            <p className="flex items-center gap-2 text-xl">
               <FileSearch size={24} /> Lista detalhada
             </p>
           </Link>
@@ -72,6 +75,7 @@ export default async function Visitor({
             text={`https://starcondomine.starseg.com/guest/visitor?lobby=${encryptedLobby}`}
           />
         </div>
+        {brand === "Control-iD" && <Monitor />}
       </section>
     </>
   );

@@ -8,6 +8,7 @@ import {
   getVisitorTypes,
   getVisitorsByLobby,
   getFilteredVisitors,
+  getVisitorPhoto,
 } from "../controllers/visitor";
 import { checkAdminPermission } from "../middlewares/permissions";
 
@@ -18,6 +19,7 @@ visitorRouter.get("/find/:id", getVisitor);
 visitorRouter.get("/types", getVisitorTypes);
 visitorRouter.get("/lobby/:lobby", getVisitorsByLobby);
 visitorRouter.get("/filtered/:lobby", getFilteredVisitors);
+visitorRouter.get("/find/:id/base64photo", getVisitorPhoto);
 visitorRouter.post("/", createVisitor);
 visitorRouter.put("/:id", updateVisitor);
 visitorRouter.delete("/:id", checkAdminPermission, deleteVisitor);

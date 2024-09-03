@@ -6,6 +6,8 @@ interface Visitor {
   rg: string;
   cpf: string;
   phone: string;
+  startDate: string | null;
+  endDate: string | null;
   status: string;
   relation: string;
   comments: string;
@@ -34,6 +36,8 @@ interface VisitorFull {
   rg: string;
   cpf: string;
   phone: string;
+  startDate: string | null;
+  endDate: string | null;
   status: string;
   relation: string;
   comments: string;

@@ -19,17 +19,15 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import api from "@/lib/axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { ArrowsClockwise, PlusCircle } from "@phosphor-icons/react/dist/ssr";
 import { createUserCommand, setUserFaceCommand } from "./commands";
 
 export function SyncMember({
-  lobby,
   member,
   devices,
 }: {
-  lobby: number | null;
   member: Member;
   devices: Device[];
 }) {
@@ -65,13 +63,17 @@ export function SyncMember({
   }
 
   async function synchronize() {
-    getBase64Photo(); // get user photo (base64)
+    await getBase64Photo(); // get user photo (base64)
     if (deviceList.length > 0) {
       deviceList.map(async (device) => {
         // create user
         await api.post(
           `/control-id/add-command?id=${device}`,
-          createUserCommand(member.memberId, member.name)
+          createUserCommand(
+            member.memberId,
+            member.name,
+            member?.cpf || member?.rg
+          )
         );
         const timestamp = ~~(Date.now() / 1000);
         await api.post(

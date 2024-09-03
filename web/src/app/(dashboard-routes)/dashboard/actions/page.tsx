@@ -189,7 +189,7 @@ export default function LobbyDetails() {
             {brand === "Control-iD" && (
               <div className="flex justify-between px-10 w-full">
                 <Link
-                  href={`actions/control-id?lobby=${id}`}
+                  href={`actions/control-id?lobby=${id}&brand=${brand}`}
                   className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
                 >
                   Control iD

@@ -1,23 +1,35 @@
 "use client";
 
-import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Form } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import api from "@/lib/axios";
+import { deleteFile, handleFileUpload } from "@/lib/firebase-upload";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Image, PlusCircle, UserCircle } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Form } from "@/components/ui/form";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { deleteFile, handleFileUpload } from "@/lib/firebase-upload";
-import { Image, UserCircle } from "@phosphor-icons/react/dist/ssr";
-import InputImage from "../form/inputImage";
-import DefaultInput from "../form/inputDefault";
-import MaskInput from "../form/inputMask";
-import DefaultTextarea from "../form/textareaDefault";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import {
+  modifyObjectCommand,
+  setUserFaceCommand,
+} from "../control-id/device/commands";
 import DefaultCheckbox from "../form/checkboxDefault";
+import DefaultInput from "../form/inputDefault";
+import InputImage from "../form/inputImage";
+import MaskInput from "../form/inputMask";
 import RadioInput from "../form/inputRadio";
+import DefaultTextarea from "../form/textareaDefault";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -79,9 +91,11 @@ interface Values {
 export function EmployeeUpdateForm({
   preloadedValues,
   member,
+  devices,
 }: {
   preloadedValues: Values;
   member: Member;
+  devices: Device[];
 }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -103,6 +117,37 @@ export function EmployeeUpdateForm({
       label: "Inativo",
     },
   ];
+
+  const [id, setId] = useState("");
+  const [deviceList, setDeviceList] = useState<string[]>([]);
+  const [sendToDevice, setSendToDevice] = useState(false);
+
+  function addDevice() {
+    const isSetDevice = deviceList.find((device) => device === id);
+    if (id !== "" && !isSetDevice) setDeviceList((prev) => [...prev, id]);
+  }
+
+  function removeDeviceFromList(device: string) {
+    setDeviceList(deviceList.filter((item) => item !== device));
+  }
+
+  const [base64, setBase64] = useState("");
+  const getBase64Photo = async () => {
+    if (session)
+      try {
+        const response = await api.get(
+          `member/find/${member.memberId}/base64photo`,
+          {
+            headers: {
+              Authorization: `Bearer ${session?.token.user.token}`,
+            },
+          }
+        );
+        setBase64(response.data.base64);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+  };
 
   const [removeFile, setRemoveFile] = useState(false);
   const [isSending, setIsSendind] = useState(false);
@@ -165,6 +210,34 @@ export function EmployeeUpdateForm({
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
+
+      if (sendToDevice) {
+        if (deviceList.length > 0) {
+          await getBase64Photo();
+          deviceList.map(async (device) => {
+            // update visitor
+            await api.post(
+              `/control-id/add-command?id=${device}`,
+              modifyObjectCommand(
+                "users",
+                {
+                  name: data.name,
+                  registration: data?.cpf || data?.rg,
+                },
+                {
+                  users: { id: member.memberId }, // where
+                }
+              )
+            );
+            const timestamp = ~~(Date.now() / 1000);
+            await api.post(
+              `/control-id/add-command?id=${device}`,
+              setUserFaceCommand(member.memberId, base64, timestamp)
+            );
+          });
+        }
+      }
+
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
@@ -326,6 +399,60 @@ export function EmployeeUpdateForm({
           idExtractor={(item) => item.value}
           descriptionExtractor={(item) => item.label}
         />
+
+        <div className="flex items-center space-x-2 mt-2">
+          <Checkbox
+            onClick={() => {
+              setSendToDevice(!sendToDevice);
+            }}
+          />
+          <label
+            htmlFor="check"
+            className="peer-disabled:opacity-70 font-medium text-sm leading-none peer-disabled:cursor-not-allowed"
+          >
+            Enviar atualização para os dispositivos
+          </label>
+        </div>
+        {sendToDevice && (
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-2">
+              <Select value={id} onValueChange={setId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione um dispositivo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {devices.map((device) => (
+                      <SelectItem key={device.deviceId} value={device.name}>
+                        {device.ip} - {device.name} - {device.description}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <Button
+                variant={"outline"}
+                onClick={addDevice}
+                className="p-0 text-2xl aspect-square"
+                title="Adicionar"
+                type="button"
+              >
+                <PlusCircle />
+              </Button>
+            </div>
+            <div className="flex gap-2">
+              {deviceList.map((device) => (
+                <p
+                  key={device}
+                  className="bg-stone-800 hover:bg-stone-950 p-1 border hover:border-red-700 rounded cursor-pointer"
+                  onClick={() => removeDeviceFromList(device)}
+                >
+                  {device}
+                </p>
+              ))}
+            </div>
+          </div>
+        )}
 
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
           {isSending ? "Atualizando..." : "Atualizar"}

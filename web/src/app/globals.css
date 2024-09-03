@@ -65,6 +65,9 @@
   ::-webkit-scrollbar-track {
     background-color: #00000000;
   }
+  input[type="datetime-local"] {
+    color-scheme: dark;
+  }
 }
 @layer base {
   * {

@@ -1,22 +1,34 @@
 "use client";
-
-import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import api from "@/lib/axios";
+import { deleteFile, handleFileUpload } from "@/lib/firebase-upload";
+import { setStringDate } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { PlusCircle, UserCircle } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Form } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { deleteFile, handleFileUpload } from "@/lib/firebase-upload";
-import { Checkbox } from "../ui/checkbox";
-import { UserCircle } from "@phosphor-icons/react/dist/ssr";
-import InputImage from "../form/inputImage";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import {
+  modifyObjectCommand,
+  setUserFaceCommand,
+} from "../control-id/device/commands";
 import DefaultInput from "../form/inputDefault";
+import InputImage from "../form/inputImage";
 import MaskInput from "../form/inputMask";
 import RadioInput from "../form/inputRadio";
 import DefaultTextarea from "../form/textareaDefault";
+import { Checkbox } from "../ui/checkbox";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -28,6 +40,8 @@ const FormSchema = z.object({
   type: z.string(),
   relation: z.string(),
   comments: z.string().optional(),
+  startDate: z.string(),
+  endDate: z.string(),
   status: z.enum(["ACTIVE", "INACTIVE"]),
 });
 interface Visitor {
@@ -38,6 +52,8 @@ interface Visitor {
   rg: string;
   cpf: string;
   phone: string;
+  startDate: string | null;
+  endDate: string | null;
   status: "ACTIVE" | "INACTIVE" | undefined;
   relation: string;
   comments: string;
@@ -56,6 +72,8 @@ interface Values {
   rg: string;
   cpf: string;
   phone: string;
+  startDate: string;
+  endDate: string;
   status: "ACTIVE" | "INACTIVE" | undefined;
   relation: string;
   comments: string;
@@ -65,9 +83,11 @@ interface Values {
 export function VisitorUpdateForm({
   preloadedValues,
   visitor,
+  devices,
 }: {
   preloadedValues: Values;
   visitor: Visitor;
+  devices: Device[];
 }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -81,6 +101,9 @@ export function VisitorUpdateForm({
     visitorTypeId: number;
     description: string;
   }
+
+  const [id, setId] = useState("");
+  const [deviceList, setDeviceList] = useState<string[]>([]);
 
   const [visitorType, setVisitorType] = useState<VisitorTypes[]>([]);
   const fetchVisitorTypes = async () => {
@@ -112,7 +135,35 @@ export function VisitorUpdateForm({
     },
   ];
 
+  function addDevice() {
+    const isSetDevice = deviceList.find((device) => device === id);
+    if (id !== "" && !isSetDevice) setDeviceList((prev) => [...prev, id]);
+  }
+
+  function removeDeviceFromList(device: string) {
+    setDeviceList(deviceList.filter((item) => item !== device));
+  }
+
+  const [base64, setBase64] = useState("");
+  const getBase64Photo = async () => {
+    if (session)
+      try {
+        const response = await api.get(
+          `visitor/find/${visitor.visitorId}/base64photo`,
+          {
+            headers: {
+              Authorization: `Bearer ${session?.token.user.token}`,
+            },
+          }
+        );
+        setBase64(response.data.base64);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+  };
+
   const [removeFile, setRemoveFile] = useState(false);
+  const [sendToDevice, setSendToDevice] = useState(false);
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
@@ -164,12 +215,55 @@ export function VisitorUpdateForm({
         relation: data.relation,
         comments: data.comments,
         status: data.status,
+        startDate: setStringDate(data.startDate),
+        endDate: setStringDate(data.endDate),
       };
       await api.put("visitor/" + visitor.visitorId, info, {
         headers: {
           Authorization: `Bearer ${session?.token.user.token}`,
         },
       });
+
+      if (sendToDevice) {
+        if (deviceList.length > 0) {
+          const startDateObject = new Date(data.startDate);
+          startDateObject.setHours(startDateObject.getHours() - 3);
+          const endDateObject = new Date(data.endDate);
+          endDateObject.setHours(endDateObject.getHours() - 3);
+
+          const startDateTimestamp = Math.floor(
+            startDateObject.getTime() / 1000
+          );
+          const endDateTimestamp = Math.floor(endDateObject.getTime() / 1000);
+
+          await getBase64Photo();
+          deviceList.map(async (device) => {
+            // update visitor
+            await api.post(
+              `/control-id/add-command?id=${device}`,
+              modifyObjectCommand(
+                "users",
+                {
+                  name: data.name,
+                  registration: data?.cpf || data?.rg,
+                  user_type_id: 1,
+                  begin_time: startDateTimestamp,
+                  end_time: endDateTimestamp,
+                },
+                {
+                  users: { id: visitor.visitorId + 10000 }, // where
+                }
+              )
+            );
+            const timestamp = ~~(Date.now() / 1000);
+            await api.post(
+              `/control-id/add-command?id=${device}`,
+              setUserFaceCommand(visitor.visitorId + 10000, base64, timestamp)
+            );
+          });
+        }
+      }
+
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
@@ -183,18 +277,18 @@ export function VisitorUpdateForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
+        className="space-y-6 w-3/4 lg:w-[40%] 2xl:w-1/3"
       >
-        <div className="flex gap-4 items-center justify-center">
+        <div className="flex justify-center items-center gap-4">
           {visitor.profileUrl.length > 0 ? (
             <div className="flex flex-col justify-center items-center">
               <img src={visitor.profileUrl} alt="Foto de perfil" width={80} />
-              <p className="text-sm text-center mt-2">Foto atual</p>
+              <p className="mt-2 text-center text-sm">Foto atual</p>
             </div>
           ) : (
             <div className="flex flex-col justify-center items-center">
               <UserCircle className="w-20 h-20" />
-              <p className="text-sm text-center mt-2">
+              <p className="mt-2 text-center text-sm">
                 Nenhuma foto <br /> cadastrada
               </p>
             </div>
@@ -211,7 +305,7 @@ export function VisitorUpdateForm({
               />
               <label
                 htmlFor="check"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="peer-disabled:opacity-70 font-medium text-sm leading-none peer-disabled:cursor-not-allowed"
               >
                 Remover foto - {removeFile ? "sim" : "não"}
               </label>
@@ -264,16 +358,16 @@ export function VisitorUpdateForm({
           placeholder="Qual é a relação desse visitante com a portaria?"
         />
 
-        <div className="flex gap-4 items-center justify-center">
+        <div className="flex justify-center items-center gap-4">
           {visitor.documentUrl && visitor.documentUrl.length > 0 ? (
             <div className="flex flex-col justify-center items-center">
               <img src={visitor.documentUrl} alt="Foto de perfil" width={80} />
-              <p className="text-sm text-center mt-2">Foto atual</p>
+              <p className="mt-2 text-center text-sm">Foto atual</p>
             </div>
           ) : (
             <div className="flex flex-col justify-center items-center">
               <UserCircle className="w-20 h-20" />
-              <p className="text-sm text-center mt-2">
+              <p className="mt-2 text-center text-sm">
                 Nenhuma foto <br /> cadastrada
               </p>
             </div>
@@ -290,7 +384,7 @@ export function VisitorUpdateForm({
               />
               <label
                 htmlFor="check"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="peer-disabled:opacity-70 font-medium text-sm leading-none peer-disabled:cursor-not-allowed"
               >
                 Remover foto - {removeFile ? "sim" : "não"}
               </label>
@@ -314,6 +408,75 @@ export function VisitorUpdateForm({
           placeholder="Alguma informação adicional..."
         />
 
+        <div className="flex gap-2">
+          <DefaultInput
+            control={form.control}
+            name="startDate"
+            label="Liberado a partir de:"
+            type="datetime-local"
+            placeholder="Data e hora"
+          />
+          <DefaultInput
+            control={form.control}
+            name="endDate"
+            label="até:"
+            type="datetime-local"
+            placeholder="Data e hora"
+          />
+        </div>
+        <div className="flex items-center space-x-2 mt-2">
+          <Checkbox
+            onClick={() => {
+              setSendToDevice(!sendToDevice);
+            }}
+          />
+          <label
+            htmlFor="check"
+            className="peer-disabled:opacity-70 font-medium text-sm leading-none peer-disabled:cursor-not-allowed"
+          >
+            Enviar atualização para os dispositivos
+          </label>
+        </div>
+        {sendToDevice && (
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-2">
+              <Select value={id} onValueChange={setId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione um dispositivo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {devices.map((device) => (
+                      <SelectItem key={device.deviceId} value={device.name}>
+                        {device.ip} - {device.name} - {device.description}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <Button
+                variant={"outline"}
+                onClick={addDevice}
+                className="p-0 text-2xl aspect-square"
+                title="Adicionar"
+                type="button"
+              >
+                <PlusCircle />
+              </Button>
+            </div>
+            <div className="flex gap-2">
+              {deviceList.map((device) => (
+                <p
+                  key={device}
+                  className="bg-stone-800 hover:bg-stone-950 p-1 border hover:border-red-700 rounded cursor-pointer"
+                  onClick={() => removeDeviceFromList(device)}
+                >
+                  {device}
+                </p>
+              ))}
+            </div>
+          </div>
+        )}
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
           {isSending ? "Atualizando..." : "Atualizar"}
         </Button>

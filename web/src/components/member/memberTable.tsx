@@ -27,6 +27,9 @@ import { deleteFile } from "@/lib/firebase-upload";
 import { Button, buttonVariants } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { SyncMember } from "../control-id/device/syncMember";
+import { DeleteDialog } from "../deleteDialog";
+import { destroyObjectCommand } from "../control-id/device/commands";
+import { toast } from "react-toastify";
 
 export default function MemberTable({ lobby }: { lobby: string }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -101,8 +104,26 @@ export default function MemberTable({ lobby }: { lobby: string }) {
   };
 
   const deleteMember = async (id: number, url: string) => {
-    deleteAction(session, "membro", `member/${id}`, fetchData);
-    deleteFile(url);
+    // deleteAction(session, "membro", `member/${id}`, fetchData);
+    try {
+      await api.delete(`member/${id}`, {
+        headers: {
+          Authorization: `Bearer ${session?.token.user.token}`,
+        },
+      });
+      fetchData();
+      if (brand === "Control-iD")
+        devices.map(async (device) => {
+          await api.post(
+            `/control-id/add-command?id=${device.name}`,
+            destroyObjectCommand("users", { users: { id: id } })
+          );
+        });
+      deleteFile(url);
+      toast.success("Usuário excluído com sucesso!");
+    } catch (error) {
+      console.error("Erro excluir dado:", error);
+    }
   };
 
   return (
@@ -246,7 +267,13 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                         >
                           <PencilLine />
                         </Link>
-                        <Button
+                        <DeleteDialog
+                          module={`${member.name}`}
+                          confirmFunction={() =>
+                            deleteMember(member.memberId, member.profileUrl)
+                          }
+                        />
+                        {/* <Button
                           variant={"ghost"}
                           className="p-1 text-2xl aspect-square"
                           onClick={() =>
@@ -255,13 +282,9 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                           title="Excluir"
                         >
                           <Trash />
-                        </Button>
+                        </Button> */}
                         {brand === "Control-iD" && (
-                          <SyncMember
-                            lobby={Number(lobby)}
-                            member={member}
-                            devices={devices}
-                          />
+                          <SyncMember member={member} devices={devices} />
                         )}
                       </TableCell>
                     </TableRow>

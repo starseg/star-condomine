@@ -3,8 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getFilteredVisitors = exports.getVisitorsByLobby = exports.getVisitorTypes = exports.deleteVisitor = exports.updateVisitor = exports.createVisitor = exports.getVisitor = exports.getAllVisitors = void 0;
+exports.getFilteredVisitors = exports.getVisitorsByLobby = exports.getVisitorTypes = exports.deleteVisitor = exports.updateVisitor = exports.createVisitor = exports.getVisitorPhoto = exports.getVisitor = exports.getAllVisitors = void 0;
 const db_1 = __importDefault(require("../db"));
+const functions_1 = require("../utils/functions");
 const getAllVisitors = async (req, res) => {
     try {
         const visitor = await db_1.default.visitor.findMany();
@@ -41,6 +42,42 @@ const getVisitor = async (req, res) => {
     }
 };
 exports.getVisitor = getVisitor;
+const getVisitorPhoto = async (req, res) => {
+    try {
+        const id = parseInt(req.params.id, 10);
+        const visitor = await db_1.default.visitor.findUniqueOrThrow({
+            where: { visitorId: id },
+            select: { profileUrl: true },
+        });
+        if (!visitor) {
+            res.status(404).json({ error: "Visitante não encontrado" });
+            return;
+        }
+        const url = visitor.profileUrl;
+        if (url && (0, functions_1.isValidURL)(url)) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error("Falha ao buscar a imagem");
+                }
+                const arrayBuffer = await response.arrayBuffer();
+                const buffer = Buffer.from(arrayBuffer);
+                const base64 = buffer.toString("base64");
+                res.json({ base64 });
+            }
+            catch (error) {
+                res.status(500).json({ error: "Erro ao converter imagem" });
+            }
+        }
+        else {
+            res.status(400).json({ error: "URL inválida ou não encontrada" });
+        }
+    }
+    catch (error) {
+        res.status(500).json({ error: "Erro ao buscar o visitante" });
+    }
+};
+exports.getVisitorPhoto = getVisitorPhoto;
 const createVisitor = async (req, res) => {
     try {
         const { profileUrl, documentUrl, name, rg, cpf, phone, startDate, endDate, relation, comments, visitorTypeId, lobbyId, } = req.body;

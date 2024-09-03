@@ -42,6 +42,16 @@ export const simpleDateFormat = (value: string) => {
   return format(date, "dd/MM/yyyy");
 };
 
+export const setStringDate = (time: string) => {
+  if (time !== "") {
+    const dateObject = new Date(time);
+    dateObject.setHours(dateObject.getHours() + 3);
+    return format(dateObject, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+  } else {
+    return null;
+  }
+};
+
 export const generatePagination = (currentPage: number, totalPages: number) => {
   if (totalPages <= 7) {
     return Array.from({ length: totalPages }, (_, i) => i + 1);

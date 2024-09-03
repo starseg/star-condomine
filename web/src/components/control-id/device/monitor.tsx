@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 
 interface ControlIdResult {
   response: string;
+  error: string;
 }
 
 export function Monitor() {
@@ -47,10 +48,51 @@ export function Monitor() {
     }
   }, [isWatching, session]);
 
+  function responseDictionary(response: string): JSX.Element {
+    if (response.startsWith(`{"ids":`)) {
+      return <p className="text-green-500">Criado com sucesso</p>;
+    }
+    if (response.startsWith(`{"changes":`)) {
+      const changes = response.split(":")[1].slice(0, -1);
+      if (Number(changes) === 0) {
+        return <p className="text-stone-300">Nenhuma mudança aplicada</p>;
+      } else {
+        return <p className="text-green-500">Mudanças aplicadas: {changes}</p>;
+      }
+    }
+    if (response.startsWith(`{"user_image":`)) {
+      return <p className="text-green-500">Imagem registrada pela câmera</p>;
+    }
+    if (response.endsWith(`"success":true}]}`)) {
+      return <p className="text-green-500">Foto cadastrada</p>;
+    }
+    if (response.includes(`"success":false`)) {
+      return (
+        <p className="text-red-500">
+          Foto não cadastrada, tente sincronizar novamente
+        </p>
+      );
+    }
+    return <p>{response}</p>;
+  }
+  function errorDictionary(error: string): JSX.Element {
+    if (error.startsWith(`constraint failed: UNIQUE constraint failed`)) {
+      return <p className="text-red-500">Dado já cadastrado</p>;
+    }
+    if (error === `constraint failed: FOREIGN KEY constraint failed`) {
+      return (
+        <p className="text-red-500">
+          Algum dado deste registro deveria ter sido cadastrado antes deste
+        </p>
+      );
+    }
+    return <p>{error}</p>;
+  }
+
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <button className="right-8 bottom-8 absolute flex justify-center items-center bg-primary hover:bg-primary/80 p-2 rounded-full w-16 h-16 text-stone-950 transition-colors">
+        <button className="right-8 bottom-8 fixed flex justify-center items-center bg-primary hover:bg-primary/80 p-2 rounded-full w-16 h-16 text-stone-950 transition-colors">
           Monitor
         </button>
       </SheetTrigger>
@@ -71,13 +113,8 @@ export function Monitor() {
                 .map((item, index) => {
                   return (
                     <div key={index}>
-                      <p
-                        className={
-                          index === 0 ? "text-green-500" : "text-white"
-                        }
-                      >
-                        {index} - {item.response}
-                      </p>
+                      {item.response && responseDictionary(item.response)}
+                      {item.error && errorDictionary(item.error)}
                       <DropdownMenuSeparator />
                     </div>
                   );

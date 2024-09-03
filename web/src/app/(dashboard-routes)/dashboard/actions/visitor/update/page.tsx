@@ -6,6 +6,7 @@ import api from "@/lib/axios";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { format } from "date-fns";
 
 export default function UpdateVisitor() {
   interface Visitor {
@@ -16,6 +17,8 @@ export default function UpdateVisitor() {
     rg: string;
     cpf: string;
     phone: string;
+    startDate: string | null;
+    endDate: string | null;
     status: "ACTIVE" | "INACTIVE" | undefined;
     relation: string;
     comments: string;
@@ -34,6 +37,8 @@ export default function UpdateVisitor() {
     rg: string;
     cpf: string;
     phone: string;
+    startDate: string;
+    endDate: string;
     status: "ACTIVE" | "INACTIVE" | undefined;
     relation: string;
     comments: string;
@@ -45,21 +50,37 @@ export default function UpdateVisitor() {
 
   const [visitor, setVisitor] = useState<Visitor | null>(null);
   const [data, setData] = useState<Values>();
+  const [devices, setDevices] = useState<Device[]>([]);
+  const fetchData = async () => {
+    if (session)
+      try {
+        const response = await api.get("visitor/find/" + params.get("id"), {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setVisitor(response.data);
+      } catch (error) {
+        console.error("(Visitor) Erro ao obter dados:", error);
+      }
+  };
+  const fetchDevices = async () => {
+    if (session)
+      try {
+        const devices = await api.get(`/device/lobby/${params.get("lobby")}`, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setDevices(devices.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      if (session)
-        try {
-          const response = await api.get("visitor/find/" + params.get("id"), {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
-          setVisitor(response.data);
-        } catch (error) {
-          console.error("(Visitor) Erro ao obter dados:", error);
-        }
-    };
     fetchData();
+    fetchDevices();
   }, [session]);
 
   useEffect(() => {
@@ -71,6 +92,14 @@ export default function UpdateVisitor() {
         cpf: visitor?.cpf || "",
         rg: visitor?.rg || "",
         phone: visitor?.phone || "",
+        startDate:
+          (visitor?.startDate &&
+            format(new Date(visitor.startDate), "yyyy-MM-dd'T'HH:mm")) ||
+          "",
+        endDate:
+          (visitor?.endDate &&
+            format(new Date(visitor.endDate), "yyyy-MM-dd'T'HH:mm")) ||
+          "",
         status: visitor?.status || "ACTIVE",
         relation: visitor?.relation || "",
         comments: visitor?.comments || "",
@@ -83,9 +112,13 @@ export default function UpdateVisitor() {
     <>
       <Menu />
       <section className="flex flex-col justify-center items-center mb-12">
-        <h1 className="text-4xl mt-2 mb-4">Atualizar Visitante</h1>
+        <h1 className="mt-2 mb-4 text-4xl">Atualizar Visitante</h1>
         {visitor && data ? (
-          <VisitorUpdateForm preloadedValues={data} visitor={visitor} />
+          <VisitorUpdateForm
+            preloadedValues={data}
+            visitor={visitor}
+            devices={devices}
+          />
         ) : (
           <LoadingIcon />
         )}

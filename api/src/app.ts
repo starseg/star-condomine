@@ -35,6 +35,7 @@ import timeSpanRouter from "./routes/timeSpanRouter";
 import timeZoneRouter from "./routes/timeZoneRouter";
 import vehicleRouter from "./routes/vehicleRouter";
 import visitorRouter from "./routes/visitorRouter";
+import visitorGroupRouter from "./routes/visitorGroupRouter";
 dotenv.config();
 
 const app = express();
@@ -69,7 +70,6 @@ app.post("/auth", authenticateOperator);
 
 app.use(verifyToken, logging);
 
-app.use("/visitor", visitorRouter);
 app.use("/operator", operatorRouter);
 app.use("/access", accessRouter);
 app.use("/accessRule", accessRuleRouter);
@@ -96,6 +96,8 @@ app.use("/telephone", telephoneRouter);
 app.use("/timeSpan", timeSpanRouter);
 app.use("/timeZone", timeZoneRouter);
 app.use("/vehicle", vehicleRouter);
+app.use("/visitor", visitorRouter);
+app.use("/visitorGroup", visitorGroupRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);

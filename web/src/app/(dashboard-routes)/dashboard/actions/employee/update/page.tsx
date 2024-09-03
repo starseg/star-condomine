@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function UpdateResident() {
+export default function UpdateEmployee() {
   interface Member {
     memberId: number;
     type: string;
@@ -60,26 +60,42 @@ export default function UpdateResident() {
 
   const [member, setMember] = useState<Member | null>(null);
   const [data, setData] = useState<Values>();
+  const [devices, setDevices] = useState<Device[]>([]);
 
   function bool(value: string | undefined) {
     return value === "true";
   }
 
+  const fetchData = async () => {
+    if (session)
+      try {
+        const response = await api.get("member/find/" + params.get("id"), {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setMember(response.data);
+      } catch (error) {
+        console.error("(Member) Erro ao obter dados:", error);
+      }
+  };
+  const fetchDevices = async () => {
+    if (session)
+      try {
+        const devices = await api.get(`/device/lobby/${params.get("lobby")}`, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setDevices(devices.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      if (session)
-        try {
-          const response = await api.get("member/find/" + params.get("id"), {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
-          setMember(response.data);
-        } catch (error) {
-          console.error("(Member) Erro ao obter dados:", error);
-        }
-    };
     fetchData();
+    fetchDevices();
   }, [session]);
 
   useEffect(() => {
@@ -106,9 +122,13 @@ export default function UpdateResident() {
     <>
       <Menu />
       <section className="flex flex-col justify-center items-center mb-12">
-        <h1 className="text-4xl mt-2 mb-4">Atualizar Funcionário</h1>
+        <h1 className="mt-2 mb-4 text-4xl">Atualizar Funcionário</h1>
         {member && data ? (
-          <EmployeeUpdateForm preloadedValues={data} member={member} />
+          <EmployeeUpdateForm
+            preloadedValues={data}
+            member={member}
+            devices={devices}
+          />
         ) : (
           <LoadingIcon />
         )}

@@ -71,6 +71,9 @@ export const createUserCommand = (
   id: number,
   name: string,
   registration: string = "",
+  user_type_id: number | null = null,
+  begin_time: number = 0,
+  end_time: number = 0,
   password: string = "",
   salt: string = ""
 ) => {
@@ -84,6 +87,9 @@ export const createUserCommand = (
           id: id,
           name: name,
           registration: registration,
+          user_type_id: user_type_id,
+          begin_time: begin_time,
+          end_time: end_time,
           password: password,
           salt: salt,
         },

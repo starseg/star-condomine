@@ -193,8 +193,9 @@ model Visitor {
   lobby   Lobby @relation(fields: [lobbyId], references: [lobbyId])
   lobbyId Int
 
-  scheduling Scheduling[]
-  access     Access[]
+  scheduling   Scheduling[]
+  access       Access[]
+  visitorGroup VisitorGroup[]
 }
 
 model Scheduling {
@@ -414,6 +415,7 @@ model Group {
 
   MemberGroup     MemberGroup[]
   GroupAccessRule GroupAccessRule[]
+  VisitorGroup    VisitorGroup[]
 }
 
 model MemberGroup {
@@ -423,6 +425,15 @@ model MemberGroup {
 
   member Member @relation(fields: [memberId], references: [memberId], onDelete: Cascade)
   group  Group  @relation(fields: [groupId], references: [groupId], onDelete: Cascade)
+}
+
+model VisitorGroup {
+  visitorGroupId Int @id @default(autoincrement())
+  visitorId      Int
+  groupId        Int
+
+  visitor Visitor @relation(fields: [visitorId], references: [visitorId], onDelete: Cascade)
+  group   Group   @relation(fields: [groupId], references: [groupId], onDelete: Cascade)
 }
 
 model GroupAccessRule {
