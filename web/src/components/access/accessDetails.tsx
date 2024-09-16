@@ -35,7 +35,10 @@ export default function AccessDetails({ id }: { id: number }) {
       {access ? (
         <>
           <div className="border-primary mx-auto mt-4 px-12 py-4 border rounded-md max-w-2xl">
-            <DetailItem label="Visitante" content={access.visitor.name} />
+            <DetailItem
+              label="Visitante"
+              content={`${access.visitor.name} - ${access.visitor.visitorType.description}`}
+            />
             <DetailItem label="Visitado" content={access.member.name} />
             <DetailItem
               label="Status"
