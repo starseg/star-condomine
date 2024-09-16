@@ -15,6 +15,9 @@ interface Access {
   visitorId: number;
   visitor: {
     name: string;
+    visitorType: {
+      description: string;
+    };
   };
   operatorId: number;
   operator: {

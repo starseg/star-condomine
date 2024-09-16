@@ -5,8 +5,8 @@
   "main": "src/app.js",
   "scripts": {
     "dev": "tsx watch src/app.ts",
-    "build": "tsc",
-    "start": "node src/app.js"
+    "build": "tsup src --format esm",
+    "start": "node dist/app.mjs"
   },
   "keywords": [
     "Controle de acesso",
@@ -32,6 +32,7 @@
     "@types/jsonwebtoken": "^9.0.5",
     "prisma": "^5.5.2",
     "ts-node": "^10.9.1",
+    "tsup": "^8.2.4",
     "tsx": "^3.14.0",
     "typescript": "^5.2.2"
   }

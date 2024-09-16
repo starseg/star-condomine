@@ -1,23 +1,21 @@
-import { Request, Response } from "express";
-import prisma from "../db";
-import { subDays } from "date-fns";
+import {
+  db_default
+} from "./chunk-BXWGZ4DM.mjs";
 
-export const getAllAccess = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+// src/controllers/access.ts
+import { subDays } from "date-fns";
+var getAllAccess = async (req, res) => {
   try {
-    const access = await prisma.access.findMany();
+    const access = await db_default.access.findMany();
     res.json(access);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar os acessos" });
   }
 };
-
-export const getAccess = async (req: Request, res: Response): Promise<void> => {
+var getAccess = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
-    const access = await prisma.access.findUniqueOrThrow({
+    const access = await db_default.access.findUniqueOrThrow({
       where: { accessId: id },
       include: {
         visitor: {
@@ -26,26 +24,26 @@ export const getAccess = async (req: Request, res: Response): Promise<void> => {
             cpf: true,
             visitorType: {
               select: {
-                description: true,
-              },
-            },
-          },
+                description: true
+              }
+            }
+          }
         },
         member: {
           select: {
             name: true,
-            cpf: true,
-          },
+            cpf: true
+          }
         },
         operator: {
           select: {
-            name: true,
-          },
-        },
-      },
+            name: true
+          }
+        }
+      }
     });
     if (!access) {
-      res.status(404).json({ error: "Acesso não encontrado" });
+      res.status(404).json({ error: "Acesso n\xE3o encontrado" });
       return;
     }
     res.json(access);
@@ -53,11 +51,7 @@ export const getAccess = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ error: "Erro ao buscar o acesso" });
   }
 };
-
-export const createAccess = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+var createAccess = async (req, res) => {
   try {
     const {
       startTime,
@@ -68,9 +62,9 @@ export const createAccess = async (
       memberId,
       lobbyId,
       visitorId,
-      operatorId,
+      operatorId
     } = req.body;
-    const access = await prisma.access.create({
+    const access = await db_default.access.create({
       data: {
         startTime,
         endTime,
@@ -80,19 +74,15 @@ export const createAccess = async (
         memberId,
         lobbyId,
         visitorId,
-        operatorId,
-      },
+        operatorId
+      }
     });
     res.status(201).json(access);
   } catch (error) {
     res.status(500).json({ error: "Erro ao criar o acesso" });
   }
 };
-
-export const updateAccess = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+var updateAccess = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     const {
@@ -105,9 +95,9 @@ export const updateAccess = async (
       memberId,
       lobbyId,
       visitorId,
-      operatorId,
+      operatorId
     } = req.body;
-    const access = await prisma.access.update({
+    const access = await db_default.access.update({
       where: { accessId: id },
       data: {
         startTime,
@@ -119,101 +109,85 @@ export const updateAccess = async (
         memberId,
         lobbyId,
         visitorId,
-        operatorId,
-      },
+        operatorId
+      }
     });
     res.status(200).json(access);
   } catch (error) {
     res.status(500).json({ error: "Erro ao atualizar o acesso" });
   }
 };
-
-export const deleteAccess = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+var deleteAccess = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
-    await prisma.access.delete({
-      where: { accessId: id },
+    await db_default.access.delete({
+      where: { accessId: id }
     });
-    res.json({ message: "Acesso excluído com sucesso" });
+    res.json({ message: "Acesso exclu\xEDdo com sucesso" });
   } catch (error) {
     res.status(500).json({ error: "Erro ao excluir o acesso" });
   }
 };
-
-export const getAccessByLobby = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+var getAccessByLobby = async (req, res) => {
   try {
     const lobby = parseInt(req.params.lobby, 10);
-    const oneMonthAgo = subDays(new Date(), 31);
-
-    const access = await prisma.access.findMany({
+    const oneMonthAgo = subDays(/* @__PURE__ */ new Date(), 31);
+    const access = await db_default.access.findMany({
       where: {
         lobbyId: lobby,
         startTime: {
-          gte: oneMonthAgo,
-        },
+          gte: oneMonthAgo
+        }
       },
       include: {
         visitor: {
           select: {
             name: true,
-            cpf: true,
-          },
+            cpf: true
+          }
         },
         member: {
           select: {
             name: true,
-            cpf: true,
-          },
-        },
+            cpf: true
+          }
+        }
       },
-      orderBy: [{ status: "asc" }, { startTime: "desc" }],
+      orderBy: [{ status: "asc" }, { startTime: "desc" }]
     });
     res.json(access);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar os acessos" });
   }
 };
-
-export const getFilteredAccess = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+var getFilteredAccess = async (req, res) => {
   try {
     const lobby = parseInt(req.params.lobby, 10);
     const { query } = req.query;
-
-    const whereCondition = query
-      ? {
-          OR: [
-            { visitor: { name: { contains: query as string } } },
-            { member: { name: { contains: query as string } } },
-          ],
-          AND: { lobbyId: lobby },
-        }
-      : {};
-    const access = await prisma.access.findMany({
+    const whereCondition = query ? {
+      OR: [
+        { visitor: { name: { contains: query } } },
+        { member: { name: { contains: query } } }
+      ],
+      AND: { lobbyId: lobby }
+    } : {};
+    const access = await db_default.access.findMany({
       where: whereCondition,
       include: {
         visitor: {
           select: {
             name: true,
-            cpf: true,
-          },
+            cpf: true
+          }
         },
         member: {
           select: {
             name: true,
-            cpf: true,
-          },
-        },
+            cpf: true
+          }
+        }
       },
-      orderBy: [{ status: "asc" }, { startTime: "desc" }],
+      orderBy: [{ status: "asc" }, { startTime: "desc" }]
     });
     if (!access) {
       res.status(404).json({ error: "Nenhum acesso encontrado" });
@@ -224,93 +198,90 @@ export const getFilteredAccess = async (
     res.status(500).json({ error: "Erro ao buscar os acessos" });
   }
 };
-
-export const generateReport = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+var generateReport = async (req, res) => {
   try {
     const lobby = parseInt(req.params.lobby, 10);
     const { from, to } = req.query;
-
     if (!from || !to) {
-      const resultWithoutDate = await prisma.access.findMany({
+      const resultWithoutDate = await db_default.access.findMany({
         where: {
-          lobbyId: lobby,
+          lobbyId: lobby
         },
         include: {
           visitor: {
             select: {
-              name: true,
-            },
+              name: true
+            }
           },
           member: {
             select: {
-              name: true,
-            },
+              name: true
+            }
           },
           operator: {
             select: {
-              name: true,
-            },
-          },
+              name: true
+            }
+          }
         },
-        orderBy: [{ startTime: "asc" }],
+        orderBy: [{ startTime: "asc" }]
       });
       res.json(resultWithoutDate);
       return;
     }
-
-    const fromObj = from ? new Date(from as string) : undefined;
-    const toObj = to ? new Date(to as string) : undefined;
-
-    // Certifique-se de que as datas são válidas, se fornecidas
-    if (
-      (fromObj && isNaN(fromObj.getTime())) ||
-      (toObj && isNaN(toObj.getTime()))
-    ) {
-      res.status(400).json({ error: "As datas fornecidas não são válidas" });
+    const fromObj = from ? new Date(from) : void 0;
+    const toObj = to ? new Date(to) : void 0;
+    if (fromObj && isNaN(fromObj.getTime()) || toObj && isNaN(toObj.getTime())) {
+      res.status(400).json({ error: "As datas fornecidas n\xE3o s\xE3o v\xE1lidas" });
       return;
     }
-
-    const access = await prisma.access.findMany({
+    const access = await db_default.access.findMany({
       where: {
         lobbyId: lobby,
-        ...(fromObj && toObj
-          ? {
-              startTime: {
-                gte: fromObj,
-                lte: toObj,
-              },
-            }
-          : {}),
+        ...fromObj && toObj ? {
+          startTime: {
+            gte: fromObj,
+            lte: toObj
+          }
+        } : {}
       },
       include: {
         visitor: {
           select: {
-            name: true,
-          },
+            name: true
+          }
         },
         member: {
           select: {
-            name: true,
-          },
+            name: true
+          }
         },
         operator: {
           select: {
-            name: true,
-          },
+            name: true
+          }
         },
         lobby: {
           select: {
-            name: true,
-          },
-        },
+            name: true
+          }
+        }
       },
-      orderBy: [{ startTime: "asc" }],
+      orderBy: [{ startTime: "asc" }]
     });
     res.json(access);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar os acessos" });
   }
+};
+
+export {
+  getAllAccess,
+  getAccess,
+  createAccess,
+  updateAccess,
+  deleteAccess,
+  getAccessByLobby,
+  getFilteredAccess,
+  generateReport
 };
