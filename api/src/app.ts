@@ -3,6 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express, { NextFunction, Request, Response } from "express";
 import helmet from "helmet";
+import swaggerUi from "swagger-ui-express";
+import swaggerFile from "./swagger-output.json";
 import { authenticateOperator } from "./middlewares/auth";
 import { logging } from "./middlewares/logging";
 import { verifyToken } from "./middlewares/permissions";
@@ -58,6 +60,7 @@ app.use(cors(corsOptions));
 
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.get("/", (request: Request, response: Response) => {
   response.json({ message: "API DO SISTEMA STAR CONDOMINE" });

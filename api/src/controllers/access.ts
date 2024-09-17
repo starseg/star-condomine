@@ -6,6 +6,9 @@ export const getAllAccess = async (
   req: Request,
   res: Response
 ): Promise<void> => {
+  // #swagger.summary = 'Get all access',
+  // #swagger.tags = ['Access']
+
   try {
     const access = await prisma.access.findMany();
     res.json(access);
@@ -15,6 +18,9 @@ export const getAllAccess = async (
 };
 
 export const getAccess = async (req: Request, res: Response): Promise<void> => {
+  // #swagger.summary = 'Get one access',
+  // #swagger.tags = ['Access']
+
   try {
     const id = parseInt(req.params.id, 10);
     const access = await prisma.access.findUniqueOrThrow({
@@ -58,6 +64,9 @@ export const createAccess = async (
   req: Request,
   res: Response
 ): Promise<void> => {
+  // #swagger.summary = 'Create new access',
+  // #swagger.tags = ['Access']
+
   try {
     const {
       startTime,
@@ -93,6 +102,9 @@ export const updateAccess = async (
   req: Request,
   res: Response
 ): Promise<void> => {
+  // #swagger.summary = 'Update one access',
+  // #swagger.tags = ['Access']
+
   try {
     const id = parseInt(req.params.id, 10);
     const {
@@ -132,6 +144,9 @@ export const deleteAccess = async (
   req: Request,
   res: Response
 ): Promise<void> => {
+  // #swagger.summary = 'Delete one access',
+  // #swagger.tags = ['Access']
+
   try {
     const id = parseInt(req.params.id, 10);
     await prisma.access.delete({
@@ -147,6 +162,9 @@ export const getAccessByLobby = async (
   req: Request,
   res: Response
 ): Promise<void> => {
+  // #swagger.summary = 'Get Acess By Lobby',
+  // #swagger.tags = ['Access']
+
   try {
     const lobby = parseInt(req.params.lobby, 10);
     const oneMonthAgo = subDays(new Date(), 31);
@@ -184,6 +202,9 @@ export const getFilteredAccess = async (
   req: Request,
   res: Response
 ): Promise<void> => {
+  // #swagger.summary = 'Get filtered access',
+  // #swagger.tags = ['Access']
+
   try {
     const lobby = parseInt(req.params.lobby, 10);
     const { query } = req.query;
@@ -229,6 +250,9 @@ export const generateReport = async (
   req: Request,
   res: Response
 ): Promise<void> => {
+  // #swagger.summary = 'Generate a report',
+  // #swagger.tags = ['Access']
+
   try {
     const lobby = parseInt(req.params.lobby, 10);
     const { from, to } = req.query;
