@@ -30,18 +30,21 @@ export default function ReportTable({ lobby }: { lobby: string }) {
   const params = new URLSearchParams(searchParams);
   const control = params.get("c") || "";
 
-  let from = params.get("from") || "";
-  let to = params.get("to") || "";
+  const [from, setFrom] = useState(params.get("from") || "");
+  const [to, setTo] = useState(params.get("to") || "");
   let period = { from: from, to: to };
+
+  useEffect(() => {
+    // Atualiza os valores de 'from' e 'to' quando os parâmetros mudam
+    setFrom(params.get("from") || "");
+    setTo(params.get("to") || "");
+  }, [searchParams]);
+
   const fetchData = async () => {
-    if (session)
+    if (session && from && to) {
+      // Verifica se session, from e to são válidos
       try {
-        let path;
-        if (!params.get("from") || !params.get("to")) {
-          path = "access/report/" + lobby;
-        } else {
-          path = `access/report/${lobby}?from=${from}&to=${to}`;
-        }
+        const path = `access/report/${lobby}?from=${from}&to=${to}`;
         const response = await api.get(path, {
           headers: {
             Authorization: `Bearer ${session?.token.user.token}`,
@@ -52,10 +55,28 @@ export default function ReportTable({ lobby }: { lobby: string }) {
       } catch (error) {
         console.error("Erro ao obter dados:", error);
       }
+    } else if (session) {
+      // Se não houver 'from' ou 'to', faz a requisição sem eles
+      try {
+        const path = `access/report/${lobby}`;
+        const response = await api.get(path, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setAccess(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+    }
   };
+
   useEffect(() => {
-    fetchData();
-  }, [session, searchParams]);
+    if (from && to) {
+      fetchData();
+    }
+  }, [session, from, to]);
 
   return (
     <>
@@ -63,9 +84,9 @@ export default function ReportTable({ lobby }: { lobby: string }) {
         <SkeletonTable />
       ) : (
         <div>
-          <div className="max-h-[60vh] overflow-x-auto uppercase">
-            <Table className="border border-stone-800 rouded-lg">
-              <TableHeader className="bg-stone-800 font-semibold sticky top-0">
+          <div className="max-h-[60vh] uppercase overflow-x-auto">
+            <Table className="border-stone-800 border rouded-lg">
+              <TableHeader className="top-0 sticky bg-stone-800 font-semibold">
                 <TableRow>
                   <TableHead>Visitante</TableHead>
                   <TableHead>Visitado</TableHead>
@@ -102,11 +123,11 @@ export default function ReportTable({ lobby }: { lobby: string }) {
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <button className="max-w-[15ch] text-ellipsis overflow-hidden whitespace-nowrap uppercase">
+                              <button className="max-w-[15ch] text-ellipsis uppercase whitespace-nowrap overflow-hidden">
                                 {item.reason}
                               </button>
                             </TooltipTrigger>
-                            <TooltipContent className="max-w-[300px] border-primary bg-stone-800 p-4 break-words">
+                            <TooltipContent className="border-primary bg-stone-800 p-4 max-w-[300px] break-words">
                               <p>{item.reason}</p>
                             </TooltipContent>
                           </Tooltip>
@@ -116,11 +137,11 @@ export default function ReportTable({ lobby }: { lobby: string }) {
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <button className="max-w-[15ch] text-ellipsis overflow-hidden whitespace-nowrap uppercase">
+                              <button className="max-w-[15ch] text-ellipsis uppercase whitespace-nowrap overflow-hidden">
                                 {item.local}
                               </button>
                             </TooltipTrigger>
-                            <TooltipContent className="max-w-[300px] border-primary bg-stone-800 p-4 break-words">
+                            <TooltipContent className="border-primary bg-stone-800 p-4 max-w-[300px] break-words">
                               <p>{item.local}</p>
                             </TooltipContent>
                           </Tooltip>
@@ -130,11 +151,11 @@ export default function ReportTable({ lobby }: { lobby: string }) {
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <button className="max-w-[15ch] text-ellipsis overflow-hidden whitespace-nowrap uppercase">
+                              <button className="max-w-[15ch] text-ellipsis uppercase whitespace-nowrap overflow-hidden">
                                 {item.comments ? item.comments : "Nenhuma"}
                               </button>
                             </TooltipTrigger>
-                            <TooltipContent className="max-w-[300px] border-primary bg-stone-800 p-4 break-words">
+                            <TooltipContent className="border-primary bg-stone-800 p-4 max-w-[300px] break-words">
                               <p>{item.comments ? item.comments : "Nenhuma"}</p>
                             </TooltipContent>
                           </Tooltip>
