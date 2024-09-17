@@ -23,7 +23,7 @@ export default async function ControliD() {
   return (
     <ControliDUpdateProvider>
       <Menu />
-      <section className="mx-auto mb-6 max-w-5xl">
+      {/* <section className="mx-auto mb-6 max-w-5xl">
         <h1 className="flex items-center gap-2 pb-4 text-4xl">
           <Gear /> Configurações Control iD
         </h1>
@@ -77,7 +77,7 @@ export default async function ControliD() {
           <AccessRuleTimeZoneForm />
         </div>
         <AccessRuleTimeZoneTable />
-      </section>
+      </section> */}
     </ControliDUpdateProvider>
   );
 }

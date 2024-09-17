@@ -14,7 +14,7 @@ export default async function AccessRules() {
       <section className="flex flex-col justify-center items-center mb-12">
         <h1 className="text-4xl text-center">Criar regra de acesso</h1>
         {/* FORM PARA CRIAR RELAÇÕES */}
-        <AccessRuleFullRegister />
+        {/* <AccessRuleFullRegister /> */}
         {/* SINCRONIZAÇÃO COM OS DISPOSITIVOS (?) */}
       </section>
     </ControliDUpdateProvider>
