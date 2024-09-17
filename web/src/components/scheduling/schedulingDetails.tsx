@@ -30,8 +30,11 @@ export default function SchedulingDetails({ id }: { id: number }) {
     <div>
       {scheduling ? (
         <>
-          <div className="max-w-2xl mx-auto border border-primary py-4 px-12 rounded-md mt-4">
-            <DetailItem label="Visitante" content={scheduling.visitor.name} />
+          <div className="border-primary mx-auto mt-4 px-12 py-4 border rounded-md max-w-2xl">
+            <DetailItem
+              label="Visitante"
+              content={`${scheduling.visitor.name} - ${scheduling.visitor.visitorType.description}`}
+            />
             <DetailItem label="Visitado" content={scheduling.member.name} />
             <DetailItem
               label="Status"
@@ -54,7 +57,7 @@ export default function SchedulingDetails({ id }: { id: number }) {
               content={scheduling.comments || "Nenhuma"}
             />
 
-            <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
+            <div className="bg-primary mt-8 mb-4 w-full h-[1px]"></div>
             <DetailItem
               label="Data do registro"
               content={formatDate(scheduling.createdAt)}
@@ -67,7 +70,7 @@ export default function SchedulingDetails({ id }: { id: number }) {
           </div>
         </>
       ) : (
-        <div className="w-full flex items-center justify-center">
+        <div className="flex justify-center items-center w-full">
           <LoadingIcon />
         </div>
       )}

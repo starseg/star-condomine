@@ -20,6 +20,9 @@ interface Scheduling {
     name: string;
     cpf: string;
     rg: string;
+    visitorType: {
+      description: string;
+    };
   };
   operatorId: number;
   operator: {

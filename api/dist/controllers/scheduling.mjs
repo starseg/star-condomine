@@ -7,7 +7,7 @@ import {
   getScheduling,
   getSchedulingsByLobby,
   updateScheduling
-} from "../chunk-NPCVNPEK.mjs";
+} from "../chunk-LRECTTLD.mjs";
 import "../chunk-BXWGZ4DM.mjs";
 export {
   createScheduling,
