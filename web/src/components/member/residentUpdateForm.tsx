@@ -13,6 +13,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { MaskedInput } from "../maskedInput";
@@ -26,6 +34,10 @@ import DefaultCombobox from "../form/comboboxDefault";
 import DefaultCheckbox from "../form/checkboxDefault";
 import DefaultTextarea from "../form/textareaDefault";
 import RadioInput from "../form/inputRadio";
+import {
+  modifyObjectCommand,
+  setUserFaceCommand,
+} from "../control-id/device/commands";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -111,10 +123,12 @@ export function ResidentUpdateForm({
   preloadedValues,
   member,
   phones,
+  devices,
 }: {
   preloadedValues: Values;
   member: Member;
   phones: Telephone[];
+  devices: Device[];
 }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -185,6 +199,37 @@ export function ResidentUpdateForm({
       label: "Inativo",
     },
   ];
+
+  const [id, setId] = useState("");
+  const [deviceList, setDeviceList] = useState<string[]>([]);
+  const [sendToDevice, setSendToDevice] = useState(false);
+
+  function addDevice() {
+    const isSetDevice = deviceList.find((device) => device === id);
+    if (id !== "" && !isSetDevice) setDeviceList((prev) => [...prev, id]);
+  }
+
+  function removeDeviceFromList(device: string) {
+    setDeviceList(deviceList.filter((item) => item !== device));
+  }
+
+  const getBase64Photo = async () => {
+    if (session)
+      try {
+        const response = await api.get(
+          `member/find/${member.memberId}/base64photo`,
+          {
+            headers: {
+              Authorization: `Bearer ${session?.token.user.token}`,
+            },
+          }
+        );
+        return response.data.base64;
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+    return "";
+  };
 
   const [removeFile, setRemoveFile] = useState(false);
   const [isSending, setIsSendind] = useState(false);
@@ -283,6 +328,33 @@ export function ResidentUpdateForm({
             }
           }
         }
+
+        if (sendToDevice) {
+          if (deviceList.length > 0) {
+            const base64 = await getBase64Photo();
+            deviceList.map(async (device) => {
+              // update visitor
+              await api.post(
+                `/control-id/add-command?id=${device}`,
+                modifyObjectCommand(
+                  "users",
+                  {
+                    name: data.name,
+                    registration: data?.cpf || data?.rg,
+                  },
+                  {
+                    users: { id: member.memberId }, // where
+                  }
+                )
+              );
+              const timestamp = ~~(Date.now() / 1000);
+              await api.post(
+                `/control-id/add-command?id=${device}`,
+                setUserFaceCommand(member.memberId, base64, timestamp)
+              );
+            });
+          }
+        }
       } catch (error) {
         console.error("(Tel) Erro ao enviar dados para a API:", error);
         throw error;
@@ -301,19 +373,19 @@ export function ResidentUpdateForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
+        className="space-y-6 w-3/4 lg:w-[40%] 2xl:w-1/3"
       >
-        <div className="flex gap-4 items-center justify-center">
+        <div className="flex justify-center items-center gap-4">
           {member.profileUrl.length > 0 ? (
             <div className="flex flex-col justify-center items-center">
               <img src={member.profileUrl} alt="Foto de perfil" width={80} />
-              <p className="text-sm text-center mt-2">Foto atual</p>
+              <p className="mt-2 text-center text-sm">Foto atual</p>
               {/* {member.profileUrl} */}
             </div>
           ) : (
             <div className="flex flex-col justify-center items-center">
               <UserCircle className="w-20 h-20" />
-              <p className="text-sm text-center mt-2">
+              <p className="mt-2 text-center text-sm">
                 Nenhuma foto <br /> cadastrada
               </p>
             </div>
@@ -330,7 +402,7 @@ export function ResidentUpdateForm({
               />
               <label
                 htmlFor="check"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="peer-disabled:opacity-70 font-medium text-sm leading-none peer-disabled:cursor-not-allowed"
               >
                 Remover foto - {removeFile ? "sim" : "não"}
               </label>
@@ -375,7 +447,7 @@ export function ResidentUpdateForm({
             <FormItem>
               <FormLabel>Telefone</FormLabel>
               <FormControl>
-                <div className="flex w-full items-center space-x-2">
+                <div className="flex items-center space-x-2 w-full">
                   <MaskedInput
                     mask="(99) 99999-9999"
                     type="text"
@@ -386,25 +458,25 @@ export function ResidentUpdateForm({
                   <Button
                     type="button"
                     variant="outline"
-                    className="aspect-square p-1"
+                    className="p-1 aspect-square"
                     onClick={() => addTelephone(field.value)}
                   >
                     <PlusCircle size={"32px"} />
                   </Button>
                 </div>
               </FormControl>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex flex-wrap gap-2">
                 {phoneNumber.map((telephone, index) => {
                   return (
                     <div
                       key={index}
-                      className="text-lg py-2 px-4 mt-2 rounded-md bg-muted flex justify-between items-center gap-2"
+                      className="flex justify-between items-center gap-2 bg-muted mt-2 px-4 py-2 rounded-md text-lg"
                     >
                       <p>{telephone}</p>
                       <Button
                         type="button"
                         variant="outline"
-                        className="aspect-square p-1"
+                        className="p-1 aspect-square"
                         onClick={() => deleteTelephone(telephone)}
                       >
                         <Trash size={"24px"} />
@@ -462,17 +534,17 @@ export function ResidentUpdateForm({
           placeholder="Senha numérica"
         />
 
-        <div className="flex gap-4 items-center justify-center">
+        <div className="flex justify-center items-center gap-4">
           {member.documentUrl && member.documentUrl.length > 0 ? (
             <div className="flex flex-col justify-center items-center">
               <img src={member.documentUrl} alt="Foto de perfil" width={80} />
-              <p className="text-sm text-center mt-2">Foto atual</p>
+              <p className="mt-2 text-center text-sm">Foto atual</p>
               {/* {member.documentUrl} */}
             </div>
           ) : (
             <div className="flex flex-col justify-center items-center">
               <UserCircle className="w-20 h-20" />
-              <p className="text-sm text-center mt-2">
+              <p className="mt-2 text-center text-sm">
                 Nenhuma foto <br /> cadastrada
               </p>
             </div>
@@ -489,7 +561,7 @@ export function ResidentUpdateForm({
               />
               <label
                 htmlFor="check"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="peer-disabled:opacity-70 font-medium text-sm leading-none peer-disabled:cursor-not-allowed"
               >
                 Remover foto - {removeFile ? "sim" : "não"}
               </label>
@@ -512,6 +584,60 @@ export function ResidentUpdateForm({
           label="Observações"
           placeholder="Alguma informação adicional..."
         />
+
+        <div className="flex items-center space-x-2 mt-2">
+          <Checkbox
+            onClick={() => {
+              setSendToDevice(!sendToDevice);
+            }}
+          />
+          <label
+            htmlFor="check"
+            className="peer-disabled:opacity-70 font-medium text-sm leading-none peer-disabled:cursor-not-allowed"
+          >
+            Enviar atualização para os dispositivos
+          </label>
+        </div>
+        {sendToDevice && (
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-2">
+              <Select value={id} onValueChange={setId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione um dispositivo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {devices.map((device) => (
+                      <SelectItem key={device.deviceId} value={device.name}>
+                        {device.ip} - {device.name} - {device.description}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <Button
+                variant={"outline"}
+                onClick={addDevice}
+                className="p-0 text-2xl aspect-square"
+                title="Adicionar"
+                type="button"
+              >
+                <PlusCircle />
+              </Button>
+            </div>
+            <div className="flex gap-2">
+              {deviceList.map((device) => (
+                <p
+                  key={device}
+                  className="bg-stone-800 hover:bg-stone-950 p-1 border hover:border-red-700 rounded cursor-pointer"
+                  onClick={() => removeDeviceFromList(device)}
+                >
+                  {device}
+                </p>
+              ))}
+            </div>
+          </div>
+        )}
 
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
           {isSending ? "Atualizando..." : "Atualizar"}

@@ -131,7 +131,6 @@ export function EmployeeUpdateForm({
     setDeviceList(deviceList.filter((item) => item !== device));
   }
 
-  const [base64, setBase64] = useState("");
   const getBase64Photo = async () => {
     if (session)
       try {
@@ -143,10 +142,11 @@ export function EmployeeUpdateForm({
             },
           }
         );
-        setBase64(response.data.base64);
+        return response.data.base64;
       } catch (error) {
         console.error("Erro ao obter dados:", error);
       }
+    return "";
   };
 
   const [removeFile, setRemoveFile] = useState(false);
@@ -213,7 +213,7 @@ export function EmployeeUpdateForm({
 
       if (sendToDevice) {
         if (deviceList.length > 0) {
-          await getBase64Photo();
+          const base64 = await getBase64Photo();
           deviceList.map(async (device) => {
             // update visitor
             await api.post(

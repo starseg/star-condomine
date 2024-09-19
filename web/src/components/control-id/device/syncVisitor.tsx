@@ -53,7 +53,6 @@ export function SyncVisitor({
     },
   });
   const { data: session } = useSession();
-  const [base64, setBase64] = useState("");
   const [id, setId] = useState("");
   const [deviceList, setDeviceList] = useState<string[]>([]);
 
@@ -68,10 +67,11 @@ export function SyncVisitor({
             },
           }
         );
-        setBase64(response.data.base64);
+        return response.data.base64;
       } catch (error) {
         console.error("Erro ao obter dados:", error);
       }
+    return "";
   };
 
   function addDevice() {
@@ -88,13 +88,15 @@ export function SyncVisitor({
     if (deviceList.length > 0) {
       const startDateObject = new Date(data.startTime);
       startDateObject.setHours(startDateObject.getHours() - 3);
+
       const endDateObject = new Date(data.endTime);
       endDateObject.setHours(endDateObject.getHours() - 3);
 
-      const startDateTimestamp = Math.floor(startDateObject.getTime() / 1000);
-      const endDateTimestamp = Math.floor(endDateObject.getTime() / 1000);
+      const startDateTimestamp = ~~(startDateObject.getTime() / 1000);
+      const endDateTimestamp = ~~(endDateObject.getTime() / 1000);
 
       deviceList.map(async (device) => {
+        const base64: string = await getBase64Photo();
         // create user
         await api.post(
           `/control-id/add-command?id=${device}`,

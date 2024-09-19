@@ -20,12 +20,14 @@ import VisitorGroupForm from "@/components/control-id/visitor-group/visitorGroup
 import VisitorGroupTable from "@/components/control-id/visitor-group/visitorGroupTable";
 import MemberTable from "@/components/member/memberTable";
 import { Menu } from "@/components/menu";
+import { buttonVariants } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import VisitorTable from "@/components/visitor/visitorTable";
 import { ControliDUpdateProvider } from "@/contexts/control-id-update-context";
 import api from "@/lib/axios";
 import { ArrowsHorizontal } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function ControliDConfig({
@@ -152,8 +154,14 @@ export default function ControliDConfig({
             </div>
             <MemberTable lobby={lobby} />
 
-            <div className="flex items-end mt-4 pb-2 w-full">
+            <div className="flex justify-between items-end mt-4 pb-2 w-full">
               <h2 className="text-xl">Visitantes</h2>
+              <Link
+                href={`/dashboard/actions/visitor/new?lobby=${lobby}`}
+                className={buttonVariants({ variant: "default" })}
+              >
+                Criar visitante
+              </Link>
             </div>
             <VisitorTable lobby={lobby} />
           </TabsContent>

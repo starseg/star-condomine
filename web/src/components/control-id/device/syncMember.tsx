@@ -33,7 +33,6 @@ export function SyncMember({
 }) {
   const { data: session } = useSession();
   const [id, setId] = useState("");
-  const [base64, setBase64] = useState("");
   const [deviceList, setDeviceList] = useState<string[]>([]);
 
   const getBase64Photo = async () => {
@@ -47,10 +46,11 @@ export function SyncMember({
             },
           }
         );
-        setBase64(response.data.base64);
+        return response.data.base64;
       } catch (error) {
         console.error("Erro ao obter dados:", error);
       }
+    return "";
   };
 
   function addDevice() {
@@ -63,9 +63,10 @@ export function SyncMember({
   }
 
   async function synchronize() {
-    await getBase64Photo(); // get user photo (base64)
+    const base64: string = await getBase64Photo(); // get user photo (base64)
     if (deviceList.length > 0) {
       deviceList.map(async (device) => {
+        const timestamp = ~~(Date.now() / 1000);
         // create user
         await api.post(
           `/control-id/add-command?id=${device}`,
@@ -75,7 +76,7 @@ export function SyncMember({
             member?.cpf || member?.rg
           )
         );
-        const timestamp = ~~(Date.now() / 1000);
+
         await api.post(
           `/control-id/add-command?id=${device}`,
           setUserFaceCommand(member.memberId, base64, timestamp)

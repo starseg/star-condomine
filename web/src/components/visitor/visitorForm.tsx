@@ -37,6 +37,8 @@ import DefaultTextarea from "../form/textareaDefault";
 import MaskInput from "../form/inputMask";
 import RadioInput from "../form/inputRadio";
 import DefaultCombobox from "../form/comboboxDefault";
+import { TakeMemberPhoto } from "../control-id/takeMemberPhoto";
+import { toast } from "react-toastify";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -137,9 +139,25 @@ export function VisitorForm() {
       }
   };
 
+  const [lobbyData, setLobbyData] = useState<Lobby>();
+  async function fetchLobbyData() {
+    if (session)
+      try {
+        const getLobby = await api.get(`/lobby/find/${lobby}`, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setLobbyData(getLobby.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+  }
+
   useEffect(() => {
     fetchVisitorTypes();
     fetchMembers();
+    fetchLobbyData();
   }, [session]);
 
   interface item {
@@ -276,13 +294,35 @@ export function VisitorForm() {
     }
   };
 
+  const [base64Photo, setBase64Photo] = useState("");
+  function handleBase64Photo(file: string) {
+    setBase64Photo(file);
+  }
+  function handleSavePhoto(file: File) {
+    form.setValue("profileUrl", file);
+    toast.success("Foto salva", {
+      theme: "colored",
+    });
+  }
+
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
+        className="space-y-6 w-3/4 lg:w-[40%] 2xl:w-1/3"
       >
-        <InputImage control={form.control} name="profileUrl" />
+        <div>
+          <p className="mb-1 text-sm">Foto de perfil</p>
+          <div className="flex gap-4">
+            <InputImage control={form.control} name="profileUrl" />
+            {lobbyData && lobbyData.ControllerBrand.name === "Control iD" && (
+              <TakeMemberPhoto
+                savePhoto={handleSavePhoto}
+                sendBase64Photo={handleBase64Photo}
+              />
+            )}
+          </div>
+        </div>
 
         <DefaultInput
           control={form.control}
@@ -352,7 +392,7 @@ export function VisitorForm() {
           />
           <label
             htmlFor="terms"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            className="peer-disabled:opacity-70 font-medium text-sm leading-none peer-disabled:cursor-not-allowed"
           >
             A pessoa já está acessando a portaria?
           </label>
@@ -406,7 +446,7 @@ export function VisitorForm() {
           />
           <label
             htmlFor="schedule"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            className="peer-disabled:opacity-70 font-medium text-sm leading-none peer-disabled:cursor-not-allowed"
           >
             Registrar agendamento?
           </label>
@@ -463,11 +503,11 @@ export function VisitorForm() {
                               ) : (
                                 <span>Data de início</span>
                               )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              <CalendarIcon className="opacity-50 ml-auto w-4 h-4" />
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
+                        <PopoverContent className="p-0 w-auto" align="start">
                           <Calendar
                             locale={ptBR}
                             mode="single"
@@ -502,12 +542,12 @@ export function VisitorForm() {
                               ) : (
                                 <span>Data de fim</span>
                               )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              <CalendarIcon className="opacity-50 ml-auto w-4 h-4" />
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
                         <PopoverContent
-                          className="w-auto p-2 space-y-2"
+                          className="space-y-2 p-2 w-auto"
                           align="start"
                         >
                           <Select
@@ -529,7 +569,7 @@ export function VisitorForm() {
                               <SelectItem value="3650">Em 10 anos</SelectItem>
                             </SelectContent>
                           </Select>
-                          <div className="rounded-md border">
+                          <div className="border rounded-md">
                             <Calendar
                               locale={ptBR}
                               mode="single"

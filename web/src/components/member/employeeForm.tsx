@@ -50,7 +50,6 @@ const FormSchema = z.object({
   tag: z.string(),
   card: z.string(),
 
-  sendToFacial: z.boolean().default(false),
   groupId: z.number(),
 });
 
@@ -72,7 +71,6 @@ export function EmployeeForm() {
       comments: "",
       tag: "",
       card: "",
-      sendToFacial: false,
       groupId: 0,
     },
   });
@@ -192,7 +190,6 @@ export function EmployeeForm() {
     setIsSendind(true);
     // FAZ O UPLOAD DA FOTO
     let file;
-    let base64image: string = "";
     if (data.profileUrl instanceof File && data.profileUrl.size > 0) {
       const timestamp = new Date().toISOString();
       const fileExtension = data.profileUrl.name.split(".").pop();
@@ -200,14 +197,6 @@ export function EmployeeForm() {
         data.profileUrl,
         `pessoas/foto-perfil-${timestamp}.${fileExtension}`
       );
-      if (data.sendToFacial && base64Photo === "") {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const result = reader.result as string;
-          base64image = result.split("data:image/jpeg;base64,")[1];
-        };
-        reader.readAsDataURL(data.profileUrl);
-      }
     } else file = "";
 
     // FAZ O UPLOAD DO DOCUMENTO
@@ -292,28 +281,10 @@ export function EmployeeForm() {
         }
       }
 
-      if (
-        data.sendToFacial &&
-        lobbyData &&
-        lobbyData.ControllerBrand.name === "Control iD"
-      ) {
-        const timestamp = ~~(Date.now() / 1000);
+      if (lobbyData && lobbyData.ControllerBrand.name === "Control iD") {
         await sendControliDCommand(
           createUserCommand(response.data.memberId, data.name)
         );
-        // if (base64Photo) {
-        //   await sendControliDCommand(
-        //     setUserFaceCommand(
-        //       base64Photo.split("data:application/octet-stream;base64,")[1],
-        //       response.data.memberId,
-        //       timestamp
-        //     )
-        //   );
-        // } else if (base64image) {
-        //   await sendControliDCommand(
-        //     setUserFaceCommand(base64image, response.data.memberId, timestamp)
-        //   );
-        // }
 
         if (data.groupId !== 0) {
           const info = {
@@ -522,28 +493,6 @@ export function EmployeeForm() {
           <p className="mb-1 text-sm">Documento com foto (RG/CPF ou CNH)</p>
           <InputImage control={form.control} name="documentUrl" />
         </div>
-
-        <DefaultCheckbox
-          control={form.control}
-          name="sendToFacial"
-          label="Cadastrar nos dispositivos de reconhecimento facial (fase de testes)"
-        />
-
-        {form.getValues("sendToFacial") === true && (
-          <div>
-            <DefaultCombobox
-              control={form.control}
-              name="groupId"
-              label="Grupo de acesso"
-              object={groupItems}
-              selectLabel="Selecione o grupo relacionado"
-              searchLabel="Buscar grupo..."
-              onSelect={(value: number) => {
-                form.setValue("groupId", value);
-              }}
-            />
-          </div>
-        )}
 
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
           {isSending ? "Registrando..." : "Registrar"}

@@ -144,7 +144,6 @@ export function VisitorUpdateForm({
     setDeviceList(deviceList.filter((item) => item !== device));
   }
 
-  const [base64, setBase64] = useState("");
   const getBase64Photo = async () => {
     if (session)
       try {
@@ -156,10 +155,11 @@ export function VisitorUpdateForm({
             },
           }
         );
-        setBase64(response.data.base64);
+        return response.data.base64;
       } catch (error) {
         console.error("Erro ao obter dados:", error);
       }
+    return "";
   };
 
   const [removeFile, setRemoveFile] = useState(false);
@@ -228,15 +228,14 @@ export function VisitorUpdateForm({
         if (deviceList.length > 0) {
           const startDateObject = new Date(data.startDate);
           startDateObject.setHours(startDateObject.getHours() - 3);
+
           const endDateObject = new Date(data.endDate);
           endDateObject.setHours(endDateObject.getHours() - 3);
 
-          const startDateTimestamp = Math.floor(
-            startDateObject.getTime() / 1000
-          );
-          const endDateTimestamp = Math.floor(endDateObject.getTime() / 1000);
+          const startDateTimestamp = ~~(startDateObject.getTime() / 1000);
+          const endDateTimestamp = ~~(endDateObject.getTime() / 1000);
 
-          await getBase64Photo();
+          const base64 = await getBase64Photo();
           deviceList.map(async (device) => {
             // update visitor
             await api.post(

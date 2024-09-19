@@ -108,7 +108,7 @@ export const setUserFaceCommand = (
     endpoint: `user_set_image_list`,
     contentType: "application/json",
     body: {
-      match: false,
+      match: true,
       user_images: [
         {
           user_id: user,

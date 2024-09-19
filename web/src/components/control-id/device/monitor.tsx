@@ -73,6 +73,11 @@ export function Monitor() {
         </p>
       );
     }
+
+    if (response.includes(`"message":"Face exists"`)) {
+      return <p className="text-red-500">Foto já pertence a outro usuário</p>;
+    }
+
     return <p>{response}</p>;
   }
   function errorDictionary(error: string): JSX.Element {

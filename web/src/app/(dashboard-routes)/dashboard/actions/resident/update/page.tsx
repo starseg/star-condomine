@@ -67,6 +67,7 @@ export default function UpdateResident() {
   const [member, setMember] = useState<Member | null>(null);
   const [phones, setPhones] = useState<Telephone[] | null>(null);
   const [data, setData] = useState<Values>();
+  const [devices, setDevices] = useState<Device[]>([]);
 
   function bool(value: string | undefined) {
     return value === "true";
@@ -99,9 +100,24 @@ export default function UpdateResident() {
       }
   };
 
+  const fetchDevices = async () => {
+    if (session)
+      try {
+        const devices = await api.get(`/device/lobby/${params.get("lobby")}`, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setDevices(devices.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+  };
+
   useEffect(() => {
     fetchData();
     fetchTelephoneData();
+    fetchDevices();
   }, [session]);
 
   useEffect(() => {
@@ -130,12 +146,13 @@ export default function UpdateResident() {
     <>
       <Menu />
       <section className="flex flex-col justify-center items-center mb-12">
-        <h1 className="text-4xl mt-2 mb-4">Atualizar Morador</h1>
+        <h1 className="mt-2 mb-4 text-4xl">Atualizar Morador</h1>
         {member && data && phones ? (
           <ResidentUpdateForm
             preloadedValues={data}
             member={member}
             phones={phones}
+            devices={devices}
           />
         ) : (
           <LoadingIcon />
