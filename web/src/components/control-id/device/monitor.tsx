@@ -14,8 +14,11 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 interface ControlIdResult {
-  response: string;
-  error: string;
+  deviceId: string;
+  body: {
+    response?: string;
+    error?: string;
+  };
 }
 
 export function Monitor() {
@@ -73,6 +76,9 @@ export function Monitor() {
         </p>
       );
     }
+    if (response.startsWith(`{"users":[{"id":`)) {
+      return <p className="text-green-500">Usuário encontrado</p>;
+    }
 
     if (response.includes(`"message":"Face exists"`)) {
       return <p className="text-red-500">Foto já pertence a outro usuário</p>;
@@ -118,8 +124,9 @@ export function Monitor() {
                 .map((item, index) => {
                   return (
                     <div key={index}>
-                      {item.response && responseDictionary(item.response)}
-                      {item.error && errorDictionary(item.error)}
+                      {item.body.response &&
+                        responseDictionary(item.body.response)}
+                      {item.body.error && errorDictionary(item.body.error)}
                       <DropdownMenuSeparator />
                     </div>
                   );

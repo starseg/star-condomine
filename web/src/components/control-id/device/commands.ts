@@ -47,6 +47,8 @@ export const listPortalsCommand = {
   body: { object: "portals" },
   contentType: "application/json",
 };
+
+// GET COMMANDS
 export const GetUserByIdCommand = (id: number) => {
   return {
     verb: "POST",

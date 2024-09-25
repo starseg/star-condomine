@@ -34,7 +34,7 @@ interface User {
 export default function EmployeeDetails({ id }: { id: number }) {
   const [member, setMember] = useState<MemberFull>();
   const [lobbyData, setLobbyData] = useState<Lobby>();
-  const [userResult, setUserResult] = useState<User>();
+  const [devices, setDevices] = useState<string[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
@@ -54,7 +54,7 @@ export default function EmployeeDetails({ id }: { id: number }) {
         console.error("Erro ao obter dados:", error);
       }
   };
-  async function fetchLobbyData() {
+  const fetchLobbyData = async () => {
     if (session)
       try {
         const getLobby = await api.get(`/lobby/find/${lobby}`, {
@@ -66,7 +66,7 @@ export default function EmployeeDetails({ id }: { id: number }) {
       } catch (error) {
         console.error("Erro ao obter dados:", error);
       }
-  }
+  };
   useEffect(() => {
     fetchData();
     fetchLobbyData();
@@ -85,7 +85,6 @@ export default function EmployeeDetails({ id }: { id: number }) {
         lobbyData.device.map(async (device) => {
           await api.post(`/control-id/add-command?id=${device.name}`, command);
         });
-        console.log("Command sent successfully");
       } else {
         console.log("Não é uma portaria com Control iD");
       }
@@ -94,25 +93,50 @@ export default function EmployeeDetails({ id }: { id: number }) {
     }
   }
 
-  async function fetchResults(): Promise<void> {
+  interface PushResponse {
+    deviceId: string;
+    body: {
+      response: string;
+    };
+  }
+
+  async function fetchResults() {
+    const devices: Array<string> = [];
     try {
       const response = await api.get("/control-id/results");
-      console.log(response.data);
-      if (response.data.length > 0) {
-        const user = JSON.parse(
-          response.data[response.data.length - 1].response
-        );
-        if (user.users[0].id === id) setUserResult(user.users[0]);
-        else console.log("User not found, try again");
+      const data: PushResponse[] = response.data;
+      if (lobbyData && data.length > 0) {
+        const latest = data.slice(-lobbyData.device.length);
+        latest.map((result) => {
+          const users: { users: User[] | [] } = JSON.parse(
+            result.body.response
+          );
+          if (users.users.length > 0 && users.users[0].id === id) {
+            const device = lobbyData.device.find(
+              (device) => device.name === result.deviceId
+            );
+            if (device) devices.push(device.description);
+          }
+        });
       }
     } catch (error) {
       console.error("Error fetching results:", error);
+    } finally {
+      return devices;
     }
   }
 
+  const [isLoading, setIsLoading] = useState(false);
   async function searchUser(id: number) {
+    setIsLoading(true);
     await sendControliDCommand(GetUserByIdCommand(id));
-    await fetchResults();
+    await new Promise((resolve) => {
+      setTimeout(async () => {
+        setDevices(await fetchResults());
+        resolve(true);
+      }, 5000);
+    });
+    setIsLoading(false);
   }
 
   return (
@@ -137,14 +161,26 @@ export default function EmployeeDetails({ id }: { id: number }) {
               {member.MemberGroup.length > 0 && (
                 <div className="flex flex-col gap-4 p-4 border rounded">
                   <p>Vinculado a: {member.MemberGroup[0].group.name}</p>
-                  <Button onClick={() => searchUser(member.memberId)}>
-                    Confirmar vinculação nas leitoras
+                  <Button
+                    disabled={isLoading}
+                    onClick={() => searchUser(member.memberId)}
+                  >
+                    {isLoading
+                      ? "Buscando dados..."
+                      : "Confirmar vinculação nas leitoras"}
                   </Button>
-                  {userResult && (
-                    <div className="flex gap-2">
-                      <Check className="text-green-400 text-xl" /> confirmado
-                    </div>
-                  )}
+                  <div className="flex flex-col gap-2">
+                    {devices &&
+                      devices.map((device, index) => (
+                        <p key={index} className="flex items-center gap-2">
+                          <Check
+                            className="text-green-400 text-xl"
+                            weight="bold"
+                          />
+                          {device}
+                        </p>
+                      ))}
+                  </div>
                 </div>
               )}
             </div>

@@ -24,6 +24,7 @@ interface Lobby {
     {
       deviceId: number;
       name: string;
+      description: string;
       ip: string;
       ramal: number;
     }

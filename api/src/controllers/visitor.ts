@@ -30,6 +30,16 @@ export const getVisitor = async (
         scheduling: {
           include: { member: { select: { name: true } } },
         },
+        visitorGroup: {
+          select: {
+            groupId: true,
+            group: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
     if (!visitor) {

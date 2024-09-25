@@ -1,6 +1,5 @@
 "use client";
 import { SkeletonTable } from "@/components/_skeletons/skeleton-table";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -11,8 +10,6 @@ import {
 } from "@/components/ui/table";
 import { useControliDUpdate } from "@/contexts/control-id-update-context";
 import api from "@/lib/axios";
-import { deleteAction } from "@/lib/delete-action";
-import { Trash2Icon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";

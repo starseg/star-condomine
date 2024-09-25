@@ -12,6 +12,7 @@ import GroupTable from "@/components/control-id/group/groupTable";
 import MemberGroupForm from "@/components/control-id/member-group/memberGroupForm";
 import MemberGroupTable from "@/components/control-id/member-group/memberGroupTable";
 import TimeSpanForm from "@/components/control-id/time-span/timeSpanForm";
+import { TimeSpanSearchInDevice } from "@/components/control-id/time-span/timeSpanSearchInDevice";
 import TimeSpanTable from "@/components/control-id/time-span/timeSpanTable";
 import TimeZoneForm from "@/components/control-id/time-zone/timeZoneForm";
 import { TimeZoneSearchInDevice } from "@/components/control-id/time-zone/timeZoneSearchInDevice";
@@ -95,7 +96,10 @@ export default function ControliDConfig({
             <TimeZoneTable />
             <div className="flex justify-between items-end mt-4 pb-2 w-full">
               <h2 className="text-xl">Intervalos</h2>
-              <TimeSpanForm />
+              <div className="flex gap-2">
+                <TimeSpanForm />
+                <TimeSpanSearchInDevice />
+              </div>
             </div>
             <TimeSpanTable />
           </TabsContent>

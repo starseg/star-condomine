@@ -8,14 +8,38 @@ import { formatDate, simpleDateFormat } from "@/lib/utils";
 import { deleteAction } from "@/lib/delete-action";
 import { useSearchParams } from "next/navigation";
 import MiniTable from "../miniTable";
-import { PencilLine, Trash } from "@phosphor-icons/react/dist/ssr";
+import {
+  Check,
+  PencilLine,
+  Trash,
+  UserCircle,
+} from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
+import { Button } from "../ui/button";
+import { GetUserByIdCommand } from "../control-id/device/commands";
+
+interface User {
+  id: number;
+  registration: string;
+  name: string;
+  password: string;
+  salt: string;
+  expires: number;
+  user_type_id: number;
+  begin_time: number;
+  end_time: number;
+  image_timestamp: number;
+}
 
 export default function residentDetails({ id }: { id: number }) {
   const [member, setMember] = useState<MemberFull>();
+  const [lobbyData, setLobbyData] = useState<Lobby>();
+  const [devices, setDevices] = useState<string[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
+  const lobbyParam = params.get("lobby");
+  const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
   const control = params.get("c");
   const fetchData = async () => {
     if (session)
@@ -30,8 +54,22 @@ export default function residentDetails({ id }: { id: number }) {
         console.error("Erro ao obter dados:", error);
       }
   };
+  const fetchLobbyData = async () => {
+    if (session)
+      try {
+        const getLobby = await api.get(`/lobby/find/${lobby}`, {
+          headers: {
+            Authorization: `Bearer ${session?.token.user.token}`,
+          },
+        });
+        setLobbyData(getLobby.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+  };
   useEffect(() => {
     fetchData();
+    fetchLobbyData();
   }, [session]);
 
   const deleteAccess = async (id: number) => {
@@ -41,21 +79,109 @@ export default function residentDetails({ id }: { id: number }) {
     deleteAction(session, "agendamento", `scheduling/${id}`, fetchData);
   };
 
+  interface PushResponse {
+    deviceId: string;
+    body: {
+      response: string;
+    };
+  }
+  async function sendControliDCommand(command: object): Promise<void> {
+    try {
+      if (lobbyData && lobbyData.ControllerBrand.name === "Control iD") {
+        lobbyData.device.map(async (device) => {
+          await api.post(`/control-id/add-command?id=${device.name}`, command);
+        });
+      } else {
+        console.log("Não é uma portaria com Control iD");
+      }
+    } catch (error) {
+      console.error("Error sending command:", error);
+    }
+  }
+  async function fetchResults() {
+    const devices: Array<string> = [];
+    try {
+      const response = await api.get("/control-id/results");
+      const data: PushResponse[] = response.data;
+      if (lobbyData && data.length > 0) {
+        const latest = data.slice(-lobbyData.device.length);
+        latest.map((result) => {
+          const users: { users: User[] | [] } = JSON.parse(
+            result.body.response
+          );
+          if (users.users.length > 0 && users.users[0].id === id) {
+            const device = lobbyData.device.find(
+              (device) => device.name === result.deviceId
+            );
+            if (device) devices.push(device.description);
+          }
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching results:", error);
+    } finally {
+      return devices;
+    }
+  }
+
+  const [isLoading, setIsLoading] = useState(false);
+  async function searchUser(id: number) {
+    setIsLoading(true);
+    await sendControliDCommand(GetUserByIdCommand(id));
+    await new Promise((resolve) => {
+      setTimeout(async () => {
+        setDevices(await fetchResults());
+        resolve(true);
+      }, 5000);
+    });
+    setIsLoading(false);
+  }
+
   return (
     <div>
       {member ? (
         <>
-          <div className="max-w-2xl mx-auto border border-primary py-4 px-12 rounded-md mt-4">
-            {member.profileUrl.length > 0 ? (
-              <img
-                src={member.profileUrl}
-                width="150px"
-                alt="Foto de perfil"
-                className="mx-auto"
-              />
-            ) : (
-              ""
-            )}
+          <div className="border-primary mx-auto mt-4 px-12 py-4 border rounded-md max-w-2xl">
+            <div className="flex justify-center items-center gap-4 w-full">
+              {member.profileUrl.length > 0 ? (
+                <img
+                  src={member.profileUrl}
+                  width="150px"
+                  alt="Foto de perfil"
+                  className="rounded"
+                />
+              ) : (
+                <div className="flex flex-col justify-center items-center">
+                  <UserCircle className="w-20 h-20" />
+                  <p>sem foto</p>
+                </div>
+              )}
+              {member.MemberGroup.length > 0 && (
+                <div className="flex flex-col gap-4 p-4 border rounded">
+                  <p>Vinculado a: {member.MemberGroup[0].group.name}</p>
+                  <Button
+                    disabled={isLoading}
+                    onClick={() => searchUser(member.memberId)}
+                  >
+                    {isLoading
+                      ? "Buscando dados..."
+                      : "Confirmar vinculação nas leitoras"}
+                  </Button>
+                  <div className="flex flex-col gap-2">
+                    {devices &&
+                      devices.map((device, index) => (
+                        <p key={index} className="flex items-center gap-2">
+                          <Check
+                            className="text-green-400 text-xl"
+                            weight="bold"
+                          />
+                          {device}
+                        </p>
+                      ))}
+                  </div>
+                </div>
+              )}
+            </div>
             <DetailItem
               label="Nome"
               content={member.name + " - " + member.memberId.toString()}
@@ -75,7 +201,7 @@ export default function residentDetails({ id }: { id: number }) {
                   ? member.telephone.map((telephone) => (
                       <p
                         key={telephone.telephoneId}
-                        className="bg-muted text-muted-foreground rounded-md px-4 py-1"
+                        className="bg-muted px-4 py-1 rounded-md text-muted-foreground"
                       >
                         {telephone.number}
                       </p>
@@ -98,7 +224,7 @@ export default function residentDetails({ id }: { id: number }) {
 
             {member.documentUrl && member.documentUrl.length > 0 ? (
               <>
-                <p className="text-lg mb-2">Documento</p>
+                <p className="mb-2 text-lg">Documento</p>
                 <img
                   src={member.documentUrl}
                   alt="Documento"
@@ -109,32 +235,32 @@ export default function residentDetails({ id }: { id: number }) {
               ""
             )}
 
-            <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
+            <div className="bg-primary mt-8 mb-4 w-full h-[1px]"></div>
             <div className="flex flex-col justify-center gap-2 mb-4">
               <label className="text-lg">Formas de acesso:</label>
               {member.faceAccess === "true" ? (
-                <p className="bg-muted text-muted-foreground rounded-md px-4 py-1">
+                <p className="bg-muted px-4 py-1 rounded-md text-muted-foreground">
                   Facial
                 </p>
               ) : (
                 ""
               )}
               {member.biometricAccess === "true" ? (
-                <p className="bg-muted text-muted-foreground rounded-md px-4 py-1">
+                <p className="bg-muted px-4 py-1 rounded-md text-muted-foreground">
                   Biometria
                 </p>
               ) : (
                 ""
               )}
               {member.remoteControlAccess === "true" ? (
-                <p className="bg-muted text-muted-foreground rounded-md px-4 py-1">
+                <p className="bg-muted px-4 py-1 rounded-md text-muted-foreground">
                   Controle remoto
                 </p>
               ) : (
                 ""
               )}
               {member.passwordAccess ? (
-                <p className="bg-muted text-muted-foreground rounded-md px-4 py-1">
+                <p className="bg-muted px-4 py-1 rounded-md text-muted-foreground">
                   Senha: {member.passwordAccess}
                 </p>
               ) : (
@@ -142,7 +268,7 @@ export default function residentDetails({ id }: { id: number }) {
               )}
             </div>
 
-            <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
+            <div className="bg-primary mt-8 mb-4 w-full h-[1px]"></div>
             <DetailItem
               label="Data do registro"
               content={formatDate(member.createdAt)}
@@ -157,13 +283,13 @@ export default function residentDetails({ id }: { id: number }) {
               {member.access.map((access) => (
                 <div
                   key={access.accessId}
-                  className="grid grid-cols-7 px-4 border-b border-stone-700 py-1"
+                  className="border-stone-700 grid grid-cols-7 px-4 py-1 border-b"
                 >
                   <p className="col-span-2">{formatDate(access.startTime)}</p>
                   <p className="col-span-2">
                     {access.endTime ? formatDate(access.endTime) : "Não saiu"}
                   </p>
-                  <p className="col-span-2 max-w-[15ch] text-ellipsis overflow-hidden whitespace-nowrap">
+                  <p className="col-span-2 max-w-[15ch] text-ellipsis whitespace-nowrap overflow-hidden">
                     {access.visitor.name}
                   </p>
                   <div className="flex items-center gap-4">
@@ -191,7 +317,7 @@ export default function residentDetails({ id }: { id: number }) {
               {member.scheduling.map((scheduling) => (
                 <div
                   key={scheduling.schedulingId}
-                  className="grid grid-cols-7 px-4 border-b border-stone-700 py-1"
+                  className="border-stone-700 grid grid-cols-7 px-4 py-1 border-b"
                 >
                   <p className="col-span-2">
                     {simpleDateFormat(scheduling.startDate)}
@@ -201,7 +327,7 @@ export default function residentDetails({ id }: { id: number }) {
                       ? simpleDateFormat(scheduling.endDate)
                       : "Não saiu"}
                   </p>
-                  <p className="col-span-2 max-w-[15ch] text-ellipsis overflow-hidden whitespace-nowrap">
+                  <p className="col-span-2 max-w-[15ch] text-ellipsis whitespace-nowrap overflow-hidden">
                     {scheduling.visitor.name}
                   </p>
                   <div className="flex items-center gap-4">
@@ -223,7 +349,7 @@ export default function residentDetails({ id }: { id: number }) {
           )}
         </>
       ) : (
-        <div className="w-full flex items-center justify-center">
+        <div className="flex justify-center items-center w-full">
           <LoadingIcon />
         </div>
       )}

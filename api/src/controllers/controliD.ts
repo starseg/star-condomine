@@ -3,11 +3,28 @@ import { Request, Response } from "express";
 let commandQueue: any[] = [];
 let resultLog: any[] = [];
 
+export const addCommand = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const id = req.query.id;
+  const content = req.body;
+  const command = {
+    id,
+    content,
+  };
+  console.log(command);
+  commandQueue.push(command);
+  res.json({ message: "Command added successfully" });
+};
+
 export const push = async (req: Request, res: Response): Promise<void> => {
   const deviceId = req.query.deviceId;
   // console.log("Device ID: ", deviceId);
   // console.log("commandQueue: ", commandQueue);
   // console.log(deviceId, commandQueue[0] ? commandQueue[0].id : "empty");
+
+  //console.log("Query: ", req.query);
 
   if (commandQueue.length > 0) {
     const compare = commandQueue[0];
@@ -24,27 +41,17 @@ export const push = async (req: Request, res: Response): Promise<void> => {
 
 export const result = async (req: Request, res: Response): Promise<void> => {
   console.log("|-<|*RESULT*|>-|");
-  console.log(req.body);
-  resultLog.push(req.body);
+  const response = {
+    deviceId: req.query.deviceId,
+    queryId: req.query.uuid,
+    body: req.body,
+  };
+  console.log(response);
+  resultLog.push(response);
   if (resultLog.length > 20) {
     resultLog.shift();
   }
-  res.json();
-};
-
-export const addCommand = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  const id = req.query.id;
-  const content = req.body;
-  const command = {
-    id,
-    content,
-  };
-  console.log(command);
-  commandQueue.push(command);
-  res.json({ message: "Command added successfully" });
+  res.json(response);
 };
 
 export const results = async (req: Request, res: Response): Promise<void> => {

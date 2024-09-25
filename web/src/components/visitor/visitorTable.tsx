@@ -210,7 +210,7 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
                             buttonVariants({ variant: "ghost" }),
                             "p-1 text-2xl aspect-square"
                           )}
-                          href={`visitor/details?id=${visitor.visitorId}&c=${control}`}
+                          href={`visitor/details?id=${visitor.visitorId}&lobby=${lobby}&c=${control}&brand=${brand}`}
                         >
                           <MagnifyingGlass />
                         </Link>

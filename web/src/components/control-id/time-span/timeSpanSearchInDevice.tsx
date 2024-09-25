@@ -12,27 +12,27 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { setTimeout } from "timers";
-import { listTimeZonesCommand } from "../device/commands";
+import { listTimeSpansCommand } from "../device/commands";
 import {
   fetchLatestResults,
   fetchLobbyData,
   sendControliDCommand,
 } from "../device/search";
 
-interface TimeZone {
+interface TimeSpan {
   id: number;
   name: string;
 }
 
-interface ITimeZoneResult {
+interface ITimeSpanResult {
   device: string;
-  timezones: TimeZone[];
+  timespans: TimeSpan[];
 }
 
-export function TimeZoneSearchInDevice() {
+export function TimeSpanSearchInDevice() {
   const [lobbyData, setLobbyData] = useState<Lobby>();
   const [isLoading, setIsLoading] = useState(false);
-  const [timezoneResult, setTimezoneResult] = useState<ITimeZoneResult[]>([]);
+  const [timespanResult, setTimeSpanResult] = useState<ITimeSpanResult[]>([]);
 
   const { data: session } = useSession();
 
@@ -50,32 +50,28 @@ export function TimeZoneSearchInDevice() {
   }, [session, lobby]);
 
   async function fetchResults() {
-    const devices: Array<ITimeZoneResult> = [];
+    const devices: Array<ITimeSpanResult> = [];
     const latestResults = await fetchLatestResults(lobbyData);
 
     if (lobbyData && latestResults && latestResults.length > 0) {
       latestResults.map((result) => {
-        try {
-          const timezones: { time_zones: TimeZone[] | [] } = JSON.parse(
-            result.body.response
+        const timespans: { time_spans: TimeSpan[] | [] } = JSON.parse(
+          result.body.response
+        );
+
+        const filteredTimesSpans = timespans.time_spans.filter((item) => {
+          return item.id !== 1;
+        });
+
+        if (filteredTimesSpans.length > 0) {
+          const device = lobbyData.device.find(
+            (device) => device.name === result.deviceId
           );
-
-          const filteredTimesZones = timezones.time_zones.filter((item) => {
-            return item.id !== 1;
-          });
-
-          if (filteredTimesZones.length > 0) {
-            const device = lobbyData.device.find(
-              (device) => device.name === result.deviceId
-            );
-            if (device)
-              devices.push({
-                device: device.description,
-                timezones: filteredTimesZones,
-              });
-          }
-        } catch (e) {
-          console.error("Erro na comunicação com o leitor");
+          if (device)
+            devices.push({
+              device: device.description,
+              timespans: filteredTimesSpans,
+            });
         }
       });
     }
@@ -83,12 +79,12 @@ export function TimeZoneSearchInDevice() {
     return devices;
   }
 
-  async function searchTimezones() {
+  async function searchTimeSpans() {
     setIsLoading(true);
-    await sendControliDCommand(listTimeZonesCommand, lobbyData);
+    await sendControliDCommand(listTimeSpansCommand, lobbyData);
     await new Promise((resolve) => {
       setTimeout(async () => {
-        setTimezoneResult(await fetchResults());
+        setTimeSpanResult(await fetchResults());
         resolve(true);
       }, 5000);
     });
@@ -101,16 +97,17 @@ export function TimeZoneSearchInDevice() {
         <Button
           className="p-1 text-2xl aspect-square"
           title="Buscar nos dispositivos"
-          onClick={searchTimezones}
+          onClick={searchTimeSpans}
         >
           <MagnifyingGlass />
         </Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Horários cadastrados nos dispositivos</SheetTitle>
+          <SheetTitle>Intervalos cadastrados nos dispositivos</SheetTitle>
           <SheetDescription>
-            Saiba quais horários estão vinculados às leitoras faciais.
+            Saiba quais intervalos estão vinculados às aos seus respectivos
+            horarios.
           </SheetDescription>
         </SheetHeader>
         {isLoading ? (
@@ -119,20 +116,18 @@ export function TimeZoneSearchInDevice() {
           </p>
         ) : (
           <>
-            {timezoneResult && timezoneResult.length > 0
-              ? timezoneResult.map((timezone, index) => (
+            {timespanResult && timespanResult.length > 0
+              ? timespanResult.map((timespan, index) => (
                   <div
                     key={index}
                     className="flex flex-col gap-4 border-primary my-4 p-4 border rounded-lg"
                   >
                     <p className="text-lg text-primary capitalize">
-                      {timezone.device}
+                      {timespan.device}
                     </p>
                     <ul>
-                      {timezone.timezones.map((timezone) => (
-                        <li key={timezone.id}>
-                          {timezone.id} - {timezone.name}
-                        </li>
+                      {timespan.timespans.map((timespan) => (
+                        <li key={timespan.id}>{timespan.id}</li>
                       ))}
                     </ul>
                   </div>

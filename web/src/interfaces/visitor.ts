@@ -86,4 +86,11 @@ interface VisitorFull {
   lobby: {
     exitControl: "ACTIVE" | "INACTIVE";
   };
+  visitorGroup: [
+    {
+      group: {
+        name: string;
+      };
+    }
+  ];
 }
