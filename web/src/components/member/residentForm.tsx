@@ -308,7 +308,7 @@ export function ResidentForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
+        className="space-y-6 w-3/4 lg:w-[40%] 2xl:w-1/3"
       >
         <div>
           <p className="mb-1 text-sm">Foto de perfil</p>
@@ -352,7 +352,7 @@ export function ResidentForm() {
             <FormItem>
               <FormLabel>Telefone</FormLabel>
               <FormControl>
-                <div className="flex w-full items-center space-x-2">
+                <div className="flex items-center space-x-2 w-full">
                   <MaskedInput
                     mask="(99) 99999-9999"
                     type="text"
@@ -363,25 +363,25 @@ export function ResidentForm() {
                   <Button
                     type="button"
                     variant="outline"
-                    className="aspect-square p-1"
+                    className="p-1 aspect-square"
                     onClick={() => addTelephone(field.value)}
                   >
                     <PlusCircle size={"32px"} />
                   </Button>
                 </div>
               </FormControl>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex flex-wrap gap-2">
                 {phoneNumber.map((telephone, index) => {
                   return (
                     <div
                       key={index}
-                      className="text-lg py-2 px-4 mt-2 rounded-md bg-muted flex justify-between items-center gap-2"
+                      className="flex justify-between items-center gap-2 bg-muted mt-2 px-4 py-2 rounded-md text-lg"
                     >
                       <p>{telephone}</p>
                       <Button
                         type="button"
                         variant="outline"
-                        className="aspect-square p-1"
+                        className="p-1 aspect-square"
                         onClick={() => deleteTelephone(telephone)}
                       >
                         <Trash size={"24px"} />
@@ -440,7 +440,7 @@ export function ResidentForm() {
             <FormItem>
               <FormLabel>Tag</FormLabel>
               <FormControl>
-                <div className="flex w-full items-center space-x-2">
+                <div className="flex items-center space-x-2 w-full">
                   <Input
                     type="text"
                     placeholder="Número da tag"
@@ -450,25 +450,25 @@ export function ResidentForm() {
                   <Button
                     type="button"
                     variant="outline"
-                    className="aspect-square p-1"
+                    className="p-1 aspect-square"
                     onClick={() => addTag(field.value)}
                   >
                     <PlusCircle size={"32px"} />
                   </Button>
                 </div>
               </FormControl>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex flex-wrap gap-2">
                 {tagNumber.map((num, index) => {
                   return (
                     <div
                       key={index}
-                      className="text-lg p-2 mt-2 rounded-md bg-muted flex justify-between items-center gap-2"
+                      className="flex justify-between items-center gap-2 bg-muted mt-2 p-2 rounded-md text-lg"
                     >
                       <p>{num}</p>
                       <Button
                         type="button"
                         variant="outline"
-                        className="aspect-square p-1"
+                        className="p-1 aspect-square"
                         onClick={() => deleteTag("tag", num)}
                       >
                         <Trash size={"24px"} />
@@ -489,7 +489,7 @@ export function ResidentForm() {
             <FormItem>
               <FormLabel>Cartão</FormLabel>
               <FormControl>
-                <div className="flex w-full items-center space-x-2">
+                <div className="flex items-center space-x-2 w-full">
                   <Input
                     type="text"
                     placeholder="Número do cartão"
@@ -499,25 +499,25 @@ export function ResidentForm() {
                   <Button
                     type="button"
                     variant="outline"
-                    className="aspect-square p-1"
+                    className="p-1 aspect-square"
                     onClick={() => addCard(field.value)}
                   >
                     <PlusCircle size={"32px"} />
                   </Button>
                 </div>
               </FormControl>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex flex-wrap gap-2">
                 {cardNumber.map((num, index) => {
                   return (
                     <div
                       key={index}
-                      className="text-lg p-2 mt-2 rounded-md bg-muted flex justify-between items-center gap-2"
+                      className="flex justify-between items-center gap-2 bg-muted mt-2 p-2 rounded-md text-lg"
                     >
                       <p>{num}</p>
                       <Button
                         type="button"
                         variant="outline"
-                        className="aspect-square p-1"
+                        className="p-1 aspect-square"
                         onClick={() => deleteTag("card", num)}
                       >
                         <Trash size={"24px"} />
