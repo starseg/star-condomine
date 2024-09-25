@@ -318,11 +318,6 @@ export function EmployeeForm() {
     });
   }
 
-  const [base64Photo, setBase64Photo] = useState("");
-  function handleBase64Photo(file: string) {
-    setBase64Photo(file);
-  }
-
   return (
     <Form {...form}>
       <form
@@ -334,10 +329,7 @@ export function EmployeeForm() {
           <div className="flex gap-4">
             <InputImage control={form.control} name="profileUrl" />
             {lobbyData && lobbyData.ControllerBrand.name === "Control iD" && (
-              <TakeMemberPhoto
-                savePhoto={handleSavePhoto}
-                sendBase64Photo={handleBase64Photo}
-              />
+              <TakeMemberPhoto savePhoto={handleSavePhoto} />
             )}
           </div>
         </div>

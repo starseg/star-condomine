@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {
   createAccessRuleCommand,
+  createPortalAccessRuleRelationCommand,
   destroyObjectCommand,
 } from "../device/commands";
 import { SyncItem } from "../device/syncItem";
@@ -120,6 +121,12 @@ export default function AccessRuleTable({ devices }: { devices: Device[] }) {
                             accessRule.name,
                             accessRule.priority,
                             accessRule.type
+                          )
+                        }
+                        sendCommand2={() =>
+                          createPortalAccessRuleRelationCommand(
+                            1,
+                            accessRule.accessRuleId
                           )
                         }
                       />

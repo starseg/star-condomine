@@ -10,7 +10,6 @@ import {
   Sheet,
   SheetClose,
   SheetContent,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -27,17 +26,14 @@ import { useSearchParams } from "next/navigation";
 
 interface TakeMemberPhotoProps {
   savePhoto: (file: File) => void;
-  sendBase64Photo: (file: string) => void;
 }
 
-export function TakeMemberPhoto({
-  savePhoto,
-  sendBase64Photo,
-}: TakeMemberPhotoProps) {
+export function TakeMemberPhoto({ savePhoto }: TakeMemberPhotoProps) {
   const [deviceId, setDeviceId] = useState("");
   const [userImage, setUserImage] = useState("");
   const [isLoadPhotoButtonDisabled, setIsLoadPhotoButtonDisabled] =
     useState(false);
+  const [isLoadingImage, setIsLoadingImage] = useState(false);
   const [savedPhoto, setSavedPhoto] = useState(false);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
@@ -64,6 +60,10 @@ export function TakeMemberPhoto({
     fetchDevices();
   }, [session]);
 
+  useEffect(() => {
+    console.log("Imagem Atualizada", userImage);
+  }, [userImage]);
+
   interface item {
     value: number;
     label: string;
@@ -83,6 +83,10 @@ export function TakeMemberPhoto({
         `/control-id/add-command?id=${deviceId}`,
         takePhotoCommand
       );
+      localStorage.setItem(
+        "control_id_timestamp",
+        new Date().getTime().toString()
+      );
       toast.success(
         "Comando executado, a foto será tirada automaticamente em 5 segundos",
         {
@@ -100,31 +104,52 @@ export function TakeMemberPhoto({
   // let userFile: File;
   const [userFile, setUserFile] = useState<File>();
   async function fetchResults(): Promise<void> {
+    setIsLoadingImage(true);
     try {
-      const response = await api.get("/control-id/results");
-      // console.log(response.data);
-      if (response.data.length > 0) {
-        const image = JSON.parse(
-          response.data[response.data.length - 1].response
-        );
+      let result = await api.get("/control-id/results");
+
+      const lastTimestamp = Number(
+        localStorage.getItem("control_id_timestamp")
+      );
+      const resultTimestamp = Number(
+        result.data[result.data.length - 1].timestamp
+      );
+
+      if (lastTimestamp > resultTimestamp) {
+        result = await api.get("/control-id/results");
+        fetchResults();
+      }
+
+      const response = result.data[result.data.length - 1].body.response;
+
+      if (result.data.length > 0) {
+        const image = JSON.parse(response);
         const timestamp = new Date().toISOString().replace(" ", "_");
         setUserFile(base64ToFile(image.user_image, `user_photo_${timestamp}`));
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setUserImage(reader.result as string);
-        };
-        if (userFile) reader.readAsDataURL(userFile);
+        setUserImage(image.user_image);
+
+        // const reader = new FileReader();
+
+        // reader.onloadend = () => {
+        //   console.log(reader.result);
+        //   setUserImage(reader.result as string);
+        // };
+
+        // if (userFile) {
+        //   reader.readAsDataURL(userFile);
+        // }
       }
     } catch (error) {
       console.error("Error fetching results:", error);
+    } finally {
+      setIsLoadingImage(false);
     }
   }
 
   function sendPhoto() {
     if (userFile) {
       savePhoto(userFile);
-      sendBase64Photo(userImage);
       setSavedPhoto(true);
       // console.log(userFile);
     } else {
@@ -191,9 +216,15 @@ export function TakeMemberPhoto({
             processo de comunicação com o dispositivo demora um pouco
           </p>
         </div>
+
+        {isLoadingImage && <p>Carregando Imagem...</p>}
+
         {userImage && (
           <div className="flex flex-col justify-center items-center gap-4 mt-8">
-            <img src={userImage} alt="Imagem do usuário" />
+            <img
+              src={`data:image/png;base64,${userImage}`}
+              alt="Imagem do usuário"
+            />
             <div className="flex gap-4">
               <SheetClose asChild>
                 <Button onClick={() => sendPhoto()}>Salvar</Button>

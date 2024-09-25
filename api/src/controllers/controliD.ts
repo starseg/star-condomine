@@ -44,6 +44,7 @@ export const result = async (req: Request, res: Response): Promise<void> => {
   const response = {
     deviceId: req.query.deviceId,
     queryId: req.query.uuid,
+    timestamp: new Date().getTime(),
     body: req.body,
   };
   console.log(response);
