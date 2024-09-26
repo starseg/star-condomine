@@ -102,10 +102,14 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
               label="Controle de saída"
               content={details.exitControl === "ACTIVE" ? "Sim" : "Não"}
             />
-            <DetailItem
-              label="Portaria apenas para administrador?"
-              content={details.protection === "ACTIVE" ? "Sim" : "Não"}
-            />
+
+            {session?.payload.user.type === "ADMIN" && (
+              <DetailItem
+                label="Portaria apenas para administradores"
+                content={details.protection === "ACTIVE" ? "Sim" : "Não"}
+              />
+            )}
+
             <DetailItem
               label="Procedimentos gerais"
               content={
