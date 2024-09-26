@@ -36,6 +36,7 @@ const FormSchema = z.object({
   telephone: z.string().min(10),
   schedules: z.string().min(3),
   exitControl: z.enum(["ACTIVE", "INACTIVE"]),
+  protection: z.enum(["ACTIVE", "INACTIVE"]),
   procedures: z.string().optional(),
   cep: z.string().min(9),
   state: z.string().min(2).max(2),
@@ -62,6 +63,7 @@ export function LobbyForm() {
       telephone: "",
       schedules: "",
       exitControl: "ACTIVE",
+      protection: "INACTIVE",
       procedures: "",
       cep: "",
       state: "",
@@ -154,6 +156,16 @@ export function LobbyForm() {
       label: "Não",
     },
   ];
+  const protectionOptions = [
+    {
+      value: "ACTIVE",
+      label: "Acessível apenas para admins",
+    },
+    {
+      value: "INACTIVE",
+      label: "Acessível a todos os usuários",
+    },
+  ];
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
@@ -177,6 +189,7 @@ export function LobbyForm() {
         telephone: data.telephone,
         schedules: data.schedules,
         exitControl: data.exitControl,
+        protection: data.protection,
         procedures: data.procedures,
         cep: data.cep,
         state: data.state,
@@ -207,7 +220,7 @@ export function LobbyForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
+        className="space-y-6 w-3/4 lg:w-[40%] 2xl:w-1/3"
       >
         <RadioInput
           control={form.control}
@@ -259,6 +272,15 @@ export function LobbyForm() {
           name="exitControl"
           label="Controle de saída"
           object={exitControlOptions}
+          idExtractor={(item) => item.value}
+          descriptionExtractor={(item) => item.label}
+        />
+
+        <RadioInput
+          control={form.control}
+          name="protection"
+          label="Portaria protegida?"
+          object={protectionOptions}
           idExtractor={(item) => item.value}
           descriptionExtractor={(item) => item.label}
         />

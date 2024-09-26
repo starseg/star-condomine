@@ -86,6 +86,7 @@ export const createLobby = async (
       telephone,
       schedules,
       exitControl,
+      protection,
       procedures,
       datasheet,
       cep,
@@ -107,6 +108,7 @@ export const createLobby = async (
         telephone,
         schedules,
         exitControl,
+        protection,
         procedures,
         datasheet,
         cep,
@@ -140,6 +142,7 @@ export const updateLobby = async (
       telephone,
       schedules,
       exitControl,
+      protection,
       procedures,
       datasheet,
       cep,
@@ -153,6 +156,7 @@ export const updateLobby = async (
       type,
       controllerBrandId,
     } = req.body;
+
     const lobby = await prisma.lobby.update({
       where: { lobbyId: id },
       data: {
@@ -162,6 +166,7 @@ export const updateLobby = async (
         telephone,
         schedules,
         exitControl,
+        protection,
         procedures,
         datasheet,
         cep,
@@ -176,6 +181,7 @@ export const updateLobby = async (
         controllerBrandId,
       },
     });
+
     res.status(200).json(lobby);
   } catch (error) {
     res.status(500).json({ error: "Erro ao atualizar a portaria" });

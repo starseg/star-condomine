@@ -43,6 +43,7 @@ model Lobby {
   code         Int?
   type         LobbyType
   exitControl  Status    @default(ACTIVE)
+  protection   Status    @default(INACTIVE)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 

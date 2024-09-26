@@ -11,6 +11,7 @@ export default function UpdateLobby() {
   interface Values {
     type: "CONDOMINIUM" | "COMPANY" | undefined;
     exitControl: "ACTIVE" | "INACTIVE" | undefined;
+    protection: "ACTIVE" | "INACTIVE" | undefined;
     cnpj: string;
     name: string;
     responsible: string;
@@ -58,6 +59,7 @@ export default function UpdateLobby() {
       setData({
         type: lobby?.type || "CONDOMINIUM",
         exitControl: lobby?.exitControl || "ACTIVE",
+        protection: lobby?.protection || "INACTIVE",
         cnpj: lobby?.cnpj || "",
         name: lobby?.name || "",
         responsible: lobby?.responsible || "",
@@ -82,7 +84,7 @@ export default function UpdateLobby() {
     <>
       <Menu />
       <section className="flex flex-col justify-center items-center mb-12">
-        <h1 className="text-4xl mt-2 mb-4">Atualizar portaria</h1>
+        <h1 className="mt-2 mb-4 text-4xl">Atualizar portaria</h1>
         {lobby && data ? (
           <LobbyUpdateForm preloadedValues={data} lobby={lobby} />
         ) : (

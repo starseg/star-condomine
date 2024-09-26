@@ -27,6 +27,7 @@ const FormSchema = z.object({
   telephone: z.string().min(10),
   schedules: z.string().min(3),
   exitControl: z.enum(["ACTIVE", "INACTIVE"]),
+  protection: z.enum(["ACTIVE", "INACTIVE"]),
   procedures: z.string().optional(),
   cep: z.string().min(9),
   state: z.string().min(2).max(2),
@@ -45,6 +46,7 @@ const FormSchema = z.object({
 interface Values {
   type: "CONDOMINIUM" | "COMPANY" | undefined;
   exitControl: "ACTIVE" | "INACTIVE" | undefined;
+  protection: "ACTIVE" | "INACTIVE" | undefined;
   cnpj: string;
   name: string;
   responsible: string;
@@ -134,6 +136,16 @@ export function LobbyUpdateForm({
       label: "Não",
     },
   ];
+  const protectionOptions = [
+    {
+      value: "ACTIVE",
+      label: "Acessível apenas para admins",
+    },
+    {
+      value: "INACTIVE",
+      label: "Acessível a todos os usuários",
+    },
+  ];
 
   const [removeFile, setRemoveFile] = useState(false);
   const [isSending, setIsSendind] = useState(false);
@@ -166,6 +178,7 @@ export function LobbyUpdateForm({
         schedules: data.schedules,
         procedures: data.procedures,
         exitControl: data.exitControl,
+        protection: data.protection,
         cep: data.cep,
         state: data.state,
         city: data.city,
@@ -195,7 +208,7 @@ export function LobbyUpdateForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
+        className="space-y-6 w-3/4 lg:w-[40%] 2xl:w-1/3"
       >
         <RadioInput
           control={form.control}
@@ -251,6 +264,15 @@ export function LobbyUpdateForm({
           descriptionExtractor={(item) => item.label}
         />
 
+        <RadioInput
+          control={form.control}
+          name="protection"
+          label="Portaria protegida?"
+          object={protectionOptions}
+          idExtractor={(item) => item.value}
+          descriptionExtractor={(item) => item.label}
+        />
+
         <DefaultTextarea
           control={form.control}
           name="procedures"
@@ -273,7 +295,7 @@ export function LobbyUpdateForm({
           />
           <label
             htmlFor="check"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            className="peer-disabled:opacity-70 font-medium text-sm leading-none peer-disabled:cursor-not-allowed"
           >
             Remover arquivo - {removeFile ? "sim" : "não"}
           </label>

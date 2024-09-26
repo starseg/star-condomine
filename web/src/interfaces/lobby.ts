@@ -17,6 +17,7 @@ interface Lobby {
   code: number;
   type: "CONDOMINIUM" | "COMPANY" | undefined;
   exitControl: "ACTIVE" | "INACTIVE" | undefined;
+  protection: "ACTIVE" | "INACTIVE" | undefined;
   controllerBrandId: number;
   createdAt: string;
   updatedAt: string;

@@ -86,7 +86,7 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
     <div>
       {details ? (
         <>
-          <div className="max-w-2xl mx-auto border border-primary py-4 px-12 rounded-md mt-4">
+          <div className="border-primary mx-auto mt-4 px-12 py-4 border rounded-md max-w-2xl">
             <DetailItem label="Nome" content={details.name} />
             <DetailItem
               label="Tipo"
@@ -103,6 +103,10 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
               content={details.exitControl === "ACTIVE" ? "Sim" : "Não"}
             />
             <DetailItem
+              label="Portaria apenas para administrador?"
+              content={details.protection === "ACTIVE" ? "Sim" : "Não"}
+            />
+            <DetailItem
               label="Procedimentos gerais"
               content={
                 details.procedures ? details.procedures : "Não especificados"
@@ -116,7 +120,7 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
               label="Marca dos dispositivos"
               content={details.ControllerBrand.name || ""}
             />
-            <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
+            <div className="bg-primary mt-8 mb-4 w-full h-[1px]"></div>
             <DetailItem label="CEP" content={details.cep} />
             <DetailItem label="Estado" content={details.state} />
             <DetailItem label="Cidade" content={details.city} />
@@ -127,7 +131,7 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
               label="Complemento"
               content={details.complement ? details.complement : "Não há"}
             />
-            <div className="h-[1px] w-full bg-primary mt-8 mb-4"></div>
+            <div className="bg-primary mt-8 mb-4 w-full h-[1px]"></div>
             <DetailItem
               label="Data do registro"
               content={formatDate(details.createdAt)}
@@ -145,10 +149,10 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
               <p>Essa portaria não tem uma ficha técnica</p>
             )}
           </div>
-          <div className="max-w-2xl mx-auto py-4 flex justify-end gap-6">
+          <div className="flex justify-end gap-6 mx-auto py-4 max-w-2xl">
             {session?.payload.user.type === "USER" ? (
               <Button
-                className="text-lg w-32 bg-blue-700 hover:bg-blue-500 text-stone-50"
+                className="bg-blue-700 hover:bg-blue-500 w-32 text-lg text-stone-50"
                 onClick={showPermissionError}
               >
                 <PencilLine className="mr-2" />
@@ -156,14 +160,14 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
               </Button>
             ) : (
               <Link href={`/dashboard/update?id=${details.lobbyId}`}>
-                <Button className="text-lg w-32 bg-blue-700 hover:bg-blue-500 text-stone-50">
+                <Button className="bg-blue-700 hover:bg-blue-500 w-32 text-lg text-stone-50">
                   <PencilLine className="mr-2" />
                   Editar
                 </Button>
               </Link>
             )}
             <Button
-              className="text-lg w-32 bg-destructive hover:bg-red-400 text-destructive-foreground"
+              className="bg-destructive hover:bg-red-400 w-32 text-destructive-foreground text-lg"
               onClick={() => deleteLobby(details.lobbyId, details.datasheet)}
             >
               <Trash className="mr-2" />
@@ -172,7 +176,7 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
           </div>
         </>
       ) : (
-        <div className="w-full flex items-center justify-center">
+        <div className="flex justify-center items-center w-full">
           <LoadingIcon />
         </div>
       )}

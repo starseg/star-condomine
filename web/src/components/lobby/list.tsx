@@ -44,11 +44,13 @@ export default function List() {
       {isLoading ? (
         <SkeletonLobbyCard />
       ) : (
-        <div
-          className="bg-stone-900 p-4 rounded-md flex items-center
-      justify-evenly flex-wrap gap-4 mb-4 max-h-[25rem] overflow-x-auto"
-        >
+        <div className="flex flex-wrap justify-evenly items-center gap-4 bg-stone-900 mb-4 p-4 rounded-md max-h-[25rem] overflow-x-auto">
           {lobbies.map((lobby: Lobby) => {
+            if (
+              session?.payload.user.type === "USER" &&
+              lobby.protection === "ACTIVE"
+            )
+              return;
             const hasActiveProblem = lobby.lobbyProblem.some(
               (problem) => problem.status === "ACTIVE"
             );

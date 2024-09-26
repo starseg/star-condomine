@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `lobby` ADD COLUMN `protected` ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'INACTIVE';
