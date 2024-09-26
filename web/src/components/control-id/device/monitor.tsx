@@ -80,6 +80,17 @@ export function Monitor() {
       return <p className="text-green-500">Usuário encontrado</p>;
     }
 
+    if (response.startsWith(`{"time_zones":[`) ||
+      response.startsWith(`{"access_rules":[`) ||
+      response.startsWith(`{"groups":[`) ||
+      response.startsWith(`{"time_spans":[`)) {
+      return <p className="text-green-500">Busca realizada com sucesso</p>;
+    }
+
+    if (response.startsWith(`{"users":[]}`)) {
+      return <p className="text-red-500">Nenhum usuário foi encontrado</p>;
+    }
+
     if (response.includes(`"message":"Face exists"`)) {
       return <p className="text-red-500">Foto já pertence a outro usuário</p>;
     }
