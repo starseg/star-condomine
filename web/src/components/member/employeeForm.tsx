@@ -283,7 +283,7 @@ export function EmployeeForm() {
 
       if (lobbyData && lobbyData.ControllerBrand.name === "Control iD") {
         await sendControliDCommand(
-          createUserCommand(response.data.memberId, data.name)
+          createUserCommand(response.data.memberId, data.name, data.cpf)
         );
 
         if (data.groupId !== 0) {
