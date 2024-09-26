@@ -2,12 +2,14 @@
 import AccessRuleTimeZoneForm from "@/components/control-id/access-rule-time-zone/accessRuleTimeZoneForm";
 import AccessRuleTimeZoneTable from "@/components/control-id/access-rule-time-zone/accessRuleTimeZoneTable";
 import AccessRuleForm from "@/components/control-id/access-rule/accessRuleForm";
+import { AccessRuleSearchInDevice } from "@/components/control-id/access-rule/accessRuleSearchInDevice";
 import AccessRuleTable from "@/components/control-id/access-rule/accessRuleTable";
 import { Monitor } from "@/components/control-id/device/monitor";
 import SyncDevice from "@/components/control-id/device/syncDevice";
 import GroupAccessRuleForm from "@/components/control-id/group-access-rule/groupAccessRuleForm";
 import GroupAccessRuleTable from "@/components/control-id/group-access-rule/groupAccessRuleTable";
 import GroupForm from "@/components/control-id/group/groupForm";
+import { GroupSearchInDevice } from "@/components/control-id/group/groupSearchInDevice";
 import GroupTable from "@/components/control-id/group/groupTable";
 import MemberGroupForm from "@/components/control-id/member-group/memberGroupForm";
 import MemberGroupTable from "@/components/control-id/member-group/memberGroupTable";
@@ -119,7 +121,10 @@ export default function ControliDConfig({
           >
             <div className="flex justify-between items-end pb-2 w-full">
               <h2 className="text-xl">Regras de acesso</h2>
-              <AccessRuleForm />
+              <div className="flex gap-2">
+                <TimeZoneForm />
+                <AccessRuleSearchInDevice />
+              </div>
             </div>
             <AccessRuleTable devices={devices} />
           </TabsContent>
@@ -136,7 +141,10 @@ export default function ControliDConfig({
           <TabsContent className="p-4 border rounded w-full" value="groups">
             <div className="flex justify-between items-end pb-2 w-full">
               <h2 className="text-xl">Grupos</h2>
-              <GroupForm />
+              <div className="flex gap-2">
+                <GroupForm />
+                <GroupSearchInDevice />
+              </div>
             </div>
             <GroupTable devices={devices} />
           </TabsContent>
@@ -153,8 +161,12 @@ export default function ControliDConfig({
             <VisitorGroupTable devices={devices} />
           </TabsContent>
           <TabsContent className="p-4 border rounded w-full" value="users">
-            <div className="flex items-end mt-4 pb-2 w-full">
+            <div className="flex justify-between items-end mt-4 pb-2 w-full">
               <h2 className="text-xl">Membros</h2>
+              <Link
+                href={`/dashboard/actions/employee/new?lobby=${lobby}`}
+                className={buttonVariants({ variant: "default" })}
+              >Adicionar Membro</Link>
             </div>
             <MemberTable lobby={lobby} />
 
@@ -163,9 +175,7 @@ export default function ControliDConfig({
               <Link
                 href={`/dashboard/actions/visitor/new?lobby=${lobby}`}
                 className={buttonVariants({ variant: "default" })}
-              >
-                Criar visitante
-              </Link>
+              >Adicionar visitante</Link>
             </div>
             <VisitorTable lobby={lobby} />
           </TabsContent>
