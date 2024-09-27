@@ -267,20 +267,30 @@ export const getFilteredMembers = async (
 
     const whereCondition = query
       ? {
-          OR: [
-            { cpf: { contains: query as string } },
-            { rg: { contains: query as string } },
-            { name: { contains: query as string } },
-            { address: { contains: query as string } },
-          ],
-          AND: { lobbyId: lobby },
-        }
+        OR: [
+          { cpf: { contains: query as string } },
+          { rg: { contains: query as string } },
+          { name: { contains: query as string } },
+          { address: { contains: query as string } },
+        ],
+        AND: { lobbyId: lobby },
+      }
       : {};
     const member = await prisma.member.findMany({
       where: whereCondition,
       include: {
         addressType: true,
         telephone: true,
+        MemberGroup: {
+          select: {
+            groupId: true,
+            group: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
     if (!member) {
@@ -303,13 +313,13 @@ export const countMembers = async (
 
     const whereCondition = query
       ? {
-          OR: [
-            { cpf: { contains: query as string } },
-            { name: { contains: query as string } },
-            { address: { contains: query as string } },
-          ],
-          AND: { lobbyId: lobby },
-        }
+        OR: [
+          { cpf: { contains: query as string } },
+          { name: { contains: query as string } },
+          { address: { contains: query as string } },
+        ],
+        AND: { lobbyId: lobby },
+      }
       : {};
     const member = await prisma.member.count({
       where: whereCondition,

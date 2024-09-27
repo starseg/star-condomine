@@ -203,8 +203,8 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                         {type === "resident"
                           ? member.address
                             ? member.addressType.description +
-                              " " +
-                              member.address
+                            " " +
+                            member.address
                             : "Endereço não cadastrado"
                           : member.rg}
                       </TableCell>
@@ -214,12 +214,13 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                             ? member.telephone[0].number
                             : "Nenhum telefone cadastrado"
                           : member.position
-                          ? member.position
-                          : "Cargo não cadastrado"}
+                            ? member.position
+                            : "Cargo não cadastrado"}
                       </TableCell>
-                      {brand === "Control-iD" && (
+                      {(brand === "Control-iD") && (
                         <TableCell>
-                          {member.MemberGroup.length > 0 ? (
+
+                          {member?.MemberGroup?.length > 0 ? (
                             <p className="text-green-500">
                               {member.MemberGroup[0].group.name}
                             </p>
