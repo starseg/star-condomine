@@ -122,7 +122,7 @@ export default function ControliDConfig({
             <div className="flex justify-between items-end pb-2 w-full">
               <h2 className="text-xl">Regras de acesso</h2>
               <div className="flex gap-2">
-                <TimeZoneForm />
+                <AccessRuleForm />
                 <AccessRuleSearchInDevice />
               </div>
             </div>
