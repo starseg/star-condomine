@@ -14,6 +14,7 @@ import DefaultCheckbox from "../form/checkboxDefault";
 import DefaultCombobox from "../form/comboboxDefault";
 import DefaultInput from "../form/inputDefault";
 import DefaultTextarea from "../form/textareaDefault";
+import { toast } from "react-toastify";
 
 const FormSchema = z.object({
   visitor: z.number(),
@@ -154,8 +155,10 @@ export function AccessForm() {
       });
       router.back();
     } catch (error) {
+      toast.error(
+        "Erro ao enviar os dados, por favor verifique se todos os campos foram preenchidos corretamente"
+      );
       console.error("Erro ao enviar dados para a API:", error);
-      throw error;
     } finally {
       setIsSendind(false);
     }

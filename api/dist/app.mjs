@@ -1,9 +1,21 @@
 import {
+  timeZoneRouter_default
+} from "./chunk-5T45NKWS.mjs";
+import {
+  vehicleRouter_default
+} from "./chunk-U6QIBRBD.mjs";
+import {
   visitorGroupRouter_default
 } from "./chunk-CA64PUMW.mjs";
 import {
   visitorRouter_default
-} from "./chunk-DGVLP3FS.mjs";
+} from "./chunk-2PSGKKRZ.mjs";
+import {
+  memberRouter_default
+} from "./chunk-5GBSMGE4.mjs";
+import {
+  notificationRouter_default
+} from "./chunk-SAEFZEXS.mjs";
 import {
   operatorRouter_default
 } from "./chunk-BQGPUEAW.mjs";
@@ -23,11 +35,11 @@ import {
   timeSpanRouter_default
 } from "./chunk-SNSY3NOX.mjs";
 import {
-  timeZoneRouter_default
-} from "./chunk-5T45NKWS.mjs";
+  groupAccessRuleRouter_default
+} from "./chunk-NLBAVEZB.mjs";
 import {
-  vehicleRouter_default
-} from "./chunk-HIPSN6P3.mjs";
+  groupRouter_default
+} from "./chunk-JTZZZLCN.mjs";
 import {
   guestRouter_default
 } from "./chunk-M7CZYJRM.mjs";
@@ -39,7 +51,7 @@ import {
 } from "./chunk-JNWPKEUF.mjs";
 import {
   lobbyRouter_default
-} from "./chunk-2PFR7Z67.mjs";
+} from "./chunk-VLIAS2I3.mjs";
 import {
   loggingRouter_default
 } from "./chunk-4QWUICRU.mjs";
@@ -47,14 +59,14 @@ import {
   memberGroupRouter_default
 } from "./chunk-PESP3FIF.mjs";
 import {
-  memberRouter_default
-} from "./chunk-NYGG6EBT.mjs";
+  accessRuleTimeZoneRouter_default
+} from "./chunk-C4TXYZTO.mjs";
 import {
-  notificationRouter_default
-} from "./chunk-SAEFZEXS.mjs";
+  areaAccessRuleRouter_default
+} from "./chunk-OFZ3Q7NX.mjs";
 import {
   controliDRouter_default
-} from "./chunk-OKLMUKDN.mjs";
+} from "./chunk-Q3BW7DX5.mjs";
 import {
   controllerBrandRouter_default
 } from "./chunk-HPBJW6HD.mjs";
@@ -70,12 +82,8 @@ import {
 import {
   generalDataRouter_default
 } from "./chunk-4B5DSNX4.mjs";
-import {
-  groupAccessRuleRouter_default
-} from "./chunk-NLBAVEZB.mjs";
-import {
-  groupRouter_default
-} from "./chunk-JTZZZLCN.mjs";
+import "./chunk-OVDLKTAO.mjs";
+import "./chunk-CVIVGIV2.mjs";
 import "./chunk-V7FQ4JXC.mjs";
 import {
   authenticateOperator
@@ -90,45 +98,41 @@ import {
   accessRuleRouter_default
 } from "./chunk-IBYSSW3J.mjs";
 import {
-  accessRuleTimeZoneRouter_default
-} from "./chunk-C4TXYZTO.mjs";
-import {
-  areaAccessRuleRouter_default
-} from "./chunk-OFZ3Q7NX.mjs";
-import {
   verifyToken
 } from "./chunk-JI5AOONO.mjs";
+import "./chunk-PXWG5AJJ.mjs";
+import "./chunk-VRWGETS4.mjs";
 import "./chunk-LRECTTLD.mjs";
 import "./chunk-O6QQWDK7.mjs";
 import "./chunk-N5A7YI3H.mjs";
 import "./chunk-AOUVEGIY.mjs";
 import "./chunk-QG6Q6HYV.mjs";
 import "./chunk-6KHMAFSH.mjs";
-import "./chunk-OVDLKTAO.mjs";
-import "./chunk-W22MSNNP.mjs";
-import "./chunk-YXAZVKDX.mjs";
+import "./chunk-E6ACWUJ6.mjs";
+import "./chunk-62OVZDAY.mjs";
+import "./chunk-GZUYO6MM.mjs";
 import "./chunk-CJDDFBBM.mjs";
 import "./chunk-RAU2RGZA.mjs";
 import "./chunk-75DSBTFO.mjs";
-import "./chunk-KKNRLSHO.mjs";
+import "./chunk-5XTVRIK7.mjs";
 import "./chunk-3K56DYEE.mjs";
 import "./chunk-DEJJPRBX.mjs";
-import "./chunk-PXWG5AJJ.mjs";
-import "./chunk-VRWGETS4.mjs";
+import "./chunk-J5WZO7TA.mjs";
+import "./chunk-W5UY2ZTU.mjs";
 import "./chunk-N3NYV6JB.mjs";
 import "./chunk-Q5KE3UIO.mjs";
 import "./chunk-RPSIJF36.mjs";
 import "./chunk-2PSRWG6C.mjs";
 import "./chunk-7NYOTFRW.mjs";
 import "./chunk-YNESARUD.mjs";
-import "./chunk-E6ACWUJ6.mjs";
-import "./chunk-62OVZDAY.mjs";
+import {
+  swagger_output_default
+} from "./chunk-3XPVQE7J.mjs";
 import "./chunk-JYFV5C2R.mjs";
 import "./chunk-2JQF3GBM.mjs";
 import "./chunk-FADTVDDG.mjs";
-import "./chunk-J5WZO7TA.mjs";
 import "./chunk-BXWGZ4DM.mjs";
-import "./chunk-BAXCZ7AV.mjs";
+import "./chunk-HEBXNMVQ.mjs";
 
 // src/app.ts
 import bodyParser from "body-parser";
@@ -136,6 +140,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import helmet from "helmet";
+import swaggerUi from "swagger-ui-express";
 dotenv.config();
 var app = express();
 app.use(express.json());
@@ -154,6 +159,7 @@ var corsOptions = {
 app.use(cors(corsOptions));
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swagger_output_default));
 app.get("/", (request, response) => {
   response.json({ message: "API DO SISTEMA STAR CONDOMINE" });
 });

@@ -1,4 +1,3 @@
-import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import express, { NextFunction, Request, Response } from "express";
@@ -41,7 +40,9 @@ import visitorGroupRouter from "./routes/visitorGroupRouter";
 dotenv.config();
 
 const app = express();
-app.use(express.json());
+
+app.use(express.json({ limit: 10000000 }));
+app.use(express.urlencoded({ limit: 10000000, extended: true }));
 
 app.use(helmet());
 
@@ -58,8 +59,8 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-app.use(bodyParser.json({ limit: "10mb" }));
-app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
+//app.use(bodyParser.json({ limit: "10mb" }));
+//app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.get("/", (request: Request, response: Response) => {

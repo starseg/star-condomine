@@ -10,6 +10,7 @@ import {
   updateVehicle
 } from "../chunk-OVDLKTAO.mjs";
 import "../chunk-BXWGZ4DM.mjs";
+import "../chunk-HEBXNMVQ.mjs";
 export {
   createVehicle,
   deleteVehicle,
