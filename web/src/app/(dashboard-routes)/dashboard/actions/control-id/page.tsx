@@ -1,4 +1,5 @@
 "use client";
+import { AccessLogs } from "@/components/control-id/access-logs/accessLogs";
 import AccessRuleTimeZoneForm from "@/components/control-id/access-rule-time-zone/accessRuleTimeZoneForm";
 import AccessRuleTimeZoneTable from "@/components/control-id/access-rule-time-zone/accessRuleTimeZoneTable";
 import AccessRuleForm from "@/components/control-id/access-rule/accessRuleForm";
@@ -69,10 +70,11 @@ export default function ControliDConfig({
           <SyncDevice />
         </div>
         <Tabs
-          defaultValue="times"
+          defaultValue="logs"
           className="flex flex-col justify-center items-center w-full"
         >
           <TabsList className="w-full">
+            <TabsTrigger value="logs" className="mr-8">Registros</TabsTrigger>
             <TabsTrigger value="times">Horários</TabsTrigger>
             <TabsTrigger value="time-access" className="text-xl">
               <ArrowsHorizontal />
@@ -87,6 +89,9 @@ export default function ControliDConfig({
             </TabsTrigger>
             <TabsTrigger value="users">Usuários</TabsTrigger>
           </TabsList>
+          <TabsContent className="p-4 border rounded w-full" value="logs">
+            <AccessLogs />
+          </TabsContent>
           <TabsContent className="p-4 border rounded w-full" value="times">
             <div className="flex justify-between items-end pb-2 w-full">
               <h2 className="text-xl">Horários</h2>

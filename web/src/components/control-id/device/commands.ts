@@ -48,6 +48,15 @@ export const listPortalsCommand = {
   contentType: "application/json",
 };
 
+export const listLogsCommand = {
+  verb: "POST",
+  endpoint: "load_objects",
+  body: { object: "access_logs" },
+  contentType: "application/json",
+};
+
+
+
 // GET COMMANDS
 export const GetUserByIdCommand = (id: number) => {
   return {

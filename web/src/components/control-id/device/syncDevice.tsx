@@ -364,7 +364,7 @@ export default function SyncDevice() {
                 <SelectGroup>
                   {devices.map((device) => (
                     <SelectItem key={device.deviceId} value={device.name}>
-                      {device.ip} - {device.name} - {device.lobby.name}
+                      {device.ip} - {device.description} - {device.lobby.name}
                     </SelectItem>
                   ))}
                 </SelectGroup>

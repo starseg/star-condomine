@@ -20,7 +20,7 @@ export const addCommand = async (
 
 export const push = async (req: Request, res: Response): Promise<void> => {
   const deviceId = req.query.deviceId;
-  // console.log("Device ID: ", deviceId);
+  console.log("Device ID: ", deviceId);
   // console.log("commandQueue: ", commandQueue);
   // console.log(deviceId, commandQueue[0] ? commandQueue[0].id : "empty");
 

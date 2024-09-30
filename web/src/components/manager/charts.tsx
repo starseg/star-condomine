@@ -1,4 +1,7 @@
 import { Chart } from "react-google-charts";
+import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts"
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "../ui/chart";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 
 export function ProblemChart(props: ProblemChartProps) {
   const data = [
@@ -83,42 +86,60 @@ export function ProblemByLobbyChart(data: AccessByLobbyChartProps[]) {
 
 export function AccessesByLobbyChart(data: AccessByLobbyChartProps[]) {
   const chartData: any = [];
-  chartData.push(["Portaria", "Acessos"]);
   for (let i = 0; i < Object.keys(data).length; i++) {
     const lobby = data[i].lobby;
     const count = data[i].count;
-    chartData.push([lobby, count]);
+    chartData.push({ portaria: lobby, acessos: count });
   }
 
+  // for (let i = 0; i < 20; i++) {
+  //   chartData.push({ portaria: `Portaria ${i}`, acessos: Math.floor(Math.random() * 5000) })
+  // }
+
+
+
+  console.log(chartData)
+
   const options = {
-    title: "Acessos por portaria",
-    backgroundColor: "#0c0a09",
-    colors: ["#FFA500"],
-    titleTextStyle: {
-      color: "white",
-      fontSize: 18,
-    },
-    hAxis: {
-      textStyle: {
-        color: "white", // Cor do texto no eixo horizontal
-      },
-    },
-    vAxis: {
-      textStyle: {
-        color: "white", // Cor do texto no eixo vertical
-      },
-    },
-    legend: "none",
-  };
+    acessos: {
+      label: "Acessos",
+      color: "#FFA500"
+    }
+  } satisfies ChartConfig;
 
   return (
-    <Chart
-      chartType="BarChart"
-      data={chartData}
-      options={options}
-      height={"950px"}
-      width={"950px"}
-    />
+    <Card className="w-[900px]">
+      <CardHeader>
+        <CardTitle>Acessos por portaria</CardTitle>
+        <CardDescription>Quantidade de acessos por portaria</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={options} className="min-w-[800px]">
+          <BarChart data={chartData} accessibilityLayer layout="vertical" margin={{ left: 5 }}>
+            <YAxis
+              dataKey="portaria"
+              type="category"
+              tickLine={false}
+              tickMargin={-5}
+              axisLine={false}
+              tickFormatter={(value) => value.slice(0, 8) + "..."}
+            />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent includeHidden />} />
+            <XAxis dataKey="acessos" type="number" padding={{ left: 10 }} />
+            <Bar dataKey="acessos" fill="#FFA500" radius={5}>
+              <LabelList
+                dataKey="acessos"
+                position="right"
+                offset={8}
+                className="fill-foreground"
+                fontSize={12}
+              />
+            </Bar>
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
+    </Card >
+
   );
 }
 
