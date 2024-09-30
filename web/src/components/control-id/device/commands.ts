@@ -55,8 +55,6 @@ export const listLogsCommand = {
   contentType: "application/json",
 };
 
-
-
 // GET COMMANDS
 export const GetUserByIdCommand = (id: number) => {
   return {
@@ -119,7 +117,7 @@ export const setUserFaceCommand = (
     endpoint: `user_set_image_list`,
     contentType: "application/json",
     body: {
-      match: true,
+      match: false,
       user_images: [
         {
           user_id: user,
