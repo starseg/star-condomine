@@ -127,7 +127,7 @@ export function SyncMember({
               <PlusCircle />
             </Button>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {deviceList.map((device) => (
               <p
                 key={device}
