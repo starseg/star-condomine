@@ -49,6 +49,7 @@
     "react-hook-form": "^7.48.2",
     "react-input-mask": "^2.0.4",
     "react-toastify": "^10.0.5",
+    "recharts": "^2.12.7",
     "sweetalert2": "^11.10.1",
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
