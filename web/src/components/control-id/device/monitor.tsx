@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 
 interface ControlIdResult {
   deviceId: string;
+  timestamp: number;
   body: {
     response?: string;
     error?: string;
@@ -47,6 +48,7 @@ export function Monitor() {
       const intervalId = setInterval(() => {
         fetchControlIdResults();
       }, 5000);
+
       return () => clearInterval(intervalId);
     }
   }, [isWatching, session]);
@@ -55,6 +57,7 @@ export function Monitor() {
     if (response.startsWith(`{"ids":`)) {
       return <p className="text-green-500">Criado com sucesso</p>;
     }
+
     if (response.startsWith(`{"changes":`)) {
       const changes = response.split(":")[1].slice(0, -1);
       if (Number(changes) === 0) {
@@ -63,36 +66,82 @@ export function Monitor() {
         return <p className="text-green-500">Mudanças aplicadas: {changes}</p>;
       }
     }
+
     if (response.startsWith(`{"user_image":`)) {
       return <p className="text-green-500">Imagem registrada pela câmera</p>;
     }
+
     if (response.endsWith(`"success":true}]}`)) {
       return <p className="text-green-500">Foto cadastrada</p>;
     }
+
     if (response.includes(`"success":false`)) {
+      if (response.includes(`"message":"Face exists"`)) {
+        return <p className="text-red-500">Foto já pertence a outro usuário</p>;
+      }
+
+      if (response.includes(`"message":Failed: Image file not recognized"`)) {
+        return (
+          <p className="text-red-500">
+            A imagem não foi reconhecida, tente enviar um arquivo PNG ou JPG
+          </p>
+        );
+      }
+
+      if (
+        response.includes(`"message":"Face pose not centered"`) ||
+        response.includes(`"message":"Face not centered"`)
+      ) {
+        return <p className="text-red-500">A face não está centralizada</p>;
+      }
+
+      if (response.includes(`"message":"Low sharpness"`)) {
+        return (
+          <p className="text-red-500">A qualidade da imagem está muito baixa</p>
+        );
+      }
+
+      if (
+        response.includes(`"message":"Face too close"`) ||
+        response.includes(`"message:"Face too distant"`)
+      ) {
+        return (
+          <p className="text-red-500">
+            A foto está muito longe ou muito perto da camera
+          </p>
+        );
+      }
+
+      if (response.includes(`"message":"Face not detected"`)) {
+        return (
+          <p className="text-red-500">
+            Não foi possivel detectar um rosto na foto
+          </p>
+        );
+      }
+
       return (
         <p className="text-red-500">
           Foto não cadastrada, tente sincronizar novamente
         </p>
       );
     }
+
     if (response.startsWith(`{"users":[{"id":`)) {
       return <p className="text-green-500">Usuário encontrado</p>;
     }
 
-    if (response.startsWith(`{"time_zones":[`) ||
+    if (
+      response.startsWith(`{"time_zones":[`) ||
       response.startsWith(`{"access_rules":[`) ||
       response.startsWith(`{"groups":[`) ||
-      response.startsWith(`{"time_spans":[`)) {
+      response.startsWith(`{"time_spans":[`)
+    ) {
       return <p className="text-green-500">Busca realizada com sucesso</p>;
     }
 
     if (response.startsWith(`{"users":[]}`)) {
       return <p className="text-red-500">Nenhum usuário foi encontrado</p>;
-    }
-
-    if (response.includes(`"message":"Face exists"`)) {
-      return <p className="text-red-500">Foto já pertence a outro usuário</p>;
     }
 
     return <p>{response}</p>;
@@ -101,6 +150,7 @@ export function Monitor() {
     if (error.startsWith(`constraint failed: UNIQUE constraint failed`)) {
       return <p className="text-red-500">Dado já cadastrado</p>;
     }
+
     if (error === `constraint failed: FOREIGN KEY constraint failed`) {
       return (
         <p className="text-red-500">
@@ -108,6 +158,7 @@ export function Monitor() {
         </p>
       );
     }
+
     return <p>{error}</p>;
   }
 
@@ -133,11 +184,28 @@ export function Monitor() {
                 .slice()
                 .reverse()
                 .map((item, index) => {
+                  const date = new Date(item.timestamp).toLocaleDateString();
+                  const time = new Date(item.timestamp).toLocaleTimeString();
+
                   return (
                     <div key={index}>
-                      {item.body.response &&
-                        responseDictionary(item.body.response)}
-                      {item.body.error && errorDictionary(item.body.error)}
+                      {item.body.response && (
+                        <div>
+                          {responseDictionary(item.body.response)}
+                          <span className="text-gray-400 text-sm">
+                            {date} - {time}
+                          </span>
+                        </div>
+                      )}
+
+                      {item.body.error && (
+                        <div>
+                          {errorDictionary(item.body.error)}
+                          <span className="text-gray-400 text-sm">
+                            {date} - {time}
+                          </span>
+                        </div>
+                      )}
                       <DropdownMenuSeparator />
                     </div>
                   );
