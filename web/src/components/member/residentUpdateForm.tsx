@@ -38,6 +38,7 @@ import {
   modifyObjectCommand,
   setUserFaceCommand,
 } from "../control-id/device/commands";
+import { resizeImage } from "../form/resizeImage";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -246,8 +247,11 @@ export function ResidentUpdateForm({
     } else if (data.profileUrl instanceof File && data.profileUrl.size > 0) {
       const timestamp = new Date().toISOString();
       const fileExtension = data.profileUrl.name.split(".").pop();
+
+      const imageFile = await resizeImage(data.profileUrl);
+
       file = await handleFileUpload(
-        data.profileUrl,
+        imageFile,
         `pessoas/foto-perfil-${timestamp}.${fileExtension}`
       );
     } else if (member?.profileUrl) file = member.profileUrl;

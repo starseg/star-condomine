@@ -29,6 +29,7 @@ import MaskInput from "../form/inputMask";
 import RadioInput from "../form/inputRadio";
 import DefaultTextarea from "../form/textareaDefault";
 import { Checkbox } from "../ui/checkbox";
+import { resizeImage } from "../form/resizeImage";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -178,9 +179,12 @@ export function VisitorUpdateForm({
     } else if (data.profileUrl instanceof File && data.profileUrl.size > 0) {
       const timestamp = new Date().toISOString();
       const fileExtension = data.profileUrl.name.split(".").pop();
+
+      const imageFile = await resizeImage(data.profileUrl);
+
       file = await handleFileUpload(
-        data.profileUrl,
-        `pessoas/foto-perfil-visita-${timestamp}.${fileExtension}`
+        imageFile,
+        `pessoas/foto-perfil-${timestamp}.${fileExtension}`
       );
     } else if (visitor?.profileUrl) file = visitor.profileUrl;
     else file = "";

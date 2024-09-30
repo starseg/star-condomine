@@ -30,6 +30,7 @@ import InputImage from "../form/inputImage";
 import MaskInput from "../form/inputMask";
 import RadioInput from "../form/inputRadio";
 import DefaultTextarea from "../form/textareaDefault";
+import { resizeImage } from "../form/resizeImage";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -164,12 +165,17 @@ export function EmployeeUpdateForm({
     } else if (data.profileUrl instanceof File && data.profileUrl.size > 0) {
       const timestamp = new Date().toISOString();
       const fileExtension = data.profileUrl.name.split(".").pop();
+
+      const imageFile = await resizeImage(data.profileUrl);
+
       file = await handleFileUpload(
-        data.profileUrl,
+        imageFile,
         `pessoas/foto-perfil-${timestamp}.${fileExtension}`
       );
     } else if (member?.profileUrl) file = member.profileUrl;
     else file = "";
+
+    console.log(data.profileUrl);
 
     // FAZ O UPLOAD DO DOCUMENTO
     let document;

@@ -26,6 +26,7 @@ import MaskInput from "../form/inputMask";
 import DefaultCombobox from "../form/comboboxDefault";
 import DefaultCheckbox from "../form/checkboxDefault";
 import DefaultTextarea from "../form/textareaDefault";
+import { resizeImage } from "../form/resizeImage";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -182,8 +183,11 @@ export function ResidentForm() {
     if (data.profileUrl instanceof File && data.profileUrl.size > 0) {
       const timestamp = new Date().toISOString();
       const fileExtension = data.profileUrl.name.split(".").pop();
+
+      const imageFile = await resizeImage(data.profileUrl);
+
       file = await handleFileUpload(
-        data.profileUrl,
+        imageFile,
         `pessoas/foto-perfil-${timestamp}.${fileExtension}`
       );
     } else file = "";

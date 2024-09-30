@@ -39,6 +39,7 @@ import RadioInput from "../form/inputRadio";
 import DefaultCombobox from "../form/comboboxDefault";
 import { TakeMemberPhoto } from "../control-id/takeMemberPhoto";
 import { toast } from "react-toastify";
+import { resizeImage } from "../form/resizeImage";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -196,9 +197,12 @@ export function VisitorForm() {
     if (data.profileUrl instanceof File && data.profileUrl.size > 0) {
       const timestamp = new Date().toISOString();
       const fileExtension = data.profileUrl.name.split(".").pop();
+
+      const imageFile = await resizeImage(data.profileUrl);
+
       file = await handleFileUpload(
-        data.profileUrl,
-        `pessoas/foto-perfil-visita-${timestamp}.${fileExtension}`
+        imageFile,
+        `pessoas/foto-perfil-${timestamp}.${fileExtension}`
       );
     } else file = "";
 
