@@ -14,6 +14,7 @@ export const verifyToken = (
 
   if (!token) {
     res.status(401).json({ error: "Token não fornecido" });
+    console.log("Sem Token")
   } else {
     jwt.verify(token, secretKey, (err, decoded) => {
       if (err) {
