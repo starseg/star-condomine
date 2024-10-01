@@ -101,7 +101,7 @@ export default function ControliDConfig({
               <h2 className="text-xl">Horários</h2>
               <div className="flex gap-2">
                 <TimeZoneForm />
-                <TimeZoneSearchInDevice />
+                {/* <TimeZoneSearchInDevice /> */}
               </div>
             </div>
             <TimeZoneTable />
@@ -109,7 +109,7 @@ export default function ControliDConfig({
               <h2 className="text-xl">Intervalos</h2>
               <div className="flex gap-2">
                 <TimeSpanForm />
-                <TimeSpanSearchInDevice />
+                {/* <TimeSpanSearchInDevice /> */}
               </div>
             </div>
             <TimeSpanTable />
@@ -132,7 +132,7 @@ export default function ControliDConfig({
               <h2 className="text-xl">Regras de acesso</h2>
               <div className="flex gap-2">
                 <AccessRuleForm />
-                <AccessRuleSearchInDevice />
+                {/* <AccessRuleSearchInDevice /> */}
               </div>
             </div>
             <AccessRuleTable devices={devices} />
@@ -152,7 +152,7 @@ export default function ControliDConfig({
               <h2 className="text-xl">Grupos</h2>
               <div className="flex gap-2">
                 <GroupForm />
-                <GroupSearchInDevice />
+                {/* <GroupSearchInDevice /> */}
               </div>
             </div>
             <GroupTable devices={devices} />
