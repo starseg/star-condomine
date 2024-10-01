@@ -52,6 +52,7 @@ const corsOptions = {
     "https://starcondomine.starseg.com",
     "https://starcondomineapi.starseg.com",
     "http://localhost:3000",
+    "*"
   ],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
