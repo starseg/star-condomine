@@ -32,7 +32,7 @@ export default function RootLayout({
       <body className={cn(nunito.className, "dark")}>
         <NextAuthSessionProvider>
           {children}
-          <ToastContainer position="bottom-right" autoClose={2500} />
+          <ToastContainer position="bottom-right" autoClose={2500} theme="colored" />
         </NextAuthSessionProvider>
       </body>
     </html>
