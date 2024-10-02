@@ -33,7 +33,7 @@ export const addCommand = async (
 export const push = async (req: Request, res: Response): Promise<void> => {
   const deviceId = req.query.deviceId;
 
-  //console.log("Device ID: ", deviceId);
+  console.log("Device ID: ", deviceId);
   console.log("commandQueue: ", commandQueue);
   //console.log("activeDevices: ", activeDevices)
   // console.log(deviceId, commandQueue[0] ? commandQueue[0].id : "empty");
@@ -82,7 +82,7 @@ export const result = async (req: Request, res: Response): Promise<void> => {
     timestamp: new Date().getTime(),
     body: req.body,
   };
-  //console.log(response);
+  console.log(response);
   resultLog.push(response);
   if (resultLog.length > 20) {
     resultLog.shift();
