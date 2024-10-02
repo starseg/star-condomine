@@ -23,6 +23,7 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { ArrowsClockwise, PlusCircle } from "@phosphor-icons/react/dist/ssr";
 import { createUserCommand, setUserFaceCommand } from "./commands";
+import { getBase64Photo } from "@/components/member/getBase64Photo";
 
 export function SyncMember({
   member,
@@ -35,23 +36,7 @@ export function SyncMember({
   const [id, setId] = useState("");
   const [deviceList, setDeviceList] = useState<string[]>([]);
 
-  const getBase64Photo = async () => {
-    if (session)
-      try {
-        const response = await api.get(
-          `member/find/${member.memberId}/base64photo`,
-          {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          }
-        );
-        return response.data.base64;
-      } catch (error) {
-        console.error("Erro ao obter dados:", error);
-      }
-    return "";
-  };
+
 
   function addDevice() {
     const isSetDevice = deviceList.find((device) => device === id);
@@ -63,7 +48,7 @@ export function SyncMember({
   }
 
   async function synchronize() {
-    const base64: string = await getBase64Photo(); // get user photo (base64)
+    const base64: string = await getBase64Photo(session, member.memberId); // get user photo (base64)
     if (deviceList.length > 0) {
       deviceList.map(async (device) => {
         const timestamp = ~~(Date.now() / 1000);

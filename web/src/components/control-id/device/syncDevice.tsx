@@ -32,7 +32,9 @@ import {
   createPortalAccessRuleRelationCommand,
   createTimeSpanCommand,
   createTimeZoneCommand,
+  createUserCommand,
   createUserGroupRelationCommand,
+  setUserFaceCommand,
 } from "./commands";
 import { CleanDevice } from "./cleanDevice";
 import { useSearchParams } from "next/navigation";
@@ -44,13 +46,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { getBase64Photo } from "@/components/member/getBase64Photo";
+import { getVisitorBase64Photo } from "@/components/visitor/getBase64Photo";
 
 const FormSchema = z.object({
   timeZone: z.boolean(),
   timeSpan: z.boolean(),
   accessRules: z.boolean(),
   groups: z.boolean(),
+  members: z.boolean(),
+  visitors: z.boolean(),
   memberGroups: z.boolean(),
+  visitorGroups: z.boolean(),
   groupAccessRules: z.boolean(),
   areaAccessRules: z.boolean(),
   accessRuleTimeZones: z.boolean(),
@@ -64,7 +71,10 @@ export default function SyncDevice() {
       timeSpan: true,
       accessRules: true,
       groups: true,
+      members: true,
+      visitors: true,
       memberGroups: true,
+      visitorGroups: true,
       groupAccessRules: true,
       areaAccessRules: true,
       accessRuleTimeZones: true,
@@ -100,11 +110,12 @@ export default function SyncDevice() {
     try {
       const device = devices.find((device) => device.name === serialId);
       if (device) {
+
         if (data.timeZone) {
           // Enviar TimeZones para o dispositivo
           let timeZones = [];
           try {
-            const response = await api.get("timeZone", {
+            const response = await api.get(`timeZone/lobby/${lobby}`, {
               headers: {
                 Authorization: `Bearer ${session?.token.user.token}`,
               },
@@ -122,11 +133,12 @@ export default function SyncDevice() {
             });
           }
         }
+
         if (data.timeSpan) {
           // Enviar TimeSpans para o dispositivo
           let timeSpans = [];
           try {
-            const response = await api.get("timeSpan", {
+            const response = await api.get(`timeSpan/lobby/${lobby}`, {
               headers: {
                 Authorization: `Bearer ${session?.token.user.token}`,
               },
@@ -159,11 +171,12 @@ export default function SyncDevice() {
             });
           }
         }
+
         if (data.accessRules) {
           // Enviar accessRules para o dispositivo
           let accessRules = [];
           try {
-            const response = await api.get("accessRule", {
+            const response = await api.get(`accessRule/lobby/${lobby}`, {
               headers: {
                 Authorization: `Bearer ${session?.token.user.token}`,
               },
@@ -194,11 +207,12 @@ export default function SyncDevice() {
             });
           }
         }
+
         if (data.groups) {
           // Enviar groups para o dispositivo
           let groups = [];
           try {
-            const response = await api.get("group", {
+            const response = await api.get(`group/lobby/${lobby}`, {
               headers: {
                 Authorization: `Bearer ${session?.token.user.token}`,
               },
@@ -216,6 +230,111 @@ export default function SyncDevice() {
             });
           }
         }
+
+        if (data.members) {
+          let members = [];
+          try {
+            const response = await api.get(`member/lobby/${lobby}`, {
+              headers: {
+                Authorization: `Bearer ${session?.token.user.token}`,
+              },
+            });
+            members = response.data;
+          } catch (error) {
+            console.error("Erro ao obter dados:", error);
+          }
+
+          if (members.length > 0) {
+            for (const member of members) {
+              const base64: string = await getBase64Photo(session, member.memberId); // get user photo (base64)
+              const timestamp = ~~(Date.now() / 1000);
+
+              console.log("Adicionando membro ao dispositivo...");
+
+              await api.post(
+                `/control-id/add-command?id=${device.name}`,
+                createUserCommand(
+                  member.memberId,
+                  member.name,
+                  member?.cpf || member?.rg
+                )
+              );
+
+              await api.post(
+                `/control-id/add-command?id=${device.name}`,
+                setUserFaceCommand(member.memberId, base64, timestamp)
+              );
+            }
+          }
+        }
+
+        if (data.visitors) {
+          let visitors = [];
+          try {
+            const response = await api.get(`visitor/lobby/${lobby}`, {
+              headers: {
+                Authorization: `Bearer ${session?.token.user.token}`,
+              },
+            });
+            visitors = response.data;
+          } catch (error) {
+            console.error("Erro ao obter dados:", error);
+          }
+
+          if (visitors.length > 0) {
+            for (const visitor of visitors) {
+              const base64: string = await getVisitorBase64Photo(session, visitor.visitorId); // get user photo (base64)
+              const timestamp = ~~(Date.now() / 1000);
+
+              console.log("Adicionando visitante ao dispositivo...");
+
+              await api.post(
+                `/control-id/add-command?id=${device.name}`,
+                createUserCommand(
+                  visitor.visitorId + 10000,
+                  visitor.name,
+                  visitor?.cpf || visitor?.rg,
+                  1 // visitor flag
+                )
+              );
+
+              await api.post(
+                `/control-id/add-command?id=${device.name}`,
+                setUserFaceCommand(visitor.visitorId + 10000, base64, timestamp)
+              );
+            }
+          }
+        }
+
+        if (data.visitorGroups) {
+          let visitorGroups = [];
+
+          try {
+            const response = await api.get(`visitorGroup/lobby/${lobby}`, {
+              headers: {
+                Authorization: `Bearer ${session?.token.user.token}`,
+              },
+            });
+            visitorGroups = response.data;
+          } catch (error) {
+            console.error("Erro ao obter dados:", error);
+          }
+
+          console.log("Adicionando a relação de visitantes x grupos ao dispositivo...");
+
+          if (visitorGroups.length > 0) {
+            for (const visitorGroup of visitorGroups) {
+              await api.post(
+                `/control-id/add-command?id=${device.name}`,
+                createUserGroupRelationCommand(
+                  visitorGroup.visitorId + 10000,
+                  visitorGroup.groupId
+                )
+              );
+            }
+          }
+        }
+
         if (data.memberGroups) {
           let memberGroups = [];
           try {
@@ -228,9 +347,11 @@ export default function SyncDevice() {
           } catch (error) {
             console.error("Erro ao obter dados:", error);
           }
-          // Enviar membros do grupo para o dispositivo
+
+          console.log("Adicionando a relação de membros x grupos ao dispositivo...");
+
           if (memberGroups.length > 0) {
-            memberGroups.map(async (memberGroup: MemberGroup) => {
+            for (const memberGroup of memberGroups) {
               await api.post(
                 `/control-id/add-command?id=${device.name}`,
                 createUserGroupRelationCommand(
@@ -238,14 +359,15 @@ export default function SyncDevice() {
                   memberGroup.groupId
                 )
               );
-            });
+            }
           }
         }
+
         if (data.groupAccessRules) {
           // Enviar groupAccessRules para o dispositivo
           let groupAccessRules = [];
           try {
-            const response = await api.get("groupAccessRule", {
+            const response = await api.get(`groupAccessRule/lobby/${lobby}`, {
               headers: {
                 Authorization: `Bearer ${session?.token.user.token}`,
               },
@@ -266,38 +388,12 @@ export default function SyncDevice() {
             });
           }
         }
-        if (data.areaAccessRules) {
-          // Enviar areaAccessRules para o dispositivo
-          let areaAccessRules = [];
-          try {
-            const response = await api.get("areaAccessRule", {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            });
-            areaAccessRules = response.data;
-          } catch (error) {
-            console.error("Erro ao obter dados:", error);
-          }
-          if (areaAccessRules.length > 0) {
-            areaAccessRules.map(async (areaAccessRule: AreaAccessRule) => {
-              if (areaAccessRule.areaId === device.lobbyId) {
-                await api.post(
-                  `/control-id/add-command?id=${device.name}`,
-                  createAreaAccessRuleRelationCommand(
-                    areaAccessRule.areaId,
-                    areaAccessRule.accessRuleId
-                  )
-                );
-              }
-            });
-          }
-        }
+
         if (data.accessRuleTimeZones) {
           // Enviar AccessRuleTimeZones para o dispositivo
           let accessRuleTimeZones = [];
           try {
-            const response = await api.get("accessRuleTimeZone", {
+            const response = await api.get(`accessRuleTimeZone/lobby/${lobby}`, {
               headers: {
                 Authorization: `Bearer ${session?.token.user.token}`,
               },
@@ -320,10 +416,12 @@ export default function SyncDevice() {
             );
           }
         }
-        toast.success("Dados enviados!", { theme: "colored" });
+
+
+        toast.success("Dados enviados!");
       }
     } catch (error) {
-      toast.error("Ocorreu um erro", { theme: "colored" });
+      toast.error("Ocorreu um erro");
       console.error("Erro:", error);
       throw error;
     }
@@ -392,6 +490,17 @@ export default function SyncDevice() {
                 name="groups"
                 label="Grupos"
               />
+              <CheckboxItem
+                control={form.control}
+                name="members"
+                label="Membros"
+              />
+              <CheckboxItem
+                control={form.control}
+                name="visitors"
+                label="Visitantes"
+              />
+
               {/* <CheckboxItem control={form.control} name="areas" label="Áreas" /> */}
               <CheckboxItem
                 control={form.control}
@@ -400,13 +509,18 @@ export default function SyncDevice() {
               />
               <CheckboxItem
                 control={form.control}
+                name="accessRuleTimeZones"
+                label="Regras de acesso x Horários"
+              />
+              <CheckboxItem
+                control={form.control}
                 name="memberGroups"
                 label="Membros x Grupos"
               />
               <CheckboxItem
                 control={form.control}
-                name="accessRuleTimeZones"
-                label="Regras de acesso x Horários"
+                name="visitorGroups"
+                label="Visitantes x Grupos"
               />
             </div>
             <SheetFooter>

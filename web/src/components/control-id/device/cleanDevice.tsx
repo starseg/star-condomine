@@ -21,20 +21,23 @@ import { Button } from "@/components/ui/button";
 import api from "@/lib/axios";
 import { destroyObjectCommand } from "./commands";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export function CleanDevice({ devices }: { devices: Device[] }) {
   const [id, setId] = useState("");
 
   async function destroyObjects() {
     const commands = [
+      "user_groups",
+      "group_access_rules",
+      "area_access_rules",
+      "access_rule_time_zones",
+      "users",
       "time_zones",
       "time_spans",
       "access_rules",
       "groups",
       "areas",
-      "group_access_rules",
-      "area_access_rules",
-      "access_rule_time_zones",
     ];
     const promises = commands.map((command) =>
       api.post(
@@ -46,8 +49,10 @@ export function CleanDevice({ devices }: { devices: Device[] }) {
     try {
       await Promise.all(promises);
       console.log("All commands executed successfully");
+      toast.success("Dispositivo limpo com sucesso!");
     } catch (error) {
       console.error("Error executing commands:", error);
+      toast.error("Erro ao limpar dispositivo");
     }
   }
 

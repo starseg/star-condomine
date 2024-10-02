@@ -118,20 +118,20 @@ export function TimeSpanSearchInDevice() {
           <>
             {timespanResult && timespanResult.length > 0
               ? timespanResult.map((timespan, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col gap-4 border-primary my-4 p-4 border rounded-lg"
-                  >
-                    <p className="text-lg text-primary capitalize">
-                      {timespan.device}
-                    </p>
-                    <ul>
-                      {timespan.timespans.map((timespan) => (
-                        <li key={timespan.id}>{timespan.id}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ))
+                <div
+                  key={index}
+                  className="flex flex-col gap-4 border-primary my-4 p-4 border rounded-lg"
+                >
+                  <p className="text-lg text-primary capitalize">
+                    {timespan.device}
+                  </p>
+                  <ul>
+                    {timespan.timespans.map((timespan) => (
+                      <li key={timespan.id}>{timespan.id}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))
               : "Nada encontrado"}
           </>
         )}
