@@ -118,27 +118,27 @@ export function TimeZoneSearchInDevice() {
             Carregando...
           </p>
         ) : (
-          <>
+          <div className="max-h-[80vh] overflow-y-scroll">
             {timezoneResult && timezoneResult.length > 0
               ? timezoneResult.map((timezone, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col gap-4 border-primary my-4 p-4 border rounded-lg"
-                  >
-                    <p className="text-lg text-primary capitalize">
-                      {timezone.device}
-                    </p>
-                    <ul>
-                      {timezone.timezones.map((timezone) => (
-                        <li key={timezone.id}>
-                          {timezone.id} - {timezone.name}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))
+                <div
+                  key={index}
+                  className="flex flex-col gap-4 border-primary my-4 p-4 border rounded-lg"
+                >
+                  <p className="text-lg text-primary capitalize">
+                    {timezone.device}
+                  </p>
+                  <ul>
+                    {timezone.timezones.map((timezone) => (
+                      <li key={timezone.id}>
+                        {timezone.id} - {timezone.name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))
               : "Nada encontrado"}
-          </>
+          </div>
         )}
       </SheetContent>
     </Sheet>

@@ -116,7 +116,7 @@ export function GroupSearchInDevice() {
             Carregando...
           </p>
         ) : (
-          <>
+          <div className="max-h-[80vh] overflow-y-scroll">
             {groupResult && groupResult.length > 0
               ? groupResult.map((group, index) => (
                 <div
@@ -136,7 +136,7 @@ export function GroupSearchInDevice() {
                 </div>
               ))
               : "Nada encontrado"}
-          </>
+          </div>
         )}
       </SheetContent>
     </Sheet>

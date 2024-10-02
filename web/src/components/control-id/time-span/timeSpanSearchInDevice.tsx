@@ -115,7 +115,7 @@ export function TimeSpanSearchInDevice() {
             Carregando...
           </p>
         ) : (
-          <>
+          <div className="max-h-[80vh] overflow-y-scroll">
             {timespanResult && timespanResult.length > 0
               ? timespanResult.map((timespan, index) => (
                 <div
@@ -133,7 +133,7 @@ export function TimeSpanSearchInDevice() {
                 </div>
               ))
               : "Nada encontrado"}
-          </>
+          </div>
         )}
       </SheetContent>
     </Sheet>

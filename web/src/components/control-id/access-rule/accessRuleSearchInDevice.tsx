@@ -105,6 +105,7 @@ export function AccessRuleSearchInDevice() {
           <MagnifyingGlass />
         </Button>
       </SheetTrigger>
+
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Regras de Acesso cadastradas nos dispositivos</SheetTitle>
@@ -117,7 +118,7 @@ export function AccessRuleSearchInDevice() {
             Carregando...
           </p>
         ) : (
-          <>
+          <div className="max-h-[80vh] overflow-y-scroll">
             {accessruleResult && accessruleResult.length > 0
               ? accessruleResult.map((accessrule, index) => (
                 <div
@@ -135,11 +136,13 @@ export function AccessRuleSearchInDevice() {
                     ))}
                   </ul>
                 </div>
+
               ))
               : "Nada encontrado"}
-          </>
+          </div>
         )}
       </SheetContent>
     </Sheet>
+
   );
 }
