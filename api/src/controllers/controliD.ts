@@ -1,36 +1,71 @@
 import { Request, Response } from "express";
 
-let commandQueue: any[] = [];
+interface ActuaclDeviceInterface {
+  deviceId: string;
+  timestamp: number;
+}
+
+let commandQueue: {
+  id: string;
+  content: any
+}[] = [];
+
+let activeDevices: ActuaclDeviceInterface[] = [];
 let resultLog: any[] = [];
+let currentTimestamp = new Date().getTime();
 
 export const addCommand = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const id = req.query.id;
+  const id = req.query.id as string;
   const content = req.body;
   const command = {
     id,
     content,
   };
-  console.log(command);
+  console.log(command.content);
   commandQueue.push(command);
   res.json({ message: "Command added successfully" });
 };
 
+
 export const push = async (req: Request, res: Response): Promise<void> => {
   const deviceId = req.query.deviceId;
-  //console.log("Device ID: ", deviceId);
-  // console.log("commandQueue: ", commandQueue);
-  // console.log(deviceId, commandQueue[0] ? commandQueue[0].id : "empty");
 
+  //console.log("Device ID: ", deviceId);
+  console.log("commandQueue: ", commandQueue);
+  //console.log("activeDevices: ", activeDevices)
+  // console.log(deviceId, commandQueue[0] ? commandQueue[0].id : "empty");
   //console.log("Query: ", req.query);
 
+  if (deviceId) {
+    setActiveDevices(deviceId as string);
+  }
+
   if (commandQueue.length > 0) {
-    const compare = commandQueue[0];
+
+    commandQueue.map((command) => {
+      if (!(activeDevices.some((device) => device.deviceId === command.id))) {
+        commandQueue = commandQueue.filter((item) => command.id !== item.id);
+      }
+    })
+
+    const compare = commandQueue.find((command) => command.id === deviceId);
+    //console.log("Compare: ", compare);
+
+    if (!compare) {
+      res.json({});
+      return
+    }
+
     if (deviceId === compare.id) {
-      const command = commandQueue.shift();
-      res.json(command.content);
+      //console.log("Fila de comandos: ", commandQueue);
+      //console.log("Indice do comando na fila: ", commandQueue.indexOf(compare))
+      const command = commandQueue.splice(commandQueue.indexOf(compare), 1);
+      // commandQueue = commandQueue.filter((item) => item.id !== compare.id);
+      //console.log("Command: ", command)
+      res.json(command[0].content);
     } else {
       res.json({});
     }
@@ -47,7 +82,7 @@ export const result = async (req: Request, res: Response): Promise<void> => {
     timestamp: new Date().getTime(),
     body: req.body,
   };
-  console.log(response);
+  //console.log(response);
   resultLog.push(response);
   if (resultLog.length > 20) {
     resultLog.shift();
@@ -69,3 +104,19 @@ export const clearResults = async (
   console.log("cleared!", resultLog);
   res.json(resultLog);
 };
+
+function setActiveDevices(deviceId: string) {
+  currentTimestamp = new Date().getTime();
+
+  if (activeDevices.some((device) => device.deviceId === deviceId)) {
+    activeDevices = activeDevices.map((device) =>
+      device.deviceId === deviceId ? { deviceId, timestamp: currentTimestamp } : device
+    );
+  } else {
+    activeDevices.push({ deviceId, timestamp: currentTimestamp });
+  }
+
+  activeDevices = activeDevices.filter(
+    (device) => currentTimestamp - device.timestamp < 10000
+  );
+}
