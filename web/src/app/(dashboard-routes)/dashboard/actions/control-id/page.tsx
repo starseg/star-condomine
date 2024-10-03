@@ -44,6 +44,10 @@ export default function ControliDConfig({
   const { data: session } = useSession();
   const lobby = searchParams?.lobby || "";
   const [devices, setDevices] = useState<Device[]>([]);
+
+  const [accessLogs, setAccessLogs] = useState<AccessLog[]>([]);
+  const [serialId, setSerialId] = useState("");
+
   const fetchDevices = async () => {
     if (session)
       try {
@@ -93,7 +97,7 @@ export default function ControliDConfig({
             <TabsTrigger value="users">Usuários</TabsTrigger>
           </TabsList>
           <TabsContent className="p-4 border rounded w-full" value="logs">
-            <AccessLogs />
+            <AccessLogs serialId={serialId} setSerialId={setSerialId} accessLogs={accessLogs} setAccessLogs={setAccessLogs} />
           </TabsContent>
           <TabsContent className="p-4 border rounded w-full" value="times">
             <div className="flex justify-between items-end pb-2 w-full">

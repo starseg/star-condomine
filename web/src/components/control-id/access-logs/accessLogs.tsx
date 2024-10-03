@@ -12,19 +12,25 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "react-toastify";
 import Image from "next/image";
+import { addHours, format } from "date-fns";
 
-export function AccessLogs() {
+interface AcessLogsProps {
+  serialId: string;
+  setSerialId: (value: string) => void;
+  accessLogs: AccessLog[];
+  setAccessLogs: (value: AccessLog[]) => void;
+}
+
+export function AccessLogs({ serialId, setSerialId, accessLogs, setAccessLogs }: AcessLogsProps) {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const lobbyParam = params.get("lobby");
   const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
 
-  const [serialId, setSerialId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [members, setMembers] = useState<Member[]>([]);
   const [visitors, setVisitors] = useState<Visitor[]>([]);
-  const [accessLogs, setAccessLogs] = useState<AccessLog[]>([]);
 
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [page, setPage] = useState(1);
@@ -46,8 +52,6 @@ export function AccessLogs() {
   async function fetchResults() {
     const response = await api.get("/control-id/results");
     const lastResult = response.data[response.data.length - 1].body.response;
-
-    console.log(response.data[response.data.length - 1].deviceId);
 
     if (response.data[response.data.length - 1].deviceId !== serialId) {
       toast.error("Ocorreu um erro ao obter os registros de acesso.");
@@ -204,10 +208,11 @@ export function AccessLogs() {
                         <TableCell>
                           {getUserNameById(log.user_id)}
                         </TableCell>
-                        <TableCell>{new Date(log.time * 1000).toLocaleDateString()}</TableCell>
-                        <TableCell>{new Date(log.time * 1000).toLocaleTimeString()}</TableCell>
+                        <TableCell>{format(addHours(new Date(log.time * 1000), 3), "dd/MM/yyyy")}</TableCell>
+                        <TableCell>{format(addHours(new Date(log.time * 1000), 3), "HH:mm:ss")}</TableCell>
                         <TableCell style={{ color: `${eventLogs[log.event].color}` }} className="font-bold">
-                          {eventLogs[log.event].value}</TableCell>
+                          {eventLogs[log.event].value}
+                        </TableCell>
                       </TableRow>
                     )
                   })}
