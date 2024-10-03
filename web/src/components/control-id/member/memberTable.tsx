@@ -21,17 +21,17 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { SkeletonTable } from "../_skeletons/skeleton-table";
 import { deleteAction } from "@/lib/delete-action";
 import { deleteFile } from "@/lib/firebase-upload";
-import { Button, buttonVariants } from "../ui/button";
 import { cn } from "@/lib/utils";
-import { SyncMember } from "../control-id/device/syncMember";
-import { DeleteDialog } from "../deleteDialog";
-import { destroyObjectCommand } from "../control-id/device/commands";
 import { toast } from "react-toastify";
+import { destroyObjectCommand } from "../device/commands";
+import { SkeletonTable } from "@/components/_skeletons/skeleton-table";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { DeleteDialog } from "@/components/deleteDialog";
+import { SyncMember } from "../device/syncMember";
 
-export default function MemberTable({ lobby }: { lobby: string }) {
+export default function ControlIdMemberTable({ lobby }: { lobby: string }) {
   const [isLoading, setIsLoading] = useState(true);
   const [members, setMembers] = useState<Member[]>([]);
   const [page, setPage] = useState(1);
@@ -161,7 +161,6 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                   {brand === "Control-iD" && (
                     <TableHead>Grupo de acesso</TableHead>
                   )}
-                  <TableHead>Propriedades</TableHead>
                   <TableHead>Ações</TableHead>
                 </TableRow>
               </TableHeader>
@@ -230,26 +229,6 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                         </TableCell>
                       )}
                       <TableCell>
-                        <div className="flex gap-2">
-                          <Link
-                            href={`${type}/vehicles?id=${member.memberId}&lobby=${member.lobbyId}`}
-                            className="flex justify-center items-center hover:border-stone-50 px-3 p-1 border rounded-md text-2xl transition-all"
-                          >
-                            <button title="Veículos">
-                              <Car />
-                            </button>
-                          </Link>
-                          <Link
-                            href={`${type}/credentials/details?id=${member.memberId}`}
-                            className="flex justify-center items-center hover:border-stone-50 px-3 py-1 border rounded-md text-2xl transition-all"
-                          >
-                            <button title="Credenciais">
-                              <Tag />
-                            </button>
-                          </Link>
-                        </div>
-                      </TableCell>
-                      <TableCell>
                         <div className="flex gap-2 items-center">
                           <Link
                             className={cn(
@@ -275,16 +254,6 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                               deleteMember(member.memberId, member.profileUrl)
                             }
                           />
-                          {/* <Button
-                          variant={"ghost"}
-                          className="p-1 text-2xl aspect-square"
-                          onClick={() =>
-                            deleteMember(member.memberId, member.profileUrl)
-                          }
-                          title="Excluir"
-                        >
-                          <Trash />
-                        </Button> */}
                           {brand === "Control-iD" && (
                             <SyncMember member={member} devices={devices} />
                           )}

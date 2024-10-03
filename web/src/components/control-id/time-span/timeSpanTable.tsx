@@ -133,7 +133,7 @@ export default function TimeSpanTable() {
                 timeSpans.map((timeSpan) => (
                   <TableRow key={timeSpan.timeSpanId}>
                     <TableCell>{timeSpan.timeSpanId}</TableCell>
-                    <TableCell>{timeSpan.timeZone.name}</TableCell>
+                    <TableCell className="max-w-[10rem]">{timeSpan.timeZone.name}</TableCell>
                     <TableCell>{secondsToHHMM(timeSpan.start)}</TableCell>
                     <TableCell>{secondsToHHMM(timeSpan.end)}</TableCell>
                     <TableCell className="flex flex-col">
