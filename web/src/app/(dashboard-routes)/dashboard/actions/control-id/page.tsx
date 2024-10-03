@@ -14,6 +14,7 @@ import { GroupSearchInDevice } from "@/components/control-id/group/groupSearchIn
 import GroupTable from "@/components/control-id/group/groupTable";
 import MemberGroupForm from "@/components/control-id/member-group/memberGroupForm";
 import MemberGroupTable from "@/components/control-id/member-group/memberGroupTable";
+import ControlIdMemberTable from "@/components/control-id/member/memberTable";
 import TimeSpanForm from "@/components/control-id/time-span/timeSpanForm";
 import { TimeSpanSearchInDevice } from "@/components/control-id/time-span/timeSpanSearchInDevice";
 import TimeSpanTable from "@/components/control-id/time-span/timeSpanTable";
@@ -22,7 +23,6 @@ import { TimeZoneSearchInDevice } from "@/components/control-id/time-zone/timeZo
 import TimeZoneTable from "@/components/control-id/time-zone/timeZoneTable";
 import VisitorGroupForm from "@/components/control-id/visitor-group/visitorGroupForm";
 import VisitorGroupTable from "@/components/control-id/visitor-group/visitorGroupTable";
-import MemberTable from "@/components/member/memberTable";
 import { Menu } from "@/components/menu";
 import { buttonVariants } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -70,14 +70,13 @@ export default function ControliDConfig({
           <SyncDevice />
         </div>
         <Tabs
-          defaultValue="times"
+          defaultValue="logs"
           className="flex flex-col justify-center items-center w-full"
         >
           <TabsList className="w-full">
-            {/* Verificar a requisição e implementar os logs de acesso */}
-            {/* <TabsTrigger value="logs" className="mr-8">
+            <TabsTrigger value="logs" className="mr-8">
               Registros
-            </TabsTrigger> */}
+            </TabsTrigger>
 
             <TabsTrigger value="times">Horários</TabsTrigger>
             <TabsTrigger value="time-access" className="text-xl">
@@ -93,9 +92,9 @@ export default function ControliDConfig({
             </TabsTrigger>
             <TabsTrigger value="users">Usuários</TabsTrigger>
           </TabsList>
-          {/* <TabsContent className="p-4 border rounded w-full" value="logs">
+          <TabsContent className="p-4 border rounded w-full" value="logs">
             <AccessLogs />
-          </TabsContent> */}
+          </TabsContent>
           <TabsContent className="p-4 border rounded w-full" value="times">
             <div className="flex justify-between items-end pb-2 w-full">
               <h2 className="text-xl">Horários</h2>
@@ -179,7 +178,7 @@ export default function ControliDConfig({
                 Adicionar Membro
               </Link>
             </div>
-            <MemberTable lobby={lobby} />
+            <ControlIdMemberTable lobby={lobby} />
 
             <div className="flex justify-between items-end mt-4 pb-2 w-full">
               <h2 className="text-xl">Visitantes</h2>
