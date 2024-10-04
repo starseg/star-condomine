@@ -8,11 +8,13 @@ import {
   CalendarCheck,
   Car,
   DeviceMobileCamera,
+  Gear,
   HouseLine,
   IdentificationCard,
   MagnifyingGlass,
   Notepad,
   PersonSimpleRun,
+  ScanSmiley,
   SealWarning,
   Warning,
 } from "@phosphor-icons/react/dist/ssr";
@@ -188,12 +190,23 @@ export default function LobbyDetails() {
             </Link>
             {brand === "Control-iD" && (
               <div className="flex justify-between px-10 w-full">
-                <Link
-                  href={`actions/control-id?lobby=${id}&brand=${brand}`}
-                  className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
-                >
-                  Control iD
-                </Link>
+                <div className="flex gap-6">
+                  <Link
+                    href={`actions/control-id?lobby=${id}&brand=${brand}`}
+                    className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
+                  >
+                    <ScanSmiley />
+                    Control iD
+                  </Link>
+
+                  <Link
+                    href={`actions/control-id/advanced?lobby=${id}&brand=${brand}`}
+                    className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
+                  >
+                    <Gear />
+                    Avançado
+                  </Link>
+                </div>
                 <OpenDoorButton />
               </div>
             )}
