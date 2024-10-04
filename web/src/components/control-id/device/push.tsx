@@ -107,7 +107,10 @@ export default function Push() {
     try {
       await api.post(`/control-id/add-command?id=${id}`, command);
       await fetchResults();
+      toast.success("Comando executado com sucesso.");
+
     } catch (error) {
+      toast.error("Não foi possível enviar o comando.");
       console.error("Error sending command:", error);
     }
   }
