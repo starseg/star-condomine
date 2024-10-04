@@ -107,7 +107,6 @@ export default function Push() {
     try {
       await api.post(`/control-id/add-command?id=${id}`, command);
       await fetchResults();
-      toast.success("Comando executado com sucesso.");
 
     } catch (error) {
       toast.error("Não foi possível enviar o comando.");
@@ -128,6 +127,13 @@ export default function Push() {
 
     try {
       const response = await api.get("/control-id/results");
+
+      if (response.data[response.data.length - 1].deviceId !== id) {
+        toast.error("Não foi possível se conectar com o dispositivo, verifique a conexão.");
+        setIsFetching(false);
+        return
+      }
+
       if (response.data.length > 0) {
         const data = JSON.parse(response.data[response.data.length - 1].body.response);
 
@@ -150,11 +156,14 @@ export default function Push() {
         if (data.groups) {
           setGroups(data.groups);
         }
+
+        toast.success("Comando executado com sucesso.");
+
       } else {
         toast.error("Erro ao executar o comando, verifique a conexão com o dispositivo.");
       }
     } catch (error) {
-      toast.error("Erro ao executar o comando");
+      toast.error("Não foi possível se conectar com o dispositivo, verifique a conexão.");
     }
 
     setIsFetching(false);
