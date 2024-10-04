@@ -17,6 +17,7 @@ import { useSearchParams } from "next/navigation";
 import { deleteAction } from "@/lib/delete-action";
 import { Button } from "../ui/button";
 import { GetUserByIdCommand } from "../control-id/device/commands";
+import { fetchLatestResults } from "../control-id/device/search";
 
 interface User {
   id: number;
@@ -35,12 +36,15 @@ export default function EmployeeDetails({ id }: { id: number }) {
   const [member, setMember] = useState<MemberFull>();
   const [lobbyData, setLobbyData] = useState<Lobby>();
   const [devices, setDevices] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const lobbyParam = params.get("lobby");
   const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
   const control = params.get("c");
+
   const fetchData = async () => {
     if (session)
       try {
@@ -106,7 +110,7 @@ export default function EmployeeDetails({ id }: { id: number }) {
       const response = await api.get("/control-id/results");
       const data: PushResponse[] = response.data;
       if (lobbyData && data.length > 0) {
-        const latest = data.slice(-lobbyData.device.length);
+        const latest = await fetchLatestResults(lobbyData)
         latest.map((result) => {
           const users: { users: User[] | [] } = JSON.parse(
             result.body.response
@@ -126,7 +130,6 @@ export default function EmployeeDetails({ id }: { id: number }) {
     }
   }
 
-  const [isLoading, setIsLoading] = useState(false);
   async function searchUser(id: number) {
     setIsLoading(true);
     await sendControliDCommand(GetUserByIdCommand(id));

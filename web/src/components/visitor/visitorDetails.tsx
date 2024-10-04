@@ -17,6 +17,7 @@ import { deleteAction } from "@/lib/delete-action";
 import { useSearchParams } from "next/navigation";
 import { GetUserByIdCommand } from "../control-id/device/commands";
 import { Button } from "../ui/button";
+import { fetchLatestResults } from "../control-id/device/search";
 
 interface User {
   id: number;
@@ -106,7 +107,7 @@ export default function VisitorDetails({ id }: { id: number }) {
       const response = await api.get("/control-id/results");
       const data: PushResponse[] = response.data;
       if (lobbyData && data.length > 0) {
-        const latest = data.slice(-lobbyData.device.length);
+        const latest = await fetchLatestResults(lobbyData)
         latest.map((result) => {
           const users: { users: User[] | [] } = JSON.parse(
             result.body.response
