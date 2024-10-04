@@ -1,4 +1,16 @@
 // LIST COMMAND
+export const listObjectCommand = (object: string, where: object = {}) => {
+  return {
+    verb: "POST",
+    endpoint: "load_objects",
+    body: {
+      object: object,
+      where: where
+    },
+    contentType: "application/json",
+  };
+}
+
 export const listUsersCommand = {
   verb: "POST",
   endpoint: "load_objects",
@@ -26,9 +38,32 @@ export const listTimeZonesCommand = {
 export const listTimeSpansCommand = {
   verb: "POST",
   endpoint: "load_objects",
-  body: { object: "time_spans" },
-  contentType: "application/json",
+  body: {
+    object: "time_spans",
+    join: "INNER",
+    fields: [
+      "id",
+      "start",
+      "end",
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu",
+      "fri",
+      "sat",
+      "hol1",
+      "hol2",
+      "hol3",
+      {
+        object: "time_zones",
+        field: "name"
+      }
+    ]
+  },
+  contentType: "application/json"
 };
+
 export const listAreasCommand = {
   verb: "POST",
   endpoint: "load_objects",

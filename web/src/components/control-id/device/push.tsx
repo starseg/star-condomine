@@ -1,30 +1,36 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import api from "@/lib/axios";
-import axios from "axios";
 import { useState, useEffect } from "react";
 import {
-  createUserCommand,
-  listAccessRulesCommand,
-  listAccessRuleTimeZonesCommand,
-  listAreasCommand,
-  listGroupsCommand,
-  listPortalsCommand,
-  listTimeSpansCommand,
+  destroyObjectCommand,
+  listAccessRulesCommand, listGroupsCommand, listTimeSpansCommand,
   listTimeZonesCommand,
-  listUsersCommand,
+  listUsersCommand
 } from "./commands";
 import {
   Select,
   SelectContent,
   SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
+  SelectItem, SelectTrigger,
+  SelectValue
 } from "@/components/ui/select";
 import { useSession } from "next-auth/react";
-import { Broom } from "@phosphor-icons/react/dist/ssr";
+import { useSearchParams } from "next/navigation";
+import LoadingIcon from "@/components/loadingIcon";
+import { secondsToHHMM } from "@/lib/utils";
+import { toast } from "react-toastify";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Broom, FileSearch } from "@phosphor-icons/react/dist/ssr";
+
 
 interface User {
   id: number;
@@ -39,65 +45,44 @@ interface User {
   image_timestamp: number;
 }
 
+interface AccessRuleDevice extends AccessRule {
+  id: number
+}
+
+interface TimeZoneDevice extends TimeZone {
+  id: number
+}
+
+interface TimeSpanDevice extends TimeSpan {
+  id: number,
+  "time_zones.name": string
+}
+
+interface GroupDevice extends Group {
+  id: number
+}
+
 export default function Push() {
   const [devices, setDevices] = useState<Device[]>([]);
   const [id, setId] = useState("");
-  const [commandsCount, setCommandsCount] = useState(0);
-  const [users, setUsers] = useState<User[]>([]);
-  // const [isActive, setActive] = useState(false);
-  // const [ip, setIP] = useState("");
-  // const [session, setSession] = useState("");
-  // useEffect(() => {
-  //   const ip = localStorage.getItem("device_ip");
-  //   if (ip) setIP(ip);
-  //   const id = localStorage.getItem("device_id");
-  //   if (id) setId(id);
-  //   const session = localStorage.getItem("session");
-  //   if (session) setSession(session);
-  // }, [commandPulse]);
 
-  // async function setPush() {
-  //   try {
-  //     let response;
-  //     if (!isActive) {
-  //       response = await axios.post(
-  //         `http://${ip}/set_configuration.fcgi?session=${session}`,
-  //         {
-  //           push_server: {
-  //             push_request_timeout: "5000",
-  //             push_request_period: "15",
-  //             push_remote_address: "http://192.168.1.53:3333/control-id",
-  //           },
-  //         }
-  //       );
-  //       if (response.status === 200) {
-  //         console.log("Ativado ☀");
-  //         setActive(true);
-  //       }
-  //     } else {
-  //       response = await axios.post(
-  //         `http://${ip}/set_configuration.fcgi?session=${session}`,
-  //         {
-  //           push_server: {
-  //             push_remote_address: "",
-  //           },
-  //         }
-  //       );
-  //       if (response.status === 200) {
-  //         console.log("Desativado 🌙");
-  //         setActive(false);
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.log("Erro ao efetuar push: ", error);
-  //   }
-  // }
+  const [users, setUsers] = useState<User[]>([]);
+  const [accessRules, setAccessRules] = useState<AccessRuleDevice[]>([]);
+  const [timeZones, setTimeZones] = useState<TimeZoneDevice[]>([]);
+  const [timeSpans, setTimeSpans] = useState<TimeSpanDevice[]>([]);
+  const [groups, setGroups] = useState<GroupDevice[]>([]);
+  const [isFetching, setIsFetching] = useState(false);
+
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams.toString());
+  const lobbyParam = params.get("lobby");
+  const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
 
   const { data: session } = useSession();
   const fetchDevices = async () => {
     if (session)
       try {
-        const response = await api.get("device", {
+        const response = await api.get(`device/lobby/${lobby}`, {
           headers: {
             Authorization: `Bearer ${session?.token.user.token}`,
           },
@@ -113,43 +98,78 @@ export default function Push() {
   }, [session]);
 
   async function sendCommand(command: object): Promise<void> {
+
+    if (!id) {
+      toast.warn("Selecione um dispositivo antes de enviar um comando.");
+      return;
+    }
+
     try {
-      const response = await api.post(
-        `/control-id/add-command?id=${id}`,
-        command
-      );
-      console.log(response.data.message);
-      setCommandsCount(commandsCount + 1);
+      await api.post(`/control-id/add-command?id=${id}`, command);
+      await fetchResults();
     } catch (error) {
       console.error("Error sending command:", error);
     }
   }
 
   async function fetchResults(): Promise<void> {
+
+    setUsers([]);
+    setAccessRules([]);
+    setTimeZones([]);
+    setTimeSpans([]);
+    setGroups([]);
+
+    setIsFetching(true);
+    await new Promise((resolve) => { setTimeout(resolve, 5000) });
+
     try {
       const response = await api.get("/control-id/results");
-      console.log(response.data);
       if (response.data.length > 0) {
-        const users = JSON.parse(
-          response.data[response.data.length - 1].response
-        );
-        setUsers(users.users);
+        const data = JSON.parse(response.data[response.data.length - 1].body.response);
+
+        if (data.users) {
+          setUsers(data.users);
+        }
+
+        if (data.access_rules) {
+          setAccessRules(data.access_rules);
+        }
+
+        if (data.time_zones) {
+          setTimeZones(data.time_zones);
+        }
+
+        if (data.time_spans) {
+          setTimeSpans(data.time_spans);
+        }
+
+        if (data.groups) {
+          setGroups(data.groups);
+        }
+      } else {
+        toast.error("Erro ao executar o comando, verifique a conexão com o dispositivo.");
       }
     } catch (error) {
-      console.error("Error fetching results:", error);
+      toast.error("Erro ao executar o comando");
     }
+
+    setIsFetching(false);
   }
-  useEffect(() => {
-    fetchResults();
-  }, [commandsCount]);
 
   async function clearResults(): Promise<void> {
     try {
       await api.get("/control-id/clearResults");
+
       setUsers([]);
-      setCommandsCount(0);
+      setAccessRules([]);
+      setTimeZones([]);
+      setTimeSpans([]);
+      setGroups([]);
+
+      toast.success("Monitor de respostas limpo com sucesso.");
     } catch (error) {
-      console.error("Error fetching results:", error);
+      toast.error("Erro ao limpar monitor de respostas.");
     }
   }
 
@@ -169,48 +189,81 @@ export default function Push() {
           </SelectGroup>
         </SelectContent>
       </Select>
-      <div className="flex flex-wrap justify-center gap-2">
-        <Button onClick={clearResults} title="Limpar">
-          <Broom size={24} />
-        </Button>
-        <Button onClick={() => sendCommand(listUsersCommand)}>
-          Listar usuários
-        </Button>
-        <Button onClick={() => sendCommand(listAccessRulesCommand)}>
-          Listar regras
-        </Button>
-        <Button onClick={() => sendCommand(listAccessRuleTimeZonesCommand)}>
-          Listar regras x horários
-        </Button>
-        <Button onClick={() => sendCommand(listTimeZonesCommand)}>
-          Listar horários
-        </Button>
-        <Button onClick={() => sendCommand(listTimeSpansCommand)}>
-          Listar intervalos
-        </Button>
-        <Button onClick={() => sendCommand(listAreasCommand)}>
-          Listar áreas
-        </Button>
-        <Button onClick={() => sendCommand(listGroupsCommand)}>
-          Listar grupos
-        </Button>
-        <Button onClick={() => sendCommand(listPortalsCommand)}>
-          Listar portais
-        </Button>
-        <Button
-          onClick={() =>
-            sendCommand(
-              createUserCommand(Math.floor(Math.random() * 1000), "Edson")
-            )
-          }
-        >
-          Criar usuário
-        </Button>
+
+      <div className="flex gap-2 mb-2">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant={"secondary"} className="flex-1 flex gap-2 text-lg">
+              <FileSearch /> Listar dados
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="mb-5">Escolha uma opção: </DialogTitle>
+              <DialogDescription className="flex flex-wrap justify-center gap-2">
+                <DialogClose asChild>
+                  <Button disabled={isFetching} variant={"secondary"} onClick={() => sendCommand(listUsersCommand)}>
+                    Listar usuários
+                  </Button>
+                </DialogClose>
+                <DialogClose asChild>
+                  <Button disabled={isFetching} variant={"secondary"} onClick={() => sendCommand(listAccessRulesCommand)}>
+                    Listar regras
+                  </Button>
+                </DialogClose>
+                <DialogClose asChild>
+                  <Button disabled={isFetching} variant={"secondary"} onClick={() => sendCommand(listTimeZonesCommand)}>
+                    Listar horários
+                  </Button>
+                </DialogClose>
+                <DialogClose asChild>
+                  <Button disabled={isFetching} variant={"secondary"} onClick={() => sendCommand(listTimeSpansCommand)}>
+                    Listar intervalos
+                  </Button>
+                </DialogClose>
+                <DialogClose asChild>
+                  <Button disabled={isFetching} variant={"secondary"} onClick={() => sendCommand(listGroupsCommand)}>
+                    Listar grupos
+                  </Button>
+                </DialogClose>
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant={"secondary"} className="flex-1 flex gap-2 text-lg">
+              <Broom /> Limpar dados
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="mb-5">Escolha uma opção: </DialogTitle>
+              <DialogDescription className="flex flex-wrap justify-center gap-2">
+                <DialogClose asChild>
+                  <Button disabled={isFetching} variant={"secondary"} onClick={clearResults} title="Limpar">
+                    Limpar monitor de respostas
+                  </Button>
+                </DialogClose>
+
+                <DialogClose asChild>
+                  <Button disabled={isFetching} variant={"secondary"} onClick={() => sendCommand(destroyObjectCommand("access_logs"))} title="Limpar">
+                    Limpar histórico de acessos
+                  </Button>
+                </DialogClose>
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
       </div>
+
+
+
       {users && users.length > 0 && (
-        <>
+        <div className="flex flex-col gap-3">
           <p className="font-bold text-lg">Usuários</p>
-          <div className="space-y-1 border-primary/50 p-1 border rounded-md max-h-60 overflow-y-auto">
+          <div className="space-y-2 border-primary/50 p-1 border rounded-md max-h-60 overflow-y-auto">
             {users.map((user) => {
               return (
                 <div className="p-2 border rounded" key={user.id}>
@@ -221,11 +274,91 @@ export default function Push() {
               );
             })}
           </div>
+        </div>
+      )}
+
+      {accessRules && accessRules.length > 0 && (
+        <>
+          <p className="font-bold text-lg">Regras de Acesso</p>
+          <div className="space-y-2 border-primary/50 p-1 border rounded-md max-h-60 overflow-y-auto">
+            {accessRules.map((accessRule) => {
+              return (
+                <div className="p-2 border rounded" key={accessRule.accessRuleId}>
+                  <p>ID: {accessRule.id}</p>
+                  <p>Nome: {accessRule.name}</p>
+                  <p>Prioridade: {accessRule.priority}</p>
+                  <p>Tipo: {accessRule.type}</p>
+                </div>
+              );
+            })}
+          </div>
         </>
       )}
-      <div className="flex justify-center items-center bg-primary p-1 rounded-full h-8 font-bold text-stone-900">
-        Comandos enviados: {commandsCount}
-      </div>
+
+      {timeZones && timeZones.length > 0 && (
+        <>
+          <p className="font-bold text-lg">Zonas de Tempo</p>
+          <div className="space-y-2 border-primary/50 p-1 border rounded-md max-h-60 overflow-y-auto">
+            {timeZones.map((timeZone) => {
+              return (
+                <div className="p-2 border rounded" key={timeZone.timeZoneId}>
+                  <p>ID: {timeZone.id}</p>
+                  <p>Nome: {timeZone.name}</p>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {timeSpans && timeSpans.length > 0 && (
+        <>
+          <p className="font-bold text-lg">Intervalos de Tempo</p>
+          <div className="space-y-2 border-primary/50 p-1 border rounded-md max-h-60 overflow-y-auto">
+            {timeSpans.map((timeSpan) => {
+              return (
+                <div className="p-2 border rounded" key={timeSpan.timeSpanId}>
+                  <p>ID: {timeSpan.id}</p>
+                  <p>Horário: {timeSpan["time_zones.name"]}</p>
+                  <p>Horário de Inicio: {secondsToHHMM(timeSpan.start)}</p>
+                  <p>Horário de fim: {secondsToHHMM(timeSpan.end)}</p>
+                  <p>Dias da Semana: {" "}
+                    {timeSpan.sun == 1 && "Dom | "}
+                    {timeSpan.mon == 1 && "Seg | "}
+                    {timeSpan.tue == 1 && "Ter | "}
+                    {timeSpan.wed == 1 && "Qua | "}
+                    {timeSpan.thu == 1 && "Qui | "}
+                    {timeSpan.fri == 1 && "Sex | "}
+                    {timeSpan.sat == 1 && "Sab"}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {groups && groups.length > 0 && (
+        <>
+          <p className="font-bold text-lg">Grupos</p>
+          <div className="space-y-2 border-primary/50 p-1 border rounded-md max-h-60 overflow-y-auto">
+            {groups.map((group) => {
+              return (
+                <div className="p-2 border rounded" key={group.groupId}>
+                  <p>ID: {group.id}</p>
+                  <p>Nome: {group.name}</p>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {isFetching && (
+        <div className="flex items-center justify-center">
+          <LoadingIcon />
+        </div>
+      )}
     </div>
   );
 }
