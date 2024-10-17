@@ -135,7 +135,8 @@ export function Monitor() {
       response.startsWith(`{"time_zones":[`) ||
       response.startsWith(`{"access_rules":[`) ||
       response.startsWith(`{"groups":[`) ||
-      response.startsWith(`{"time_spans":[`)
+      response.startsWith(`{"time_spans":[`) ||
+      response.startsWith(`{"access_logs":[`)
     ) {
       return <p className="text-green-500">Busca realizada com sucesso</p>;
     }
