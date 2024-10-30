@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import DefaultInput from "../form/inputDefault";
 import DefaultCombobox from "../form/comboboxDefault";
+import DefaultSelect from "../form/selectDefault";
 
 const FormSchema = z.object({
   name: z.string(),
@@ -19,6 +20,7 @@ const FormSchema = z.object({
   ramal: z.string(),
   description: z.string(),
   model: z.number(),
+  status: z.string(),
   login: z.string(),
   password: z.string(),
 });
@@ -31,6 +33,7 @@ export function DeviceForm() {
       ip: "",
       ramal: "",
       description: "",
+      status: "Ativo",
       model: 0,
       login: "",
       password: "",
@@ -40,7 +43,7 @@ export function DeviceForm() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [deviceModel, setDeviceModel] = useState<DeviceModel[]>([]);
   useEffect(() => {
@@ -86,6 +89,7 @@ export function DeviceForm() {
       ramal: parseInt(data.ramal),
       description: data.description,
       login: data.login,
+      status: data.status === "Ativo" ? "ACTIVE" : "INACTIVE",
       password: data.password,
       deviceModelId: data.model,
       lobbyId: lobby,
@@ -136,6 +140,15 @@ export function DeviceForm() {
           label="Descrição"
           placeholder="Digite a descrição do dispositivo"
         />
+
+        <DefaultSelect
+          control={form.control}
+          name="status"
+          title="Status do Dispositivo"
+          label="Selecione o status do dispositivo..."
+          values={["Ativo", "Inativo"]}
+        />
+
         <DefaultInput
           control={form.control}
           name="login"
