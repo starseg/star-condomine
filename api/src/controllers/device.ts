@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../db";
+import { Status } from "@prisma/client";
 
 export const getAllDevices = async (
   req: Request,
@@ -47,6 +48,7 @@ export const createDevice = async (
       ip,
       ramal,
       description,
+      status,
       login,
       password,
       deviceModelId,
@@ -58,6 +60,7 @@ export const createDevice = async (
         ip,
         ramal,
         description,
+        status,
         login,
         password,
         deviceModelId,
@@ -81,6 +84,7 @@ export const updateDevice = async (
       ip,
       ramal,
       description,
+      status,
       login,
       password,
       deviceModelId,
@@ -93,6 +97,7 @@ export const updateDevice = async (
         ip,
         ramal,
         description,
+        status,
         login,
         password,
         deviceModelId,
@@ -153,19 +158,22 @@ export const getFilteredDevices = async (
 ): Promise<void> => {
   try {
     const lobby = parseInt(req.params.lobby, 10);
-    const { query } = req.query;
+    const { query, status } = req.query;
 
-    const whereCondition = query
+    console.log(req.query);
+
+    const whereCondition = query || status
       ? {
-          OR: [
-            { name: { contains: query as string } },
-            { ip: { contains: query as string } },
-            { description: { contains: query as string } },
-            { deviceModel: { model: { contains: query as string } } },
-          ],
-          AND: { lobbyId: lobby },
-        }
+        OR: [
+          { name: { contains: query as string } },
+          { ip: { contains: query as string } },
+          { description: { contains: query as string } },
+          { deviceModel: { model: { contains: query as string } } },
+        ],
+        AND: { lobbyId: lobby, status: status as Status },
+      }
       : {};
+    console.log(whereCondition);
     const device = await prisma.device.findMany({
       where: whereCondition,
       include: {

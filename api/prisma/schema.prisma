@@ -290,6 +290,7 @@ model Device {
   login       String?
   password    String?
   description String  @db.VarChar(1000)
+  status      Status  @default(ACTIVE)
 
   deviceModel   DeviceModel @relation(fields: [deviceModelId], references: [deviceModelId])
   deviceModelId Int
