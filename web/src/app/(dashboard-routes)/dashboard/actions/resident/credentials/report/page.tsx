@@ -16,7 +16,7 @@ export default async function CredentialsReport() {
           <h1 className="text-4xl text-center">
             Credenciais dos proprietários
           </h1>
-          <Search placeholder="Buscar..." pagination={false} />
+          <Search placeholder="Buscar..." pagination={false} classname="md:w-1/2 lg:w-4/12 items-center" />
         </div>
         <div>
           <CredentialsFullTable />

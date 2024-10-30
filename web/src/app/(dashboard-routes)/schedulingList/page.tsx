@@ -17,7 +17,7 @@ export default function SchedulingList() {
       <section className="max-w-5xl mx-auto mb-24">
         <div className="flex justify-between mb-2">
           <h1 className="text-4xl text-center mb-2">Listas de agendamentos</h1>
-          <Search placeholder="Buscar..." pagination={false} />
+          <Search placeholder="Buscar..." pagination={false} classname="md:w-1/2 lg:w-4/12 items-center" />
         </div>
         <div className="max-h-[60vh] overflow-x-auto">
           <SchedulingListItems />

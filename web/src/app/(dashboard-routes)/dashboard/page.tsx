@@ -23,7 +23,7 @@ export default async function Dashboard() {
           <h1 className="flex gap-2 items-center text-stone-50 text-4xl">
             <DoorOpen /> Portarias
           </h1>
-          <Search placeholder="Buscar..." pagination={false} />
+          <Search placeholder="Buscar..." pagination={false} classname="md:w-1/2 lg:w-4/12 items-center" />
         </div>
         <List />
         <div className="flex items-start justify-between flex-wrap gap-4">

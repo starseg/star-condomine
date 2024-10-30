@@ -22,15 +22,21 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
   const [devices, setDevices] = useState<Device[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const fetchData = async () => {
     if (session)
       try {
         let path;
-        if (!params.get("query")) {
-          path = "device/lobby/" + lobby;
+        if (params.get("query")) {
+          if (params.get("status")) {
+            path = `/device/filtered/${lobby}?query=${params.get("query")}&status=${params.get("status")}`;
+          } else {
+            path = `/device/filtered/${lobby}?query=${params.get("query")}`;
+          }
+        } else if (params.get("status")) {
+          path = `/device/filtered/${lobby}?status=${params.get("status")}`;
         } else {
-          path = `device/filtered/${lobby}?query=${params.get("query")}`;
+          path = "/device/lobby/" + lobby;
         }
         const response = await api.get(path, {
           headers: {
@@ -66,6 +72,7 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
               <TableHead>Modelo</TableHead>
               <TableHead>Login</TableHead>
               <TableHead>Senha</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead>Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -79,6 +86,13 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
                 <TableCell>{device.deviceModel.model}</TableCell>
                 <TableCell>{device.login}</TableCell>
                 <TableCell>{device.password}</TableCell>
+                {
+                  device.status === "ACTIVE" ? (
+                    <TableCell className="text-green-500">Ativo</TableCell>
+                  ) : (
+                    <TableCell className="text-red-500">Inativo</TableCell>
+                  )
+                }
                 <TableCell className="flex gap-4 text-2xl">
                   <Link
                     href={`device/update?lobby=${device.lobbyId}&id=${device.deviceId}`}
@@ -97,7 +111,7 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell className="text-right" colSpan={8}>
+              <TableCell className="text-right" colSpan={9}>
                 Total de registros: {devices.length}
               </TableCell>
             </TableRow>

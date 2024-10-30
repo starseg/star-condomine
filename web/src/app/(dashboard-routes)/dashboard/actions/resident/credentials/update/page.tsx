@@ -1,5 +1,4 @@
 "use client";
-import { DeviceUpdateForm } from "@/components/device/deviceUpdateForm";
 import LoadingIcon from "@/components/loadingIcon";
 import { CredentialsUpdateForm } from "@/components/member/credentialsUpdateForm";
 import { Menu } from "@/components/menu";

@@ -34,7 +34,7 @@ export default async function Visitor({
       <section className="mx-auto mb-24 max-w-5xl">
         <div className="flex justify-between mb-4">
           <h1 className="text-4xl text-center">Visitantes</h1>
-          <Search placeholder="Buscar..." pagination={false} />
+          <Search placeholder="Buscar..." pagination={false} classname="md:w-1/2 lg:w-4/12 items-center" />
         </div>
         <VisitorTable lobby={lobby} />
 

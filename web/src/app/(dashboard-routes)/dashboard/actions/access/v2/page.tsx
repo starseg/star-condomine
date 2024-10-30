@@ -26,7 +26,7 @@ export default async function Access({
       <section className="max-w-5xl mx-auto mb-24">
         <h1 className="text-4xl text-center">Acessos</h1>
         <div className="flex justify-end mb-4">
-          <Search placeholder="Buscar..." pagination={false} />
+          <Search placeholder="Buscar..." pagination={false} classname="md:w-1/2 lg:w-4/12 items-center" />
         </div>
         <div className="max-h-[60vh] overflow-x-auto">
           <OldAccessTable lobby={lobby} />

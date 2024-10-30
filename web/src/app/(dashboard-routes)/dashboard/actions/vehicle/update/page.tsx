@@ -6,7 +6,6 @@ import api from "@/lib/axios";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { DeviceUpdateForm } from "@/components/device/deviceUpdateForm";
 
 export default function UpdateVehicle() {
   interface Vehicle {

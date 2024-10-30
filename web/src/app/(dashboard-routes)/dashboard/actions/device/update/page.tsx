@@ -14,12 +14,13 @@ export default function UpdateDevice() {
     ramal: string;
     description: string;
     model: number;
+    status: "Ativo" | "Inativo";
     login: string;
     password: string;
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [device, setDevice] = useState<Device | null>(null);
   const [data, setData] = useState<Values>();
@@ -47,6 +48,7 @@ export default function UpdateDevice() {
         ip: device?.ip || "",
         ramal: device?.ramal.toString() || "",
         description: device?.description || "",
+        status: device?.status == "ACTIVE" ? "Ativo" : "Inativo",
         model: device?.deviceModelId || 0,
         login: device?.login || "",
         password: device?.password || "",

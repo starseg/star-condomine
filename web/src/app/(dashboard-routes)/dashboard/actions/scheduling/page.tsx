@@ -26,7 +26,7 @@ export default async function Scheduling({
       <section className="max-w-5xl mx-auto mb-24">
         <div className="flex justify-between mb-4">
           <h1 className="text-4xl text-center">Agendamentos</h1>
-          <Search placeholder="Buscar..." pagination={false} />
+          <Search placeholder="Buscar..." pagination={false} classname="md:w-1/2 lg:w-4/12 items-center" />
         </div>
         <SchedulingTable lobby={lobby} />
         <div className="mt-2 flex gap-4 items-center">

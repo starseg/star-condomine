@@ -5,6 +5,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { DeviceMobile, FilePlus } from "@phosphor-icons/react/dist/ssr";
 import { Metadata } from "next";
 import Link from "next/link";
+import { SelectFilter } from "@/components/selectFilter";
 
 export const metadata: Metadata = {
   title: "Dispositivos",
@@ -15,16 +16,25 @@ export default async function Device({
 }: {
   searchParams?: {
     lobby?: string;
+    status?: string;
   };
 }) {
   const lobby = searchParams?.lobby || "";
+  const status = searchParams?.status || "";
   return (
     <>
       <Menu url={`/dashboard/actions?id=${lobby}`} />
       <section className="max-w-5xl mx-auto mb-24">
         <div className="flex justify-between mb-4">
           <h1 className="text-4xl text-center mb-2">Dispositivos</h1>
-          <Search placeholder="Buscar..." pagination={false} />
+          <div className="flex gap-2 w-1/2">
+            <Search placeholder="Buscar..." pagination={false} />
+            <SelectFilter defaultValue={status} values={[
+              { label: "Ativos", value: "ACTIVE" },
+              { label: "Inativos", value: "INACTIVE" },
+              { label: "Todos", value: "Todos" }
+            ]} label="Status" pagination={false} classname="w-1/4" />
+          </div>
         </div>
         <div className="max-h-[60vh] overflow-x-auto">
           <DeviceTable lobby={lobby} />
