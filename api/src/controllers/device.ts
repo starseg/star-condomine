@@ -173,7 +173,6 @@ export const getFilteredDevices = async (
         AND: { lobbyId: lobby, status: status as Status },
       }
       : {};
-    console.log(whereCondition);
     const device = await prisma.device.findMany({
       where: whereCondition,
       include: {
