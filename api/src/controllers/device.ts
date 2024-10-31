@@ -131,8 +131,11 @@ export const getDeviceByLobby = async (
 ): Promise<void> => {
   try {
     const lobby = parseInt(req.params.lobby, 10);
+
     const device = await prisma.device.findMany({
-      where: { lobbyId: lobby },
+      where: {
+        lobbyId: lobby,
+      },
       include: {
         deviceModel: true,
         lobby: {
@@ -160,8 +163,6 @@ export const getFilteredDevices = async (
     const lobby = parseInt(req.params.lobby, 10);
     const { query, status } = req.query;
 
-    console.log(req.query);
-
     const whereCondition = query || status
       ? {
         OR: [
@@ -177,6 +178,11 @@ export const getFilteredDevices = async (
       where: whereCondition,
       include: {
         deviceModel: true,
+        lobby: {
+          select: {
+            name: true,
+          }
+        }
       },
       orderBy: [{ name: "asc" }],
     });
