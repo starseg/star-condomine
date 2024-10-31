@@ -24,15 +24,15 @@ export default async function Device({
   return (
     <>
       <Menu url={`/dashboard/actions?id=${lobby}`} />
-      <section className="max-w-5xl mx-auto mb-24">
+      <section className="max-w-5xl mx-auto mb-24 mt-4">
         <div className="flex justify-between mb-4">
           <h1 className="text-4xl text-center mb-2">Dispositivos</h1>
           <div className="flex gap-2 w-1/2">
             <Search placeholder="Buscar..." pagination={false} />
-            <SelectFilter defaultValue={status} values={[
+            <SelectFilter defaultValue={"Todos"} values={[
+              { label: "Todos", value: "Todos" },
               { label: "Ativos", value: "ACTIVE" },
               { label: "Inativos", value: "INACTIVE" },
-              { label: "Todos", value: "Todos" }
             ]} label="Status" pagination={false} classname="w-1/4" />
           </div>
         </div>

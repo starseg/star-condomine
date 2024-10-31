@@ -134,6 +134,8 @@ export default function Push() {
         return
       }
 
+      console.log(response.data);
+
       if (response.data.length > 0) {
         const data = JSON.parse(response.data[response.data.length - 1].body.response);
 
@@ -195,7 +197,12 @@ export default function Push() {
           <SelectGroup>
             {devices.map((device) => (
               <SelectItem key={device.deviceId} value={device.name}>
-                {device.ip} - {device.name} - {device.lobby.name}
+                {device.ip} - {device.description} - {
+                  device.status === "ACTIVE" ? (
+                    <span className="text-green-500">Ativo</span>
+                  ) : (
+                    <span className="text-red-500">Inativo</span>
+                  )}
               </SelectItem>
             ))}
           </SelectGroup>

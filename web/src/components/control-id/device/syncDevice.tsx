@@ -82,7 +82,7 @@ export default function SyncDevice() {
   });
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const lobbyParam = params.get("lobby");
   const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
 
@@ -91,7 +91,7 @@ export default function SyncDevice() {
   const fetchDevices = async () => {
     if (session)
       try {
-        const response = await api.get(`device/lobby/${lobby}`, {
+        const response = await api.get(`/device/filtered/${lobby}?status=ACTIVE`, {
           headers: {
             Authorization: `Bearer ${session?.token.user.token}`,
           },

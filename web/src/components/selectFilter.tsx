@@ -31,15 +31,18 @@ export function SelectFilter({
   const handleChange = useDebouncedCallback((term) => {
     const params = new URLSearchParams(searchParams.toString());
     if (pagination) params.set("page", "1");
-    if (term) {
-      if (term === "Todos") {
-        params.delete("status");
-        return replace(`${pathname}?${params.toString()}`);
-      }
-      params.set("status", term);
-    } else {
+
+    if (term === "Todos") {
       params.delete("status");
+      return replace(`${pathname}?${params.toString()}`);
     }
+
+    if (term) {
+      params.set("status", term);
+      return replace(`${pathname}?${params.toString()}`);
+    }
+
+    params.delete("status");
     replace(`${pathname}?${params.toString()}`);
   }, 300);
 

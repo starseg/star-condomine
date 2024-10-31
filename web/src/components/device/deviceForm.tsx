@@ -20,7 +20,6 @@ const FormSchema = z.object({
   ramal: z.string(),
   description: z.string(),
   model: z.number(),
-  status: z.string(),
   login: z.string(),
   password: z.string(),
 });
@@ -33,7 +32,6 @@ export function DeviceForm() {
       ip: "",
       ramal: "",
       description: "",
-      status: "Ativo",
       model: 0,
       login: "",
       password: "",
@@ -89,7 +87,7 @@ export function DeviceForm() {
       ramal: parseInt(data.ramal),
       description: data.description,
       login: data.login,
-      status: data.status === "Ativo" ? "ACTIVE" : "INACTIVE",
+      status: "ACTIVE",
       password: data.password,
       deviceModelId: data.model,
       lobbyId: lobby,
@@ -139,14 +137,6 @@ export function DeviceForm() {
           name="description"
           label="Descrição"
           placeholder="Digite a descrição do dispositivo"
-        />
-
-        <DefaultSelect
-          control={form.control}
-          name="status"
-          title="Status do Dispositivo"
-          label="Selecione o status do dispositivo..."
-          values={["Ativo", "Inativo"]}
         />
 
         <DefaultInput

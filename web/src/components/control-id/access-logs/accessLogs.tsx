@@ -24,7 +24,7 @@ interface AcessLogsProps {
 export function AccessLogs({ serialId, setSerialId, accessLogs, setAccessLogs }: AcessLogsProps) {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const lobbyParam = params.get("lobby");
   const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
 
@@ -51,10 +51,16 @@ export function AccessLogs({ serialId, setSerialId, accessLogs, setAccessLogs }:
 
   async function fetchResults() {
     const response = await api.get("/control-id/results");
+    if (!response.data.length) {
+      toast.error("Ocorreu um erro ao obter os registros de acesso, verifique se o dispositivo está conectado e tente novamente.");
+      setAccessLogs([]);
+      return
+    }
+
     const lastResult = response.data[response.data.length - 1].body.response;
 
     if (response.data[response.data.length - 1].deviceId !== serialId) {
-      toast.error("Ocorreu um erro ao obter os registros de acesso.");
+      toast.error("Ocorreu um erro ao obter os registros de acesso, verifique se o dispositivo está conectado e tente novamente.");
       setAccessLogs([]);
       return
     };
@@ -78,11 +84,12 @@ export function AccessLogs({ serialId, setSerialId, accessLogs, setAccessLogs }:
   const fetchDevices = async () => {
     if (session)
       try {
-        const response = await api.get(`device/lobby/${lobby}`, {
+        const response = await api.get(`/device/filtered/${lobby}?status=ACTIVE`, {
           headers: {
             Authorization: `Bearer ${session?.token.user.token}`,
           },
         });
+        console.log(response.data);
         setDevices(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
