@@ -46,7 +46,7 @@ export default function UpdateDevice() {
       setData({
         name: device?.name || "",
         ip: device?.ip || "",
-        ramal: device?.ramal.toString() || "",
+        ramal: device?.ramal?.toString() || "",
         description: device?.description || "",
         status: device?.status == "ACTIVE" ? "Ativo" : "Inativo",
         model: device?.deviceModelId || 0,

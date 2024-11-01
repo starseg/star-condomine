@@ -88,6 +88,8 @@ export function DeviceUpdateForm({
     setIsSendind(true);
     const id = params.get("id");
 
+    console.log(data);
+
     const info = {
       name: data.name,
       ip: data.ip,

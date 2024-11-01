@@ -5,10 +5,10 @@ import {
   getDevice,
   updateDevice,
   deleteDevice,
-  getDeviceModels,
   getDeviceByLobby,
   getFilteredDevices,
-} from "../controllers/device";
+} from "../controllers/device-controller";
+import { getDeviceModels } from "../controllers/deviceModel";
 import { checkAdminPermission } from "../middlewares/permissions";
 
 const deviceRouter = express.Router();
