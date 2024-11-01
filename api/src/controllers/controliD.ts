@@ -14,6 +14,31 @@ let activeDevices: ActuaclDeviceInterface[] = [];
 let resultLog: any[] = [];
 let currentTimestamp = new Date().getTime();
 
+export const clearResults = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  resultLog = [];
+  console.log("cleared!", resultLog);
+  res.json(resultLog);
+};
+
+function setActiveDevices(deviceId: string) {
+  currentTimestamp = new Date().getTime();
+
+  if (activeDevices.some((device) => device.deviceId === deviceId)) {
+    activeDevices = activeDevices.map((device) =>
+      device.deviceId === deviceId ? { deviceId, timestamp: currentTimestamp } : device
+    );
+  } else {
+    activeDevices.push({ deviceId, timestamp: currentTimestamp });
+  }
+
+  activeDevices = activeDevices.filter(
+    (device) => currentTimestamp - device.timestamp < 10000
+  );
+}
+
 export const addCommand = async (
   req: Request,
   res: Response
@@ -28,6 +53,7 @@ export const addCommand = async (
   commandQueue.push(command);
   res.json({ message: "Command added successfully" });
 };
+
 
 
 export const push = async (req: Request, res: Response): Promise<void> => {
@@ -89,34 +115,3 @@ export const result = async (req: Request, res: Response): Promise<void> => {
   }
   res.json(response);
 };
-
-export const results = async (req: Request, res: Response): Promise<void> => {
-  // console.log("resultLog");
-  // console.log(resultLog);
-  res.json(resultLog);
-};
-
-export const clearResults = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  resultLog = [];
-  console.log("cleared!", resultLog);
-  res.json(resultLog);
-};
-
-function setActiveDevices(deviceId: string) {
-  currentTimestamp = new Date().getTime();
-
-  if (activeDevices.some((device) => device.deviceId === deviceId)) {
-    activeDevices = activeDevices.map((device) =>
-      device.deviceId === deviceId ? { deviceId, timestamp: currentTimestamp } : device
-    );
-  } else {
-    activeDevices.push({ deviceId, timestamp: currentTimestamp });
-  }
-
-  activeDevices = activeDevices.filter(
-    (device) => currentTimestamp - device.timestamp < 10000
-  );
-}
