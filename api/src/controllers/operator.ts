@@ -40,10 +40,10 @@ export const createOperator = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { username, name, password, type } = req.body;
+    const { username, name, password, type, lobbyId } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
     const operator = await prisma.operator.create({
-      data: { username, name, password: hashedPassword, type },
+      data: { username, name, password: hashedPassword, type, lobbyId },
     });
     res.status(201).json(operator);
   } catch (error) {
@@ -57,7 +57,7 @@ export const updateOperator = async (
 ): Promise<void> => {
   try {
     const id = parseInt(req.params.id, 10);
-    const { username, name, password, type, status } = req.body;
+    const { username, name, password, type, status, lobbyId } = req.body;
     let hashedPassword: string | undefined;
     if (password) {
       hashedPassword = await bcrypt.hash(password, 10);
@@ -70,6 +70,7 @@ export const updateOperator = async (
         password: hashedPassword || undefined,
         type,
         status,
+        lobbyId,
       },
     });
     res.status(200).json(operator);

@@ -14,17 +14,18 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useRouter } from "next/navigation";;
+import { useRouter } from "next/navigation";
 import api from "@/lib/axios";
 import { useEffect, useState } from "react";
 import { InputPassword } from "../input-password";
 import RadioInput from "../form/inputRadio";
 import DefaultInput from "../form/inputDefault";
 import DefaultCombobox from "../form/comboboxDefault";
+import { useSession } from "next-auth/react";
 
 const FormSchema = z.object({
   type: z.enum(["ADMIN", "USER"]),
-  isExternal: z.boolean(),
+  isExternal: z.string(),
   lobbyId: z.number().nullable(),
   name: z.string(),
   username: z.string().min(5, {
@@ -36,27 +37,31 @@ const FormSchema = z.object({
 });
 
 export function OperatorForm() {
-
+  const { data: session } = useSession();
   const [lobbies, setLobbies] = useState<Lobby[]>([]);
-
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await api.get(`lobby`);
-        setLobbies(response.data);
-      } catch (error) {
-        console.error("Erro ao obter dados:", error);
-      }
+      if (session)
+        try {
+          const response = await api.get("lobby", {
+            headers: {
+              Authorization: `Bearer ${session?.token.user.token}`,
+            },
+          });
+          setLobbies(response.data);
+        } catch (error) {
+          console.error("Erro ao obter dados:", error);
+        }
     };
 
     fetchData();
-  }, [lobbies])
+  }, [session]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       type: "USER",
-      isExternal: false,
+      isExternal: "false",
       lobbyId: null,
       name: "",
       username: "",
@@ -70,7 +75,18 @@ export function OperatorForm() {
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
     try {
-      await api.post("operator", data);
+      const info = {
+        type: data.type,
+        lobbyId: data.lobbyId,
+        name: data.name,
+        username: data.username,
+        password: data.password,
+      };
+      await api.post("operator", info, {
+        headers: {
+          Authorization: `Bearer ${session?.token.user.token}`,
+        },
+      });
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
@@ -80,9 +96,14 @@ export function OperatorForm() {
     }
   };
 
-
-  const userPermissions = [{ value: "USER", label: "Usuário comum" }, { value: "ADMIN", label: "Administrador" }]
-  const userExternal = [{ value: false, label: "Interno" }, { value: true, label: "Externo" }]
+  const userPermissions = [
+    { value: "USER", label: "Usuário comum" },
+    { value: "ADMIN", label: "Administrador" },
+  ];
+  const userExternal = [
+    { value: "false", label: "Interno" },
+    { value: "true", label: "Externo" },
+  ];
 
   interface item {
     value: number;
@@ -91,20 +112,18 @@ export function OperatorForm() {
 
   let items: item[] = [];
 
-  lobbies.map(lobby => {
+  lobbies.map((lobby) => {
     items.push({
       value: lobby.lobbyId,
       label: lobby.name,
-    })
-  })
-
-  console.log(form.getValues())
+    });
+  });
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
+        className="space-y-6 w-3/4 lg:w-[40%] 2xl:w-1/3"
       >
         <RadioInput
           control={form.control}
@@ -124,7 +143,7 @@ export function OperatorForm() {
           descriptionExtractor={(item) => item.label}
         />
 
-        {form.watch("isExternal") === true &&
+        {form.watch("isExternal") === "true" && (
           <DefaultCombobox
             control={form.control}
             name="lobbyId"
@@ -132,12 +151,24 @@ export function OperatorForm() {
             object={items}
             selectLabel="Selecione uma portaria"
             searchLabel="Buscar portaria..."
-            onSelect={(value: number) => { form.setValue("lobbyId", value) }}
+            onSelect={(value: number) => {
+              form.setValue("lobbyId", value);
+            }}
           />
-        }
+        )}
 
-        <DefaultInput control={form.control} name="name" label="Nome" placeholder="Digite o nome completo do Operador" />
-        <DefaultInput control={form.control} name="username" label="Nome de usuário" placeholder="Crie um nome único para o usuário" />
+        <DefaultInput
+          control={form.control}
+          name="name"
+          label="Nome"
+          placeholder="Digite o nome completo do Operador"
+        />
+        <DefaultInput
+          control={form.control}
+          name="username"
+          label="Nome de usuário"
+          placeholder="Crie um nome único para o usuário"
+        />
 
         <FormField
           control={form.control}

@@ -19,7 +19,7 @@ export function OpenDoorButton() {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams.toString());
-  const lobby = params.get("id");
+  const lobby = params.get("lobby");
 
   const [devices, setDevices] = useState<Device[]>([]);
   const fetchDevices = async () => {
