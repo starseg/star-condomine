@@ -21,10 +21,13 @@ interface Token {
 }
 
 export const config = {
-  matcher: "/((?!_next/static|_next/image|favicon.ico).*)",
+  matcher: "/((?!.*\\.|_next/static|_next/image|favicon.ico|api).*)"
 };
 
-export const publicRoutes = ["/"];
+export const publicRoutes = [
+  "/",
+  "/login",
+];
 
 export default async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
@@ -37,38 +40,20 @@ export default async function middleware(req: NextRequest) {
   const token = (await getToken({ req })) as Token | null;
 
   if (!token) {
-    return NextResponse.next();
+    return NextResponse.redirect(new URL("/", req.nextUrl.origin));
   }
 
   const t = JSON.stringify(token);
   const payload: Payload = jwtDecode(t);
-
   api.defaults.headers.Authorization = `Bearer ${token.user.token}`;
 
   const user = payload.user;
 
   if (typeof user.lobbyId === "number") {
-    // Se o usuário tentar acessar a página de dashboard, redirecione para a página de ações do lobby
-    if (pathname === "/dashboard") {
-      return NextResponse.redirect(
-        `${req.nextUrl.origin}/dashboard/actions?lobby=${user.lobbyId}`
-      );
-    }
 
-    // Se o lobbyId não estiver na query string, adicione-o e redirecione para o lobby correto
-    if (!searchParams.has("lobby")) {
-      searchParams.set("lobby", user.lobbyId.toString());
-      return NextResponse.redirect(
-        `${req.nextUrl.origin}/${pathname}?${searchParams.toString()}`
-      );
-    }
-
-    // Se o lobbyId na query string for diferente do lobbyId do usuário, atualize-o e redirecione para o lobby correto
-    if (searchParams.get("lobby") !== user.lobbyId.toString()) {
-      searchParams.set("lobby", user.lobbyId.toString());
-      return NextResponse.redirect(
-        `${req.nextUrl.origin}/${pathname}?${searchParams.toString()}`
-      );
+    // Se o o id da portaria não estiver na url ou for diferente do id do usuário, redireciona para a página da portaria do usuário
+    if (!searchParams.has("lobby") || searchParams.get("lobby") !== user.lobbyId.toString()) {
+      return NextResponse.redirect(new URL(`/dashboard/actions/?lobby=${user.lobbyId}`, req.nextUrl.origin));
     }
   }
 

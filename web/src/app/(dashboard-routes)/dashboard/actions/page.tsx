@@ -199,13 +199,15 @@ export default function LobbyDetails() {
                     Control iD
                   </Link>
 
-                  <Link
-                    href={`actions/control-id/advanced?lobby=${id}&brand=${brand}`}
-                    className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
-                  >
-                    <Gear />
-                    Avançado
-                  </Link>
+                  {session?.payload.user.type === "ADMIN" && (
+                    <Link
+                      href={`actions/control-id/advanced?lobby=${id}&brand=${brand}`}
+                      className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
+                    >
+                      <Gear />
+                      Avançado
+                    </Link>
+                  )}
                 </div>
                 <OpenDoorButton />
               </div>
