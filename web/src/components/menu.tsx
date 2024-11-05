@@ -74,7 +74,7 @@ export function Menu({ url = "" }: { url?: string }) {
           <DropdownMenuLabel>Menu</DropdownMenuLabel>
           <DropdownMenuSeparator />
 
-          {session?.payload.user.type === "ADMIN" && (
+          {(session?.payload.user.type === "ADMIN" && !session.payload.user.lobbyId) && (
             <>
               <DropdownMenuItem>
                 <Link

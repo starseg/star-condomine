@@ -38,7 +38,7 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
   };
 
   const deleteLobby = async (id: number, url: string) => {
-    if (session?.payload.user.type === "USER") {
+    if (session?.payload.user.type === "USER" || session?.payload.user.lobbyId) {
       Swal.fire({
         title: "Operação não permitida",
         text: "Sua permissão de usuário não permite exclusões",
