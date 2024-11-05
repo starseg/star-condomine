@@ -26,7 +26,7 @@ export default function CredentialsFullTable() {
   const [tags, setTags] = useState<Tags[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const lobby = params.get("lobby");
 
   const fetchData = async () => {

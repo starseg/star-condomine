@@ -35,7 +35,7 @@ export default function AccessTable({ lobby }: { lobby: string }) {
   const [paginatedAccess, setPaginatedAccess] = useState<Access[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const control = params.get("c");
   const itemsPerPage = 10;
 
@@ -130,7 +130,7 @@ export default function AccessTable({ lobby }: { lobby: string }) {
       if (
         !oldestEntries[entry.visitorId] ||
         new Date(entry.startTime) <
-          new Date(oldestEntries[entry.visitorId].startTime)
+        new Date(oldestEntries[entry.visitorId].startTime)
       ) {
         oldestEntries[entry.visitorId] = entry;
       }

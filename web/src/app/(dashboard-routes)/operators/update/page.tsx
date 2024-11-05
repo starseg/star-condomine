@@ -27,7 +27,7 @@ export default function UpdateOperator() {
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [operator, setOperator] = useState<Operator | null>(null);
   const [data, setData] = useState<Values>();

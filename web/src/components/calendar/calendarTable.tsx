@@ -23,7 +23,7 @@ export default function CalendarTable({ lobby }: { lobby: string }) {
   const [calendar, setCalendar] = useState<Calendar[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const fetchData = async () => {
     if (session)
       try {

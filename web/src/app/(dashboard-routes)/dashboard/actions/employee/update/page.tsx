@@ -56,7 +56,7 @@ export default function UpdateEmployee() {
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [member, setMember] = useState<Member | null>(null);
   const [data, setData] = useState<Values>();

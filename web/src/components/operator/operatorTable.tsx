@@ -55,6 +55,7 @@ export default function OperatorTable() {
                 <TableHead>Usuário</TableHead>
                 <TableHead>Senha</TableHead>
                 <TableHead>Permissão</TableHead>
+                <TableHead>Tipo de Usuário</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Ações</TableHead>
               </TableRow>
@@ -67,6 +68,9 @@ export default function OperatorTable() {
                   <TableCell>********</TableCell>
                   <TableCell>
                     {operator.type === "ADMIN" ? "Administrador" : "Comum"}
+                  </TableCell>
+                  <TableCell>
+                    {operator.lobbyId ? "Externo" : "Interno"}
                   </TableCell>
                   <TableCell>
                     {operator.status === "ACTIVE" ? (
@@ -91,7 +95,7 @@ export default function OperatorTable() {
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TableCell className="text-right" colSpan={6}>
+                <TableCell className="text-right" colSpan={7}>
                   Total de registros: {operators.length}
                 </TableCell>
               </TableRow>

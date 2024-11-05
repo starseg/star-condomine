@@ -12,7 +12,6 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import DefaultInput from "../form/inputDefault";
 import DefaultCombobox from "../form/comboboxDefault";
-import DefaultSelect from "../form/selectDefault";
 
 const FormSchema = z.object({
   name: z.string(),

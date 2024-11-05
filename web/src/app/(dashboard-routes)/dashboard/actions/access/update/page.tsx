@@ -21,7 +21,7 @@ export default function UpdateAccess() {
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [access, setAccess] = useState<Access | null>(null);
   const [data, setData] = useState<Values>();

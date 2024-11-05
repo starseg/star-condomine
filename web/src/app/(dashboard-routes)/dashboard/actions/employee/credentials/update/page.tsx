@@ -16,7 +16,7 @@ export default function UpdateCredential() {
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [tag, setTag] = useState<Tags | null>(null);
   const [data, setData] = useState<Values>();

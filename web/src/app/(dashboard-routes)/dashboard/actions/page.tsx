@@ -35,8 +35,8 @@ export default function LobbyDetails() {
 
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
-  const lobbyId = params.get("id") || "";
+  const params = new URLSearchParams(searchParams.toString());
+  const lobbyId = params.get("lobby") || "";
 
   const fetchData = async () => {
     if (session)

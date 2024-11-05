@@ -8,6 +8,7 @@ declare module "next-auth" {
         name: String;
         username: String;
         type: String;
+        lobbyId: number | null;
       };
     };
     token: {

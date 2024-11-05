@@ -29,7 +29,7 @@ export default function OldAccessTable({ lobby }: { lobby: string }) {
   const [access, setAccess] = useState<Access[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const control = params.get("c");
 
   const fetchData = async () => {
@@ -103,7 +103,7 @@ export default function OldAccessTable({ lobby }: { lobby: string }) {
       if (
         !oldestEntries[entry.visitorId] ||
         new Date(entry.startTime) <
-          new Date(oldestEntries[entry.visitorId].startTime)
+        new Date(oldestEntries[entry.visitorId].startTime)
       ) {
         oldestEntries[entry.visitorId] = entry;
       }

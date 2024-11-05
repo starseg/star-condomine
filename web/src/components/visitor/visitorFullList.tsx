@@ -12,7 +12,7 @@ export default function VisitorFullList({ lobby }: { lobby: string }) {
   const [isSorted, setIsSorted] = useState(false);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const fetchData = async () => {
     if (session)
       try {

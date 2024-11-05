@@ -25,7 +25,7 @@ export function CredentialsForm() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const member = params.get("id");
 
   const form = useForm<z.infer<typeof FormSchema>>({

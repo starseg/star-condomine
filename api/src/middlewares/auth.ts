@@ -41,6 +41,7 @@ export const authenticateOperator = async (
             name: operator.name,
             username: operator.username,
             type: operator.type,
+            lobbyId: operator.lobbyId,
           },
         },
         secretKey,

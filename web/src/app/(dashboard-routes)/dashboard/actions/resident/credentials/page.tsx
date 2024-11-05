@@ -39,7 +39,7 @@ interface Values {
 export default function residentCredentials() {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [data, setData] = useState<Member | null>(null);
   const fetchTagData = async () => {

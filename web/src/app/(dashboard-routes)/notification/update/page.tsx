@@ -25,7 +25,7 @@ export default function UpdateNotification() {
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [notification, setNotification] = useState<Notification | null>(null);
   const [data, setData] = useState<Values>();

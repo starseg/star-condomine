@@ -70,7 +70,7 @@ export function ResidentForm() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   // const [terms, setTerms] = useState(false);
 

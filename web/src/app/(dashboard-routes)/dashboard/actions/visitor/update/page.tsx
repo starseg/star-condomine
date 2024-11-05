@@ -46,7 +46,7 @@ export default function UpdateVisitor() {
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [visitor, setVisitor] = useState<Visitor | null>(null);
   const [data, setData] = useState<Values>();

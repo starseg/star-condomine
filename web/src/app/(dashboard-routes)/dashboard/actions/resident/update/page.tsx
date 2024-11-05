@@ -62,7 +62,7 @@ export default function UpdateResident() {
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [member, setMember] = useState<Member | null>(null);
   const [phones, setPhones] = useState<Telephone[] | null>(null);

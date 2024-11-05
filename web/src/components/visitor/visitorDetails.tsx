@@ -38,7 +38,7 @@ export default function VisitorDetails({ id }: { id: number }) {
   const [devices, setDevices] = useState<string[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const lobbyParam = params.get("lobby");
   const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
   const control = params.get("c");

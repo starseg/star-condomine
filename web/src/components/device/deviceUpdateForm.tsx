@@ -150,7 +150,7 @@ export function DeviceUpdateForm({
           name="status"
           title="Status do Dispositivo"
           label="Selecione o status do dispositivo..."
-          values={["Ativo", "Inativo"]}
+          values={[{ value: "Ativo", label: "Ativo" }, { value: "Inativo", label: "Inativo" }]}
         />
 
         <DefaultInput

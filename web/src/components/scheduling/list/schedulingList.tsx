@@ -20,7 +20,7 @@ export default function SchedulingListItems() {
   const [schedulingList, setSchedulingList] = useState<SchedulingList[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const fetchData = async () => {
     if (session)
       try {

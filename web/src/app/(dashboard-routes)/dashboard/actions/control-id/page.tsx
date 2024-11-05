@@ -67,7 +67,7 @@ export default function ControliDConfig({
   }, [session]);
   return (
     <ControliDUpdateProvider>
-      <Menu url={`/dashboard/actions?id=${lobby}`} />
+      <Menu url={`/dashboard/actions?lobby=${lobby}`} />
       <section className="mx-auto mb-24 max-w-5xl">
         <div className="flex justify-between items-center my-2">
           <h1 className="text-3xl">Configurações Control iD</h1>

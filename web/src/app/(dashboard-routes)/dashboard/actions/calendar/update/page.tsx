@@ -20,7 +20,7 @@ export default function UpdateProblem() {
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [calendar, setCalendar] = useState<Calendar | null>(null);
   const [data, setData] = useState<Values>();

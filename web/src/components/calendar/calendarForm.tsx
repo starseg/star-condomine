@@ -30,7 +30,7 @@ export function CalendarForm() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {

@@ -14,16 +14,18 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";;
 import api from "@/lib/axios";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { InputPassword } from "../input-password";
+import RadioInput from "../form/inputRadio";
+import DefaultInput from "../form/inputDefault";
+import DefaultCombobox from "../form/comboboxDefault";
 
 const FormSchema = z.object({
   type: z.enum(["ADMIN", "USER"]),
+  isExternal: z.boolean(),
+  lobbyId: z.number().nullable(),
   name: z.string(),
   username: z.string().min(5, {
     message: "O nome deve ter no mínimo 5 caracteres",
@@ -34,28 +36,41 @@ const FormSchema = z.object({
 });
 
 export function OperatorForm() {
+
+  const [lobbies, setLobbies] = useState<Lobby[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get(`lobby`);
+        setLobbies(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+    };
+
+    fetchData();
+  }, [lobbies])
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       type: "USER",
+      isExternal: false,
+      lobbyId: null,
       name: "",
       username: "",
       password: "",
     },
   });
 
-  const { data: session } = useSession();
   const router = useRouter();
 
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
     try {
-      const response = await api.post("operator", data, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.post("operator", data);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
@@ -65,78 +80,65 @@ export function OperatorForm() {
     }
   };
 
+
+  const userPermissions = [{ value: "USER", label: "Usuário comum" }, { value: "ADMIN", label: "Administrador" }]
+  const userExternal = [{ value: false, label: "Interno" }, { value: true, label: "Externo" }]
+
+  interface item {
+    value: number;
+    label: string;
+  }
+
+  let items: item[] = [];
+
+  lobbies.map(lobby => {
+    items.push({
+      value: lobby.lobbyId,
+      label: lobby.name,
+    })
+  })
+
+  console.log(form.getValues())
+
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
       >
-        <FormField
+        <RadioInput
           control={form.control}
           name="type"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tipo de permissão</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="USER" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Usuário comum</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="ADMIN" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Administrador</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Permissão do usuário"
+          object={userPermissions}
+          idExtractor={(item) => item.value}
+          descriptionExtractor={(item) => item.label}
         />
-        <FormField
+
+        <RadioInput
           control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Digite o nome completo do operador"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          name="isExternal"
+          label="Tipo de usuário"
+          object={userExternal}
+          idExtractor={(item) => item.value}
+          descriptionExtractor={(item) => item.label}
         />
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome de usuário</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Crie um nome único para o usuário"
-                  autoComplete="off"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+
+        {form.watch("isExternal") === true &&
+          <DefaultCombobox
+            control={form.control}
+            name="lobbyId"
+            label="Portaria do Operador"
+            object={items}
+            selectLabel="Selecione uma portaria"
+            searchLabel="Buscar portaria..."
+            onSelect={(value: number) => { form.setValue("lobbyId", value) }}
+          />
+        }
+
+        <DefaultInput control={form.control} name="name" label="Nome" placeholder="Digite o nome completo do Operador" />
+        <DefaultInput control={form.control} name="username" label="Nome de usuário" placeholder="Crie um nome único para o usuário" />
+
         <FormField
           control={form.control}
           name="password"

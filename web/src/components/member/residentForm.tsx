@@ -75,7 +75,7 @@ export function ResidentForm() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [addressType, setAddressType] = useState([]);
   useEffect(() => {

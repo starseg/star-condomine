@@ -14,7 +14,7 @@ export default function UpdateBrand() {
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [brand, setBrand] = useState<Brand | null>(null);
   const [data, setData] = useState<Values>();

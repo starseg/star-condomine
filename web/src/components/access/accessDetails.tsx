@@ -11,7 +11,7 @@ export default function AccessDetails({ id }: { id: number }) {
   const [access, setAccess] = useState<Access>();
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const control = params.get("c");
   const fetchData = async () => {
     if (session)

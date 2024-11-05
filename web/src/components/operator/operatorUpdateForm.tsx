@@ -54,7 +54,7 @@ export function OperatorUpdateForm({
 
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const router = useRouter();
 
   const [isSending, setIsSendind] = useState(false);

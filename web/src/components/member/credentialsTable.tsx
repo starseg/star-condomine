@@ -28,7 +28,7 @@ export default function CredentialsTable() {
   const [tags, setTags] = useState<Tags[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const id = params.get("id");
 
   const fetchData = async () => {

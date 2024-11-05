@@ -42,7 +42,7 @@ export function ProblemUpdateForm({
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const status = [
     {

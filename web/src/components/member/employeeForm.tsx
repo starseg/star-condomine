@@ -79,7 +79,7 @@ export function EmployeeForm() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   // PEGA O ID DA PORTARIA
   const lobbyParam = params.get("lobby");
   const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;

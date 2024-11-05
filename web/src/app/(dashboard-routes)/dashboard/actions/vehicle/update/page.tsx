@@ -31,7 +31,7 @@ export default function UpdateVehicle() {
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [data, setData] = useState<Values>();

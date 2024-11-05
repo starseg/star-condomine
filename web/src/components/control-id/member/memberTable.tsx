@@ -39,7 +39,7 @@ export default function ControlIdMemberTable({ lobby }: { lobby: string }) {
   const [devices, setDevices] = useState<Device[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const control = params.get("c");
   const brand = params.get("brand");
   const itemsPerPage = 10;

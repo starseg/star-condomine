@@ -34,7 +34,7 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
   );
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const control = params.get("c");
   const router = useRouter();
   const itemsPerPage = 10;
@@ -144,8 +144,8 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
                     <TableRow key={item.schedulingId}>
                       <TableCell>
                         {item.visitor.cpf === "" ||
-                        item.visitor.rg === "" ||
-                        item.visitor.name.split(" ").length < 2 ? (
+                          item.visitor.rg === "" ||
+                          item.visitor.name.split(" ").length < 2 ? (
                           <p className="max-w-[25ch] text-amber-400">
                             ⚠ {item.visitor.name}
                           </p>
@@ -180,7 +180,7 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
                       </TableCell>
                       <TableCell className="flex gap-4 text-2xl">
                         {item.status === "INACTIVE" ||
-                        item.endDate < currentDateUTC ? (
+                          item.endDate < currentDateUTC ? (
                           <button
                             disabled
                             title="Não disponível para registrar acesso"

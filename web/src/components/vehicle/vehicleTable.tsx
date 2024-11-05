@@ -35,7 +35,7 @@ export default function VehicleTable({ lobby }: { lobby: string }) {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const fetchData = async () => {
     if (session)
       try {

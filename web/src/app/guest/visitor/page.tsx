@@ -28,7 +28,7 @@ export default function GuestNewVisitor() {
   const [error, setError] = useState("");
 
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const lobby = params.get("lobby") || "";
   const lobbyId = decrypt(lobby);
 

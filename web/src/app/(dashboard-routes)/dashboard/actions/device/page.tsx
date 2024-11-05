@@ -23,7 +23,7 @@ export default async function Device({
   const status = searchParams?.status || "";
   return (
     <>
-      <Menu url={`/dashboard/actions?id=${lobby}`} />
+      <Menu url={`/dashboard/actions?lobby=${lobby}`} />
       <section className="max-w-5xl mx-auto mb-24 mt-4">
         <div className="flex justify-between mb-4">
           <h1 className="text-4xl text-center mb-2">Dispositivos</h1>

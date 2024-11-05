@@ -94,7 +94,7 @@ export function SchedulingListUpdateForm({
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [lobby, setLobby] = useState<Lobby>({
     lobbyId: 0,
@@ -232,7 +232,7 @@ export function SchedulingListUpdateForm({
                     >
                       {field.value
                         ? memberItems.find((item) => item.value === field.value)
-                            ?.label
+                          ?.label
                         : "Selecione para quem é o agendamento"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>

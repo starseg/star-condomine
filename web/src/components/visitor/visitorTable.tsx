@@ -48,7 +48,7 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
 
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const control = params.get("c");
   const brand = params.get("brand");
 

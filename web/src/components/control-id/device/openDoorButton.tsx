@@ -18,7 +18,7 @@ import { openDoorCommand } from "./commands";
 export function OpenDoorButton() {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const lobby = params.get("id");
 
   const [devices, setDevices] = useState<Device[]>([]);

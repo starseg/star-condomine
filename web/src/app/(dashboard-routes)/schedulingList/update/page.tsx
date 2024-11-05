@@ -33,7 +33,7 @@ export default function UpdateSchedulingList() {
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [list, setList] = useState<SchedulingList | null>(null);
   const [data, setData] = useState<Values>();
