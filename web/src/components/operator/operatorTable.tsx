@@ -19,6 +19,7 @@ import { deleteAction } from "@/lib/delete-action";
 export default function OperatorTable() {
   const [isLoading, setIsLoading] = useState(true);
   const [operators, setOperators] = useState<Operator[]>([]);
+
   const { data: session } = useSession();
   const fetchData = async () => {
     if (session)
@@ -38,6 +39,12 @@ export default function OperatorTable() {
     deleteAction(session, "operador", `operator/${id}`, fetchData);
   };
 
+  async function getlobbyName(lobbyId: number | null) {
+    if (!lobbyId) return "Todas";
+    const response = await api.get(`lobby/find/${lobbyId}`);
+    return response.data.name;
+  }
+
   return (
     <>
       {isLoading ? (
@@ -52,6 +59,7 @@ export default function OperatorTable() {
                 <TableHead>Senha</TableHead>
                 <TableHead>Permissão</TableHead>
                 <TableHead>Tipo de Usuário</TableHead>
+                <TableHead>Portaria</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Ações</TableHead>
               </TableRow>
@@ -68,6 +76,7 @@ export default function OperatorTable() {
                   <TableCell>
                     {operator.lobbyId ? "Externo" : "Interno"}
                   </TableCell>
+                  <TableCell>{getlobbyName(operator.lobbyId)}</TableCell>
                   <TableCell>
                     {operator.status === "ACTIVE" ? (
                       <p className="text-green-500">Ativo</p>
@@ -91,7 +100,7 @@ export default function OperatorTable() {
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TableCell className="text-right" colSpan={7}>
+                <TableCell className="text-right" colSpan={8}>
                   Total de registros: {operators.length}
                 </TableCell>
               </TableRow>
