@@ -49,11 +49,7 @@ export default function GroupForm() {
         lobbyId: lobby,
       };
 
-      const response = await api.post(`group`, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.post(`group`, info);
       if (response.status === 201) {
         toast.success("Grupo registrado!", {
           theme: "colored",

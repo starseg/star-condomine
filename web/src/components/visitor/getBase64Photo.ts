@@ -5,12 +5,7 @@ export const getVisitorBase64Photo = async (session: Session | null, visitorId: 
   if (session)
     try {
       const response = await api.get(
-        `visitor/find/${visitorId}/base64photo`,
-        {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        }
+        `visitor/find/${visitorId}/base64photo`
       );
       return response.data.base64;
     } catch (error) {

@@ -48,11 +48,7 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
         } else {
           path = `scheduling/filtered/${lobby}?query=${params.get("query")}`;
         }
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         setScheduling(response.data);
         setPaginatedScheduling(response.data.slice(0, itemsPerPage));
         setIsLoading(false);
@@ -105,11 +101,7 @@ export default function SchedulingTable({ lobby }: { lobby: string }) {
       lobbyId: Number(lobby),
     };
     try {
-      await api.post("access", info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.post("access", info);
       router.push(`/dashboard/actions/access?lobby=${lobby}&c=${control}`);
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

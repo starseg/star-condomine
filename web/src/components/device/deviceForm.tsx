@@ -47,11 +47,7 @@ export function DeviceForm() {
     const fetchData = async () => {
       if (session)
         try {
-          const response = await api.get("deviceModel", {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          const response = await api.get("deviceModel",);
           setDeviceModel(response.data);
         } catch (error) {
           console.error("Erro ao obter dados:", error);
@@ -92,11 +88,7 @@ export function DeviceForm() {
       lobbyId: lobby,
     };
     try {
-      await api.post("device", info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.post("device", info);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

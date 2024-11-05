@@ -29,12 +29,7 @@ export default function UpdateProblem() {
       if (session)
         try {
           const response = await api.get(
-            "lobbyCalendar/find/" + params.get("id"),
-            {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            }
+            "lobbyCalendar/find/" + params.get("id")
           );
           setCalendar(response.data);
         } catch (error) {

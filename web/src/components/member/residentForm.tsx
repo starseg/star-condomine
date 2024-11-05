@@ -82,11 +82,7 @@ export function ResidentForm() {
     const fetchData = async () => {
       if (session)
         try {
-          const response = await api.get("member/address", {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          const response = await api.get("member/address",);
           setAddressType(response.data);
         } catch (error) {
           console.error("Erro ao obter dados:", error);
@@ -123,11 +119,7 @@ export function ResidentForm() {
   const fetchTagTypes = async () => {
     if (session)
       try {
-        const types = await api.get("tag/types", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const types = await api.get("tag/types");
         setTagTypes(types.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -222,11 +214,7 @@ export function ResidentForm() {
         comments: data.comments,
         lobbyId: lobby,
       };
-      const response = await api.post("member", info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.post("member", info);
 
       // REGISTRA OS NÚMEROS DE TELEFONE
       if (phoneNumber[0] != "") {
@@ -237,11 +225,6 @@ export function ResidentForm() {
               {
                 number: phoneNumber[i],
                 memberId: response.data.memberId,
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${session?.token.user.token}`,
-                },
               }
             );
           }
@@ -261,11 +244,6 @@ export function ResidentForm() {
                 value: tagNumber[i],
                 tagTypeId: tag,
                 memberId: response.data.memberId,
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${session?.token.user.token}`,
-                },
               }
             );
           }
@@ -285,11 +263,6 @@ export function ResidentForm() {
                 value: cardNumber[i],
                 tagTypeId: card,
                 memberId: response.data.memberId,
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${session?.token.user.token}`,
-                },
               }
             );
           }

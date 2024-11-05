@@ -38,11 +38,7 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
         } else {
           path = "/device/lobby/" + lobby;
         }
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         setDevices(response.data);
         setIsLoading(false);
       } catch (error) {

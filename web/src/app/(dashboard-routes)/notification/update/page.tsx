@@ -34,12 +34,7 @@ export default function UpdateNotification() {
       if (session)
         try {
           const response = await api.get(
-            "notification/find/" + params.get("id"),
-            {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            }
+            "notification/find/" + params.get("id")
           );
           setNotification(response.data);
         } catch (error) {

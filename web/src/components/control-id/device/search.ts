@@ -7,11 +7,7 @@ export async function fetchLobbyData(
 ) {
   if (session)
     try {
-      const getLobby = await api.get(`/lobby/find/${lobby}`, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const getLobby = await api.get(`/lobby/find/${lobby}`);
 
       return getLobby.data;
     } catch (error) {

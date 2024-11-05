@@ -61,11 +61,7 @@ export function ProblemForm() {
       operatorId: operator,
     };
     try {
-      await api.post("lobbyProblem", info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.post("lobbyProblem", info);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

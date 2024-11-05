@@ -23,11 +23,7 @@ export default function OperatorTable() {
   const fetchData = async () => {
     if (session)
       try {
-        const response = await api.get("operator", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("operator");
         setOperators(response.data);
         setIsLoading(false);
       } catch (error) {

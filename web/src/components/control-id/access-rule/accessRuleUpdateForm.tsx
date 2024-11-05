@@ -86,11 +86,7 @@ export default function AccessRuleUpdateForm({
         priority: Number(data.priority),
       };
 
-      const response = await api.put(`accessRule/${id}`, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.put(`accessRule/${id}`, info);
 
       if (data.synchronize) {
         if (deviceList.length > 0) {

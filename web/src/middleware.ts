@@ -45,7 +45,6 @@ export default async function middleware(req: NextRequest) {
 
   const t = JSON.stringify(token);
   const payload: Payload = jwtDecode(t);
-  api.defaults.headers.Authorization = `Bearer ${token.user.token}`;
 
   const user = payload.user;
 

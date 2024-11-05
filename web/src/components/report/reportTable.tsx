@@ -45,11 +45,7 @@ export default function ReportTable({ lobby }: { lobby: string }) {
       // Verifica se session, from e to são válidos
       try {
         const path = `access/report/${lobby}?from=${from}&to=${to}`;
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         setAccess(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -59,11 +55,7 @@ export default function ReportTable({ lobby }: { lobby: string }) {
       // Se não houver 'from' ou 'to', faz a requisição sem eles
       try {
         const path = `access/report/${lobby}`;
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         setAccess(response.data);
         setIsLoading(false);
       } catch (error) {

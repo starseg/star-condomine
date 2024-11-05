@@ -45,11 +45,7 @@ export default function VehicleTable({ lobby }: { lobby: string }) {
         } else {
           path = `vehicle/filtered/${lobby}?query=${params.get("query")}`;
         }
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         setVehicles(response.data);
         setIsLoading(false);
       } catch (error) {

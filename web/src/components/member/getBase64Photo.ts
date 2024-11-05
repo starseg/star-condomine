@@ -5,12 +5,7 @@ export const getBase64Photo = async (session: Session | null, memberId: number) 
   if (session)
     try {
       const response = await api.get(
-        `member/find/${memberId}/base64photo`,
-        {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        }
+        `member/find/${memberId}/base64photo`
       );
       return response.data.base64;
     } catch (error) {

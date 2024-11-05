@@ -20,11 +20,7 @@ export default function ResidentFullList({ lobby }: { lobby: string }) {
         } else {
           path = `member/filtered/${lobby}?query=${params.get("query")}`;
         }
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         setMembers(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);

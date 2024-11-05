@@ -30,11 +30,7 @@ export default function VehicleTable({
     if (session)
       try {
         let path = "vehicle/member/" + member;
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         setVehicles(response.data);
         setIsLoading(false);
       } catch (error) {

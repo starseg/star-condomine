@@ -51,12 +51,7 @@ export default function UpdateScheduling() {
       if (session)
         try {
           const response = await api.get(
-            "scheduling/find/" + params.get("id"),
-            {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            }
+            "scheduling/find/" + params.get("id")
           );
           setScheduling(response.data);
         } catch (error) {

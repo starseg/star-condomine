@@ -49,11 +49,7 @@ export default function TimeZoneForm() {
         lobbyId: lobby,
       };
 
-      const response = await api.post(`timeZone`, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.post(`timeZone`, info);
       if (response.status === 201) {
         toast.success("Horário registrado!", {
           theme: "colored",

@@ -61,11 +61,7 @@ export default function AreaAccessRuleForm() {
   const fetchAreas = async () => {
     if (session)
       try {
-        const response = await api.get(`lobby`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(`lobby`);
         setAreas(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -76,11 +72,7 @@ export default function AreaAccessRuleForm() {
   const fetchAccessRules = async () => {
     if (session)
       try {
-        const response = await api.get(`accessRule`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(`accessRule`);
         setAccessRules(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -99,11 +91,7 @@ export default function AreaAccessRuleForm() {
         accessRuleId: data.accessRuleId,
       };
 
-      const response = await api.post(`areaAccessRule`, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.post(`areaAccessRule`, info);
       if (response.status === 201) {
         toast.success("Relação registrada!", {
           theme: "colored",
@@ -158,8 +146,8 @@ export default function AreaAccessRuleForm() {
                         >
                           {field.value
                             ? areas.find(
-                                (lobby) => lobby.lobbyId === field.value
-                              )?.name
+                              (lobby) => lobby.lobbyId === field.value
+                            )?.name
                             : "Selecione uma portaria"}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
@@ -216,9 +204,9 @@ export default function AreaAccessRuleForm() {
                         >
                           {field.value
                             ? accessRules.find(
-                                (accessRule) =>
-                                  accessRule.accessRuleId === field.value
-                              )?.name
+                              (accessRule) =>
+                                accessRule.accessRuleId === field.value
+                            )?.name
                             : "Selecione uma regra"}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>

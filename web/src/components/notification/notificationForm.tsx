@@ -41,11 +41,7 @@ export function NotificationForm() {
       message: data.message,
     };
     try {
-      await api.post("notification", info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.post("notification", info);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

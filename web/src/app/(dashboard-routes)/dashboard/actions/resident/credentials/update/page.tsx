@@ -24,11 +24,7 @@ export default function UpdateCredential() {
     const fetchData = async () => {
       if (session)
         try {
-          const response = await api.get("tag/find/" + params.get("id"), {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          const response = await api.get("tag/find/" + params.get("id"),);
           setTag(response.data);
         } catch (error) {
           console.error("(Device) Erro ao obter dados:", error);

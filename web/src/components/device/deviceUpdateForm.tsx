@@ -56,11 +56,7 @@ export function DeviceUpdateForm({
   useEffect(() => {
     const fetchModels = async () => {
       try {
-        const response = await api.get("device/models", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("device/models");
         setDeviceModel(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -99,11 +95,7 @@ export function DeviceUpdateForm({
       password: data.password,
     };
     try {
-      await api.put("device/" + id, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.put("device/" + id, info);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

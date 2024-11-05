@@ -70,12 +70,7 @@ export function VehicleUpdateForm({
       if (session)
         try {
           const response = await api.get(
-            "member/lobby/" + params.get("lobby"),
-            {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            }
+            "member/lobby/" + params.get("lobby")
           );
           setMembers(response.data);
         } catch (error) {
@@ -85,11 +80,7 @@ export function VehicleUpdateForm({
     const fetchVehicleTypes = async () => {
       if (session)
         try {
-          const response = await api.get("vehicle/types", {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          const response = await api.get("vehicle/types",);
           setTypes(response.data);
         } catch (error) {
           console.error("Erro ao obter dados:", error);
@@ -138,11 +129,7 @@ export function VehicleUpdateForm({
       comments: data.comments,
     };
     try {
-      await api.put("vehicle/" + id, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.put("vehicle/" + id, info);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

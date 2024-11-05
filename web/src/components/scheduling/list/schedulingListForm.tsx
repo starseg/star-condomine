@@ -65,11 +65,7 @@ export function SchedulingListForm() {
   const fetchLobbies = async () => {
     if (session)
       try {
-        const response = await api.get("lobby", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("lobby");
         setLobbies(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -80,11 +76,7 @@ export function SchedulingListForm() {
   const fetchMembers = async () => {
     if (session)
       try {
-        const response = await api.get("member", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("member");
         setMembers(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -162,11 +154,7 @@ export function SchedulingListForm() {
       lobbyId: data.lobby,
     };
     try {
-      await api.post("schedulingList", info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.post("schedulingList", info);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);
@@ -201,7 +189,7 @@ export function SchedulingListForm() {
                     >
                       {field.value
                         ? lobbyItems.find((item) => item.value === field.value)
-                            ?.label
+                          ?.label
                         : "Selecione a portaria"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -260,8 +248,8 @@ export function SchedulingListForm() {
                     >
                       {field.value
                         ? filteredMemberItems.find(
-                            (item) => item.value === field.value
-                          )?.label
+                          (item) => item.value === field.value
+                        )?.label
                         : "Selecione para quem é o agendamento"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>

@@ -35,11 +35,7 @@ export default function UpdateOperator() {
     const fetchData = async () => {
       if (session)
         try {
-          const response = await api.get("operator/find/" + params.get("id"), {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          const response = await api.get("operator/find/" + params.get("id"),);
           setOperator(response.data);
         } catch (error) {
           console.error("(operator) Erro ao obter dados:", error);

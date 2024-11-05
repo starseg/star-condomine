@@ -93,11 +93,7 @@ export function EmployeeForm() {
   const fetchTagTypes = async () => {
     if (session)
       try {
-        const types = await api.get("tag/types", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const types = await api.get("tag/types");
         setTagTypes(types.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -127,11 +123,7 @@ export function EmployeeForm() {
   async function fetchLobbyData() {
     if (session)
       try {
-        const getLobby = await api.get(`/lobby/find/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const getLobby = await api.get(`/lobby/find/${lobby}`);
         setLobbyData(getLobby.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -142,11 +134,7 @@ export function EmployeeForm() {
   const fetchGroups = async () => {
     if (session)
       try {
-        const response = await api.get("group", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("group");
         setGroups(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -232,11 +220,7 @@ export function EmployeeForm() {
         comments: data.comments,
         lobbyId: lobby,
       };
-      const response = await api.post("member", info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.post("member", info);
 
       // REGISTRA TAGS DO FUNCIONARIO
       if (tagNumber[0] != "") {
@@ -248,11 +232,6 @@ export function EmployeeForm() {
                 value: tagNumber[i],
                 tagTypeId: tag,
                 memberId: response.data.memberId,
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${session?.token.user.token}`,
-                },
               }
             );
           }
@@ -271,11 +250,6 @@ export function EmployeeForm() {
                 value: cardNumber[i],
                 tagTypeId: card,
                 memberId: response.data.memberId,
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${session?.token.user.token}`,
-                },
               }
             );
           }
@@ -295,11 +269,7 @@ export function EmployeeForm() {
             memberId: response.data.memberId,
             groupId: data.groupId,
           };
-          await api.post(`memberGroup`, info, {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          await api.post(`memberGroup`, info,);
           await sendControliDCommand(
             createUserGroupRelationCommand(response.data.memberId, data.groupId)
           );

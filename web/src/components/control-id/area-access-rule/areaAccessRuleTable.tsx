@@ -24,11 +24,7 @@ export default function AreaAccessRuleTable() {
   const fetchData = async () => {
     if (session) {
       try {
-        const response = await api.get(`areaAccessRule`, {
-          headers: {
-            Authorization: `Bearer ${session.token.user.token}`,
-          },
-        });
+        const response = await api.get(`areaAccessRule`);
         setAreaAccessRules(response.data);
         setIsLoading(false);
       } catch (error) {

@@ -88,11 +88,7 @@ export function LobbyUpdateForm({
     const fetchData = async () => {
       if (session)
         try {
-          const response = await api.get("brand", {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          const response = await api.get("brand",);
           setBrands(response.data);
         } catch (error) {
           console.error("Erro ao obter dados:", error);
@@ -190,11 +186,7 @@ export function LobbyUpdateForm({
         code: Number(data.code),
         controllerBrandId: data.brand,
       };
-      await api.put("lobby/" + id, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.put("lobby/" + id, info);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

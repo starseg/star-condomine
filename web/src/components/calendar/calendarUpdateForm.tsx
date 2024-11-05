@@ -50,11 +50,7 @@ export function CalendarUpdateForm({
       date: data.date,
     };
     try {
-      await api.put("lobbyCalendar/" + id, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.put("lobbyCalendar/" + id, info);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

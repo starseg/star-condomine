@@ -51,11 +51,7 @@ export default function TimeSpanTable() {
   const fetchData = async () => {
     if (session) {
       try {
-        const response = await api.get(`timeSpan/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session.token.user.token}`,
-          },
-        });
+        const response = await api.get(`timeSpan/lobby/${lobby}`);
         setTimeSpans(response.data);
 
         setIsLoading(false);
@@ -72,11 +68,7 @@ export default function TimeSpanTable() {
   const fetchDevices = async () => {
     if (session)
       try {
-        const response = await api.get(`device/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(`device/lobby/${lobby}`);
         setDevices(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -90,11 +82,7 @@ export default function TimeSpanTable() {
   const deleteItem = async (id: number) => {
     // deleteAction(session, "intervalo", `timeSpan/${id}`, fetchData);
     try {
-      await api.delete(`timeSpan/${id}`, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.delete(`timeSpan/${id}`);
       fetchData();
       devices.map(async (device) => {
         await api.post(

@@ -42,11 +42,7 @@ export default function GroupAccessRuleTable({
   const fetchData = async () => {
     if (session) {
       try {
-        const response = await api.get(`groupAccessRule/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session.token.user.token}`,
-          },
-        });
+        const response = await api.get(`groupAccessRule/lobby/${lobby}`);
         setGroupAccessRules(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -64,11 +60,7 @@ export default function GroupAccessRuleTable({
     access_rule_id: number
   ) => {
     try {
-      await api.delete(`groupAccessRule/${id}`, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.delete(`groupAccessRule/${id}`);
       fetchData();
       devices.map(async (device) => {
         await api.post(

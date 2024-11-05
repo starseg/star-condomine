@@ -48,11 +48,7 @@ export default function AccessTable({ lobby }: { lobby: string }) {
         } else {
           path = `access/filtered/${lobby}?query=${params.get("query")}`;
         }
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         setAccess(response.data);
         setPaginatedAccess(response.data.slice(0, itemsPerPage));
         setIsLoading(false);
@@ -94,11 +90,6 @@ export default function AccessTable({ lobby }: { lobby: string }) {
         {
           endTime: new Date().toJSON(),
           status: "INACTIVE",
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
         }
       );
       fetchData();

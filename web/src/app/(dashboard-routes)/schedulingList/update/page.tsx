@@ -42,12 +42,7 @@ export default function UpdateSchedulingList() {
       if (session)
         try {
           const response = await api.get(
-            "schedulingList/find/" + params.get("id"),
-            {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            }
+            "schedulingList/find/" + params.get("id")
           );
           setList(response.data);
         } catch (error) {

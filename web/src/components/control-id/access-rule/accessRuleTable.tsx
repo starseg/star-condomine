@@ -35,11 +35,7 @@ export default function AccessRuleTable({ devices }: { devices: Device[] }) {
   const fetchData = async () => {
     if (session) {
       try {
-        const response = await api.get(`accessRule/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session.token.user.token}`,
-          },
-        });
+        const response = await api.get(`accessRule/lobby/${lobby}`);
         setAccessRules(response.data);
 
         setIsLoading(false);
@@ -55,11 +51,7 @@ export default function AccessRuleTable({ devices }: { devices: Device[] }) {
   const deleteItem = async (id: number) => {
     // deleteAction(session, "regra de acesso", `accessRule/${id}`, fetchData);
     try {
-      await api.delete(`accessRule/${id}`, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.delete(`accessRule/${id}`);
       fetchData();
       devices.map(async (device) => {
         await api.post(

@@ -22,11 +22,7 @@ export default function List() {
           } else {
             path = "lobby/filtered?query=" + params.get("query");
           }
-          const response = await api.get(path, {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          const response = await api.get(path,);
 
           setLobbies(response.data);
           setIsLoading(false);

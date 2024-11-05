@@ -42,11 +42,7 @@ export default function LobbyDetails() {
     if (session)
       try {
         const path = "lobby/find/" + lobbyId;
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         if (response.data) {
           setLobby(response.data);
         }
@@ -59,11 +55,7 @@ export default function LobbyDetails() {
     if (session)
       try {
         const path = "lobbyCalendar/today/" + lobbyId;
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         if (response.data) {
           setCalendar(response.data);
         }

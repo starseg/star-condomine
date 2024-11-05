@@ -66,11 +66,7 @@ export default function MemberGroupForm() {
   const fetchMembers = async () => {
     if (session)
       try {
-        const response = await api.get(`member/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(`member/lobby/${lobby}`);
         setMembers(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -81,11 +77,7 @@ export default function MemberGroupForm() {
   const fetchGroups = async () => {
     if (session)
       try {
-        const response = await api.get(`group/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(`group/lobby/${lobby}`);
         setGroups(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -104,11 +96,7 @@ export default function MemberGroupForm() {
         groupId: data.groupId,
       };
 
-      const response = await api.post(`memberGroup`, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.post(`memberGroup`, info);
       if (response.status === 201) {
         toast.success("Relação registrada!", {
           theme: "colored",

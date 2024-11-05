@@ -46,11 +46,7 @@ export function CredentialsForm() {
   const fetchTagTypes = async () => {
     if (session)
       try {
-        const response = await api.get("tag/types", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("tag/types");
         setTagType(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -87,11 +83,7 @@ export function CredentialsForm() {
       memberId: Number(member),
     };
     try {
-      await api.post("tag", info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.post("tag", info);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

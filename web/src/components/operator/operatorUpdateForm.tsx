@@ -61,11 +61,7 @@ export function OperatorUpdateForm({
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setIsSendind(true);
     try {
-      const response = await api.put("operator/" + params.get("id"), data, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.put("operator/" + params.get("id"), data);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

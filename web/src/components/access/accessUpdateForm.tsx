@@ -58,11 +58,7 @@ export function AccessUpdateForm({
   const fetchVisitors = async () => {
     if (session)
       try {
-        const response = await api.get("visitor/lobby/" + params.get("lobby"), {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("visitor/lobby/" + params.get("lobby"));
         setVisitors(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -73,11 +69,7 @@ export function AccessUpdateForm({
   const fetchMembers = async () => {
     if (session)
       try {
-        const response = await api.get("member/lobby/" + params.get("lobby"), {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("member/lobby/" + params.get("lobby"));
         setMembers(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -134,11 +126,7 @@ export function AccessUpdateForm({
       lobbyId: lobby,
     };
     try {
-      await api.put("access/" + id, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.put("access/" + id, info);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

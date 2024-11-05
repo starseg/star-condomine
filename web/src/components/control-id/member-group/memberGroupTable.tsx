@@ -33,11 +33,7 @@ export default function MemberGroupTable({ devices }: { devices: Device[] }) {
   const fetchData = async () => {
     if (session) {
       try {
-        const response = await api.get(`memberGroup/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session.token.user.token}`,
-          },
-        });
+        const response = await api.get(`memberGroup/lobby/${lobby}`);
         setMemberGroups(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -55,11 +51,7 @@ export default function MemberGroupTable({ devices }: { devices: Device[] }) {
     group_id: number
   ) => {
     try {
-      await api.delete(`memberGroup/${id}`, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.delete(`memberGroup/${id}`);
       fetchData();
       devices.map(async (device) => {
         await api.post(

@@ -55,11 +55,7 @@ export default function AccessRuleForm() {
         lobbyId: lobby,
       };
 
-      const response = await api.post(`accessRule`, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.post(`accessRule`, info);
       if (response.status === 201) {
         toast.success("Regra registrada!", {
           theme: "colored",

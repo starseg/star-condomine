@@ -137,11 +137,7 @@ export function EmployeeUpdateForm({
       try {
         const response = await api.get(
           `member/find/${member.memberId}/base64photo`,
-          {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          }
+
         );
         return response.data.base64;
       } catch (error) {
@@ -211,11 +207,7 @@ export function EmployeeUpdateForm({
         comments: data.comments,
         status: data.status,
       };
-      await api.put("member/" + params.get("id"), info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.put("member/" + params.get("id"), info);
 
       if (sendToDevice) {
         if (deviceList.length > 0) {

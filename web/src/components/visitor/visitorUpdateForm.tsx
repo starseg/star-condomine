@@ -110,11 +110,7 @@ export function VisitorUpdateForm({
   const fetchVisitorTypes = async () => {
     if (session)
       try {
-        const response = await api.get("visitor/types", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("visitor/types");
         setVisitorType(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -150,11 +146,7 @@ export function VisitorUpdateForm({
       try {
         const response = await api.get(
           `visitor/find/${visitor.visitorId}/base64photo`,
-          {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          }
+
         );
         return response.data.base64;
       } catch (error) {
@@ -222,11 +214,7 @@ export function VisitorUpdateForm({
         startDate: setStringDate(data.startDate),
         endDate: setStringDate(data.endDate),
       };
-      await api.put("visitor/" + visitor.visitorId, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.put("visitor/" + visitor.visitorId, info);
 
       if (sendToDevice) {
         if (deviceList.length > 0) {

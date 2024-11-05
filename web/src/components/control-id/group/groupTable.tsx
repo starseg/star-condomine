@@ -34,11 +34,7 @@ export default function GroupTable({ devices }: { devices: Device[] }) {
   const fetchData = async () => {
     if (session) {
       try {
-        const response = await api.get(`group/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session.token.user.token}`,
-          },
-        });
+        const response = await api.get(`group/lobby/${lobby}`);
         setGroups(response.data);
 
         setIsLoading(false);
@@ -53,11 +49,7 @@ export default function GroupTable({ devices }: { devices: Device[] }) {
 
   const deleteItem = async (id: number) => {
     try {
-      await api.delete(`group/${id}`, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.delete(`group/${id}`);
       fetchData();
       devices.map(async (device) => {
         await api.post(

@@ -22,11 +22,7 @@ export default function VisitorFullList({ lobby }: { lobby: string }) {
         } else {
           path = `visitor/filtered/${lobby}?query=${params.get("query")}`;
         }
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         setVisitors(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);

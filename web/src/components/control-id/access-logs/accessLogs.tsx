@@ -84,11 +84,7 @@ export function AccessLogs({ serialId, setSerialId, accessLogs, setAccessLogs }:
   const fetchDevices = async () => {
     if (session)
       try {
-        const response = await api.get(`/device/filtered/${lobby}?status=ACTIVE`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(`/device/filtered/${lobby}?status=ACTIVE`);
         console.log(response.data);
         setDevices(response.data);
       } catch (error) {
@@ -99,11 +95,7 @@ export function AccessLogs({ serialId, setSerialId, accessLogs, setAccessLogs }:
   async function fetchMembers() {
     if (session)
       try {
-        const response = await api.get(`member/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(`member/lobby/${lobby}`);
 
         setMembers(response.data);
         setIsLoading(false);
@@ -115,11 +107,7 @@ export function AccessLogs({ serialId, setSerialId, accessLogs, setAccessLogs }:
   async function fetchVisitors() {
     if (session)
       try {
-        const response = await api.get(`visitor/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(`visitor/lobby/${lobby}`);
 
         setVisitors(response.data);
         setIsLoading(false);

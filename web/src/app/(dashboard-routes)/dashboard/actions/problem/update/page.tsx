@@ -37,12 +37,7 @@ export default function UpdateProblem() {
       if (session)
         try {
           const response = await api.get(
-            "lobbyProblem/find/" + params.get("id"),
-            {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            }
+            "lobbyProblem/find/" + params.get("id")
           );
           setProblem(response.data);
         } catch (error) {

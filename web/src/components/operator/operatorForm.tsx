@@ -43,11 +43,7 @@ export function OperatorForm() {
     const fetchData = async () => {
       if (session)
         try {
-          const response = await api.get("lobby", {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          const response = await api.get("lobby",);
           setLobbies(response.data);
         } catch (error) {
           console.error("Erro ao obter dados:", error);
@@ -82,11 +78,7 @@ export function OperatorForm() {
         username: data.username,
         password: data.password,
       };
-      await api.post("operator", info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.post("operator", info);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

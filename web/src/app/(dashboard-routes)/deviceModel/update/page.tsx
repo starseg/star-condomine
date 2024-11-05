@@ -25,12 +25,7 @@ export default function UpdateDeviceModel() {
       if (session)
         try {
           const response = await api.get(
-            "deviceModel/find/" + params.get("id"),
-            {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            }
+            "deviceModel/find/" + params.get("id")
           );
           setDeviceModel(response.data);
         } catch (error) {

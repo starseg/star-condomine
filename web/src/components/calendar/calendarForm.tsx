@@ -44,11 +44,7 @@ export function CalendarForm() {
       lobbyId: lobby,
     };
     try {
-      await api.post("lobbyCalendar", info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.post("lobbyCalendar", info);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

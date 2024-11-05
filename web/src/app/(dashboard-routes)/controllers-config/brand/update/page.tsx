@@ -22,11 +22,7 @@ export default function UpdateBrand() {
     const fetchData = async () => {
       if (session)
         try {
-          const response = await api.get("brand/find/" + params.get("id"), {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          const response = await api.get("brand/find/" + params.get("id"),);
           setBrand(response.data);
         } catch (error) {
           console.error("(Brand) Erro ao obter dados:", error);

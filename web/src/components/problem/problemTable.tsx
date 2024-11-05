@@ -39,11 +39,7 @@ export default function ProblemTable({ lobby }: { lobby: string }) {
         } else {
           path = `lobbyProblem/filtered/${lobby}?query=${params.get("query")}`;
         }
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         setProblems(response.data);
         setIsLoading(false);
       } catch (error) {

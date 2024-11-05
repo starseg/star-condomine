@@ -15,11 +15,7 @@ export default function FeedbackList() {
   const fetchData = async () => {
     if (session)
       try {
-        const response = await api.get("feedback", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("feedback");
         setFeedbacks(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -46,11 +42,7 @@ export default function FeedbackList() {
         await api.put(
           "feedback/" + id,
           { status: "INACTIVE" },
-          {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          }
+
         );
         fetchData();
         Swal.fire({

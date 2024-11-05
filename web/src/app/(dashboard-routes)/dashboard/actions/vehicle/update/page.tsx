@@ -39,11 +39,7 @@ export default function UpdateVehicle() {
     const fetchData = async () => {
       if (session)
         try {
-          const response = await api.get("vehicle/find/" + params.get("id"), {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          const response = await api.get("vehicle/find/" + params.get("id"),);
           setVehicle(response.data);
         } catch (error) {
           console.error("(Device) Erro ao obter dados:", error);

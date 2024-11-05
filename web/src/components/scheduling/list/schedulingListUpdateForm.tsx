@@ -102,11 +102,7 @@ export function SchedulingListUpdateForm({
   });
   const fetchLobby = async () => {
     try {
-      const response = await api.get(`lobby/find/${preloadedValues.lobby}`, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.get(`lobby/find/${preloadedValues.lobby}`);
       setLobby(response.data);
     } catch (error) {
       console.error("Erro ao obter dados:", error);
@@ -116,11 +112,7 @@ export function SchedulingListUpdateForm({
   const [members, setMembers] = useState([]);
   const fetchMembers = async () => {
     try {
-      const response = await api.get(`member/lobby/${preloadedValues.lobby}`, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.get(`member/lobby/${preloadedValues.lobby}`);
       setMembers(response.data);
     } catch (error) {
       console.error("Erro ao obter dados:", error);
@@ -189,11 +181,7 @@ export function SchedulingListUpdateForm({
       status: data.status,
     };
     try {
-      await api.put(`schedulingList/${id}`, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.put(`schedulingList/${id}`, info);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

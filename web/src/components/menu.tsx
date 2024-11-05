@@ -33,11 +33,7 @@ export function Menu({ url = "" }: { url?: string }) {
   const fetchFeedbacks = async () => {
     if (session)
       try {
-        const response = await api.get("feedback/new", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("feedback/new");
         setFeedbacks(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);

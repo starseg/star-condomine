@@ -54,11 +54,7 @@ export default function UpdateVisitor() {
   const fetchData = async () => {
     if (session)
       try {
-        const response = await api.get("visitor/find/" + params.get("id"), {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("visitor/find/" + params.get("id"));
         setVisitor(response.data);
       } catch (error) {
         console.error("(Visitor) Erro ao obter dados:", error);
@@ -67,11 +63,7 @@ export default function UpdateVisitor() {
   const fetchDevices = async () => {
     if (session)
       try {
-        const devices = await api.get(`/device/lobby/${params.get("lobby")}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const devices = await api.get(`/device/lobby/${params.get("lobby")}`);
         setDevices(devices.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);

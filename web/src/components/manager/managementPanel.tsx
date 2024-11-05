@@ -29,11 +29,7 @@ export default function ManagementPanel() {
 
   const fetchCount = async () => {
     try {
-      const response = await api.get("generalData/count", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.get("generalData/count");
       setCounts(response.data);
     } catch (error) {
       console.error("Erro ao obter dados:", error);
@@ -41,11 +37,7 @@ export default function ManagementPanel() {
   };
   const fetchAccessesByLobby = async () => {
     try {
-      const response = await api.get("generalData/accessesByLobby", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.get("generalData/accessesByLobby");
       setAccessesByLobby(response.data);
     } catch (error) {
       console.error("Erro ao obter dados:", error);
@@ -53,11 +45,7 @@ export default function ManagementPanel() {
   };
   const fetchAccessesByOperator = async () => {
     try {
-      const response = await api.get("generalData/accessesByOperator", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.get("generalData/accessesByOperator");
       setAccessesByOperator(response.data);
     } catch (error) {
       console.error("Erro ao obter dados:", error);
@@ -65,11 +53,7 @@ export default function ManagementPanel() {
   };
   const fetchProblemsByLobby = async () => {
     try {
-      const response = await api.get("generalData/problemsByLobby", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.get("generalData/problemsByLobby");
       setProblemsByLobby(response.data);
     } catch (error) {
       console.error("Erro ao obter dados:", error);
@@ -77,11 +61,7 @@ export default function ManagementPanel() {
   };
   const fetchAccessesPerHour = async () => {
     try {
-      const response = await api.get("generalData/countAccessesPerHour", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.get("generalData/countAccessesPerHour");
       setAccessesPerHour(response.data);
     } catch (error) {
       console.error("Erro ao obter dados:", error);
@@ -99,10 +79,10 @@ export default function ManagementPanel() {
   return (
     <div className="mt-8">
       {counts &&
-      problemsByLobby &&
-      accessesByLobby &&
-      accessesByOperator &&
-      accessesPerHour ? (
+        problemsByLobby &&
+        accessesByLobby &&
+        accessesByOperator &&
+        accessesPerHour ? (
         <>
           {/* GRÁFICOS */}
           <div className="flex flex-col gap-4 justify-center items-center mb-8">

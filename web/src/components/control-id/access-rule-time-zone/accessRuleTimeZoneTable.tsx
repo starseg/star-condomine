@@ -40,11 +40,7 @@ export default function AccessRuleTimeZoneTable({
   const fetchData = async () => {
     if (session) {
       try {
-        const response = await api.get(`accessRuleTimeZone/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session.token.user.token}`,
-          },
-        });
+        const response = await api.get(`accessRuleTimeZone/lobby/${lobby}`);
         setAccessRuleTimeZones(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -62,11 +58,7 @@ export default function AccessRuleTimeZoneTable({
     time_zone_id: number
   ) => {
     try {
-      await api.delete(`accessRuleTimeZone/${id}`, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.delete(`accessRuleTimeZone/${id}`);
       fetchData();
       devices.map(async (device) => {
         await api.post(

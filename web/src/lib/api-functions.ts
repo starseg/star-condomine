@@ -11,11 +11,7 @@ import api from "./axios";
 */
 const find = async (path: string, token: Session) => {
   try {
-    const response = await api.get(path, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.get(path);
     return response.data;
   } catch (error) {
     console.error("Erro ao obter dados:", error);
@@ -42,11 +38,7 @@ const filtered = async (
     let path;
     if (!query) path = url1;
     else path = url2;
-    const response = await api.get(path, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.get(path);
     return response.data;
   } catch (error) {
     console.error("Erro ao obter dados:", error);

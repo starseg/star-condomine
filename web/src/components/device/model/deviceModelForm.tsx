@@ -49,11 +49,7 @@ export function DeviceModelForm() {
     setIsSendind(true);
 
     try {
-      await api.post("deviceModel", data, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.post("deviceModel", data);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

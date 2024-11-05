@@ -63,11 +63,7 @@ export default function TimeZoneUpdateForm({
   const fetchDevices = async () => {
     if (session)
       try {
-        const response = await api.get(`device/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(`device/lobby/${lobby}`);
         setDevices(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -92,12 +88,7 @@ export default function TimeZoneUpdateForm({
     try {
       const response = await api.put(
         `timeZone/${id}`,
-        { name: data.name },
-        {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        }
+        { name: data.name }
       );
 
       if (data.synchronize) {

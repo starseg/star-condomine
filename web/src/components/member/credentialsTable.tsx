@@ -34,11 +34,7 @@ export default function CredentialsTable() {
   const fetchData = async () => {
     if (session)
       try {
-        const response = await api.get(`tag/member/${id}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(`tag/member/${id}`);
         setTags(response.data);
         setIsLoading(false);
       } catch (error) {

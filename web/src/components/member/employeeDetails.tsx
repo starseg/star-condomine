@@ -48,11 +48,7 @@ export default function EmployeeDetails({ id }: { id: number }) {
   const fetchData = async () => {
     if (session)
       try {
-        const response = await api.get("member/find/" + id, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("member/find/" + id);
         setMember(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -61,11 +57,7 @@ export default function EmployeeDetails({ id }: { id: number }) {
   const fetchLobbyData = async () => {
     if (session)
       try {
-        const getLobby = await api.get(`/lobby/find/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const getLobby = await api.get(`/lobby/find/${lobby}`);
         setLobbyData(getLobby.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);

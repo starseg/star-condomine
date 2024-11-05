@@ -109,11 +109,7 @@ export default function MemberCredentialsForm({
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     try {
-      const response = await api.delete("tag/member/" + params.get("id"), {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.delete("tag/member/" + params.get("id"));
 
       if (response) {
         if (tagNumber[0] != "") {
@@ -125,11 +121,6 @@ export default function MemberCredentialsForm({
                   value: tagNumber[i],
                   tagTypeId: tagId,
                   memberId: memberData.memberId,
-                },
-                {
-                  headers: {
-                    Authorization: `Bearer ${session?.token.user.token}`,
-                  },
                 }
               );
             }
@@ -147,11 +138,6 @@ export default function MemberCredentialsForm({
                   value: cardNumber[i],
                   tagTypeId: cardId,
                   memberId: memberData.memberId,
-                },
-                {
-                  headers: {
-                    Authorization: `Bearer ${session?.token.user.token}`,
-                  },
                 }
               );
             }
@@ -170,11 +156,6 @@ export default function MemberCredentialsForm({
         "member/" + params.get("id"),
         {
           passwordAccess: data.password,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
         }
       );
     } catch (error) {

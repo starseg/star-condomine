@@ -16,11 +16,7 @@ export default function AccessDetails({ id }: { id: number }) {
   const fetchData = async () => {
     if (session)
       try {
-        const response = await api.get("access/find/" + id, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("access/find/" + id)
         setAccess(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);

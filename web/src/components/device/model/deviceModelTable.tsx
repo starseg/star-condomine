@@ -31,11 +31,7 @@ export default function DeviceModelTable() {
   const fetchData = async () => {
     if (session)
       try {
-        const response = await api.get("deviceModel", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("deviceModel");
         setDeviceModels(response.data);
         setIsLoading(false);
       } catch (error) {

@@ -93,11 +93,7 @@ export default function Login() {
   const fetchDevices = async () => {
     if (session)
       try {
-        const response = await api.get("device", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("device");
         setDevices(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -142,8 +138,8 @@ export default function Login() {
                       >
                         {field.value
                           ? devices.find(
-                              (device) => device.deviceId === field.value
-                            )?.ip
+                            (device) => device.deviceId === field.value
+                          )?.ip
                           : "Selecione um dispositivo"}
                         <ChevronsUpDown className="opacity-50 ml-2 w-4 h-4 shrink-0" />
                       </Button>
