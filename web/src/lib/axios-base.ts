@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Configuração da URL base
 const apiBase = axios.create({
-  baseURL: process.env.API_URL,
+  baseURL: "http://localhost:3333",
 });
 
 export default apiBase;

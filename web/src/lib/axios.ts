@@ -4,7 +4,7 @@ import { getSession } from "next-auth/react";
 
 // Configuração da URL base
 const api = axios.create({
-  baseURL: process.env.API_URL,
+  baseURL: "http://localhost:3333",
 });
 
 let cachedSession: Session | null = null;
