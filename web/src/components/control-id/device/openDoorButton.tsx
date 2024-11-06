@@ -25,7 +25,9 @@ export function OpenDoorButton() {
   const fetchDevices = async () => {
     if (session)
       try {
-        const response = await api.get(`device/lobby/${lobby}`);
+        const response = await api.get(
+          `device/filtered/${lobby}?status=ACTIVE`
+        );
         setDevices(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);

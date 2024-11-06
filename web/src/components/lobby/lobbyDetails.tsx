@@ -38,7 +38,10 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
   };
 
   const deleteLobby = async (id: number, url: string) => {
-    if (session?.payload.user.type === "USER" || session?.payload.user.lobbyId) {
+    if (
+      session?.payload.user.type === "USER" ||
+      session?.payload.user.lobbyId
+    ) {
       Swal.fire({
         title: "Operação não permitida",
         text: "Sua permissão de usuário não permite exclusões",
@@ -70,8 +73,8 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
           router.push("/dashboard");
         }
       });
+      deleteFile(url);
     }
-    deleteFile(url);
   };
 
   return (

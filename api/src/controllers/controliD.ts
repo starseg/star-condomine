@@ -1,16 +1,16 @@
 import { Request, Response } from "express";
 
-interface ActuaclDeviceInterface {
+interface ActiveDeviceInterface {
   deviceId: string;
   timestamp: number;
 }
 
 let commandQueue: {
   id: string;
-  content: any
+  content: any;
 }[] = [];
 
-let activeDevices: ActuaclDeviceInterface[] = [];
+let activeDevices: ActiveDeviceInterface[] = [];
 let resultLog: any[] = [];
 let currentTimestamp = new Date().getTime();
 
@@ -29,14 +29,13 @@ export const addCommand = async (
   res.json({ message: "Command added successfully" });
 };
 
-
 export const push = async (req: Request, res: Response): Promise<void> => {
   const deviceId = req.query.deviceId;
 
   console.log("Device ID: ", deviceId);
   console.log("commandQueue: ", commandQueue);
   //console.log("activeDevices: ", activeDevices)
-  // console.log(deviceId, commandQueue[0] ? commandQueue[0].id : "empty");
+  //console.log(deviceId, commandQueue[0] ? commandQueue[0].id : "empty");
   //console.log("Query: ", req.query);
 
   if (deviceId) {
@@ -44,19 +43,18 @@ export const push = async (req: Request, res: Response): Promise<void> => {
   }
 
   if (commandQueue.length > 0) {
-
     commandQueue.map((command) => {
-      if (!(activeDevices.some((device) => device.deviceId === command.id))) {
+      if (!activeDevices.some((device) => device.deviceId === command.id)) {
         commandQueue = commandQueue.filter((item) => command.id !== item.id);
       }
-    })
+    });
 
     const compare = commandQueue.find((command) => command.id === deviceId);
     //console.log("Compare: ", compare);
 
     if (!compare) {
       res.json({});
-      return
+      return;
     }
 
     if (deviceId === compare.id) {
@@ -110,7 +108,9 @@ function setActiveDevices(deviceId: string) {
 
   if (activeDevices.some((device) => device.deviceId === deviceId)) {
     activeDevices = activeDevices.map((device) =>
-      device.deviceId === deviceId ? { deviceId, timestamp: currentTimestamp } : device
+      device.deviceId === deviceId
+        ? { deviceId, timestamp: currentTimestamp }
+        : device
     );
   } else {
     activeDevices.push({ deviceId, timestamp: currentTimestamp });

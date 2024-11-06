@@ -1,32 +1,54 @@
+"use client";
 import { SkeletonTable } from "@/components/_skeletons/skeleton-table";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { TableHeader, TableRow, TableHead, TableBody, Table, TableCell } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  Table,
+  TableCell,
+} from "@/components/ui/table";
 import api from "@/lib/axios";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { listLogsCommand } from "../device/commands";
 import { eventLogs } from "./event-logs";
-import { CaretDown, CaretLeft, CaretRight } from "@phosphor-icons/react/dist/ssr";
+import {
+  CaretDown,
+  CaretLeft,
+  CaretRight,
+} from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { toast } from "react-toastify";
 import Image from "next/image";
 import { addHours, format } from "date-fns";
 
-interface AcessLogsProps {
-  serialId: string;
-  setSerialId: (value: string) => void;
-  accessLogs: AccessLog[];
-  setAccessLogs: (value: AccessLog[]) => void;
-}
-
-export function AccessLogs({ serialId, setSerialId, accessLogs, setAccessLogs }: AcessLogsProps) {
+export function AccessLogs() {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams.toString());
   const lobbyParam = params.get("lobby");
   const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
+
+  const [accessLogs, setAccessLogs] = useState<AccessLog[]>([]);
+  const [serialId, setSerialId] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
   const [members, setMembers] = useState<Member[]>([]);
@@ -41,29 +63,32 @@ export function AccessLogs({ serialId, setSerialId, accessLogs, setAccessLogs }:
     await api.post(`/control-id/add-command?id=${serialId}`, listLogsCommand);
     await new Promise((resolve) => {
       setTimeout(async () => {
-        fetchResults()
+        fetchResults();
         resolve(true);
       }, 5000);
     });
     setIsLoading(false);
   }
 
-
   async function fetchResults() {
     const response = await api.get("/control-id/results");
     if (!response.data.length) {
-      toast.error("Ocorreu um erro ao obter os registros de acesso, verifique se o dispositivo está conectado e tente novamente.");
+      toast.error(
+        "Ocorreu um erro ao obter os registros de acesso, verifique se o dispositivo está conectado e tente novamente."
+      );
       setAccessLogs([]);
-      return
+      return;
     }
 
     const lastResult = response.data[response.data.length - 1].body.response;
 
     if (response.data[response.data.length - 1].deviceId !== serialId) {
-      toast.error("Ocorreu um erro ao obter os registros de acesso, verifique se o dispositivo está conectado e tente novamente.");
+      toast.error(
+        "Ocorreu um erro ao obter os registros de acesso, verifique se o dispositivo está conectado e tente novamente."
+      );
       setAccessLogs([]);
-      return
-    };
+      return;
+    }
 
     try {
       const accessLogs = JSON.parse(lastResult);
@@ -72,7 +97,7 @@ export function AccessLogs({ serialId, setSerialId, accessLogs, setAccessLogs }:
       console.error("Erro ao obter dados:", error);
       toast.error("Ocorreu um erro ao obter os registros de acesso.");
     }
-  };
+  }
 
   useEffect(() => {
     if (serialId) {
@@ -84,8 +109,9 @@ export function AccessLogs({ serialId, setSerialId, accessLogs, setAccessLogs }:
   const fetchDevices = async () => {
     if (session)
       try {
-        const response = await api.get(`/device/filtered/${lobby}?status=ACTIVE`);
-        console.log(response.data);
+        const response = await api.get(
+          `/device/filtered/${lobby}?status=ACTIVE`
+        );
         setDevices(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -122,7 +148,6 @@ export function AccessLogs({ serialId, setSerialId, accessLogs, setAccessLogs }:
     fetchVisitors();
   }, [session]);
 
-
   const itemsPerPageOptions = [5, 10, 25, 50, 100];
   const totalOfPages = Math.ceil(accessLogs.length / itemsPerPage);
 
@@ -148,24 +173,28 @@ export function AccessLogs({ serialId, setSerialId, accessLogs, setAccessLogs }:
     setPage(1);
   };
 
-
   function getUserNameById(id: number) {
     if (id === 0) {
       return "Usuário não identificado";
     } else if (id <= 10_000) {
-      return members.find((member) => member.memberId === id)?.name ?? "Usuário não encontrado";
+      return (
+        members.find((member) => member.memberId === id)?.name ??
+        "Usuário não encontrado"
+      );
     } else if (id > 10_000) {
-      return visitors.find((visitor) => visitor.visitorId === id - 10_000)?.name ?? "Usuário não encontrado";
+      return (
+        visitors.find((visitor) => visitor.visitorId === id - 10_000)?.name ??
+        "Usuário não encontrado"
+      );
     } else {
       return "Usuário não encontrado";
     }
   }
 
-
   return (
-    <div className="flex flex-col gap-6 justify-between mt-2 w-full">
+    <div className="flex flex-col justify-between gap-6 mt-2 w-full">
       <div className="flex justify-between items-center w-full">
-        <h2 className="text-xl">Registros de Acesso</h2>
+        <h2 className="text-3xl">Registros das leitoras</h2>
         <Select value={serialId} onValueChange={setSerialId}>
           <SelectTrigger className="w-fit">
             <SelectValue placeholder="Selecione um dispositivo" />
@@ -200,30 +229,46 @@ export function AccessLogs({ serialId, setSerialId, accessLogs, setAccessLogs }:
                   {paginatedAcessLogs.map((log) => {
                     return (
                       <TableRow key={log.id}>
+                        <TableCell>{getUserNameById(log.user_id)}</TableCell>
                         <TableCell>
-                          {getUserNameById(log.user_id)}
+                          {format(
+                            addHours(new Date(log.time * 1000), 3),
+                            "dd/MM/yyyy"
+                          )}
                         </TableCell>
-                        <TableCell>{format(addHours(new Date(log.time * 1000), 3), "dd/MM/yyyy")}</TableCell>
-                        <TableCell>{format(addHours(new Date(log.time * 1000), 3), "HH:mm:ss")}</TableCell>
-                        <TableCell style={{ color: `${eventLogs[log.event].color}` }} className="font-bold">
+                        <TableCell>
+                          {format(
+                            addHours(new Date(log.time * 1000), 3),
+                            "HH:mm:ss"
+                          )}
+                        </TableCell>
+                        <TableCell
+                          style={{ color: `${eventLogs[log.event].color}` }}
+                          className="font-bold"
+                        >
                           {eventLogs[log.event].value}
                         </TableCell>
                       </TableRow>
-                    )
+                    );
                   })}
                 </TableBody>
               </Table>
             </div>
           ) : (
-            <div className="flex justify-center items-center flex-col gap-2 mt-10">
-              <Image src="/undraw_location_search.svg" alt="Sem registros" width={982 / 2} height={763 / 2} />
+            <div className="flex flex-col justify-center items-center gap-2 mt-10">
+              <Image
+                src="/undraw_location_search.svg"
+                alt="Sem registros"
+                width={982 / 2}
+                height={763 / 2}
+              />
               <p className="font-bold">Não há nenhum dado a ser exibido.</p>
             </div>
           )}
         </>
       )}
-      {(serialId && !isLoading && accessLogs.length > 0) && (
-        <div className="flex items-center gap-4 mt-4 pr-4 justify-end">
+      {serialId && !isLoading && accessLogs.length > 0 && (
+        <div className="flex justify-end items-center gap-4 mt-4 pr-4">
           <p className="bg-stone-800 p-2 rounded">
             {accessLogs.length} registros
           </p>

@@ -1,7 +1,7 @@
-import api from "@/lib/axios";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { jwtDecode } from "jwt-decode";
+import apiBase from "@/lib/axios-base";
 
 export const nextAuthOptions: NextAuthOptions = {
   providers: [
@@ -13,7 +13,7 @@ export const nextAuthOptions: NextAuthOptions = {
         password: { label: "password", type: "password" },
       },
       async authorize(credentials, req) {
-        const res = await api.post("/auth", credentials, {
+        const res = await apiBase.post("/auth", credentials, {
           headers: {
             "Content-Type": "application/json",
           },

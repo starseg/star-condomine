@@ -19,17 +19,23 @@ import { deleteAction } from "@/lib/delete-action";
 export default function OperatorTable() {
   const [isLoading, setIsLoading] = useState(true);
   const [operators, setOperators] = useState<Operator[]>([]);
+  const [lobbies, setLobbies] = useState<Lobby[]>([]);
 
   const { data: session } = useSession();
   const fetchData = async () => {
-    if (session)
+    if (session) {
       try {
-        const response = await api.get("operator");
-        setOperators(response.data);
+        const [responseLobbies, responseOperators] = await Promise.all([
+          api.get("lobby"),
+          api.get("operator"),
+        ]);
+        setLobbies(responseLobbies.data);
+        setOperators(responseOperators.data);
         setIsLoading(false);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
       }
+    }
   };
   useEffect(() => {
     fetchData();
@@ -41,8 +47,8 @@ export default function OperatorTable() {
 
   async function getlobbyName(lobbyId: number | null) {
     if (!lobbyId) return "Todas";
-    const response = await api.get(`lobby/find/${lobbyId}`);
-    return response.data.name;
+    const response = lobbies.find((lobby) => lobby.lobbyId === lobbyId);
+    if (response) return response.name;
   }
 
   return (
@@ -51,7 +57,7 @@ export default function OperatorTable() {
         <SkeletonTable />
       ) : (
         <div className="max-h-[60vh] overflow-x-auto">
-          <Table className="border border-stone-800">
+          <Table className="border-stone-800 border">
             <TableHeader className="bg-stone-800 font-semibold">
               <TableRow>
                 <TableHead>Nome</TableHead>
