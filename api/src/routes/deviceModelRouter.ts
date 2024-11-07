@@ -5,7 +5,7 @@ import {
   getDeviceModel,
   updateDeviceModel,
   deleteDeviceModel,
-} from "../controllers/deviceModel";
+} from "../controllers/device-model-controller";
 import { checkAdminPermission } from "../middlewares/permissions";
 
 const deviceModelRouter = express.Router();

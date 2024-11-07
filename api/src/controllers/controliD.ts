@@ -54,11 +54,6 @@ export const addCommand = async (
   res.json({ message: "Command added successfully" });
 };
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> main
 export const push = async (req: Request, res: Response): Promise<void> => {
   const deviceId = req.query.deviceId;
 
@@ -117,39 +112,3 @@ export const result = async (req: Request, res: Response): Promise<void> => {
   }
   res.json(response);
 };
-<<<<<<< HEAD
-=======
-
-export const results = async (req: Request, res: Response): Promise<void> => {
-  // console.log("resultLog");
-  // console.log(resultLog);
-  res.json(resultLog);
-};
-
-export const clearResults = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  resultLog = [];
-  console.log("cleared!", resultLog);
-  res.json(resultLog);
-};
-
-function setActiveDevices(deviceId: string) {
-  currentTimestamp = new Date().getTime();
-
-  if (activeDevices.some((device) => device.deviceId === deviceId)) {
-    activeDevices = activeDevices.map((device) =>
-      device.deviceId === deviceId
-        ? { deviceId, timestamp: currentTimestamp }
-        : device
-    );
-  } else {
-    activeDevices.push({ deviceId, timestamp: currentTimestamp });
-  }
-
-  activeDevices = activeDevices.filter(
-    (device) => currentTimestamp - device.timestamp < 10000
-  );
-}
->>>>>>> main

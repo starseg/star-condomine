@@ -8,7 +8,7 @@ import {
   getDeviceByLobby,
   getFilteredDevices,
 } from "../controllers/device-controller";
-import { getDeviceModels } from "../controllers/deviceModel";
+import { getDeviceModels } from "../controllers/device-model-controller";
 import { checkAdminPermission } from "../middlewares/permissions";
 
 const deviceRouter = express.Router();
