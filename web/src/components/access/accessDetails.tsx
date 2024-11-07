@@ -54,8 +54,8 @@ export default function AccessDetails({ id }: { id: number }) {
             ) : (
               ""
             )}
-            <DetailItem label="Local" content={access.local} />
-            <DetailItem label="Motivo" content={access.reason} />
+            <DetailItem label="Local" content={access.local ?? "Não Informado"} />
+            <DetailItem label="Motivo" content={access.reason ?? "Não Informado"} />
             <DetailItem
               label="Observações"
               content={access.comments ? access.comments : "Sem observações"}
