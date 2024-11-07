@@ -136,6 +136,7 @@ export function AccessForm() {
       comments: data.comments,
       memberId: data.member,
       visitorId: data.visitor,
+      status: "INACTIVE",
       operatorId: operator,
       lobbyId: lobby,
     };
