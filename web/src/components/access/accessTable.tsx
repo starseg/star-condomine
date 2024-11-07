@@ -85,13 +85,10 @@ export default function AccessTable({ lobby }: { lobby: string }) {
 
   const registerExit = async (id: number) => {
     try {
-      await api.put(
-        "access/" + id,
-        {
-          endTime: new Date().toJSON(),
-          status: "INACTIVE",
-        }
-      );
+      await api.put("access/" + id, {
+        endTime: new Date().toJSON(),
+        status: "INACTIVE",
+      });
       fetchData();
       Swal.fire({
         title: "Saída registrada!",
@@ -121,7 +118,7 @@ export default function AccessTable({ lobby }: { lobby: string }) {
       if (
         !oldestEntries[entry.visitorId] ||
         new Date(entry.startTime) <
-        new Date(oldestEntries[entry.visitorId].startTime)
+          new Date(oldestEntries[entry.visitorId].startTime)
       ) {
         oldestEntries[entry.visitorId] = entry;
       }
@@ -157,11 +154,18 @@ export default function AccessTable({ lobby }: { lobby: string }) {
                   return (
                     <TableRow key={item.accessId} style={nameStyle}>
                       <TableCell>
-                        <p className="max-w-[25ch]">
-                          {item.visitor.name !== null
-                            ? item.visitor.name
-                            : "desconhecido"}
-                        </p>
+                        <div className="max-w-[25ch]">
+                          {item.visitor.name !== null ? (
+                            <p>
+                              {item.visitor.name}
+                              <span className="ml-1 text-xs">
+                                ({item.visitor.visitorType.description})
+                              </span>
+                            </p>
+                          ) : (
+                            "desconhecido"
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell>
                         <p className="max-w-[25ch]">{item.member.name}</p>
