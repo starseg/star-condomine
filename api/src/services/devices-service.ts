@@ -43,12 +43,20 @@ export class DevicesService {
   }
 
   async updateDevice(id: number, data: Prisma.DeviceUpdateInput) {
-    const updatedDevice = await prisma.device.update({
-      where: { deviceId: id },
-      data,
-    });
+    try {
+      const updatedDevice = await prisma.device.update({
+        where: { deviceId: id },
+        data,
+      });
 
-    return updatedDevice;
+      return updatedDevice;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+        throw new ResourceNotFoundError();
+      }
+
+      throw error;
+    }
   }
 
   async deleteDevice(id: number) {
@@ -60,6 +68,8 @@ export class DevicesService {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
         throw new ResourceNotFoundError();
       }
+
+      throw error
     }
   }
 

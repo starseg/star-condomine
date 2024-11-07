@@ -40,6 +40,8 @@ export class DeviceModelService {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
         throw new ResourceNotFoundError();
       }
+
+      throw error;
     }
   }
 
@@ -54,6 +56,8 @@ export class DeviceModelService {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
         throw new ResourceNotFoundError();
       }
+
+      throw error;
     }
   }
 }
