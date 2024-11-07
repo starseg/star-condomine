@@ -26,7 +26,7 @@ export default function CredentialsFullTable() {
   const [tags, setTags] = useState<Tags[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const lobby = params.get("lobby");
 
   const fetchData = async () => {
@@ -34,11 +34,7 @@ export default function CredentialsFullTable() {
       try {
         let query = "";
         if (params.get("query")) query = `?query=${params.get("query")}`;
-        const response = await api.get(`tag/lobby/${lobby}${query}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(`tag/lobby/${lobby}${query}`);
         setTags(response.data);
         setIsLoading(false);
       } catch (error) {

@@ -35,18 +35,14 @@ export default function LobbyDetails() {
 
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
-  const lobbyId = params.get("id") || "";
+  const params = new URLSearchParams(searchParams.toString());
+  const lobbyId = params.get("lobby") || "";
 
   const fetchData = async () => {
     if (session)
       try {
         const path = "lobby/find/" + lobbyId;
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         if (response.data) {
           setLobby(response.data);
         }
@@ -59,11 +55,7 @@ export default function LobbyDetails() {
     if (session)
       try {
         const path = "lobbyCalendar/today/" + lobbyId;
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         if (response.data) {
           setCalendar(response.data);
         }
@@ -199,13 +191,15 @@ export default function LobbyDetails() {
                     Control iD
                   </Link>
 
-                  <Link
-                    href={`actions/control-id/advanced?lobby=${id}&brand=${brand}`}
-                    className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
-                  >
-                    <Gear />
-                    Avançado
-                  </Link>
+                  {session?.payload.user.type === "ADMIN" && (
+                    <Link
+                      href={`actions/control-id/advanced?lobby=${id}&brand=${brand}`}
+                      className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
+                    >
+                      <Gear />
+                      Avançado
+                    </Link>
+                  )}
                 </div>
                 <OpenDoorButton />
               </div>

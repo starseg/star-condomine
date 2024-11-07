@@ -27,11 +27,7 @@ export const deleteAction = async (
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await api.delete(path, {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          await api.delete(path);
           fetchData();
           Swal.fire({
             title: "Excluído!",

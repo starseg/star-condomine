@@ -29,7 +29,7 @@ export default function OldAccessTable({ lobby }: { lobby: string }) {
   const [access, setAccess] = useState<Access[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const control = params.get("c");
 
   const fetchData = async () => {
@@ -41,11 +41,7 @@ export default function OldAccessTable({ lobby }: { lobby: string }) {
         } else {
           path = `access/filtered/${lobby}?query=${params.get("query")}`;
         }
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         setAccess(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -67,11 +63,6 @@ export default function OldAccessTable({ lobby }: { lobby: string }) {
         {
           endTime: new Date().toJSON(),
           status: "INACTIVE",
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
         }
       );
       fetchData();
@@ -103,7 +94,7 @@ export default function OldAccessTable({ lobby }: { lobby: string }) {
       if (
         !oldestEntries[entry.visitorId] ||
         new Date(entry.startTime) <
-          new Date(oldestEntries[entry.visitorId].startTime)
+        new Date(oldestEntries[entry.visitorId].startTime)
       ) {
         oldestEntries[entry.visitorId] = entry;
       }

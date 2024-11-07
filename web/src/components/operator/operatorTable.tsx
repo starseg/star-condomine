@@ -19,20 +19,23 @@ import { deleteAction } from "@/lib/delete-action";
 export default function OperatorTable() {
   const [isLoading, setIsLoading] = useState(true);
   const [operators, setOperators] = useState<Operator[]>([]);
+  const [lobbies, setLobbies] = useState<Lobby[]>([]);
+
   const { data: session } = useSession();
   const fetchData = async () => {
-    if (session)
+    if (session) {
       try {
-        const response = await api.get("operator", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
-        setOperators(response.data);
+        const [responseLobbies, responseOperators] = await Promise.all([
+          api.get("lobby"),
+          api.get("operator"),
+        ]);
+        setLobbies(responseLobbies.data);
+        setOperators(responseOperators.data);
         setIsLoading(false);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
       }
+    }
   };
   useEffect(() => {
     fetchData();
@@ -42,19 +45,27 @@ export default function OperatorTable() {
     deleteAction(session, "operador", `operator/${id}`, fetchData);
   };
 
+  async function getlobbyName(lobbyId: number | null) {
+    if (!lobbyId) return "Todas";
+    const response = lobbies.find((lobby) => lobby.lobbyId === lobbyId);
+    if (response) return response.name;
+  }
+
   return (
     <>
       {isLoading ? (
         <SkeletonTable />
       ) : (
         <div className="max-h-[60vh] overflow-x-auto">
-          <Table className="border border-stone-800">
+          <Table className="border-stone-800 border">
             <TableHeader className="bg-stone-800 font-semibold">
               <TableRow>
                 <TableHead>Nome</TableHead>
                 <TableHead>Usuário</TableHead>
                 <TableHead>Senha</TableHead>
                 <TableHead>Permissão</TableHead>
+                <TableHead>Tipo de Usuário</TableHead>
+                <TableHead>Portaria</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Ações</TableHead>
               </TableRow>
@@ -68,6 +79,10 @@ export default function OperatorTable() {
                   <TableCell>
                     {operator.type === "ADMIN" ? "Administrador" : "Comum"}
                   </TableCell>
+                  <TableCell>
+                    {operator.lobbyId ? "Externo" : "Interno"}
+                  </TableCell>
+                  <TableCell>{getlobbyName(operator.lobbyId)}</TableCell>
                   <TableCell>
                     {operator.status === "ACTIVE" ? (
                       <p className="text-green-500">Ativo</p>
@@ -91,7 +106,7 @@ export default function OperatorTable() {
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TableCell className="text-right" colSpan={6}>
+                <TableCell className="text-right" colSpan={8}>
                   Total de registros: {operators.length}
                 </TableCell>
               </TableRow>

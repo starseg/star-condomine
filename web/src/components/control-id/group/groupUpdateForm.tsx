@@ -74,11 +74,7 @@ export default function GroupUpdateForm({
     try {
       const info = { name: data.name };
 
-      const response = await api.put(`group/${id}`, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.put(`group/${id}`, info);
 
       if (data.synchronize) {
         if (deviceList.length > 0) {

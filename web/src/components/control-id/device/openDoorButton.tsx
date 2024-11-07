@@ -18,18 +18,16 @@ import { openDoorCommand } from "./commands";
 export function OpenDoorButton() {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
-  const lobby = params.get("id");
+  const params = new URLSearchParams(searchParams.toString());
+  const lobby = params.get("lobby");
 
   const [devices, setDevices] = useState<Device[]>([]);
   const fetchDevices = async () => {
     if (session)
       try {
-        const response = await api.get(`device/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(
+          `device/filtered/${lobby}?status=ACTIVE`
+        );
         setDevices(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);

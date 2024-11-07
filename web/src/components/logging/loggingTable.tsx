@@ -23,11 +23,7 @@ export default function LoggingTable() {
   const fetchData = async () => {
     if (session)
       try {
-        const response = await api.get("log", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("log");
         setLogs(response.data);
         setIsLoading(false);
       } catch (error) {

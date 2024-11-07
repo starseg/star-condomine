@@ -16,7 +16,7 @@ export default async function Device({
   const lobby = searchParams?.lobby || "";
   return (
     <>
-      <Menu url={`/dashboard/actions?id=${lobby}`} />
+      <Menu url={`/dashboard/actions?lobby=${lobby}`} />
       <section className="max-w-5xl mx-auto mb-24">
         <h1 className="text-4xl text-center">Detalhes da portaria</h1>
         <LobbyDetails lobby={lobby} />

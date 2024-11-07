@@ -32,7 +32,7 @@ export default function UpdateLobby() {
 
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [lobby, setLobby] = useState<Lobby | null>(null);
   const [data, setData] = useState<Values>();
@@ -41,11 +41,7 @@ export default function UpdateLobby() {
     const fetchData = async () => {
       if (session)
         try {
-          const response = await api.get("lobby/find/" + params.get("id"), {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          const response = await api.get("lobby/find/" + params.get("id"),);
           setLobby(response.data);
         } catch (error) {
           console.error("(Lobby) Erro ao obter dados:", error);

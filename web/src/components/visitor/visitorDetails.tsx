@@ -38,18 +38,14 @@ export default function VisitorDetails({ id }: { id: number }) {
   const [devices, setDevices] = useState<string[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const lobbyParam = params.get("lobby");
   const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
   const control = params.get("c");
   const fetchData = async () => {
     if (session)
       try {
-        const response = await api.get("visitor/find/" + id, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("visitor/find/" + id);
         setVisitor(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -59,11 +55,7 @@ export default function VisitorDetails({ id }: { id: number }) {
   const fetchLobbyData = async () => {
     if (session)
       try {
-        const getLobby = await api.get(`/lobby/find/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const getLobby = await api.get(`/lobby/find/${lobby}`);
         setLobbyData(getLobby.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);

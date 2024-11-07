@@ -47,16 +47,12 @@ export function CredentialsUpdateForm({
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [tagType, setTagType] = useState<TagTypes[]>([]);
   const fetchTagTypes = async () => {
     try {
-      const response = await api.get("tag/types", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.get("tag/types");
       setTagType(response.data);
     } catch (error) {
       console.error("Erro ao obter dados:", error);
@@ -102,11 +98,7 @@ export function CredentialsUpdateForm({
       status: data.status,
     };
     try {
-      await api.put("tag/" + id, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.put("tag/" + id, info);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

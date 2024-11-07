@@ -7,27 +7,30 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
+interface Operator {
+  operatorId: number;
+  username: string;
+  name: string;
+  password: string;
+  lobbyId: number | null;
+  createdAt: string;
+  updatedAt: string;
+  type: "USER" | "ADMIN" | undefined;
+  status: "ACTIVE" | "INACTIVE" | undefined;
+}
+interface Values {
+  username: string;
+  name: string;
+  password: string;
+  lobbyId: number | null;
+  type: "USER" | "ADMIN" | undefined;
+  status: "ACTIVE" | "INACTIVE" | undefined;
+}
+
 export default function UpdateOperator() {
-  interface Operator {
-    operatorId: number;
-    username: string;
-    name: string;
-    password: string;
-    createdAt: string;
-    updatedAt: string;
-    type: "USER" | "ADMIN" | undefined;
-    status: "ACTIVE" | "INACTIVE" | undefined;
-  }
-  interface Values {
-    username: string;
-    name: string;
-    password: string;
-    type: "USER" | "ADMIN" | undefined;
-    status: "ACTIVE" | "INACTIVE" | undefined;
-  }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [operator, setOperator] = useState<Operator | null>(null);
   const [data, setData] = useState<Values>();
@@ -35,11 +38,7 @@ export default function UpdateOperator() {
     const fetchData = async () => {
       if (session)
         try {
-          const response = await api.get("operator/find/" + params.get("id"), {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          const response = await api.get("operator/find/" + params.get("id"));
           setOperator(response.data);
         } catch (error) {
           console.error("(operator) Erro ao obter dados:", error);
@@ -54,6 +53,7 @@ export default function UpdateOperator() {
         username: operator.username || "",
         name: operator.name || "",
         password: "",
+        lobbyId: operator.lobbyId || null,
         type: operator.type || "USER",
         status: operator.status || "ACTIVE",
       });

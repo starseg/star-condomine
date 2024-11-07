@@ -40,7 +40,7 @@ export function DeviceModelUpdateForm({
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const facialOptions = [
     {
@@ -59,11 +59,7 @@ export function DeviceModelUpdateForm({
     const id = params.get("id");
 
     try {
-      await api.put("deviceModel/" + id, data, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.put("deviceModel/" + id, data);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

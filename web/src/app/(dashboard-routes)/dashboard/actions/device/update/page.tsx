@@ -28,11 +28,7 @@ export default function UpdateDevice() {
     const fetchData = async () => {
       if (session)
         try {
-          const response = await api.get("device/find/" + params.get("id"), {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          const response = await api.get("device/find/" + params.get("id"),);
           setDevice(response.data);
         } catch (error) {
           console.error("(Device) Erro ao obter dados:", error);

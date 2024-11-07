@@ -181,6 +181,11 @@ export const getAccessByLobby = async (
           select: {
             name: true,
             cpf: true,
+            visitorType: {
+              select: {
+                description: true,
+              },
+            },
           },
         },
         member: {
@@ -225,6 +230,11 @@ export const getFilteredAccess = async (
           select: {
             name: true,
             cpf: true,
+            visitorType: {
+              select: {
+                description: true,
+              },
+            },
           },
         },
         member: {

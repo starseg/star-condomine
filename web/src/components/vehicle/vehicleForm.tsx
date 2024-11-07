@@ -54,7 +54,7 @@ export function VehicleForm() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [members, setMembers] = useState([]);
   const [types, setTypes] = useState([]);
@@ -63,12 +63,7 @@ export function VehicleForm() {
       if (session)
         try {
           const response = await api.get(
-            "member/lobby/" + params.get("lobby"),
-            {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            }
+            "member/lobby/" + params.get("lobby")
           );
           setMembers(response.data);
         } catch (error) {
@@ -78,11 +73,7 @@ export function VehicleForm() {
     const fetchVehicleTypes = async () => {
       if (session)
         try {
-          const response = await api.get("vehicle/types", {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          const response = await api.get("vehicle/types",);
           setTypes(response.data);
         } catch (error) {
           console.error("Erro ao obter dados:", error);
@@ -130,11 +121,7 @@ export function VehicleForm() {
       comments: data.comments,
     };
     try {
-      await api.post("vehicle", info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.post("vehicle", info);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

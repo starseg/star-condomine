@@ -91,11 +91,7 @@ export default function SyncDevice() {
   const fetchDevices = async () => {
     if (session)
       try {
-        const response = await api.get(`/device/filtered/${lobby}?status=ACTIVE`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(`/device/filtered/${lobby}?status=ACTIVE`);
         setDevices(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -115,11 +111,7 @@ export default function SyncDevice() {
           // Enviar TimeZones para o dispositivo
           let timeZones = [];
           try {
-            const response = await api.get(`timeZone/lobby/${lobby}`, {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            });
+            const response = await api.get(`timeZone/lobby/${lobby}`);
             timeZones = response.data;
           } catch (error) {
             console.error("Erro ao obter dados:", error);
@@ -138,11 +130,7 @@ export default function SyncDevice() {
           // Enviar TimeSpans para o dispositivo
           let timeSpans = [];
           try {
-            const response = await api.get(`timeSpan/lobby/${lobby}`, {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            });
+            const response = await api.get(`timeSpan/lobby/${lobby}`);
             timeSpans = response.data;
           } catch (error) {
             console.error("Erro ao obter dados:", error);
@@ -176,11 +164,7 @@ export default function SyncDevice() {
           // Enviar accessRules para o dispositivo
           let accessRules = [];
           try {
-            const response = await api.get(`accessRule/lobby/${lobby}`, {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            });
+            const response = await api.get(`accessRule/lobby/${lobby}`);
             accessRules = response.data;
           } catch (error) {
             console.error("Erro ao obter dados:", error);
@@ -212,11 +196,7 @@ export default function SyncDevice() {
           // Enviar groups para o dispositivo
           let groups = [];
           try {
-            const response = await api.get(`group/lobby/${lobby}`, {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            });
+            const response = await api.get(`group/lobby/${lobby}`);
             groups = response.data;
           } catch (error) {
             console.error("Erro ao obter dados:", error);
@@ -234,11 +214,7 @@ export default function SyncDevice() {
         if (data.members) {
           let members = [];
           try {
-            const response = await api.get(`member/lobby/${lobby}`, {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            });
+            const response = await api.get(`member/lobby/${lobby}`);
             members = response.data;
           } catch (error) {
             console.error("Erro ao obter dados:", error);
@@ -271,11 +247,7 @@ export default function SyncDevice() {
         if (data.visitors) {
           let visitors = [];
           try {
-            const response = await api.get(`visitor/lobby/${lobby}`, {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            });
+            const response = await api.get(`visitor/lobby/${lobby}`);
             visitors = response.data;
           } catch (error) {
             console.error("Erro ao obter dados:", error);
@@ -310,11 +282,7 @@ export default function SyncDevice() {
           let visitorGroups = [];
 
           try {
-            const response = await api.get(`visitorGroup/lobby/${lobby}`, {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            });
+            const response = await api.get(`visitorGroup/lobby/${lobby}`);
             visitorGroups = response.data;
           } catch (error) {
             console.error("Erro ao obter dados:", error);
@@ -338,11 +306,7 @@ export default function SyncDevice() {
         if (data.memberGroups) {
           let memberGroups = [];
           try {
-            const response = await api.get(`memberGroup/lobby/${lobby}`, {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            });
+            const response = await api.get(`memberGroup/lobby/${lobby}`);
             memberGroups = response.data;
           } catch (error) {
             console.error("Erro ao obter dados:", error);
@@ -367,11 +331,7 @@ export default function SyncDevice() {
           // Enviar groupAccessRules para o dispositivo
           let groupAccessRules = [];
           try {
-            const response = await api.get(`groupAccessRule/lobby/${lobby}`, {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            });
+            const response = await api.get(`groupAccessRule/lobby/${lobby}`);
             groupAccessRules = response.data;
           } catch (error) {
             console.error("Erro ao obter dados:", error);
@@ -393,11 +353,7 @@ export default function SyncDevice() {
           // Enviar AccessRuleTimeZones para o dispositivo
           let accessRuleTimeZones = [];
           try {
-            const response = await api.get(`accessRuleTimeZone/lobby/${lobby}`, {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            });
+            const response = await api.get(`accessRuleTimeZone/lobby/${lobby}`);
             accessRuleTimeZones = response.data;
           } catch (error) {
             console.error("Erro ao obter dados:", error);

@@ -31,7 +31,7 @@ export default function UpdateVehicle() {
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [data, setData] = useState<Values>();
@@ -39,11 +39,7 @@ export default function UpdateVehicle() {
     const fetchData = async () => {
       if (session)
         try {
-          const response = await api.get("vehicle/find/" + params.get("id"), {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          const response = await api.get("vehicle/find/" + params.get("id"),);
           setVehicle(response.data);
         } catch (error) {
           console.error("(Device) Erro ao obter dados:", error);

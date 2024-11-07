@@ -14,7 +14,7 @@ export default function List() {
   useEffect(() => {
     const fetchData = async () => {
       if (session) {
-        const params = new URLSearchParams(searchParams);
+        const params = new URLSearchParams(searchParams.toString());
         try {
           let path;
           if (params.size == 0) {
@@ -22,11 +22,7 @@ export default function List() {
           } else {
             path = "lobby/filtered?query=" + params.get("query");
           }
-          const response = await api.get(path, {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          const response = await api.get(path,);
 
           setLobbies(response.data);
           setIsLoading(false);
@@ -62,7 +58,7 @@ export default function List() {
             return (
               <LobbyCard
                 key={lobby.lobbyId}
-                href={"dashboard/actions?id=" + lobby.lobbyId}
+                href={"dashboard/actions?lobby=" + lobby.lobbyId}
                 title={lobby.name}
                 type={lobby.schedules}
                 status={status}

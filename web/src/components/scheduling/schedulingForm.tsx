@@ -59,17 +59,13 @@ export function SchedulingForm() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [visitors, setVisitors] = useState<Visitor[]>([]);
   const fetchVisitors = async () => {
     if (session)
       try {
-        const response = await api.get("visitor/lobby/" + params.get("lobby"), {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("visitor/lobby/" + params.get("lobby"));
         setVisitors(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -80,11 +76,7 @@ export function SchedulingForm() {
   const fetchMembers = async () => {
     if (session)
       try {
-        const response = await api.get("member/lobby/" + params.get("lobby"), {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("member/lobby/" + params.get("lobby"));
         setMembers(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -152,11 +144,7 @@ export function SchedulingForm() {
       lobbyId: lobby,
     };
     try {
-      await api.post("scheduling", info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.post("scheduling", info);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

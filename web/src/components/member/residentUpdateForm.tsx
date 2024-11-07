@@ -141,7 +141,7 @@ export function ResidentUpdateForm({
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [addressType, setAddressType] = useState([]);
   const [phoneNumber, setPhoneNumber] = useState<string[]>([]);
@@ -158,11 +158,7 @@ export function ResidentUpdateForm({
   const fetchAddressData = async () => {
     if (session)
       try {
-        const response = await api.get("member/address", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("member/address");
         setAddressType(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -219,11 +215,7 @@ export function ResidentUpdateForm({
       try {
         const response = await api.get(
           `member/find/${member.memberId}/base64photo`,
-          {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          }
+
         );
         return response.data.base64;
       } catch (error) {
@@ -292,19 +284,11 @@ export function ResidentUpdateForm({
         comments: data.comments,
         status: data.status,
       };
-      const response = await api.put("member/" + params.get("id"), info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.put("member/" + params.get("id"), info);
 
       // REGISTRA OS NÚMEROS DE TELEFONE
       try {
-        const res = await api.delete("telephone/member/" + params.get("id"), {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const res = await api.delete("telephone/member/" + params.get("id"));
 
         if (res) {
           if (phoneNumber[0] != "") {
@@ -315,11 +299,6 @@ export function ResidentUpdateForm({
                   {
                     number: phoneNumber[i],
                     memberId: response.data.memberId,
-                  },
-                  {
-                    headers: {
-                      Authorization: `Bearer ${session?.token.user.token}`,
-                    },
                   }
                 );
               }

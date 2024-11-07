@@ -26,7 +26,7 @@ import AccessRuleUpdateForm from "./accessRuleUpdateForm";
 export default function AccessRuleTable({ devices }: { devices: Device[] }) {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const lobbyParam = params.get("lobby");
   const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
   const { update } = useControliDUpdate();
@@ -35,11 +35,7 @@ export default function AccessRuleTable({ devices }: { devices: Device[] }) {
   const fetchData = async () => {
     if (session) {
       try {
-        const response = await api.get(`accessRule/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session.token.user.token}`,
-          },
-        });
+        const response = await api.get(`accessRule/lobby/${lobby}`);
         setAccessRules(response.data);
 
         setIsLoading(false);
@@ -55,11 +51,7 @@ export default function AccessRuleTable({ devices }: { devices: Device[] }) {
   const deleteItem = async (id: number) => {
     // deleteAction(session, "regra de acesso", `accessRule/${id}`, fetchData);
     try {
-      await api.delete(`accessRule/${id}`, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.delete(`accessRule/${id}`);
       fetchData();
       devices.map(async (device) => {
         await api.post(

@@ -41,7 +41,7 @@ export function NotificationUpdateForm({
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const id = params.get("id");
 
   const status = [
@@ -65,11 +65,7 @@ export function NotificationUpdateForm({
       status: data.status,
     };
     try {
-      await api.put("notification/" + id, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.put("notification/" + id, info);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

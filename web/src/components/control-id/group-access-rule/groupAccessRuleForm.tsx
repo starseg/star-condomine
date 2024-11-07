@@ -61,11 +61,7 @@ export default function GroupAccessRuleForm() {
   const fetchGroups = async () => {
     if (session)
       try {
-        const response = await api.get("group", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("group");
         setGroups(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -76,11 +72,7 @@ export default function GroupAccessRuleForm() {
   const fetchAccessRules = async () => {
     if (session)
       try {
-        const response = await api.get(`accessRule`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(`accessRule`);
         setAccessRules(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -99,11 +91,7 @@ export default function GroupAccessRuleForm() {
         groupId: data.groupId,
       };
 
-      const response = await api.post(`groupAccessRule`, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.post(`groupAccessRule`, info);
       if (response.status === 201) {
         toast.success("Relação registrada!", {
           theme: "colored",
@@ -158,8 +146,8 @@ export default function GroupAccessRuleForm() {
                         >
                           {field.value
                             ? groups.find(
-                                (group) => group.groupId === field.value
-                              )?.name
+                              (group) => group.groupId === field.value
+                            )?.name
                             : "Selecione um grupo"}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
@@ -217,9 +205,9 @@ export default function GroupAccessRuleForm() {
                         >
                           {field.value
                             ? accessRules.find(
-                                (accessRule) =>
-                                  accessRule.accessRuleId === field.value
-                              )?.name
+                              (accessRule) =>
+                                accessRule.accessRuleId === field.value
+                            )?.name
                             : "Selecione uma regra"}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>

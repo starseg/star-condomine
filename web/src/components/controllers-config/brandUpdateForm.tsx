@@ -35,7 +35,7 @@ export function BrandUpdateForm({
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
@@ -43,11 +43,7 @@ export function BrandUpdateForm({
     const id = params.get("id");
 
     try {
-      await api.put("brand/" + id, data, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.put("brand/" + id, data);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

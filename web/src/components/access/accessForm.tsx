@@ -43,17 +43,13 @@ export function AccessForm() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [visitors, setVisitors] = useState<Visitor[]>([]);
   const fetchVisitors = async () => {
     if (session)
       try {
-        const response = await api.get("visitor/lobby/" + params.get("lobby"), {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("visitor/lobby/" + params.get("lobby"));
         setVisitors(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -64,11 +60,7 @@ export function AccessForm() {
   const fetchMembers = async () => {
     if (session)
       try {
-        const response = await api.get("member/lobby/" + params.get("lobby"), {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("member/lobby/" + params.get("lobby"));
         setMembers(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -148,11 +140,7 @@ export function AccessForm() {
       lobbyId: lobby,
     };
     try {
-      await api.post("access", info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.post("access", info);
       router.back();
     } catch (error) {
       toast.error(

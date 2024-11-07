@@ -56,7 +56,7 @@ export default function UpdateEmployee() {
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [member, setMember] = useState<Member | null>(null);
   const [data, setData] = useState<Values>();
@@ -69,11 +69,7 @@ export default function UpdateEmployee() {
   const fetchData = async () => {
     if (session)
       try {
-        const response = await api.get("member/find/" + params.get("id"), {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("member/find/" + params.get("id"));
         setMember(response.data);
       } catch (error) {
         console.error("(Member) Erro ao obter dados:", error);
@@ -82,11 +78,7 @@ export default function UpdateEmployee() {
   const fetchDevices = async () => {
     if (session)
       try {
-        const devices = await api.get(`/device/lobby/${params.get("lobby")}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const devices = await api.get(`/device/lobby/${params.get("lobby")}`);
         setDevices(devices.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);

@@ -23,7 +23,7 @@ export default function CalendarTable({ lobby }: { lobby: string }) {
   const [calendar, setCalendar] = useState<Calendar[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const fetchData = async () => {
     if (session)
       try {
@@ -33,11 +33,7 @@ export default function CalendarTable({ lobby }: { lobby: string }) {
         } else {
           path = `lobbyCalendar/filtered/${lobby}?query=${params.get("query")}`;
         }
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         setCalendar(response.data);
         setIsLoading(false);
       } catch (error) {

@@ -16,7 +16,7 @@ export default function UpdateDeviceModel() {
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [deviceModel, setDeviceModel] = useState<DeviceModel | null>(null);
   const [data, setData] = useState<Values>();
@@ -25,12 +25,7 @@ export default function UpdateDeviceModel() {
       if (session)
         try {
           const response = await api.get(
-            "deviceModel/find/" + params.get("id"),
-            {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            }
+            "deviceModel/find/" + params.get("id")
           );
           setDeviceModel(response.data);
         } catch (error) {

@@ -33,7 +33,7 @@ export default function UpdateSchedulingList() {
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [list, setList] = useState<SchedulingList | null>(null);
   const [data, setData] = useState<Values>();
@@ -42,12 +42,7 @@ export default function UpdateSchedulingList() {
       if (session)
         try {
           const response = await api.get(
-            "schedulingList/find/" + params.get("id"),
-            {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            }
+            "schedulingList/find/" + params.get("id")
           );
           setList(response.data);
         } catch (error) {

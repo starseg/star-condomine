@@ -28,7 +28,7 @@ export default function AccessRuleTimeZoneTable({
 }) {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const lobbyParam = params.get("lobby");
   const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
   const { update } = useControliDUpdate();
@@ -40,11 +40,7 @@ export default function AccessRuleTimeZoneTable({
   const fetchData = async () => {
     if (session) {
       try {
-        const response = await api.get(`accessRuleTimeZone/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session.token.user.token}`,
-          },
-        });
+        const response = await api.get(`accessRuleTimeZone/lobby/${lobby}`);
         setAccessRuleTimeZones(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -62,11 +58,7 @@ export default function AccessRuleTimeZoneTable({
     time_zone_id: number
   ) => {
     try {
-      await api.delete(`accessRuleTimeZone/${id}`, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.delete(`accessRuleTimeZone/${id}`);
       fetchData();
       devices.map(async (device) => {
         await api.post(

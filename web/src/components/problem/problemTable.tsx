@@ -29,7 +29,7 @@ export default function ProblemTable({ lobby }: { lobby: string }) {
   const [problems, setProblems] = useState<Problem[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const fetchData = async () => {
     if (session)
       try {
@@ -39,11 +39,7 @@ export default function ProblemTable({ lobby }: { lobby: string }) {
         } else {
           path = `lobbyProblem/filtered/${lobby}?query=${params.get("query")}`;
         }
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         setProblems(response.data);
         setIsLoading(false);
       } catch (error) {

@@ -58,7 +58,7 @@ export default function MemberGroupForm() {
   });
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const lobbyParam = params.get("lobby");
   const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
 
@@ -66,11 +66,7 @@ export default function MemberGroupForm() {
   const fetchMembers = async () => {
     if (session)
       try {
-        const response = await api.get(`member/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(`member/lobby/${lobby}`);
         setMembers(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -81,11 +77,7 @@ export default function MemberGroupForm() {
   const fetchGroups = async () => {
     if (session)
       try {
-        const response = await api.get(`group/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(`group/lobby/${lobby}`);
         setGroups(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -104,11 +96,7 @@ export default function MemberGroupForm() {
         groupId: data.groupId,
       };
 
-      const response = await api.post(`memberGroup`, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.post(`memberGroup`, info);
       if (response.status === 201) {
         toast.success("Relação registrada!", {
           theme: "colored",
@@ -163,8 +151,8 @@ export default function MemberGroupForm() {
                         >
                           {field.value
                             ? members.find(
-                                (member) => member.memberId === field.value
-                              )?.name
+                              (member) => member.memberId === field.value
+                            )?.name
                             : "Selecione uma pessoa"}
                           <ChevronsUpDown className="opacity-50 ml-2 w-4 h-4 shrink-0" />
                         </Button>
@@ -221,8 +209,8 @@ export default function MemberGroupForm() {
                         >
                           {field.value
                             ? groups.find(
-                                (group) => group.groupId === field.value
-                              )?.name
+                              (group) => group.groupId === field.value
+                            )?.name
                             : "Selecione um grupo"}
                           <ChevronsUpDown className="opacity-50 ml-2 w-4 h-4 shrink-0" />
                         </Button>

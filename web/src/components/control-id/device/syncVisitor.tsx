@@ -61,11 +61,7 @@ export function SyncVisitor({
       try {
         const response = await api.get(
           `visitor/find/${visitor.visitorId}/base64photo`,
-          {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          }
+
         );
         return response.data.base64;
       } catch (error) {
@@ -132,11 +128,6 @@ export function SyncVisitor({
         {
           startDate: realStartDate,
           endDate: realEndDate,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
         }
       );
     }

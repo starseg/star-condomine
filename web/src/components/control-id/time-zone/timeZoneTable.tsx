@@ -25,7 +25,7 @@ import { toast } from "react-toastify";
 export default function TimeZoneTable() {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const lobbyParam = params.get("lobby");
   const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
   const { update } = useControliDUpdate();
@@ -35,11 +35,7 @@ export default function TimeZoneTable() {
   const fetchData = async () => {
     if (session) {
       try {
-        const response = await api.get(`timeZone/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session.token.user.token}`,
-          },
-        });
+        const response = await api.get(`timeZone/lobby/${lobby}`);
         setTimeZones(response.data);
 
         setIsLoading(false);
@@ -57,11 +53,7 @@ export default function TimeZoneTable() {
   const fetchDevices = async () => {
     if (session)
       try {
-        const response = await api.get(`device/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(`device/lobby/${lobby}`);
         setDevices(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -75,11 +67,7 @@ export default function TimeZoneTable() {
   const deleteItem = async (id: number) => {
     // deleteAction(session, "horário", `timeZone/${id}`, fetchData);
     try {
-      await api.delete(`timeZone/${id}`, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.delete(`timeZone/${id}`);
       fetchData();
       devices.map(async (device) => {
         await api.post(

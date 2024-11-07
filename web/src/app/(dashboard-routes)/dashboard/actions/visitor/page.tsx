@@ -30,7 +30,7 @@ export default async function Visitor({
 
   return (
     <>
-      <Menu url={`/dashboard/actions?id=${lobby}`} />
+      <Menu url={`/dashboard/actions?lobby=${lobby}`} />
       <section className="mx-auto mb-24 max-w-5xl">
         <div className="flex justify-between mb-4">
           <h1 className="text-4xl text-center">Visitantes</h1>

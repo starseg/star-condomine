@@ -39,7 +39,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
   const [devices, setDevices] = useState<Device[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const control = params.get("c");
   const brand = params.get("brand");
   const itemsPerPage = 10;
@@ -52,11 +52,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
         } else {
           path = `member/filtered/${lobby}?query=${params.get("query")}`;
         }
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         setMembers(response.data);
         setPaginatedMembers(response.data.slice(0, itemsPerPage));
         setIsLoading(false);
@@ -67,11 +63,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
   async function fetchDevices() {
     if (session)
       try {
-        const devices = await api.get(`/device/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const devices = await api.get(`/device/lobby/${lobby}`);
         setDevices(devices.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -106,11 +98,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
   const deleteMember = async (id: number, url: string) => {
     // deleteAction(session, "membro", `member/${id}`, fetchData);
     try {
-      await api.delete(`member/${id}`, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.delete(`member/${id}`);
       fetchData();
       if (brand === "Control-iD")
         devices.map(async (device) => {

@@ -33,11 +33,7 @@ export function Menu({ url = "" }: { url?: string }) {
   const fetchFeedbacks = async () => {
     if (session)
       try {
-        const response = await api.get("feedback/new", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("feedback/new");
         setFeedbacks(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -53,6 +49,10 @@ export function Menu({ url = "" }: { url?: string }) {
         <BackButton />
       ) : url === "bell" ? (
         <NotificationList />
+      ) : url === "/dashboard" && session?.payload.user.lobbyId ? (
+        <Link href={`${url}`} className="invisible">
+          <ArrowLeft size={"2.5rem"} />
+        </Link>
       ) : (
         <Link href={`${url}`}>
           <ArrowLeft size={"2.5rem"} />
@@ -74,7 +74,7 @@ export function Menu({ url = "" }: { url?: string }) {
           <DropdownMenuLabel>Menu</DropdownMenuLabel>
           <DropdownMenuSeparator />
 
-          {session?.payload.user.type === "ADMIN" && (
+          {(session?.payload.user.type === "ADMIN" && !session.payload.user.lobbyId) && (
             <>
               <DropdownMenuItem>
                 <Link
@@ -111,30 +111,35 @@ export function Menu({ url = "" }: { url?: string }) {
             </>
           )}
 
-          <DropdownMenuItem>
-            <Link
-              href={"/schedulingList"}
-              className="flex justify-center items-center gap-2"
-            >
-              <ListChecks size={"24px"} /> Lista de agendamentos
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link
-              href={"/feedback"}
-              className="flex justify-center items-center gap-2"
-            >
-              <Envelope size={"24px"} /> Feedbacks
-              <p className="text-xs font-bold flex items-center justify-center w-5 h-5 rounded-full bg-yellow-500 text-stone-950">
-                {feedbacks.toString()}
-              </p>
-            </Link>
-          </DropdownMenuItem>
+          {!session?.payload.user.lobbyId && (
+            <>
+              <DropdownMenuItem>
+                <Link
+                  href={"/schedulingList"}
+                  className="flex justify-center items-center gap-2"
+                >
+                  <ListChecks size={"24px"} /> Lista de agendamentos
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link
+                  href={"/feedback"}
+                  className="flex justify-center items-center gap-2"
+                >
+                  <Envelope size={"24px"} /> Feedbacks
+                  <p className="text-xs font-bold flex items-center justify-center w-5 h-5 rounded-full bg-yellow-500 text-stone-950">
+                    {feedbacks.toString()}
+                  </p>
+                </Link>
+              </DropdownMenuItem>
+            </>
+          )}
+
           <DropdownMenuItem>
             <a
               href="https://northern-squirrel-23f.notion.site/Manual-Star-Condomine-14149e5d23a24c1ab3a9a199478ee9d6"
               target="_blank"
-              className="flex justify-center items-center gap-2"
+              className="flex ju  stify-center items-center gap-2"
             >
               <BookBookmark size={"24px"} /> Manual
             </a>

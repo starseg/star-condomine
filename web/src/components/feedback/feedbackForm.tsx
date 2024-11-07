@@ -49,11 +49,7 @@ export function FeedbackForm() {
       message: data.message,
     };
     try {
-      await api.post("feedback", info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.post("feedback", info);
 
       router.push("/feedback/success");
     } catch (error) {

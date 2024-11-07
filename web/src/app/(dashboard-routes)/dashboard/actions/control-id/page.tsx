@@ -51,11 +51,7 @@ export default function ControliDConfig({
   const fetchDevices = async () => {
     if (session)
       try {
-        const response = await api.get(`device/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(`device/lobby/${lobby}`);
         setDevices(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -67,21 +63,17 @@ export default function ControliDConfig({
   }, [session]);
   return (
     <ControliDUpdateProvider>
-      <Menu url={`/dashboard/actions?id=${lobby}`} />
+      <Menu url={`/dashboard/actions?lobby=${lobby}`} />
       <section className="mx-auto mb-24 max-w-5xl">
         <div className="flex justify-between items-center my-2">
           <h1 className="text-3xl">Configurações Control iD</h1>
           <SyncDevice />
         </div>
         <Tabs
-          defaultValue="logs"
+          defaultValue="times"
           className="flex flex-col justify-center items-center w-full"
         >
           <TabsList className="w-full">
-            <TabsTrigger value="logs" className="mr-8">
-              Registros
-            </TabsTrigger>
-
             <TabsTrigger value="times">Horários</TabsTrigger>
             <TabsTrigger value="time-access" className="text-xl">
               <ArrowsHorizontal />
@@ -96,9 +88,6 @@ export default function ControliDConfig({
             </TabsTrigger>
             <TabsTrigger value="users">Usuários</TabsTrigger>
           </TabsList>
-          <TabsContent className="p-4 border rounded w-full" value="logs">
-            <AccessLogs serialId={serialId} setSerialId={setSerialId} accessLogs={accessLogs} setAccessLogs={setAccessLogs} />
-          </TabsContent>
           <TabsContent className="p-4 border rounded w-full" value="times">
             <div className="flex justify-between items-end pb-2 w-full">
               <h2 className="text-xl">Horários</h2>

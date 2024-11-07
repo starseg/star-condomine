@@ -24,7 +24,7 @@ import { SyncItem } from "../device/syncItem";
 export default function MemberGroupTable({ devices }: { devices: Device[] }) {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const lobbyParam = params.get("lobby");
   const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
   const { update } = useControliDUpdate();
@@ -33,11 +33,7 @@ export default function MemberGroupTable({ devices }: { devices: Device[] }) {
   const fetchData = async () => {
     if (session) {
       try {
-        const response = await api.get(`memberGroup/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session.token.user.token}`,
-          },
-        });
+        const response = await api.get(`memberGroup/lobby/${lobby}`);
         setMemberGroups(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -55,11 +51,7 @@ export default function MemberGroupTable({ devices }: { devices: Device[] }) {
     group_id: number
   ) => {
     try {
-      await api.delete(`memberGroup/${id}`, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.delete(`memberGroup/${id}`);
       fetchData();
       devices.map(async (device) => {
         await api.post(

@@ -26,11 +26,7 @@ export default function NotificationList() {
   const fetchData = async () => {
     if (session)
       try {
-        const response = await api.get("notification/active", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("notification/active");
         setNotifications(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);

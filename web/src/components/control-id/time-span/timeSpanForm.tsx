@@ -67,7 +67,7 @@ export default function TimeSpanForm() {
   const { data: session } = useSession();
   const { update } = useControliDUpdate();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const lobbyParam = params.get("lobby");
   const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
 
@@ -75,11 +75,7 @@ export default function TimeSpanForm() {
   const fetchTimeZones = async () => {
     if (session)
       try {
-        const response = await api.get("timeZone", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("timeZone");
         setTimeZones(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -127,11 +123,7 @@ export default function TimeSpanForm() {
         lobbyId: lobby,
       };
 
-      const response = await api.post(`timeSpan`, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.post(`timeSpan`, info);
       if (response.status === 201) {
         toast.success("Intervalo registrado!", {
           theme: "colored",

@@ -30,7 +30,7 @@ export function CalendarForm() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
@@ -44,11 +44,7 @@ export function CalendarForm() {
       lobbyId: lobby,
     };
     try {
-      await api.post("lobbyCalendar", info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.post("lobbyCalendar", info);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

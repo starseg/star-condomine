@@ -23,7 +23,7 @@ export function DatePickerWithRange({
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: subDays(new Date(), 30),

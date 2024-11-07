@@ -37,7 +37,7 @@ export function TakeMemberPhoto({ savePhoto }: TakeMemberPhotoProps) {
   const [savedPhoto, setSavedPhoto] = useState(false);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const lobbyParam = params.get("lobby");
   const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
 
@@ -45,11 +45,7 @@ export function TakeMemberPhoto({ savePhoto }: TakeMemberPhotoProps) {
   const fetchDevices = async () => {
     if (session)
       try {
-        const response = await api.get(`device/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(`device/lobby/${lobby}`);
         setDevices(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);

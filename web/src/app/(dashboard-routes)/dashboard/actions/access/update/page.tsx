@@ -21,7 +21,7 @@ export default function UpdateAccess() {
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [access, setAccess] = useState<Access | null>(null);
   const [data, setData] = useState<Values>();
@@ -29,11 +29,7 @@ export default function UpdateAccess() {
     const fetchData = async () => {
       if (session)
         try {
-          const response = await api.get("access/find/" + params.get("id"), {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          const response = await api.get("access/find/" + params.get("id"),);
           setAccess(response.data);
         } catch (error) {
           console.error("(Access) Erro ao obter dados:", error);

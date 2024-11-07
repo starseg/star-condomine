@@ -28,7 +28,7 @@ export default function UpdateProblem() {
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [problem, setProblem] = useState<Problem | null>(null);
   const [data, setData] = useState<Values>();
@@ -37,12 +37,7 @@ export default function UpdateProblem() {
       if (session)
         try {
           const response = await api.get(
-            "lobbyProblem/find/" + params.get("id"),
-            {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            }
+            "lobbyProblem/find/" + params.get("id")
           );
           setProblem(response.data);
         } catch (error) {

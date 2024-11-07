@@ -32,11 +32,7 @@ export function Monitor() {
   const fetchControlIdResults = async () => {
     if (session)
       try {
-        const response = await api.get(`/control-id/results`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(`/control-id/results`);
         setControlIdResults(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);

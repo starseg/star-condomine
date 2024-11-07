@@ -20,7 +20,7 @@ export default function SchedulingListItems() {
   const [schedulingList, setSchedulingList] = useState<SchedulingList[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const fetchData = async () => {
     if (session)
       try {
@@ -30,11 +30,7 @@ export default function SchedulingListItems() {
         } else {
           path = `schedulingList/filtered?query=${params.get("query")}`;
         }
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         setSchedulingList(response.data);
         setIsLoading(false);
       } catch (error) {

@@ -103,7 +103,7 @@ export function VisitorForm() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const lobby = params.get("lobby");
 
   interface VisitorType {
@@ -115,11 +115,7 @@ export function VisitorForm() {
   const fetchVisitorTypes = async () => {
     if (session)
       try {
-        const response = await api.get("visitor/types", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("visitor/types");
         setVisitorType(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -129,11 +125,7 @@ export function VisitorForm() {
   const fetchMembers = async () => {
     if (session)
       try {
-        const response = await api.get("member/lobby/" + lobby, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("member/lobby/" + lobby);
         setMembers(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -144,11 +136,7 @@ export function VisitorForm() {
   async function fetchLobbyData() {
     if (session)
       try {
-        const getLobby = await api.get(`/lobby/find/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const getLobby = await api.get(`/lobby/find/${lobby}`);
         setLobbyData(getLobby.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -233,11 +221,7 @@ export function VisitorForm() {
         endDate: null,
         lobbyId: Number(lobby),
       };
-      const response = await api.post("visitor", info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.post("visitor", info);
       // SE A PESSOA JÁ ESTIVER ACESSANDO, REGISTRA O ACESSO
       if (isAccessing) {
         try {
@@ -251,11 +235,7 @@ export function VisitorForm() {
             operatorId: Number(operator),
             lobbyId: Number(lobby),
           };
-          await api.post("access", access, {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          await api.post("access", access,);
         } catch (error) {
           console.error("Erro ao enviar dados para a API:", error);
           throw error;
@@ -279,11 +259,7 @@ export function VisitorForm() {
           lobbyId: Number(lobby),
         };
         try {
-          await api.post("scheduling", info, {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          await api.post("scheduling", info,);
         } catch (error) {
           console.error("Erro ao enviar dados para a API:", error);
           throw error;

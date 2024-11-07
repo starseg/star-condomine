@@ -39,7 +39,7 @@ export default function residentDetails({ id }: { id: number }) {
 
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const lobbyParam = params.get("lobby");
   const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
   const control = params.get("c");
@@ -47,11 +47,7 @@ export default function residentDetails({ id }: { id: number }) {
   const fetchData = async () => {
     if (session)
       try {
-        const response = await api.get("member/find/" + id, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("member/find/" + id);
         setMember(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -60,11 +56,7 @@ export default function residentDetails({ id }: { id: number }) {
   const fetchLobbyData = async () => {
     if (session)
       try {
-        const getLobby = await api.get(`/lobby/find/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const getLobby = await api.get(`/lobby/find/${lobby}`);
         setLobbyData(getLobby.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);

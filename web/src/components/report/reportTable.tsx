@@ -27,7 +27,7 @@ export default function ReportTable({ lobby }: { lobby: string }) {
   const [access, setAccess] = useState<Access[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const control = params.get("c") || "";
 
   const [from, setFrom] = useState(params.get("from") || "");
@@ -45,11 +45,7 @@ export default function ReportTable({ lobby }: { lobby: string }) {
       // Verifica se session, from e to são válidos
       try {
         const path = `access/report/${lobby}?from=${from}&to=${to}`;
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         setAccess(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -59,11 +55,7 @@ export default function ReportTable({ lobby }: { lobby: string }) {
       // Se não houver 'from' ou 'to', faz a requisição sem eles
       try {
         const path = `access/report/${lobby}`;
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         setAccess(response.data);
         setIsLoading(false);
       } catch (error) {

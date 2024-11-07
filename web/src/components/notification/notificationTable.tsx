@@ -40,11 +40,7 @@ export default function NotificationTable() {
   const fetchData = async () => {
     if (session)
       try {
-        const response = await api.get("notification", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("notification");
         setNotifications(response.data);
         setIsLoading(false);
       } catch (error) {

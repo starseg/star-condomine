@@ -12,11 +12,7 @@ export default function SchedulingDetails({ id }: { id: number }) {
   const fetchData = async () => {
     if (session)
       try {
-        const response = await api.get("scheduling/find/" + id, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("scheduling/find/" + id);
         setScheduling(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);

@@ -39,16 +39,12 @@ interface Values {
 export default function residentCredentials() {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [data, setData] = useState<Member | null>(null);
   const fetchTagData = async () => {
     try {
-      const response = await api.get("member/tags/" + params.get("id"), {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.get("member/tags/" + params.get("id"));
       setData(response.data);
     } catch (error) {
       console.error("Erro ao obter dados:", error);
@@ -58,11 +54,7 @@ export default function residentCredentials() {
   const [tagTypes, setTagTypes] = useState<ITagTypes[]>([]);
   const fetchTagTypes = async () => {
     try {
-      const types = await api.get("tag/types", {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const types = await api.get("tag/types");
       setTagTypes(types.data);
     } catch (error) {
       console.error("Erro ao obter dados:", error);

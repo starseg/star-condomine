@@ -19,11 +19,7 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
   const fetchData = async () => {
     if (session)
       try {
-        const response = await api.get("lobby/find/" + lobby, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("lobby/find/" + lobby);
         setDetails(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -42,7 +38,10 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
   };
 
   const deleteLobby = async (id: number, url: string) => {
-    if (session?.payload.user.type === "USER") {
+    if (
+      session?.payload.user.type === "USER" ||
+      session?.payload.user.lobbyId
+    ) {
       Swal.fire({
         title: "Operação não permitida",
         text: "Sua permissão de usuário não permite exclusões",
@@ -61,11 +60,7 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            await api.delete("lobby/" + id, {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            });
+            await api.delete("lobby/" + id);
             fetchData();
             Swal.fire({
               title: "Excluída!",
@@ -78,8 +73,8 @@ export default function LobbyDetails({ lobby }: { lobby: string }) {
           router.push("/dashboard");
         }
       });
+      deleteFile(url);
     }
-    deleteFile(url);
   };
 
   return (

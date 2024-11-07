@@ -12,7 +12,10 @@ interface DefaultCheckboxProps {
   name: string;
   title?: string;
   label: string;
-  values: string[];
+  values: {
+    value: any;
+    label: any;
+  }[];
 }
 
 export default function DefaultSelect({
@@ -36,9 +39,9 @@ export default function DefaultSelect({
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {values.map((value) => (
-                <SelectItem key={value} value={value}>
-                  {value}
+              {values.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
                 </SelectItem>
               ))}
             </SelectContent>

@@ -2,6 +2,7 @@
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
+import api from "@/lib/axios";
 
 export default function LogoutButton() {
   const router = useRouter();
@@ -9,11 +10,12 @@ export default function LogoutButton() {
     await signOut({
       redirect: false,
     });
+    api.clearSessionCache();
     router.replace("/");
   }
 
   return (
-    <button onClick={logout} className="flex items-center justify-center gap-2">
+    <button onClick={logout} className="flex justify-center items-center gap-2">
       <LogOut /> Sair
     </button>
   );

@@ -42,7 +42,7 @@ export default function AccessRuleForm() {
   });
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const lobbyParam = params.get("lobby");
   const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
 
@@ -55,11 +55,7 @@ export default function AccessRuleForm() {
         lobbyId: lobby,
       };
 
-      const response = await api.post(`accessRule`, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.post(`accessRule`, info);
       if (response.status === 201) {
         toast.success("Regra registrada!", {
           theme: "colored",

@@ -25,7 +25,7 @@ export default function UpdateNotification() {
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [notification, setNotification] = useState<Notification | null>(null);
   const [data, setData] = useState<Values>();
@@ -34,12 +34,7 @@ export default function UpdateNotification() {
       if (session)
         try {
           const response = await api.get(
-            "notification/find/" + params.get("id"),
-            {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            }
+            "notification/find/" + params.get("id")
           );
           setNotification(response.data);
         } catch (error) {

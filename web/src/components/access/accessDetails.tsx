@@ -11,16 +11,12 @@ export default function AccessDetails({ id }: { id: number }) {
   const [access, setAccess] = useState<Access>();
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const control = params.get("c");
   const fetchData = async () => {
     if (session)
       try {
-        const response = await api.get("access/find/" + id, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("access/find/" + id)
         setAccess(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);

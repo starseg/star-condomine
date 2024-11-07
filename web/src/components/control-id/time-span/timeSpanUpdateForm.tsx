@@ -117,11 +117,7 @@ export default function TimeSpanUpdateForm({
   const fetchTimeZones = async () => {
     if (session)
       try {
-        const response = await api.get("timeZone", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("timeZone");
         setTimeZones(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -132,11 +128,7 @@ export default function TimeSpanUpdateForm({
   const fetchDevices = async () => {
     if (session)
       try {
-        const response = await api.get(`device/lobby/${lobby}`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(`device/lobby/${lobby}`);
         setDevices(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -195,11 +187,7 @@ export default function TimeSpanUpdateForm({
         hol3: data.hol3 === true ? 1 : 0,
       };
 
-      const response = await api.put(`timeSpan/${id}`, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.put(`timeSpan/${id}`, info);
 
       if (data.synchronize) {
         const { timeZoneId, ...rest } = info;

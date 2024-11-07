@@ -42,7 +42,7 @@ export default function UpdateScheduling() {
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [scheduling, setScheduling] = useState<Scheduling | null>(null);
   const [data, setData] = useState<Values>();
@@ -51,12 +51,7 @@ export default function UpdateScheduling() {
       if (session)
         try {
           const response = await api.get(
-            "scheduling/find/" + params.get("id"),
-            {
-              headers: {
-                Authorization: `Bearer ${session?.token.user.token}`,
-              },
-            }
+            "scheduling/find/" + params.get("id")
           );
           setScheduling(response.data);
         } catch (error) {

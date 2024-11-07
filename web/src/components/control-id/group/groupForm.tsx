@@ -38,7 +38,7 @@ export default function GroupForm() {
   });
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const lobbyParam = params.get("lobby");
   const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
 
@@ -49,11 +49,7 @@ export default function GroupForm() {
         lobbyId: lobby,
       };
 
-      const response = await api.post(`group`, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.post(`group`, info);
       if (response.status === 201) {
         toast.success("Grupo registrado!", {
           theme: "colored",

@@ -16,7 +16,7 @@ export default function UpdateCredential() {
   }
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const [tag, setTag] = useState<Tags | null>(null);
   const [data, setData] = useState<Values>();
@@ -24,11 +24,7 @@ export default function UpdateCredential() {
     const fetchData = async () => {
       if (session)
         try {
-          const response = await api.get("tag/find/" + params.get("id"), {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          });
+          const response = await api.get("tag/find/" + params.get("id"),);
           setTag(response.data);
         } catch (error) {
           console.error("(Device) Erro ao obter dados:", error);

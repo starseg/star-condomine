@@ -38,7 +38,7 @@ export default function TimeZoneForm() {
   });
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const lobbyParam = params.get("lobby");
   const lobby = lobbyParam ? parseInt(lobbyParam, 10) : null;
 
@@ -49,11 +49,7 @@ export default function TimeZoneForm() {
         lobbyId: lobby,
       };
 
-      const response = await api.post(`timeZone`, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      const response = await api.post(`timeZone`, info);
       if (response.status === 201) {
         toast.success("Horário registrado!", {
           theme: "colored",

@@ -35,7 +35,7 @@ export default function VehicleTable({ lobby }: { lobby: string }) {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const fetchData = async () => {
     if (session)
       try {
@@ -45,11 +45,7 @@ export default function VehicleTable({ lobby }: { lobby: string }) {
         } else {
           path = `vehicle/filtered/${lobby}?query=${params.get("query")}`;
         }
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         setVehicles(response.data);
         setIsLoading(false);
       } catch (error) {

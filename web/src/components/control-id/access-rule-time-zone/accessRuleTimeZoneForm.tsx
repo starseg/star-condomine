@@ -61,11 +61,7 @@ export default function AccessRuleTimeZoneForm() {
   const fetchTimeZones = async () => {
     if (session)
       try {
-        const response = await api.get("timeZone", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("timeZone");
         setTimeZones(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -76,11 +72,7 @@ export default function AccessRuleTimeZoneForm() {
   const fetchAccessRules = async () => {
     if (session)
       try {
-        const response = await api.get(`accessRule`, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(`accessRule`);
         setAccessRules(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -99,11 +91,6 @@ export default function AccessRuleTimeZoneForm() {
         {
           timeZoneId: data.timeZoneId,
           accessRuleId: data.accessRuleId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
         }
       );
       if (response.status === 201) {
@@ -160,9 +147,9 @@ export default function AccessRuleTimeZoneForm() {
                         >
                           {field.value
                             ? accessRules.find(
-                                (accessRule) =>
-                                  accessRule.accessRuleId === field.value
-                              )?.name
+                              (accessRule) =>
+                                accessRule.accessRuleId === field.value
+                            )?.name
                             : "Selecione uma regra"}
                           <ChevronsUpDown className="opacity-50 ml-2 w-4 h-4 shrink-0" />
                         </Button>
@@ -222,9 +209,9 @@ export default function AccessRuleTimeZoneForm() {
                         >
                           {field.value
                             ? timeZones.find(
-                                (timeZone) =>
-                                  timeZone.timeZoneId === field.value
-                              )?.name
+                              (timeZone) =>
+                                timeZone.timeZoneId === field.value
+                            )?.name
                             : "Selecione um horário"}
                           <ChevronsUpDown className="opacity-50 ml-2 w-4 h-4 shrink-0" />
                         </Button>

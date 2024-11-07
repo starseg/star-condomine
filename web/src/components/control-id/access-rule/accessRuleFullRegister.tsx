@@ -56,11 +56,7 @@ export function AccessRuleFullRegister() {
   const fetchGroups = async () => {
     if (session)
       try {
-        const response = await api.get("group", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("group");
         setGroups(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -71,11 +67,7 @@ export function AccessRuleFullRegister() {
   const fetchTimeZones = async () => {
     if (session)
       try {
-        const response = await api.get("timeZone", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("timeZone");
         setTimeZones(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -86,11 +78,7 @@ export function AccessRuleFullRegister() {
   const fetchLobbies = async () => {
     if (session)
       try {
-        const response = await api.get("lobby", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("lobby");
         setLobbies(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -119,11 +107,6 @@ export function AccessRuleFullRegister() {
           name: data.name,
           type: 1,
           priority: 1,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
         }
       );
       if (accessRule) {
@@ -135,11 +118,7 @@ export function AccessRuleFullRegister() {
             areaId: data.area,
             accessRuleId: accessRuleId,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          }
+
         );
 
         await api.post(
@@ -148,11 +127,7 @@ export function AccessRuleFullRegister() {
             accessRuleId: accessRuleId,
             groupId: data.group,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          }
+
         );
 
         await api.post(
@@ -161,11 +136,7 @@ export function AccessRuleFullRegister() {
             accessRuleId: accessRuleId,
             timeZoneId: data.timeZone,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${session?.token.user.token}`,
-            },
-          }
+
         );
       }
       router.back();
@@ -221,7 +192,7 @@ export function AccessRuleFullRegister() {
                     >
                       {field.value
                         ? lobbies.find((lobby) => lobby.lobbyId === field.value)
-                            ?.name
+                          ?.name
                         : "Selecione a portaria"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -279,7 +250,7 @@ export function AccessRuleFullRegister() {
                     >
                       {field.value
                         ? groups.find((group) => group.groupId === field.value)
-                            ?.name
+                          ?.name
                         : "Selecione o grupo"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -337,8 +308,8 @@ export function AccessRuleFullRegister() {
                     >
                       {field.value
                         ? timeZones.find(
-                            (timeZone) => timeZone.timeZoneId === field.value
-                          )?.name
+                          (timeZone) => timeZone.timeZoneId === field.value
+                        )?.name
                         : "Selecione o horário"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>

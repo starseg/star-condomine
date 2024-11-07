@@ -25,11 +25,7 @@ export default function BrandTable() {
   const fetchData = async () => {
     if (session)
       try {
-        const response = await api.get("brand", {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get("brand");
         setBrands(response.data);
         setIsLoading(false);
       } catch (error) {

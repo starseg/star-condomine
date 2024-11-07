@@ -42,7 +42,7 @@ export function ProblemUpdateForm({
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
 
   const status = [
     {
@@ -75,11 +75,7 @@ export function ProblemUpdateForm({
       operatorId: operator,
     };
     try {
-      await api.put("lobbyProblem/" + id, info, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.put("lobbyProblem/" + id, info);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

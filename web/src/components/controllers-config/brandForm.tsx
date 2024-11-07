@@ -33,11 +33,7 @@ export function BrandForm() {
     setIsSendind(true);
 
     try {
-      await api.post("brand", data, {
-        headers: {
-          Authorization: `Bearer ${session?.token.user.token}`,
-        },
-      });
+      await api.post("brand", data);
       router.back();
     } catch (error) {
       console.error("Erro ao enviar dados para a API:", error);

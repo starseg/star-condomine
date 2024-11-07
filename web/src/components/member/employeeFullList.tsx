@@ -10,7 +10,7 @@ export default function ResidentFullList({ lobby }: { lobby: string }) {
   const [members, setMembers] = useState<Member[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams.toString());
   const fetchData = async () => {
     if (session)
       try {
@@ -20,11 +20,7 @@ export default function ResidentFullList({ lobby }: { lobby: string }) {
         } else {
           path = `member/filtered/${lobby}?query=${params.get("query")}`;
         }
-        const response = await api.get(path, {
-          headers: {
-            Authorization: `Bearer ${session?.token.user.token}`,
-          },
-        });
+        const response = await api.get(path);
         setMembers(response.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);

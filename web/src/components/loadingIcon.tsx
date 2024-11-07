@@ -7,6 +7,7 @@ export default function LoadingIcon() {
       alt="Carregando..."
       width={204}
       height={204}
+      priority
     />
   );
 }
