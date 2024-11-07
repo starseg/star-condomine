@@ -1,22 +1,22 @@
 import express from "express";
 import {
   createAccess,
-  getAllAccess,
+  getAccesses,
   getAccess,
   updateAccess,
   deleteAccess,
   getAccessByLobby,
-  getFilteredAccess,
+  getFilteredAccesses,
   generateReport,
-} from "../controllers/access";
+} from "../controllers/access-controller";
 import { checkAdminPermission } from "../middlewares/permissions";
 
 const accessRouter = express.Router();
 
-accessRouter.get("/", getAllAccess);
+accessRouter.get("/", getAccesses);
 accessRouter.get("/find/:id", getAccess);
 accessRouter.get("/lobby/:lobby", getAccessByLobby);
-accessRouter.get("/filtered/:lobby", getFilteredAccess);
+accessRouter.get("/filtered/:lobby", getFilteredAccesses);
 accessRouter.get("/report/:lobby", generateReport);
 accessRouter.post("/", createAccess);
 accessRouter.put("/:id", updateAccess);
