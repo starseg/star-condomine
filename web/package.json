@@ -33,7 +33,7 @@
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
     "date-fns": "^2.30.0",
-    "firebase": "^10.7.0",
+    "firebase": "^11.0.1",
     "input-otp": "^1.2.4",
     "inputmask-core": "^2.2.0",
     "jspdf": "^2.5.1",
