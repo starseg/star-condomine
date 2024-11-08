@@ -189,12 +189,7 @@ export const countAccessesPerHour = async (
     );
 
     const numberOfHours = results.length;
-    const averageAccessesPerHour =
-      numberOfHours > 0 ? totalAccesses / numberOfHours : 0;
-
-
-    console.log("averageAccessesPerHour", averageAccessesPerHour);
-    console.log("results", hourlyCounts);
+    const averageAccessesPerHour = Number(numberOfHours > 0 ? totalAccesses / numberOfHours : 0);
 
     // Enviar resposta
     res.json({
