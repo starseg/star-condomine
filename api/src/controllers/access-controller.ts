@@ -11,10 +11,10 @@ const accessSchema = z.object({
   reason: z.string().nullable().optional(),
   comments: z.string().nullable().optional(),
   status: z.enum(["ACTIVE", "INACTIVE"]),
-  memberId: z.number(),
-  lobbyId: z.number(),
-  visitorId: z.number(),
-  operatorId: z.number(),
+  memberId: z.coerce.number(),
+  lobbyId: z.coerce.number(),
+  visitorId: z.coerce.number(),
+  operatorId: z.coerce.number(),
 })
 
 const accessService = new AccessService()
@@ -80,14 +80,6 @@ export async function getAccesses(Req: Request, res: Response) {
     const accesses = await accessService.getAllAccesses()
     return res.json(accesses)
   } catch (error) {
-    if (error instanceof ResourceNotFoundError) {
-      return res.status(404).json({ error: error.message });
-    }
-
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors });
-    }
-
     return res.status(500).json({ message: "Error getting accesses", error });
   }
 }

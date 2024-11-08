@@ -8,13 +8,13 @@ const devicesService = new DevicesService();
 const deviceSchema = z.object({
   name: z.string(),
   ip: z.string().nullable(),
-  ramal: z.number().nullable(),
+  ramal: z.coerce.number().nullable(),
   description: z.string(),
   status: z.enum(['ACTIVE', 'INACTIVE']),
   login: z.string().nullable(),
   password: z.string().nullable(),
-  deviceModelId: z.number(),
-  lobbyId: z.number(),
+  deviceModelId: z.coerce.number(),
+  lobbyId: z.coerce.number(),
 })
 
 export async function createDevice(req: Request, res: Response) {
