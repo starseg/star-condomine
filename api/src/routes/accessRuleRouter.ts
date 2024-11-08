@@ -6,7 +6,7 @@ import {
   getAccessRule,
   updateAccessRule,
   getAccessRulesByLobby,
-} from "../controllers/accessRule";
+} from "../controllers/access-rule-controller";
 import { checkAdminPermission } from "../middlewares/permissions";
 
 const accessRuleRouter = express.Router();
