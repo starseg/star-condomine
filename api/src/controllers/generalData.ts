@@ -175,7 +175,7 @@ export const countAccessesPerHour = async (
     }
 
     // Converting BigInt counts to number
-    const convertedResults = results.map(result => {
+    const hourlyCounts = results.map(result => {
       return {
         ...result,
         count: Number(result.count)
@@ -183,7 +183,7 @@ export const countAccessesPerHour = async (
     })
 
 
-    const totalAccesses = convertedResults.reduce(
+    const totalAccesses = hourlyCounts.reduce(
       (sum, record) => sum + Number(record.count),
       0
     );
@@ -192,13 +192,14 @@ export const countAccessesPerHour = async (
     const averageAccessesPerHour =
       numberOfHours > 0 ? totalAccesses / numberOfHours : 0;
 
+
+    console.log("averageAccessesPerHour", averageAccessesPerHour);
+    console.log("results", hourlyCounts);
+
     // Enviar resposta
     res.json({
       averageAccessesPerHour,
-      hourlyCounts: results.map((result) => ({
-        ...result,
-        count: Number(result.count),
-      })),
+      hourlyCounts
     });
   } catch (error) {
     console.error(error);
