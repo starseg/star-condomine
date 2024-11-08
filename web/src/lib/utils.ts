@@ -117,3 +117,12 @@ export function isValidURL(str: string): boolean {
     return false;
   }
 }
+
+export function generateHexColor() {
+  const caracteres = "0123456789ABCDEF";
+  let cor = "#";
+  for (let i = 0; i < 6; i++) {
+    cor += caracteres[Math.floor(Math.random() * 16)];
+  }
+  return cor;
+}
