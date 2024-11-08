@@ -178,6 +178,7 @@ export const countAccessesPerHour = async (
     const hourlyCounts = results.map(result => {
       return {
         ...result,
+        hour: Number(result.hour),
         count: Number(result.count)
       }
     })
@@ -189,12 +190,7 @@ export const countAccessesPerHour = async (
     );
 
     const numberOfHours = results.length;
-    const averageAccessesPerHour = Number(numberOfHours > 0 ? totalAccesses / numberOfHours : 0);
-
-    console.log({
-      averageAccessesPerHour,
-      hourlyCounts
-    })
+    const averageAccessesPerHour = Number(numberOfHours > 0 ? totalAccesses / numberOfHours : 0).toFixed(2);
 
     // Enviar resposta
     res.json({
