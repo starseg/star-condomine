@@ -43,6 +43,7 @@ import { Input } from "@/components/ui/input";
 
 export function AccessLogs() {
   const { data: session } = useSession();
+
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams.toString());
   const lobbyParam = params.get("lobby");
@@ -51,14 +52,17 @@ export function AccessLogs() {
   const [accessLogs, setAccessLogs] = useState<AccessLog[]>([]);
   const [serialId, setSerialId] = useState("");
   const [filter, setFilter] = useState("");
-
   const [isLoading, setIsLoading] = useState(false);
   const [members, setMembers] = useState<Member[]>([]);
   const [visitors, setVisitors] = useState<Visitor[]>([]);
-
+  const [devices, setDevices] = useState<Device[]>([]);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [paginatedAcessLogs, setPaginatedAcessLogs] = useState<AccessLog[]>([]);
+
+  const itemsPerPageOptions = [5, 10, 25, 50, 100];
+  const filteredLogs = applyFilter(accessLogs);
+  const totalOfPages = Math.ceil(filteredLogs.length / itemsPerPage);
 
   function applyFilter(logs: AccessLog[]) {
     if (filter) {
@@ -70,10 +74,6 @@ export function AccessLogs() {
 
     return logs;
   }
-
-  useEffect(() => {
-    setPage(1)
-  }, [filter])
 
   async function searchAccessLogs() {
     setIsLoading(true);
@@ -116,64 +116,24 @@ export function AccessLogs() {
     }
   }
 
-  useEffect(() => {
-    if (serialId) {
-      searchAccessLogs();
+  const fetchData = async () => {
+    if (session) {
+      try {
+        const [devicesResponse, membersResponse, visitorsResponse] = await Promise.all([
+          api.get(`/device/filtered/${lobby}?status=ACTIVE`),
+          api.get(`member/lobby/${lobby}`),
+          api.get(`visitor/lobby/${lobby}`)
+        ]);
+
+        setDevices(devicesResponse.data);
+        setMembers(membersResponse.data);
+        setVisitors(visitorsResponse.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
     }
-  }, [serialId]);
-
-  const [devices, setDevices] = useState<Device[]>([]);
-  const fetchDevices = async () => {
-    if (session)
-      try {
-        const response = await api.get(
-          `/device/filtered/${lobby}?status=ACTIVE`
-        );
-        setDevices(response.data);
-      } catch (error) {
-        console.error("Erro ao obter dados:", error);
-      }
   };
-
-  async function fetchMembers() {
-    if (session)
-      try {
-        const response = await api.get(`member/lobby/${lobby}`);
-
-        setMembers(response.data);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Erro ao obter dados:", error);
-      }
-  }
-
-  async function fetchVisitors() {
-    if (session)
-      try {
-        const response = await api.get(`visitor/lobby/${lobby}`);
-
-        setVisitors(response.data);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Erro ao obter dados:", error);
-      }
-  }
-
-  useEffect(() => {
-    fetchDevices();
-    fetchMembers();
-    fetchVisitors();
-  }, [session]);
-
-  const itemsPerPageOptions = [5, 10, 25, 50, 100];
-  const filteredLogs = applyFilter(accessLogs);
-  const totalOfPages = Math.ceil(filteredLogs.length / itemsPerPage);
-
-  useEffect(() => {
-    const begin = (page - 1) * itemsPerPage;
-    const end = page * itemsPerPage;
-    setPaginatedAcessLogs(filteredLogs.slice(begin, end));
-  }, [page, accessLogs, itemsPerPage, filter]);
 
   const changePage = (operation: string) => {
     setPage((prevPage) => {
@@ -208,6 +168,27 @@ export function AccessLogs() {
       return "Usuário não encontrado";
     }
   }
+
+
+  useEffect(() => {
+    fetchData();
+  }, [session]);
+
+  useEffect(() => {
+    if (serialId) {
+      searchAccessLogs();
+    }
+  }, [serialId]);
+
+  useEffect(() => {
+    setPage(1)
+  }, [filter])
+
+  useEffect(() => {
+    const begin = (page - 1) * itemsPerPage;
+    const end = page * itemsPerPage;
+    setPaginatedAcessLogs(filteredLogs.slice(begin, end));
+  }, [page, accessLogs, itemsPerPage, filter]);
 
   return (
     <div className="flex flex-col justify-between gap-6 mt-2 w-full">
