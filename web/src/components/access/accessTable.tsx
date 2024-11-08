@@ -118,7 +118,7 @@ export default function AccessTable({ lobby }: { lobby: string }) {
       if (
         !oldestEntries[entry.visitorId] ||
         new Date(entry.startTime) <
-          new Date(oldestEntries[entry.visitorId].startTime)
+        new Date(oldestEntries[entry.visitorId].startTime)
       ) {
         oldestEntries[entry.visitorId] = entry;
       }
@@ -159,7 +159,7 @@ export default function AccessTable({ lobby }: { lobby: string }) {
                             <p>
                               {item.visitor.name}
                               <span className="ml-1 text-xs">
-                                ({item.visitor.visitorType.description})
+                                ({item.visitor.visitorType.description ? item.visitor.visitorType.description : ""})
                               </span>
                             </p>
                           ) : (

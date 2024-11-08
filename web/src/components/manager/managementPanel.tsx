@@ -4,13 +4,11 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import LoadingIcon from "../loadingIcon";
 import Card from "./card";
-import {
-  AccessesByLobbyChart,
-  AccessesByOperatorChart,
-  AccessesPerHourChart,
-  ProblemByLobbyChart,
-  ProblemChart,
-} from "./charts";
+import { ProblemChart } from "./charts/problemChart";
+import { AccessesByLobbyChart } from "./charts/accessesByLobbyChart";
+import { ProblemsByLobbyChart } from "./charts/problemsByLobbyChart";
+import { AccessesByOperatorChart } from "./charts/accessesByOperatorChart";
+import { AccessesPerHourChart } from "./charts/accessesPerHourChart";
 
 export default function ManagementPanel() {
   const [counts, setCounts] = useState<GeneralCounts>();
@@ -27,78 +25,48 @@ export default function ManagementPanel() {
     useState<AccessPerHourChartProps>();
   const { data: session } = useSession();
 
-  const fetchCount = async () => {
-    try {
-      const response = await api.get("generalData/count");
-      setCounts(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
-  };
-  const fetchAccessesByLobby = async () => {
-    try {
-      const response = await api.get("generalData/accessesByLobby");
-      setAccessesByLobby(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
-  };
-  const fetchAccessesByOperator = async () => {
-    try {
-      const response = await api.get("generalData/accessesByOperator");
-      setAccessesByOperator(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
-  };
-  const fetchProblemsByLobby = async () => {
-    try {
-      const response = await api.get("generalData/problemsByLobby");
-      setProblemsByLobby(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
-  };
-  const fetchAccessesPerHour = async () => {
-    try {
-      const response = await api.get("generalData/countAccessesPerHour");
-      setAccessesPerHour(response.data);
-    } catch (error) {
-      console.error("Erro ao obter dados:", error);
-    }
-  };
-
   useEffect(() => {
-    fetchCount();
-    fetchAccessesByLobby();
-    fetchAccessesByOperator();
-    fetchProblemsByLobby();
-    fetchAccessesPerHour();
+    const fetchData = async () => {
+      try {
+        const [
+          countResponse,
+          accessesByLobbyResponse,
+          accessesByOperatorResponse,
+          problemsByLobbyResponse,
+          accessesPerHourResponse,
+        ] = await Promise.all([
+          api.get("generalData/count"),
+          api.get("generalData/accessesByLobby"),
+          api.get("generalData/accessesByOperator"),
+          api.get("generalData/problemsByLobby"),
+          api.get("generalData/countAccessesPerHour"),
+        ]);
+
+        // Definindo os estados após as respostas
+        setCounts(countResponse.data);
+        setAccessesByLobby(accessesByLobbyResponse.data);
+        setAccessesByOperator(accessesByOperatorResponse.data);
+        setProblemsByLobby(problemsByLobbyResponse.data);
+        setAccessesPerHour(accessesPerHourResponse.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+    };
+
+    // Chama a função fetchData quando a sessão muda
+    fetchData();
   }, [session]);
 
   return (
     <div className="mt-8">
       {counts &&
-        problemsByLobby &&
-        accessesByLobby &&
-        accessesByOperator &&
-        accessesPerHour ? (
+      problemsByLobby &&
+      accessesByLobby &&
+      accessesByOperator &&
+      accessesPerHour ? (
         <>
-          {/* GRÁFICOS */}
-          <div className="flex flex-col gap-4 justify-center items-center mb-8">
-            <div className="flex gap-4 justify-center items-center">
-              <ProblemChart
-                total={counts.problems}
-                solved={counts.solvedProblems}
-              />
-              <ProblemByLobbyChart {...problemsByLobby} />
-            </div>
-            <AccessesByLobbyChart {...accessesByLobby} />
-            <AccessesByOperatorChart {...accessesByOperator} />
-            <AccessesPerHourChart {...accessesPerHour} />
-          </div>
           {/* COUNTS */}
-          <div className="flex flex-wrap gap-4 items-center justify-center">
+          <div className="flex flex-wrap justify-center items-center gap-4">
             <Card title="Portarias" content={counts.lobbies} />
             <Card title="Proprietários" content={counts.members} />
             <Card title="Visitantes" content={counts.visitors} />
@@ -108,9 +76,22 @@ export default function ManagementPanel() {
             <Card title="Dispositivos" content={counts.devices} />
             <Card title="Problemas" content={counts.problems} />
           </div>
+          {/* GRÁFICOS */}
+          <div className="flex flex-col justify-center items-center gap-4 mt-8">
+            <div className="flex justify-center items-center gap-4">
+              <ProblemChart
+                total={counts.problems}
+                solved={counts.solvedProblems}
+              />
+              <ProblemsByLobbyChart {...problemsByLobby} />
+            </div>
+            <AccessesByLobbyChart {...accessesByLobby} />
+            <AccessesByOperatorChart {...accessesByOperator} />
+            <AccessesPerHourChart {...accessesPerHour} />
+          </div>
         </>
       ) : (
-        <div className="w-full flex items-center justify-center">
+        <div className="flex justify-center items-center w-full">
           <LoadingIcon />
         </div>
       )}
