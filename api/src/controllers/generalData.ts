@@ -169,11 +169,25 @@ export const countAccessesPerHour = async (
       ORDER BY hour
     `);
 
+    if (!results) {
+      res.status(404).json({ error: "Nenhum acesso encontrado" });
+      return;
+    }
+
     // Converting BigInt counts to number
-    const totalAccesses = results.reduce(
+    const convertedResults = results.map(result => {
+      return {
+        ...result,
+        count: Number(result.count)
+      }
+    })
+
+
+    const totalAccesses = convertedResults.reduce(
       (sum, record) => sum + Number(record.count),
       0
     );
+
     const numberOfHours = results.length;
     const averageAccessesPerHour =
       numberOfHours > 0 ? totalAccesses / numberOfHours : 0;
