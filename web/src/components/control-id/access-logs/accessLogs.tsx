@@ -39,6 +39,7 @@ import {
 import { toast } from "react-toastify";
 import Image from "next/image";
 import { addHours, format } from "date-fns";
+import { Input } from "@/components/ui/input";
 
 export function AccessLogs() {
   const { data: session } = useSession();
@@ -49,6 +50,7 @@ export function AccessLogs() {
 
   const [accessLogs, setAccessLogs] = useState<AccessLog[]>([]);
   const [serialId, setSerialId] = useState("");
+  const [filter, setFilter] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
   const [members, setMembers] = useState<Member[]>([]);
@@ -57,6 +59,21 @@ export function AccessLogs() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [paginatedAcessLogs, setPaginatedAcessLogs] = useState<AccessLog[]>([]);
+
+  function applyFilter(logs: AccessLog[]) {
+    if (filter) {
+      return logs.filter((log) => {
+        const userName = getUserNameById(log.user_id);
+        return userName.toLowerCase().includes(filter.toLowerCase());
+      })
+    }
+
+    return logs;
+  }
+
+  useEffect(() => {
+    setPage(1)
+  }, [filter])
 
   async function searchAccessLogs() {
     setIsLoading(true);
@@ -149,13 +166,14 @@ export function AccessLogs() {
   }, [session]);
 
   const itemsPerPageOptions = [5, 10, 25, 50, 100];
-  const totalOfPages = Math.ceil(accessLogs.length / itemsPerPage);
+  const filteredLogs = applyFilter(accessLogs);
+  const totalOfPages = Math.ceil(filteredLogs.length / itemsPerPage);
 
   useEffect(() => {
     const begin = (page - 1) * itemsPerPage;
     const end = page * itemsPerPage;
-    setPaginatedAcessLogs(accessLogs.slice(begin, end));
-  }, [page, accessLogs, itemsPerPage]);
+    setPaginatedAcessLogs(filteredLogs.slice(begin, end));
+  }, [page, accessLogs, itemsPerPage, filter]);
 
   const changePage = (operation: string) => {
     setPage((prevPage) => {
@@ -195,20 +213,29 @@ export function AccessLogs() {
     <div className="flex flex-col justify-between gap-6 mt-2 w-full">
       <div className="flex justify-between items-center w-full">
         <h2 className="text-3xl">Registros das leitoras</h2>
-        <Select value={serialId} onValueChange={setSerialId}>
-          <SelectTrigger className="w-fit">
-            <SelectValue placeholder="Selecione um dispositivo" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {devices.map((device) => (
-                <SelectItem key={device.deviceId} value={device.name}>
-                  {device.ip} - {device.description} - {device.lobby.name}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <div className="flex gap-3">
+          <Input
+            type="text"
+            placeholder="Filtrar por nome"
+            className="flex-1"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          />
+          <Select value={serialId} onValueChange={setSerialId}>
+            <SelectTrigger className="w-fit">
+              <SelectValue placeholder="Selecione um dispositivo" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {devices.map((device) => (
+                  <SelectItem key={device.deviceId} value={device.name}>
+                    {device.ip} - {device.description} - {device.lobby.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       {isLoading ? (
         <SkeletonTable />
@@ -270,7 +297,7 @@ export function AccessLogs() {
       {serialId && !isLoading && accessLogs.length > 0 && (
         <div className="flex justify-end items-center gap-4 mt-4 pr-4">
           <p className="bg-stone-800 p-2 rounded">
-            {accessLogs.length} registros
+            {filteredLogs.length} registros
           </p>
           <DropdownMenu>
             <DropdownMenuTrigger>
