@@ -39,9 +39,11 @@ import {
 import { toast } from "react-toastify";
 import Image from "next/image";
 import { addHours, format } from "date-fns";
+import { Input } from "@/components/ui/input";
 
 export function AccessLogs() {
   const { data: session } = useSession();
+
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams.toString());
   const lobbyParam = params.get("lobby");
@@ -49,14 +51,29 @@ export function AccessLogs() {
 
   const [accessLogs, setAccessLogs] = useState<AccessLog[]>([]);
   const [serialId, setSerialId] = useState("");
-
+  const [filter, setFilter] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [members, setMembers] = useState<Member[]>([]);
   const [visitors, setVisitors] = useState<Visitor[]>([]);
-
+  const [devices, setDevices] = useState<Device[]>([]);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [paginatedAcessLogs, setPaginatedAcessLogs] = useState<AccessLog[]>([]);
+
+  const itemsPerPageOptions = [5, 10, 25, 50, 100];
+  const filteredLogs = applyFilter(accessLogs);
+  const totalOfPages = Math.ceil(filteredLogs.length / itemsPerPage);
+
+  function applyFilter(logs: AccessLog[]) {
+    if (filter) {
+      return logs.filter((log) => {
+        const userName = getUserNameById(log.user_id);
+        return userName.toLowerCase().includes(filter.toLowerCase());
+      })
+    }
+
+    return logs;
+  }
 
   async function searchAccessLogs() {
     setIsLoading(true);
@@ -99,63 +116,24 @@ export function AccessLogs() {
     }
   }
 
-  useEffect(() => {
-    if (serialId) {
-      searchAccessLogs();
+  const fetchData = async () => {
+    if (session) {
+      try {
+        const [devicesResponse, membersResponse, visitorsResponse] = await Promise.all([
+          api.get(`/device/filtered/${lobby}?status=ACTIVE`),
+          api.get(`member/lobby/${lobby}`),
+          api.get(`visitor/lobby/${lobby}`)
+        ]);
+
+        setDevices(devicesResponse.data);
+        setMembers(membersResponse.data);
+        setVisitors(visitorsResponse.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
     }
-  }, [serialId]);
-
-  const [devices, setDevices] = useState<Device[]>([]);
-  const fetchDevices = async () => {
-    if (session)
-      try {
-        const response = await api.get(
-          `/device/filtered/${lobby}?status=ACTIVE`
-        );
-        setDevices(response.data);
-      } catch (error) {
-        console.error("Erro ao obter dados:", error);
-      }
   };
-
-  async function fetchMembers() {
-    if (session)
-      try {
-        const response = await api.get(`member/lobby/${lobby}`);
-
-        setMembers(response.data);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Erro ao obter dados:", error);
-      }
-  }
-
-  async function fetchVisitors() {
-    if (session)
-      try {
-        const response = await api.get(`visitor/lobby/${lobby}`);
-
-        setVisitors(response.data);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Erro ao obter dados:", error);
-      }
-  }
-
-  useEffect(() => {
-    fetchDevices();
-    fetchMembers();
-    fetchVisitors();
-  }, [session]);
-
-  const itemsPerPageOptions = [5, 10, 25, 50, 100];
-  const totalOfPages = Math.ceil(accessLogs.length / itemsPerPage);
-
-  useEffect(() => {
-    const begin = (page - 1) * itemsPerPage;
-    const end = page * itemsPerPage;
-    setPaginatedAcessLogs(accessLogs.slice(begin, end));
-  }, [page, accessLogs, itemsPerPage]);
 
   const changePage = (operation: string) => {
     setPage((prevPage) => {
@@ -191,24 +169,54 @@ export function AccessLogs() {
     }
   }
 
+
+  useEffect(() => {
+    fetchData();
+  }, [session]);
+
+  useEffect(() => {
+    if (serialId) {
+      searchAccessLogs();
+    }
+  }, [serialId]);
+
+  useEffect(() => {
+    setPage(1)
+  }, [filter])
+
+  useEffect(() => {
+    const begin = (page - 1) * itemsPerPage;
+    const end = page * itemsPerPage;
+    setPaginatedAcessLogs(filteredLogs.slice(begin, end));
+  }, [page, accessLogs, itemsPerPage, filter]);
+
   return (
     <div className="flex flex-col justify-between gap-6 mt-2 w-full">
       <div className="flex justify-between items-center w-full">
         <h2 className="text-3xl">Registros das leitoras</h2>
-        <Select value={serialId} onValueChange={setSerialId}>
-          <SelectTrigger className="w-fit">
-            <SelectValue placeholder="Selecione um dispositivo" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {devices.map((device) => (
-                <SelectItem key={device.deviceId} value={device.name}>
-                  {device.ip} - {device.description} - {device.lobby.name}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <div className="flex gap-3">
+          <Input
+            type="text"
+            placeholder="Filtrar por nome"
+            className="flex-1"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          />
+          <Select value={serialId} onValueChange={setSerialId}>
+            <SelectTrigger className="w-fit">
+              <SelectValue placeholder="Selecione um dispositivo" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {devices.map((device) => (
+                  <SelectItem key={device.deviceId} value={device.name}>
+                    {device.ip} - {device.description} - {device.lobby.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       {isLoading ? (
         <SkeletonTable />
@@ -270,7 +278,7 @@ export function AccessLogs() {
       {serialId && !isLoading && accessLogs.length > 0 && (
         <div className="flex justify-end items-center gap-4 mt-4 pr-4">
           <p className="bg-stone-800 p-2 rounded">
-            {accessLogs.length} registros
+            {filteredLogs.length} registros
           </p>
           <DropdownMenu>
             <DropdownMenuTrigger>

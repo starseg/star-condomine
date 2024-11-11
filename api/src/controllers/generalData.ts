@@ -169,22 +169,33 @@ export const countAccessesPerHour = async (
       ORDER BY hour
     `);
 
+    if (!results) {
+      res.status(404).json({ error: "Nenhum acesso encontrado" });
+      return;
+    }
+
     // Converting BigInt counts to number
-    const totalAccesses = results.reduce(
+    const hourlyCounts = results.map(result => {
+      return {
+        ...result,
+        hour: Number(result.hour),
+        count: Number(result.count)
+      }
+    })
+
+
+    const totalAccesses = hourlyCounts.reduce(
       (sum, record) => sum + Number(record.count),
       0
     );
+
     const numberOfHours = results.length;
-    const averageAccessesPerHour =
-      numberOfHours > 0 ? totalAccesses / numberOfHours : 0;
+    const averageAccessesPerHour = Number(numberOfHours > 0 ? totalAccesses / numberOfHours : 0).toFixed(2);
 
     // Enviar resposta
     res.json({
       averageAccessesPerHour,
-      hourlyCounts: results.map((result) => ({
-        ...result,
-        count: Number(result.count),
-      })),
+      hourlyCounts
     });
   } catch (error) {
     console.error(error);

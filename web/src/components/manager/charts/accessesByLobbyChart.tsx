@@ -45,9 +45,10 @@ export function AccessesByLobbyChart(data: AccessByLobbyChartProps[]) {
               dataKey="portaria"
               type="category"
               tickLine={false}
-              tickMargin={-20}
+              tickMargin={-10}
+              padding={{ bottom: 20 }}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 20)}
+              tickFormatter={(value) => value.slice(0, 6) + "..."}
             />
             <ChartTooltip
               cursor={false}
