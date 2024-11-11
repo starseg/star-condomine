@@ -20,3 +20,13 @@ interface AccessPerHourChartProps {
     count: number;
   }[];
 }
+
+interface AccessByVisitorTypeChartProps {
+  visitorType: string;
+  count: number;
+}
+
+interface LogsByOperatorChartProps {
+  operator: string;
+  count: number;
+}

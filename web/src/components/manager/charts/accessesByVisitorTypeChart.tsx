@@ -12,34 +12,33 @@ import {
   CardHeader,
   CardTitle,
 } from "../../ui/card";
-export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
+export function AccessesByVisitorTypeChart(
+  data: AccessByVisitorTypeChartProps[]
+) {
   const chartData: any = [];
   for (let i = 0; i < Object.keys(data).length; i++) {
-    const operatorName = data[i].operator.split(" ");
-    const operator =
-      operatorName.length > 1
-        ? operatorName[0]
-            .concat(" ")
-            .concat(operatorName[operatorName.length - 1])
-        : operatorName[0];
+    const visitorType = data[i].visitorType;
     const count = data[i].count;
-    chartData.push({ operador: operator, acessos: count });
+    chartData.push({ tipo_visitante: visitorType, acessos: count });
   }
 
   const options = {
     acessos: {
       label: "Acessos",
+      color: "#a855f7",
     },
   } satisfies ChartConfig;
 
   return (
     <Card className="w-[900px]">
       <CardHeader>
-        <CardTitle>Atendimentos por monitor(a)</CardTitle>
-        <CardDescription>Quantidade de acessos por operador</CardDescription>
+        <CardTitle>Acessos por tipo de visitante</CardTitle>
+        <CardDescription>
+          Quantidade de acessos por tipo de visitante
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={options} className="min-w-[800px]">
+        <ChartContainer config={options} className="w-[800px] h-[200px]">
           <BarChart
             data={chartData}
             accessibilityLayer
@@ -47,7 +46,7 @@ export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
             margin={{ left: 5 }}
           >
             <YAxis
-              dataKey="operador"
+              dataKey="tipo_visitante"
               type="category"
               tickLine={false}
               tickMargin={-20}
@@ -59,7 +58,7 @@ export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
               content={<ChartTooltipContent includeHidden />}
             />
             <XAxis dataKey="acessos" type="number" padding={{ left: 30 }} />
-            <Bar dataKey="acessos" fill="#db2777" radius={5}>
+            <Bar dataKey="acessos" fill="#a855f7" radius={5}>
               <LabelList
                 dataKey="acessos"
                 position="right"

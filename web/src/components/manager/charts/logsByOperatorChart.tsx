@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../ui/card";
-export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
+export function LogsByOperatorChart(data: LogsByOperatorChartProps[]) {
   const chartData: any = [];
   for (let i = 0; i < Object.keys(data).length; i++) {
     const operatorName = data[i].operator.split(" ");
@@ -23,20 +23,22 @@ export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
             .concat(operatorName[operatorName.length - 1])
         : operatorName[0];
     const count = data[i].count;
-    chartData.push({ operador: operator, acessos: count });
+    chartData.push({ operador: operator, logs: count });
   }
 
   const options = {
-    acessos: {
-      label: "Acessos",
+    logs: {
+      label: "Atividades",
     },
   } satisfies ChartConfig;
 
   return (
     <Card className="w-[900px]">
       <CardHeader>
-        <CardTitle>Atendimentos por monitor(a)</CardTitle>
-        <CardDescription>Quantidade de acessos por operador</CardDescription>
+        <CardTitle>Atividades por monitor(a)</CardTitle>
+        <CardDescription>
+          Quantidade de atividades por operador nos últimos 30 dias
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={options} className="min-w-[800px]">
@@ -58,10 +60,10 @@ export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
               cursor={false}
               content={<ChartTooltipContent includeHidden />}
             />
-            <XAxis dataKey="acessos" type="number" padding={{ left: 30 }} />
-            <Bar dataKey="acessos" fill="#db2777" radius={5}>
+            <XAxis dataKey="logs" type="number" padding={{ left: 30 }} />
+            <Bar dataKey="logs" fill="#db2777" radius={5}>
               <LabelList
-                dataKey="acessos"
+                dataKey="logs"
                 position="right"
                 offset={8}
                 className="fill-foreground"

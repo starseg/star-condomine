@@ -12,18 +12,12 @@ import {
   CardHeader,
   CardTitle,
 } from "../../ui/card";
-export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
+export function ExitsPerHourChart(data: AccessPerHourChartProps) {
   const chartData: any = [];
-  for (let i = 0; i < Object.keys(data).length; i++) {
-    const operatorName = data[i].operator.split(" ");
-    const operator =
-      operatorName.length > 1
-        ? operatorName[0]
-            .concat(" ")
-            .concat(operatorName[operatorName.length - 1])
-        : operatorName[0];
-    const count = data[i].count;
-    chartData.push({ operador: operator, acessos: count });
+  for (let i = 0; i < Object.keys(data.hourlyCounts).length; i++) {
+    const hour = data.hourlyCounts[i].hour.toString().concat("h");
+    const count = data.hourlyCounts[i].count;
+    chartData.push({ hora: hour, acessos: count });
   }
 
   const options = {
@@ -35,8 +29,8 @@ export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
   return (
     <Card className="w-[900px]">
       <CardHeader>
-        <CardTitle>Atendimentos por monitor(a)</CardTitle>
-        <CardDescription>Quantidade de acessos por operador</CardDescription>
+        <CardTitle>Registros de saída por hora</CardTitle>
+        <CardDescription>Quantidade de saídas por hora</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={options} className="min-w-[800px]">
@@ -47,7 +41,7 @@ export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
             margin={{ left: 5 }}
           >
             <YAxis
-              dataKey="operador"
+              dataKey="hora"
               type="category"
               tickLine={false}
               tickMargin={-20}
@@ -59,7 +53,7 @@ export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
               content={<ChartTooltipContent includeHidden />}
             />
             <XAxis dataKey="acessos" type="number" padding={{ left: 30 }} />
-            <Bar dataKey="acessos" fill="#db2777" radius={5}>
+            <Bar dataKey="acessos" fill="#ef4444" radius={5}>
               <LabelList
                 dataKey="acessos"
                 position="right"

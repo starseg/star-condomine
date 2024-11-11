@@ -12,31 +12,28 @@ import {
   CardHeader,
   CardTitle,
 } from "../../ui/card";
-export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
+export function SchedulingsByLobbyChart(data: AccessByLobbyChartProps[]) {
   const chartData: any = [];
   for (let i = 0; i < Object.keys(data).length; i++) {
-    const operatorName = data[i].operator.split(" ");
-    const operator =
-      operatorName.length > 1
-        ? operatorName[0]
-            .concat(" ")
-            .concat(operatorName[operatorName.length - 1])
-        : operatorName[0];
+    const lobby = data[i].lobby;
     const count = data[i].count;
-    chartData.push({ operador: operator, acessos: count });
+    chartData.push({ portaria: lobby, agendamentos: count });
   }
 
   const options = {
-    acessos: {
-      label: "Acessos",
+    agendamentos: {
+      label: "Agendamentos",
+      color: "#10b981",
     },
   } satisfies ChartConfig;
 
   return (
     <Card className="w-[900px]">
       <CardHeader>
-        <CardTitle>Atendimentos por monitor(a)</CardTitle>
-        <CardDescription>Quantidade de acessos por operador</CardDescription>
+        <CardTitle>Agendamentos por portaria</CardTitle>
+        <CardDescription>
+          Quantidade de agendamentos por portaria
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={options} className="min-w-[800px]">
@@ -47,7 +44,7 @@ export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
             margin={{ left: 5 }}
           >
             <YAxis
-              dataKey="operador"
+              dataKey="portaria"
               type="category"
               tickLine={false}
               tickMargin={-20}
@@ -58,10 +55,14 @@ export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
               cursor={false}
               content={<ChartTooltipContent includeHidden />}
             />
-            <XAxis dataKey="acessos" type="number" padding={{ left: 30 }} />
-            <Bar dataKey="acessos" fill="#db2777" radius={5}>
+            <XAxis
+              dataKey="agendamentos"
+              type="number"
+              padding={{ left: 30 }}
+            />
+            <Bar dataKey="agendamentos" fill="#10b981" radius={5}>
               <LabelList
-                dataKey="acessos"
+                dataKey="agendamentos"
                 position="right"
                 offset={8}
                 className="fill-foreground"

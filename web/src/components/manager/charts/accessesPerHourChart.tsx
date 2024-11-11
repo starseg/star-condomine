@@ -29,7 +29,7 @@ export function AccessesPerHourChart(data: AccessPerHourChartProps) {
   return (
     <Card className="w-[900px]">
       <CardHeader>
-        <CardTitle>Atendimentos por monitor(a)</CardTitle>
+        <CardTitle>Acessos por hora</CardTitle>
         <CardDescription>Quantidade de acessos por hora</CardDescription>
       </CardHeader>
       <CardContent>

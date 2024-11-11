@@ -191,3 +191,159 @@ export const countAccessesPerHour = async (
     res.status(500).send("Server error");
   }
 };
+
+export const countExitsPerHour = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    // Ajustar o fuso horário (UTC -3)
+    const adjustedTimeQuery = Prisma.sql`DATE_SUB(endTime, INTERVAL 3 HOUR)`;
+
+    // Agrupar por hora e contar acessos
+    const results = await prisma.$queryRaw<
+      { hour: number; count: bigint }[]
+    >(Prisma.sql`
+      SELECT 
+        EXTRACT(HOUR FROM ${adjustedTimeQuery}) as hour, 
+        COUNT(*) as count
+      FROM Access
+      WHERE endTime IS NOT NULL
+      GROUP BY EXTRACT(HOUR FROM ${adjustedTimeQuery})
+      ORDER BY hour
+    `);
+
+    // Converting BigInt counts to number
+    const totalAccesses = results.reduce(
+      (sum, record) => sum + Number(record.count),
+      0
+    );
+    const numberOfHours = results.length;
+    const averageAccessesPerHour =
+      numberOfHours > 0 ? totalAccesses / numberOfHours : 0;
+
+    // Enviar resposta
+    res.json({
+      averageAccessesPerHour,
+      hourlyCounts: results.map((result) => ({
+        ...result,
+        count: Number(result.count),
+      })),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+};
+
+export const schedulingsByLobby = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const count = await prisma.scheduling.groupBy({
+      by: ["lobbyId"],
+      _count: true,
+    });
+
+    const lobbies = await prisma.lobby.findMany({
+      select: {
+        lobbyId: true,
+        name: true,
+      },
+    });
+
+    interface SchedulingResponseInterface {
+      lobby: string | undefined;
+      count: number;
+    }
+    const accesses: SchedulingResponseInterface[] = [];
+    count.map((item) => {
+      accesses.push({
+        lobby: lobbies.find((i) => i.lobbyId === item.lobbyId)?.name,
+        count: item._count,
+      });
+    });
+    res.json(accesses);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os dados" });
+  }
+};
+
+export const accessesByVisitorType = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    // Consulta para agrupar acessos por tipo de visitante
+    const results = await prisma.$queryRaw<
+      { visitorType: string; count: bigint }[]
+    >(Prisma.sql`
+      SELECT 
+      vt.description AS visitorType, 
+        COUNT(a.accessId) AS count
+        FROM Access a
+        JOIN Visitor v ON v.visitorId = a.visitorId
+        JOIN VisitorType vt ON vt.visitorTypeId = v.visitorTypeId
+        GROUP BY vt.description
+        `);
+
+    interface AccessResponseInterface {
+      visitorType: string | undefined;
+      count: number;
+    }
+    // Convertendo BigInt para number no campo `count`
+    const accesses: AccessResponseInterface[] = results.map((result) => ({
+      visitorType: result.visitorType,
+      count: Number(result.count),
+    }));
+
+    res.json(accesses);
+  } catch (error) {
+    console.error("Error fetching access counts by visitor type:", error);
+    throw new Error("Server error");
+  }
+};
+
+export const logsByOperator = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const currentDate = new Date();
+    const date30DaysAgo = new Date();
+    date30DaysAgo.setDate(currentDate.getDate() - 30);
+
+    const count = await prisma.logging.groupBy({
+      by: ["operatorId"],
+      _count: true,
+      where: {
+        date: {
+          gte: date30DaysAgo,
+        },
+      },
+    });
+
+    const operators = await prisma.operator.findMany({
+      select: {
+        operatorId: true,
+        name: true,
+      },
+    });
+
+    interface LogsResponseInterface {
+      operator: string | undefined;
+      count: number;
+    }
+    const logs: LogsResponseInterface[] = [];
+    count.map((item) => {
+      logs.push({
+        operator: operators.find((i) => i.operatorId === item.operatorId)?.name,
+        count: item._count,
+      });
+    });
+    res.json(logs);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar os dados" });
+  }
+};
