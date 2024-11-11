@@ -36,20 +36,21 @@ export function SchedulingsByLobbyChart(data: AccessByLobbyChartProps[]) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={options} className="min-w-[800px]">
+        <ChartContainer config={options} className="max-w-[800px] min-h-[600px]">
           <BarChart
             data={chartData}
             accessibilityLayer
             layout="vertical"
-            margin={{ left: 5 }}
+            margin={{ left: 5, top: 10 }}
           >
             <YAxis
               dataKey="portaria"
               type="category"
               tickLine={false}
-              tickMargin={-20}
+              tickMargin={5}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 20)}
+              tickFormatter={(value) => value.slice(0, 5) + "..."}
+              padding={{ bottom: 15 }}
             />
             <ChartTooltip
               cursor={false}
@@ -58,7 +59,7 @@ export function SchedulingsByLobbyChart(data: AccessByLobbyChartProps[]) {
             <XAxis
               dataKey="agendamentos"
               type="number"
-              padding={{ left: 30 }}
+              padding={{ left: 10 }}
             />
             <Bar dataKey="agendamentos" fill="#10b981" radius={5}>
               <LabelList

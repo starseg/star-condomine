@@ -43,21 +43,21 @@ export function AccessesByVisitorTypeChart(
             data={chartData}
             accessibilityLayer
             layout="vertical"
-            margin={{ left: 5 }}
           >
             <YAxis
               dataKey="tipo_visitante"
               type="category"
               tickLine={false}
-              tickMargin={-20}
+              tickMargin={5}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 20)}
+              tickFormatter={(value) => value.slice(0, 6) + "..."}
+              padding={{ bottom: 10 }}
             />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent includeHidden />}
             />
-            <XAxis dataKey="acessos" type="number" padding={{ left: 30 }} />
+            <XAxis dataKey="acessos" type="number" domain={[0, 'dataMax + 5000']} />
             <Bar dataKey="acessos" fill="#a855f7" radius={5}>
               <LabelList
                 dataKey="acessos"

@@ -19,8 +19,8 @@ export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
     const operator =
       operatorName.length > 1
         ? operatorName[0]
-            .concat(" ")
-            .concat(operatorName[operatorName.length - 1])
+          .concat(" ")
+          .concat(operatorName[operatorName.length - 1])
         : operatorName[0];
     const count = data[i].count;
     chartData.push({ operador: operator, acessos: count });
@@ -39,7 +39,7 @@ export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
         <CardDescription>Quantidade de acessos por operador</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={options} className="min-w-[800px]">
+        <ChartContainer config={options} className="max-w-[800px] min-h-[600px]">
           <BarChart
             data={chartData}
             accessibilityLayer

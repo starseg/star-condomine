@@ -33,7 +33,7 @@ export function ExitsPerHourChart(data: AccessPerHourChartProps) {
         <CardDescription>Quantidade de saídas por hora</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={options} className="min-w-[800px]">
+        <ChartContainer config={options} className="max-w-[800px] min-h-[600px]">
           <BarChart
             data={chartData}
             accessibilityLayer
@@ -44,15 +44,15 @@ export function ExitsPerHourChart(data: AccessPerHourChartProps) {
               dataKey="hora"
               type="category"
               tickLine={false}
-              tickMargin={-20}
+              tickMargin={5}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 20)}
+              padding={{ bottom: 10 }}
             />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent includeHidden />}
             />
-            <XAxis dataKey="acessos" type="number" padding={{ left: 30 }} />
+            <XAxis dataKey="acessos" type="number" />
             <Bar dataKey="acessos" fill="#ef4444" radius={5}>
               <LabelList
                 dataKey="acessos"
