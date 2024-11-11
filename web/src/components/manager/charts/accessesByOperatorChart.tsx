@@ -52,7 +52,7 @@ export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
               tickLine={false}
               tickMargin={-20}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 20)}
+              tickFormatter={(value) => value.slice(0, 4) + "..."}
             />
             <ChartTooltip
               cursor={false}

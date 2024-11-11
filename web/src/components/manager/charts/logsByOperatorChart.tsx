@@ -54,7 +54,7 @@ export function LogsByOperatorChart(data: LogsByOperatorChartProps[]) {
               tickLine={false}
               tickMargin={5}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 6) + "..."}
+              tickFormatter={(value) => value.slice(0, 4) + "..."}
               padding={{ bottom: 10 }}
             />
             <ChartTooltip
