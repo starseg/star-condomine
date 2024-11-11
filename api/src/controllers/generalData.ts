@@ -175,14 +175,13 @@ export const countAccessesPerHour = async (
     }
 
     // Converting BigInt counts to number
-    const hourlyCounts = results.map(result => {
+    const hourlyCounts = results.map((result) => {
       return {
         ...result,
         hour: Number(result.hour),
-        count: Number(result.count)
-      }
-    })
-
+        count: Number(result.count),
+      };
+    });
 
     const totalAccesses = hourlyCounts.reduce(
       (sum, record) => sum + Number(record.count),
@@ -190,12 +189,14 @@ export const countAccessesPerHour = async (
     );
 
     const numberOfHours = results.length;
-    const averageAccessesPerHour = Number(numberOfHours > 0 ? totalAccesses / numberOfHours : 0).toFixed(2);
+    const averageAccessesPerHour = Number(
+      numberOfHours > 0 ? totalAccesses / numberOfHours : 0
+    ).toFixed(2);
 
     // Enviar resposta
     res.json({
       averageAccessesPerHour,
-      hourlyCounts
+      hourlyCounts,
     });
   } catch (error) {
     console.error(error);
@@ -239,6 +240,7 @@ export const countExitsPerHour = async (
       hourlyCounts: results.map((result) => ({
         ...result,
         count: Number(result.count),
+        hour: Number(result.hour),
       })),
     });
   } catch (error) {
