@@ -128,7 +128,7 @@ export const PdfButton = ({
   return (
     <Button
       variant={"outline"}
-      className="flex gap-2 mt-4 px-8"
+      className="flex gap-2 px-8"
       onClick={() => generatePdf(data)}
     >
       {" "}
