@@ -6,7 +6,7 @@ import {
   getAccessRuleTimeZone,
   getAccessRuleTimeZonesByLobby,
   updateAccessRuleTimeZone,
-} from "../controllers/accessRuleTimeZone";
+} from "../controllers/access-rule-timezone-controller";
 import { checkAdminPermission } from "../middlewares/permissions";
 
 const accessRuleTimeZoneRouter = express.Router();
