@@ -19,8 +19,8 @@ export function LogsByOperatorChart(data: LogsByOperatorChartProps[]) {
     const operator =
       operatorName.length > 1
         ? operatorName[0]
-            .concat(" ")
-            .concat(operatorName[operatorName.length - 1])
+          .concat(" ")
+          .concat(operatorName[operatorName.length - 1])
         : operatorName[0];
     const count = data[i].count;
     chartData.push({ operador: operator, logs: count });
@@ -41,7 +41,7 @@ export function LogsByOperatorChart(data: LogsByOperatorChartProps[]) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={options} className="min-w-[800px]">
+        <ChartContainer config={options} className="max-w-[800px] min-h-[600px]">
           <BarChart
             data={chartData}
             accessibilityLayer
@@ -52,15 +52,16 @@ export function LogsByOperatorChart(data: LogsByOperatorChartProps[]) {
               dataKey="operador"
               type="category"
               tickLine={false}
-              tickMargin={-20}
+              tickMargin={5}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 20)}
+              tickFormatter={(value) => value.slice(0, 4) + "..."}
+              padding={{ bottom: 10 }}
             />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent includeHidden />}
             />
-            <XAxis dataKey="logs" type="number" padding={{ left: 30 }} />
+            <XAxis dataKey="logs" type="number" />
             <Bar dataKey="logs" fill="#db2777" radius={5}>
               <LabelList
                 dataKey="logs"

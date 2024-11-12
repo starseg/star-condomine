@@ -34,7 +34,7 @@ export function AccessesByLobbyChart(data: AccessByLobbyChartProps[]) {
         <CardDescription>Quantidade de acessos por portaria</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={options} className="min-w-[800px]">
+        <ChartContainer config={options} className="max-w-[800px] min-h-[600px]">
           <BarChart
             data={chartData}
             accessibilityLayer
@@ -48,7 +48,7 @@ export function AccessesByLobbyChart(data: AccessByLobbyChartProps[]) {
               tickMargin={-10}
               padding={{ bottom: 20 }}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 6) + "..."}
+              tickFormatter={(value) => value.slice(0, 5) + "..."}
             />
             <ChartTooltip
               cursor={false}
