@@ -191,20 +191,19 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                         {type === "resident"
                           ? member.address
                             ? member.addressType.description +
-                              " " +
-                              member.address
+                            " " +
+                            member.address
                             : "Endereço não cadastrado"
                           : member.rg}
                       </TableCell>
                       <TableCell>
-                        {/* {type === "resident"
+                        {type === "resident"
                           ? member.telephone.length > 0
                             ? member.telephone[0].number
                             : "Nenhum telefone cadastrado"
                           : member.position
                             ? member.position
-                            : "Cargo não cadastrado"} */}
-                        {member.telephone[0].number}
+                            : "Cargo não cadastrado"}
                       </TableCell>
                       {brand === "Control-iD" && (
                         <TableCell>
