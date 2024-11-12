@@ -12,7 +12,7 @@ export class AccessRuleService {
   }
 
   async getAccessRuleById(id: number) {
-    const accessRule = await prisma.accessRule.findUniqueOrThrow({
+    const accessRule = await prisma.accessRule.findUnique({
       where: { accessRuleId: id },
     })
 

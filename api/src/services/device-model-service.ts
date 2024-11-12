@@ -9,7 +9,7 @@ export class DeviceModelService {
   }
 
   async getDeviceModel(id: number) {
-    const device = await prisma.deviceModel.findUniqueOrThrow({
+    const device = await prisma.deviceModel.findUnique({
       where: { deviceModelId: id },
     });
 

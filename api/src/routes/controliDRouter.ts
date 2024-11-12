@@ -4,7 +4,7 @@ import {
   clearResults,
   push,
   result,
-} from "../controllers/controliD";
+} from "../controllers/controliD-controller";
 
 const controliDRouter = express.Router();
 
