@@ -1,3 +1,5 @@
+#!/bin/bash
+
 executar_comando() {
     $2 > /dev/null 2> erro.log  # Redireciona stdout para /dev/null (descarta) e stderr para erro.log
     if [ $? -eq 0 ]; then # Verifica se o comando foi executado com sucesso
@@ -5,7 +7,8 @@ executar_comando() {
     else
         echo "$1 falhou ❌"
         echo "Log de erro:"
-        cat erro.log  # Exibe o conteúdo do log de erro
+        cat erro.log 
+        exit 1
     fi
 }
 
