@@ -191,23 +191,23 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                         {type === "resident"
                           ? member.address
                             ? member.addressType.description +
-                            " " +
-                            member.address
+                              " " +
+                              member.address
                             : "Endereço não cadastrado"
                           : member.rg}
                       </TableCell>
                       <TableCell>
-                        {type === "resident"
+                        {/* {type === "resident"
                           ? member.telephone.length > 0
                             ? member.telephone[0].number
                             : "Nenhum telefone cadastrado"
                           : member.position
                             ? member.position
-                            : "Cargo não cadastrado"}
+                            : "Cargo não cadastrado"} */}
+                        {member.telephone[0].number}
                       </TableCell>
-                      {(brand === "Control-iD") && (
+                      {brand === "Control-iD" && (
                         <TableCell>
-
                           {member?.MemberGroup?.length > 0 ? (
                             <p className="text-green-500">
                               {member.MemberGroup[0].group.name}
@@ -238,7 +238,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex gap-2 items-center">
+                        <div className="flex items-center gap-2">
                           <Link
                             className={cn(
                               buttonVariants({ variant: "ghost" }),
