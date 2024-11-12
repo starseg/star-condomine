@@ -3,7 +3,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -21,10 +20,20 @@ import {
 } from "../ui/tooltip";
 import { PdfButton } from "./pdfButton";
 import { SkeletonTable } from "../_skeletons/skeleton-table";
+import { Input } from "../ui/input";
+import {
+  CaretLeft,
+  CaretRight,
+  Funnel,
+  MagnifyingGlass,
+} from "@phosphor-icons/react/dist/ssr";
+import { Button } from "../ui/button";
 
 export default function ReportTable({ lobby }: { lobby: string }) {
   const [isLoading, setIsLoading] = useState(true);
   const [access, setAccess] = useState<Access[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredAccess, setFilteredAccess] = useState<Access[]>([]);
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams.toString());
@@ -33,6 +42,10 @@ export default function ReportTable({ lobby }: { lobby: string }) {
   const [from, setFrom] = useState(params.get("from") || "");
   const [to, setTo] = useState(params.get("to") || "");
   let period = { from: from, to: to };
+
+  const [page, setPage] = useState(1);
+  const [paginatedAccess, setPaginatedAccess] = useState<Access[]>([]);
+  const itemsPerPage = 50;
 
   useEffect(() => {
     // Atualiza os valores de 'from' e 'to' quando os parâmetros mudam
@@ -47,6 +60,8 @@ export default function ReportTable({ lobby }: { lobby: string }) {
         const path = `access/report/${lobby}?from=${from}&to=${to}`;
         const response = await api.get(path);
         setAccess(response.data);
+        setFilteredAccess(response.data);
+        setPaginatedAccess(response.data.slice(0, itemsPerPage));
         setIsLoading(false);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -70,6 +85,36 @@ export default function ReportTable({ lobby }: { lobby: string }) {
     }
   }, [session, from, to]);
 
+  const totalOfPages = Math.ceil(filteredAccess.length / itemsPerPage);
+
+  useEffect(() => {
+    const begin = (page - 1) * itemsPerPage;
+    const end = page * itemsPerPage;
+    setPaginatedAccess(filteredAccess.slice(begin, end));
+  }, [page, filteredAccess]);
+
+  const changePage = (operation: string) => {
+    setPage((prevPage) => {
+      if (operation === "+" && prevPage < totalOfPages) {
+        return prevPage + 1;
+      } else if (operation === "-" && prevPage > 1) {
+        return prevPage - 1;
+      }
+      return prevPage;
+    });
+  };
+
+  function filterDataByName() {
+    const filtered = access.filter(
+      (item) =>
+        item.visitor.name.toUpperCase().includes(searchTerm.toUpperCase()) ||
+        item.member.name.toUpperCase().includes(searchTerm.toUpperCase())
+    );
+    setFilteredAccess(filtered);
+    setPage(1);
+    setPaginatedAccess(filtered.slice(0, itemsPerPage));
+  }
+
   return (
     <>
       {isLoading ? (
@@ -90,7 +135,7 @@ export default function ReportTable({ lobby }: { lobby: string }) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {access.map((item) => {
+                {paginatedAccess.map((item) => {
                   return (
                     <TableRow key={item.accessId}>
                       <TableCell>
@@ -157,16 +202,63 @@ export default function ReportTable({ lobby }: { lobby: string }) {
                   );
                 })}
               </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TableCell className="text-right uppercase" colSpan={7}>
-                    Total de registros: {access.length}
-                  </TableCell>
-                </TableRow>
-              </TableFooter>
             </Table>
           </div>
-          <PdfButton data={access} period={period} control={control} />
+          <div className="flex justify-between items-center gap-4 mt-4">
+            <div className="flex justify-center items-center gap-2">
+              <Funnel size={40} />
+              <Input
+                type="text"
+                placeholder="Filtrar por nome"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="max-w-sm"
+              />
+              <Button
+                variant={"outline"}
+                onClick={filterDataByName}
+                className="p-2"
+                title="Pesquisar"
+              >
+                <MagnifyingGlass size={20} />
+              </Button>
+            </div>
+            <div className="flex justify-center items-center gap-2 mr-4">
+              <div className="flex items-center gap-4 pr-4">
+                <p className="bg-stone-800 p-2 rounded">
+                  {filteredAccess.length} registros
+                </p>
+                <p>
+                  Página {page} de {totalOfPages}
+                </p>
+                <div className="flex items-center gap-4 text-xl">
+                  <Button
+                    variant={"outline"}
+                    className="p-0 aspect-square"
+                    title="Anterior"
+                    disabled={page === 1}
+                    onClick={() => changePage("-")}
+                  >
+                    <CaretLeft />
+                  </Button>
+                  <Button
+                    variant={"outline"}
+                    className="p-0 aspect-square"
+                    title="Próxima"
+                    disabled={page === totalOfPages}
+                    onClick={() => changePage("+")}
+                  >
+                    <CaretRight />
+                  </Button>
+                </div>
+              </div>
+              <PdfButton
+                data={filteredAccess}
+                period={period}
+                control={control}
+              />
+            </div>
+          </div>
         </div>
       )}
     </>

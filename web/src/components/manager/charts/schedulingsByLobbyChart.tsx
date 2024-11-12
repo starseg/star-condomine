@@ -12,25 +12,28 @@ import {
   CardHeader,
   CardTitle,
 } from "../../ui/card";
-export function AccessesPerHourChart(data: AccessPerHourChartProps) {
+export function SchedulingsByLobbyChart(data: AccessByLobbyChartProps[]) {
   const chartData: any = [];
-  for (let i = 0; i < Object.keys(data.hourlyCounts).length; i++) {
-    const hour = data.hourlyCounts[i].hour.toString().concat("h");
-    const count = data.hourlyCounts[i].count;
-    chartData.push({ hora: hour, acessos: count });
+  for (let i = 0; i < Object.keys(data).length; i++) {
+    const lobby = data[i].lobby;
+    const count = data[i].count;
+    chartData.push({ portaria: lobby, agendamentos: count });
   }
 
   const options = {
-    acessos: {
-      label: "Acessos",
+    agendamentos: {
+      label: "Agendamentos",
+      color: "#10b981",
     },
   } satisfies ChartConfig;
 
   return (
     <Card className="w-[900px]">
       <CardHeader>
-        <CardTitle>Acessos por hora</CardTitle>
-        <CardDescription>Quantidade de acessos por hora</CardDescription>
+        <CardTitle>Agendamentos por portaria</CardTitle>
+        <CardDescription>
+          Quantidade de agendamentos por portaria
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={options} className="max-w-[800px] min-h-[600px]">
@@ -38,24 +41,29 @@ export function AccessesPerHourChart(data: AccessPerHourChartProps) {
             data={chartData}
             accessibilityLayer
             layout="vertical"
-            margin={{ left: 5 }}
+            margin={{ left: 5, top: 10 }}
           >
             <YAxis
-              dataKey="hora"
+              dataKey="portaria"
               type="category"
               tickLine={false}
               tickMargin={5}
               axisLine={false}
-              padding={{ bottom: 10 }}
+              tickFormatter={(value) => value.slice(0, 5) + "..."}
+              padding={{ bottom: 15 }}
             />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent includeHidden />}
             />
-            <XAxis dataKey="acessos" type="number" />
-            <Bar dataKey="acessos" fill="#60a5fa" radius={5}>
+            <XAxis
+              dataKey="agendamentos"
+              type="number"
+              padding={{ left: 10 }}
+            />
+            <Bar dataKey="agendamentos" fill="#10b981" radius={5}>
               <LabelList
-                dataKey="acessos"
+                dataKey="agendamentos"
                 position="right"
                 offset={8}
                 className="fill-foreground"

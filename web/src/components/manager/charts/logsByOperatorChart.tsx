@@ -12,25 +12,33 @@ import {
   CardHeader,
   CardTitle,
 } from "../../ui/card";
-export function AccessesPerHourChart(data: AccessPerHourChartProps) {
+export function LogsByOperatorChart(data: LogsByOperatorChartProps[]) {
   const chartData: any = [];
-  for (let i = 0; i < Object.keys(data.hourlyCounts).length; i++) {
-    const hour = data.hourlyCounts[i].hour.toString().concat("h");
-    const count = data.hourlyCounts[i].count;
-    chartData.push({ hora: hour, acessos: count });
+  for (let i = 0; i < Object.keys(data).length; i++) {
+    const operatorName = data[i].operator.split(" ");
+    const operator =
+      operatorName.length > 1
+        ? operatorName[0]
+          .concat(" ")
+          .concat(operatorName[operatorName.length - 1])
+        : operatorName[0];
+    const count = data[i].count;
+    chartData.push({ operador: operator, logs: count });
   }
 
   const options = {
-    acessos: {
-      label: "Acessos",
+    logs: {
+      label: "Atividades",
     },
   } satisfies ChartConfig;
 
   return (
     <Card className="w-[900px]">
       <CardHeader>
-        <CardTitle>Acessos por hora</CardTitle>
-        <CardDescription>Quantidade de acessos por hora</CardDescription>
+        <CardTitle>Atividades por monitor(a)</CardTitle>
+        <CardDescription>
+          Quantidade de atividades por operador nos últimos 30 dias
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={options} className="max-w-[800px] min-h-[600px]">
@@ -41,21 +49,22 @@ export function AccessesPerHourChart(data: AccessPerHourChartProps) {
             margin={{ left: 5 }}
           >
             <YAxis
-              dataKey="hora"
+              dataKey="operador"
               type="category"
               tickLine={false}
               tickMargin={5}
               axisLine={false}
+              tickFormatter={(value) => value.slice(0, 4) + "..."}
               padding={{ bottom: 10 }}
             />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent includeHidden />}
             />
-            <XAxis dataKey="acessos" type="number" />
-            <Bar dataKey="acessos" fill="#60a5fa" radius={5}>
+            <XAxis dataKey="logs" type="number" />
+            <Bar dataKey="logs" fill="#db2777" radius={5}>
               <LabelList
-                dataKey="acessos"
+                dataKey="logs"
                 position="right"
                 offset={8}
                 className="fill-foreground"

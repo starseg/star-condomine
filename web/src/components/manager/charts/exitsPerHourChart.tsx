@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../ui/card";
-export function AccessesPerHourChart(data: AccessPerHourChartProps) {
+export function ExitsPerHourChart(data: AccessPerHourChartProps) {
   const chartData: any = [];
   for (let i = 0; i < Object.keys(data.hourlyCounts).length; i++) {
     const hour = data.hourlyCounts[i].hour.toString().concat("h");
@@ -29,8 +29,8 @@ export function AccessesPerHourChart(data: AccessPerHourChartProps) {
   return (
     <Card className="w-[900px]">
       <CardHeader>
-        <CardTitle>Acessos por hora</CardTitle>
-        <CardDescription>Quantidade de acessos por hora</CardDescription>
+        <CardTitle>Registros de saída por hora</CardTitle>
+        <CardDescription>Quantidade de saídas por hora</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={options} className="max-w-[800px] min-h-[600px]">
@@ -53,7 +53,7 @@ export function AccessesPerHourChart(data: AccessPerHourChartProps) {
               content={<ChartTooltipContent includeHidden />}
             />
             <XAxis dataKey="acessos" type="number" />
-            <Bar dataKey="acessos" fill="#60a5fa" radius={5}>
+            <Bar dataKey="acessos" fill="#ef4444" radius={5}>
               <LabelList
                 dataKey="acessos"
                 position="right"

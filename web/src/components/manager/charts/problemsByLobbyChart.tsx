@@ -59,7 +59,7 @@ export function ProblemsByLobbyChart(data: AccessByLobbyChartProps[]) {
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="flex items-center gap-2 font-medium leading-none">
-          Média de {total / Object.keys(data).length} problemas por portaria
+          Média de {(total / Object.keys(data).length).toFixed(2)} problemas por portaria
         </div>
       </CardFooter>
     </Card>

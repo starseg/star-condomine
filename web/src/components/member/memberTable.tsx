@@ -205,9 +205,8 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                             ? member.position
                             : "Cargo não cadastrado"}
                       </TableCell>
-                      {(brand === "Control-iD") && (
+                      {brand === "Control-iD" && (
                         <TableCell>
-
                           {member?.MemberGroup?.length > 0 ? (
                             <p className="text-green-500">
                               {member.MemberGroup[0].group.name}
@@ -238,7 +237,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex gap-2 items-center">
+                        <div className="flex items-center gap-2">
                           <Link
                             className={cn(
                               buttonVariants({ variant: "ghost" }),

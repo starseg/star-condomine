@@ -9,6 +9,10 @@ import { AccessesByLobbyChart } from "./charts/accessesByLobbyChart";
 import { ProblemsByLobbyChart } from "./charts/problemsByLobbyChart";
 import { AccessesByOperatorChart } from "./charts/accessesByOperatorChart";
 import { AccessesPerHourChart } from "./charts/accessesPerHourChart";
+import { ExitsPerHourChart } from "./charts/exitsPerHourChart";
+import { SchedulingsByLobbyChart } from "./charts/schedulingsByLobbyChart";
+import { AccessesByVisitorTypeChart } from "./charts/accessesByVisitorTypeChart";
+import { LogsByOperatorChart } from "./charts/logsByOperatorChart";
 
 export default function ManagementPanel() {
   const [counts, setCounts] = useState<GeneralCounts>();
@@ -23,6 +27,16 @@ export default function ManagementPanel() {
   >([]);
   const [accessesPerHour, setAccessesPerHour] =
     useState<AccessPerHourChartProps>();
+  const [exitsPerHour, setExitsPerHour] = useState<AccessPerHourChartProps>();
+  const [schedulingsByLobby, setSchedulingsByLobby] = useState<
+    AccessByLobbyChartProps[]
+  >([]);
+  const [accessesByVisitorType, setAccessesByVisitorType] = useState<
+    AccessByVisitorTypeChartProps[]
+  >([]);
+  const [logsByOperator, setLogsByOperator] = useState<
+    LogsByOperatorChartProps[]
+  >([]);
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -34,12 +48,20 @@ export default function ManagementPanel() {
           accessesByOperatorResponse,
           problemsByLobbyResponse,
           accessesPerHourResponse,
+          exitsPerHourResponse,
+          schedulingsByLobbyResponse,
+          accessesByVisitorTypeResponse,
+          logsByOperatorResponse,
         ] = await Promise.all([
           api.get("generalData/count"),
           api.get("generalData/accessesByLobby"),
           api.get("generalData/accessesByOperator"),
           api.get("generalData/problemsByLobby"),
           api.get("generalData/countAccessesPerHour"),
+          api.get("generalData/countExitsPerHour"),
+          api.get("generalData/schedulingsByLobby"),
+          api.get("generalData/accessesByVisitorType"),
+          api.get("generalData/logsByOperator"),
         ]);
 
         // Definindo os estados após as respostas
@@ -48,11 +70,14 @@ export default function ManagementPanel() {
         setAccessesByOperator(accessesByOperatorResponse.data);
         setProblemsByLobby(problemsByLobbyResponse.data);
         setAccessesPerHour(accessesPerHourResponse.data);
+        setExitsPerHour(exitsPerHourResponse.data);
+        setSchedulingsByLobby(schedulingsByLobbyResponse.data);
+        setAccessesByVisitorType(accessesByVisitorTypeResponse.data);
+        setLogsByOperator(logsByOperatorResponse.data);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
       }
     };
-
     // Chama a função fetchData quando a sessão muda
     fetchData();
   }, [session]);
@@ -62,8 +87,11 @@ export default function ManagementPanel() {
       {counts &&
       problemsByLobby &&
       accessesByLobby &&
+      accessesByVisitorType &&
       accessesByOperator &&
-      accessesPerHour ? (
+      logsByOperator &&
+      accessesPerHour &&
+      exitsPerHour ? (
         <>
           {/* COUNTS */}
           <div className="flex flex-wrap justify-center items-center gap-4">
@@ -88,6 +116,10 @@ export default function ManagementPanel() {
             <AccessesByLobbyChart {...accessesByLobby} />
             <AccessesByOperatorChart {...accessesByOperator} />
             <AccessesPerHourChart {...accessesPerHour} />
+            <ExitsPerHourChart {...exitsPerHour} />
+            <SchedulingsByLobbyChart {...schedulingsByLobby} />
+            <AccessesByVisitorTypeChart {...accessesByVisitorType} />
+            <LogsByOperatorChart {...logsByOperator} />
           </div>
         </>
       ) : (
