@@ -12,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../ui/card";
+import { DatePickerWithRange } from "@/components/report/calendarRange";
 export function AccessesByLobbyChart(data: AccessByLobbyChartProps[]) {
   const chartData: any = [];
   for (let i = 0; i < Object.keys(data).length; i++) {
@@ -30,8 +31,13 @@ export function AccessesByLobbyChart(data: AccessByLobbyChartProps[]) {
   return (
     <Card className="w-[900px]">
       <CardHeader>
-        <CardTitle>Acessos por portaria</CardTitle>
-        <CardDescription>Quantidade de acessos por portaria</CardDescription>
+        <div className="flex justify-between">
+          <div className="flex flex-col">
+            <CardTitle>Acessos por portaria</CardTitle>
+            <CardDescription>Quantidade de acessos por portaria</CardDescription>
+          </div>
+          <DatePickerWithRange />
+        </div>
       </CardHeader>
       <CardContent>
         <ChartContainer config={options} className="max-w-[800px] min-h-[600px]">

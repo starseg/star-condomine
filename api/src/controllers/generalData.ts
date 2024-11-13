@@ -52,9 +52,23 @@ export const accessesByLobby = async (
   res: Response
 ): Promise<void> => {
   try {
+
+    const startTime = new Date(req.query.from as string) || undefined;
+    const endTime = new Date(req.query.to as string) || undefined;
+
+    const whereCondition = (req.query.from && req.query.to) ? {
+      startTime: {
+        gte: startTime,
+        lte: endTime,
+      },
+    } : {};
+
+    console.log(whereCondition);
+
     const count = await prisma.access.groupBy({
       by: ["lobbyId"],
       _count: true,
+      where: whereCondition,
     });
 
     const lobbies = await prisma.lobby.findMany({
