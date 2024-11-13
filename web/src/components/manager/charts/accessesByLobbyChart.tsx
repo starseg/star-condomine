@@ -32,7 +32,7 @@ export function AccessesByLobbyChart(data: AccessByLobbyChartProps[]) {
     <Card className="w-[900px]">
       <CardHeader>
         <div className="flex justify-between">
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-2">
             <CardTitle>Acessos por portaria</CardTitle>
             <CardDescription>Quantidade de acessos por portaria</CardDescription>
           </div>
