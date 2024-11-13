@@ -69,7 +69,7 @@ export function AccessLogs() {
       return logs.filter((log) => {
         const userName = getUserNameById(log.user_id);
         return userName.toLowerCase().includes(filter.toLowerCase());
-      })
+      });
     }
 
     return logs;
@@ -119,11 +119,12 @@ export function AccessLogs() {
   const fetchData = async () => {
     if (session) {
       try {
-        const [devicesResponse, membersResponse, visitorsResponse] = await Promise.all([
-          api.get(`/device/filtered/${lobby}?status=ACTIVE`),
-          api.get(`member/lobby/${lobby}`),
-          api.get(`visitor/lobby/${lobby}`)
-        ]);
+        const [devicesResponse, membersResponse, visitorsResponse] =
+          await Promise.all([
+            api.get(`/device/filtered/${lobby}?status=ACTIVE`),
+            api.get(`member/lobby/${lobby}`),
+            api.get(`visitor/lobby/${lobby}`),
+          ]);
 
         setDevices(devicesResponse.data);
         setMembers(membersResponse.data);
@@ -169,6 +170,20 @@ export function AccessLogs() {
     }
   }
 
+  function getUserPhotoById(id: number) {
+    if (id === 0) {
+      return "";
+    } else if (id <= 10_000) {
+      return members.find((member) => member.memberId === id)?.profileUrl ?? "";
+    } else if (id > 10_000) {
+      return (
+        visitors.find((visitor) => visitor.visitorId === id - 10_000)
+          ?.profileUrl ?? ""
+      );
+    } else {
+      return "";
+    }
+  }
 
   useEffect(() => {
     fetchData();
@@ -181,8 +196,8 @@ export function AccessLogs() {
   }, [serialId]);
 
   useEffect(() => {
-    setPage(1)
-  }, [filter])
+    setPage(1);
+  }, [filter]);
 
   useEffect(() => {
     const begin = (page - 1) * itemsPerPage;
@@ -237,7 +252,14 @@ export function AccessLogs() {
                   {paginatedAcessLogs.map((log) => {
                     return (
                       <TableRow key={log.id}>
-                        <TableCell>{getUserNameById(log.user_id)}</TableCell>
+                        <TableCell className="flex items-center gap-2">
+                          <img
+                            src={getUserPhotoById(log.user_id)}
+                            alt=""
+                            className="rounded-full max-w-16 aspect-square object-cover"
+                          />
+                          {getUserNameById(log.user_id)}
+                        </TableCell>
                         <TableCell>
                           {format(
                             addHours(new Date(log.time * 1000), 3),

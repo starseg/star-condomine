@@ -1,4 +1,5 @@
 "use client";
+import { AccessLogsLive } from "@/components/control-id/access-logs/accessLogsLive";
 import { OpenDoorButton } from "@/components/control-id/device/openDoorButton";
 import LoadingIcon from "@/components/loadingIcon";
 import { Menu } from "@/components/menu";
@@ -202,6 +203,7 @@ export default function LobbyDetails() {
                   )}
                 </div>
                 <OpenDoorButton />
+                <AccessLogsLive />
               </div>
             )}
           </div>
