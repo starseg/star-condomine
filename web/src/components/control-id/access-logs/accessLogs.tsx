@@ -242,7 +242,8 @@ export function AccessLogs() {
               <Table className="border w-full">
                 <TableHeader>
                   <TableRow className="bg-secondary hover:bg-secondary">
-                    <TableHead>Usuário</TableHead>
+                    <TableHead>Foto do usuário</TableHead>
+                    <TableHead>Nome do usuário</TableHead>
                     <TableHead>Data do registro</TableHead>
                     <TableHead>Horário do registro</TableHead>
                     <TableHead>Tipo do evento</TableHead>
@@ -252,12 +253,14 @@ export function AccessLogs() {
                   {paginatedAcessLogs.map((log) => {
                     return (
                       <TableRow key={log.id}>
-                        <TableCell className="flex items-center gap-2">
+                        <TableCell className="p-6">
                           <img
-                            src={getUserPhotoById(log.user_id)}
+                            src={getUserPhotoById(log.user_id) || "/user-null.jpg"}
                             alt=""
-                            className="rounded-full max-w-16 aspect-square object-cover"
+                            className="rounded-xl max-w-20 aspect-square object-cover"
                           />
+                        </TableCell>
+                        <TableCell>
                           {getUserNameById(log.user_id)}
                         </TableCell>
                         <TableCell>

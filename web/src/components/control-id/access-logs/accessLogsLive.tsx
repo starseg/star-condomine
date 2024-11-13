@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 import Image from "next/image";
 import { addHours, format } from "date-fns";
 import LoadingIcon from "@/components/loadingIcon";
+import ptBR from "date-fns/locale/pt-BR";
 
 export function AccessLogsLive() {
   const { data: session } = useSession();
@@ -28,6 +29,7 @@ export function AccessLogsLive() {
 
   const [accessLogs, setAccessLogs] = useState<AccessLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loggedLobby, setLoggedLobby] = useState<Lobby | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
   const [visitors, setVisitors] = useState<Visitor[]>([]);
   const [devices, setDevices] = useState<Device[]>([]);
@@ -74,13 +76,15 @@ export function AccessLogsLive() {
   const fetchData = async () => {
     if (session) {
       try {
-        const [devicesResponse, membersResponse, visitorsResponse] =
+        const [devicesResponse, membersResponse, visitorsResponse, lobbyResponse] =
           await Promise.all([
             api.get(`/device/filtered/${lobby}?status=ACTIVE`),
             api.get(`member/lobby/${lobby}`),
             api.get(`visitor/lobby/${lobby}`),
+            api.get(`/lobby/find/${lobby}`),
           ]);
 
+        setLoggedLobby(lobbyResponse.data);
         setDevices(devicesResponse.data);
         setMembers(membersResponse.data);
         setVisitors(visitorsResponse.data);
@@ -110,16 +114,13 @@ export function AccessLogsLive() {
 
   function getUserPhotoById(id: number) {
     if (id === 0) {
-      return "";
+      return;
     } else if (id <= 10_000) {
-      return members.find((member) => member.memberId === id)?.profileUrl ?? "";
+      return members.find((member) => member.memberId === id)?.profileUrl;
     } else if (id > 10_000) {
-      return (
-        visitors.find((visitor) => visitor.visitorId === id - 10_000)
-          ?.profileUrl ?? ""
-      );
+      return visitors.find((visitor) => visitor.visitorId === id - 10_000)?.profileUrl
     } else {
-      return "";
+      return;
     }
   }
 
@@ -148,43 +149,71 @@ export function AccessLogsLive() {
           Acessos
         </button>
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent className="min-w-[40%]" aria-description="Ultimos acessos das leitoras faciais">
         <SheetHeader className="flex flex-col justify-between gap-6 mt-2 w-full">
-          <div className="flex justify-between items-center w-full">
-            <SheetTitle className="text-3xl">Acessos</SheetTitle>
+          <div className="flex flex-col w-full -mb-3">
+            <SheetTitle className="text-3xl text-primary">Acessos Recentes</SheetTitle>
+            <SheetDescription className="flex gap-2 items-center text-sm text-muted-foreground">
+              Relatório dos últimos 20 acessos dos dispositivos da portaria {loggedLobby?.name}
+            </SheetDescription>
           </div>
           {isLoading ? (
-            <LoadingIcon />
+            <div className="flex justify-center items-center">
+              <LoadingIcon />
+            </div>
           ) : (
             <>
               {accessLogs.length > 0 ? (
-                <SheetDescription className="w-full max-h-[60vh] overflow-auto">
-                  {accessLogs.map((log) => {
-                    return (
-                      <div key={log.id} className="">
-                        <img
-                          src={getUserPhotoById(log.user_id)}
-                          alt=""
-                          className="rounded-full max-w-16 aspect-square object-cover"
-                        />
-                        {getUserNameById(log.user_id)}
-                        {format(
-                          addHours(new Date(log.time * 1000), 3),
-                          "dd/MM/yyyy"
-                        )}
-                        {format(
-                          addHours(new Date(log.time * 1000), 3),
-                          "HH:mm:ss"
-                        )}
-                        <div
-                          style={{ color: `${eventLogs[log.event].color}` }}
-                          className="font-bold"
-                        >
-                          {eventLogs[log.event].value}
+                <SheetDescription className="w-full max-h-[80vh] overflow-auto pb-4">
+                  <div className="flex flex-col h-full">
+                    {accessLogs.map((log, index) => {
+                      return (
+                        <div className="flex flex-col gap-2">
+                          <div key={log.id} className="flex gap-3 items-center">
+
+                            <div className="flex flex-col" style={{
+                              marginTop: index !== 0 ? '24px' : "0",
+                              color: `${eventLogs[log.event].color}`
+                            }}>
+                              <span>{format(addHours(new Date(log.time * 1000), 3), "dd/M/yyyy", { locale: ptBR })}</span>
+                              <span>{format(addHours(new Date(log.time * 1000), 3), "HH:mm:ss", { locale: ptBR })}</span>
+                            </div>
+
+                            <div className="flex flex-col items-center">
+                              {index !== 0 && (
+                                <div className="w-[2px] h-6 bg-muted-foreground"></div>
+                              )}
+                              <img
+                                src={getUserPhotoById(log.user_id) || "/user-null.jpg"}
+                                alt=""
+                                className="rounded-full max-w-12 aspect-square object-cover"
+                              />
+                            </div>
+
+                            <div className="flex flex-col gap-2" style={{ marginTop: index !== 0 ? '24px' : "0" }}>
+                              <span className="text-foreground text-pretty">
+                                {getUserNameById(log.user_id)} {
+                                  log.user_id === 0 ? "" : log.user_id <= 10_000 ? (
+                                    loggedLobby?.type === "CONDOMINIUM" ? "- Morador" : "- Funcionário"
+                                  ) : "- Visitante"
+                                }
+                              </span>
+                              <div>
+                                <span style={{ color: `${eventLogs[log.event].color}` }} className="font-bold text-pretty">
+                                  {eventLogs[log.event].value}
+                                </span>
+                                <span> - </span>
+                                <span>
+                                  {format(addHours(new Date(log.time * 1000), 3), "HH:mm:ss", { locale: ptBR })}
+                                </span>
+                              </div>
+                            </div>
+
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </SheetDescription>
               ) : (
                 <div className="flex flex-col justify-center items-center gap-2 h-svh">
@@ -201,6 +230,6 @@ export function AccessLogsLive() {
           )}
         </SheetHeader>
       </SheetContent>
-    </Sheet>
+    </Sheet >
   );
 }
