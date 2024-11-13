@@ -56,6 +56,7 @@ export function AccessLogs() {
   const [members, setMembers] = useState<Member[]>([]);
   const [visitors, setVisitors] = useState<Visitor[]>([]);
   const [devices, setDevices] = useState<Device[]>([]);
+  const [loggedLobby, setLoggedLobby] = useState<Lobby | null>(null);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [paginatedAcessLogs, setPaginatedAcessLogs] = useState<AccessLog[]>([]);
@@ -119,16 +120,18 @@ export function AccessLogs() {
   const fetchData = async () => {
     if (session) {
       try {
-        const [devicesResponse, membersResponse, visitorsResponse] =
+        const [devicesResponse, membersResponse, visitorsResponse, lobbyResponse] =
           await Promise.all([
             api.get(`/device/filtered/${lobby}?status=ACTIVE`),
             api.get(`member/lobby/${lobby}`),
             api.get(`visitor/lobby/${lobby}`),
+            api.get(`/lobby/find/${lobby}`),
           ]);
 
         setDevices(devicesResponse.data);
         setMembers(membersResponse.data);
         setVisitors(visitorsResponse.data);
+        setLoggedLobby(lobbyResponse.data);
         setIsLoading(false);
       } catch (error) {
         console.error("Erro ao obter dados:", error);
@@ -244,6 +247,7 @@ export function AccessLogs() {
                   <TableRow className="bg-secondary hover:bg-secondary">
                     <TableHead>Foto do usuário</TableHead>
                     <TableHead>Nome do usuário</TableHead>
+                    <TableHead>Tipo de usuário</TableHead>
                     <TableHead>Data do registro</TableHead>
                     <TableHead>Horário do registro</TableHead>
                     <TableHead>Tipo do evento</TableHead>
@@ -262,6 +266,17 @@ export function AccessLogs() {
                         </TableCell>
                         <TableCell>
                           {getUserNameById(log.user_id)}
+                        </TableCell>
+                        <TableCell>
+                          {log.user_id === 0
+                            ? "Não identificado"
+                            : log.user_id <= 10_000
+                              ? (
+                                loggedLobby?.type === "CONDOMINIUM"
+                                  ? "Morador"
+                                  : "Funcionário"
+                              )
+                              : "Visitante"}
                         </TableCell>
                         <TableCell>
                           {format(
