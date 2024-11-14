@@ -34,6 +34,7 @@
     "cmdk": "^0.2.0",
     "date-fns": "^2.30.0",
     "firebase": "^11.0.1",
+    "html2pdf.js": "^0.10.2",
     "input-otp": "^1.2.4",
     "inputmask-core": "^2.2.0",
     "jspdf": "^2.5.1",

@@ -1,32 +1,5 @@
 "use client";
 import { SkeletonTable } from "@/components/_skeletons/skeleton-table";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  Table,
-  TableCell,
-} from "@/components/ui/table";
-import api from "@/lib/axios";
-import { useSession } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
-import { listLogsCommand } from "../device/commands";
-import { eventLogs } from "./event-logs";
-import {
-  CaretDown,
-  CaretLeft,
-  CaretRight,
-} from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -36,10 +9,37 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { toast } from "react-toastify";
-import Image from "next/image";
-import { addHours, format } from "date-fns";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import api from "@/lib/axios";
+import {
+  CaretDown,
+  CaretLeft,
+  CaretRight,
+} from "@phosphor-icons/react/dist/ssr";
+import { addHours, format } from "date-fns";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { listLogsCommand } from "../device/commands";
+import { eventLogs } from "./event-logs";
 
 export function AccessLogs() {
   const { data: session } = useSession();
@@ -120,13 +120,17 @@ export function AccessLogs() {
   const fetchData = async () => {
     if (session) {
       try {
-        const [devicesResponse, membersResponse, visitorsResponse, lobbyResponse] =
-          await Promise.all([
-            api.get(`/device/filtered/${lobby}?status=ACTIVE`),
-            api.get(`member/lobby/${lobby}`),
-            api.get(`visitor/lobby/${lobby}`),
-            api.get(`/lobby/find/${lobby}`),
-          ]);
+        const [
+          devicesResponse,
+          membersResponse,
+          visitorsResponse,
+          lobbyResponse,
+        ] = await Promise.all([
+          api.get(`/device/filtered/${lobby}?status=ACTIVE`),
+          api.get(`member/lobby/${lobby}`),
+          api.get(`visitor/lobby/${lobby}`),
+          api.get(`/lobby/find/${lobby}`),
+        ]);
 
         setDevices(devicesResponse.data);
         setMembers(membersResponse.data);
@@ -259,24 +263,22 @@ export function AccessLogs() {
                       <TableRow key={log.id}>
                         <TableCell className="p-6">
                           <img
-                            src={getUserPhotoById(log.user_id) || "/user-null.jpg"}
+                            src={
+                              getUserPhotoById(log.user_id) || "/user-null.jpg"
+                            }
                             alt=""
                             className="rounded-xl max-w-20 aspect-square object-cover"
                           />
                         </TableCell>
-                        <TableCell>
-                          {getUserNameById(log.user_id)}
-                        </TableCell>
+                        <TableCell>{getUserNameById(log.user_id)}</TableCell>
                         <TableCell>
                           {log.user_id === 0
                             ? "Não identificado"
                             : log.user_id <= 10_000
-                              ? (
-                                loggedLobby?.type === "CONDOMINIUM"
-                                  ? "Morador"
-                                  : "Funcionário"
-                              )
-                              : "Visitante"}
+                            ? loggedLobby?.type === "CONDOMINIUM"
+                              ? "Morador"
+                              : "Funcionário"
+                            : "Visitante"}
                         </TableCell>
                         <TableCell>
                           {format(

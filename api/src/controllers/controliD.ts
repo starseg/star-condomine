@@ -24,7 +24,7 @@ export const addCommand = async (
     id,
     content,
   };
-  console.log(command.content);
+  // console.log(command.content);
   commandQueue.push(command);
   res.json({ message: "Command added successfully" });
 };
@@ -32,8 +32,8 @@ export const addCommand = async (
 export const push = async (req: Request, res: Response): Promise<void> => {
   const deviceId = req.query.deviceId;
 
-  console.log("Device ID: ", deviceId);
-  console.log("commandQueue: ", commandQueue);
+  // console.log("Device ID: ", deviceId);
+  // console.log("commandQueue: ", commandQueue);
   //console.log("activeDevices: ", activeDevices)
   //console.log(deviceId, commandQueue[0] ? commandQueue[0].id : "empty");
   //console.log("Query: ", req.query);
