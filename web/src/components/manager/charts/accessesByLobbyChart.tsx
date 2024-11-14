@@ -34,13 +34,17 @@ export function AccessesByLobbyChart(data: AccessByLobbyChartProps[]) {
         <div className="flex justify-between">
           <div className="flex flex-col gap-2">
             <CardTitle>Acessos por portaria</CardTitle>
-            <CardDescription>Quantidade de acessos por portaria</CardDescription>
+            <CardDescription>
+              Quantidade de acessos por portaria
+            </CardDescription>
           </div>
-          <DatePickerWithRange />
         </div>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={options} className="max-w-[800px] min-h-[600px]">
+        <ChartContainer
+          config={options}
+          className="max-w-[800px] min-h-[600px]"
+        >
           <BarChart
             data={chartData}
             accessibilityLayer
