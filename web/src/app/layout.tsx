@@ -13,7 +13,7 @@ const nunito = Nunito({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Star Condomine",
+    template: "%s ⭐",
     default: "Star Condomine",
   },
   description: "Plataforma de controle de portarias online da Starseg",
@@ -28,11 +28,17 @@ export default function RootLayout({
     <html lang="pt-BR">
       <head>
         <link rel="icon" href="favicon.ico" sizes="any" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#eab308" />
       </head>
       <body className={cn(nunito.className, "dark")}>
         <NextAuthSessionProvider>
           {children}
-          <ToastContainer position="bottom-right" autoClose={2500} theme="colored" />
+          <ToastContainer
+            position="bottom-right"
+            autoClose={2500}
+            theme="colored"
+          />
         </NextAuthSessionProvider>
       </body>
     </html>

@@ -1,0 +1,17 @@
+{
+  "name": "Star Condomine",
+  "short_name": "Star Condomine",
+  "description": "Aplicação de controle de portaria da Star Seg",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c0a09",
+  "theme_color": "#eab308",
+  "icons": [
+    {
+      "src": "/icons/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "lang": "pt-BR"
+}
