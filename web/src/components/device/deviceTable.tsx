@@ -119,9 +119,11 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
                   >
                     <Trash />
                   </button>
-                  <Button variant={"outline"} className="text-sm" onClick={() => testConection(device)}>
-                    Testar conexão
-                  </Button>
+                  {device.status === "ACTIVE" && device.deviceModel.model === "FaceID" && (
+                    <Button variant={"outline"} className="text-sm" onClick={() => testConection(device)}>
+                      Testar conexão
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             ))}
