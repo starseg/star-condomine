@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 
 interface ActiveDeviceInterface {
   deviceId: string;
@@ -120,3 +120,10 @@ function setActiveDevices(deviceId: string) {
     (device) => currentTimestamp - device.timestamp < 10000
   );
 }
+
+export function getActiveDevices(res: Request, req: Response) {
+  return req.json({
+    devices: activeDevices.map((device) => device.deviceId),
+  })
+}
+

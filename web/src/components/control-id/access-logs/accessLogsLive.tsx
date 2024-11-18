@@ -65,7 +65,13 @@ export function AccessLogsLive() {
 
     try {
       const accessLogs = JSON.parse(lastResult);
-      setAccessLogs(accessLogs.access_logs.reverse().slice(0, 20));
+      const filteredLogs = devices.flatMap((device) => {
+        return accessLogs.access_logs.filter(
+          (log: AccessLog) => log.device_id === Number(device.name)
+        );
+      });
+
+      setAccessLogs(filteredLogs.reverse().slice(0, 20));
     } catch (error) {
       console.error("Erro ao obter dados:", error);
       toast.error("Ocorreu um erro ao obter os registros de acesso.");
@@ -227,10 +233,10 @@ export function AccessLogsLive() {
                                 {log.user_id === 0
                                   ? ""
                                   : log.user_id <= 10_000
-                                  ? loggedLobby?.type === "CONDOMINIUM"
-                                    ? "- Morador"
-                                    : "- Funcionário"
-                                  : "- Visitante"}
+                                    ? loggedLobby?.type === "CONDOMINIUM"
+                                      ? "- Morador"
+                                      : "- Funcionário"
+                                    : "- Visitante"}
                               </span>
                               <div>
                                 <span
