@@ -197,7 +197,7 @@ export function AccessLogsLive() {
                               <span>
                                 {format(
                                   addHours(new Date(log.time * 1000), 3),
-                                  "dd/M/yyyy",
+                                  "dd/MM/yyyy",
                                   { locale: ptBR }
                                 )}
                               </span>
