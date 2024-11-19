@@ -16,6 +16,8 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SkeletonTable } from "../_skeletons/skeleton-table";
 import { deleteAction } from "@/lib/delete-action";
+import { Button } from "../ui/button";
+import { toast } from "react-toastify";
 
 export default function DeviceTable({ lobby }: { lobby: string }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -51,6 +53,22 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
 
   const deleteDevice = async (id: number) => {
     deleteAction(session, "dispositivo", `device/${id}`, fetchData);
+  };
+
+  const testConection = async (device: Device) => {
+    try {
+      const response = await api.get("/control-id/activeDevices") as { data: { devices: string[] } };
+      console.log(response.data);
+      const isActive = response.data.devices.includes(device.name);
+      if (isActive) {
+        toast.success("Conexão realizada com sucesso.");
+      } else {
+        toast.error("Erro ao se conectar com a leitora.");
+      }
+    } catch (error) {
+      toast.error("Erro ao se conectar com a leitora.");
+      console.error("Erro ao se conectar com a leitora:", error);
+    }
   };
 
   return (
@@ -89,7 +107,7 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
                     <TableCell className="text-red-500">Inativo</TableCell>
                   )
                 }
-                <TableCell className="flex gap-4 text-2xl">
+                <TableCell className="flex gap-4 text-2xl justify-center items-center">
                   <Link
                     href={`device/update?lobby=${device.lobbyId}&id=${device.deviceId}`}
                   >
@@ -101,6 +119,11 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
                   >
                     <Trash />
                   </button>
+                  {device.status === "ACTIVE" && device.deviceModel.model === "FaceID" && (
+                    <Button variant={"outline"} className="text-sm" onClick={() => testConection(device)}>
+                      Testar conexão
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             ))}
