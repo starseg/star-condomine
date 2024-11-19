@@ -31,6 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { useMediaQuery } from "react-responsive";
 
 const FormSchema = z.object({
   visitor: z.number(),
@@ -153,6 +154,7 @@ export function SchedulingForm() {
       setIsSendind(false);
     }
   };
+  const isMobile = useMediaQuery({ query: "(max-width: 480px)" });
 
   return (
     <Form {...form}>
@@ -165,7 +167,11 @@ export function SchedulingForm() {
           name="visitor"
           label="Visitante"
           object={visitorItems}
-          selectLabel="Selecione o visitante que está acessando"
+          selectLabel={
+            isMobile
+              ? "Selecione o visitante..."
+              : "Selecione o visitante que irá acessar"
+          }
           searchLabel="Buscar visitante..."
           onSelect={(value: number) => {
             form.setValue("visitor", value);
@@ -177,7 +183,7 @@ export function SchedulingForm() {
           name="member"
           label="Morador visitado / colaborador acionado"
           object={memberItems}
-          selectLabel="Selecione quem está sendo visitado"
+          selectLabel="Selecione será sendo visitado"
           searchLabel="Buscar pessoa..."
           onSelect={(value: number) => {
             form.setValue("member", value);
@@ -198,7 +204,7 @@ export function SchedulingForm() {
           placeholder="Para onde está indo? Casa, Salão de Festas..."
         />
 
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <FormField
             control={form.control}
             name="startDate"

@@ -23,18 +23,22 @@ export default async function Scheduling({
   return (
     <>
       <Menu url={`/dashboard/actions?lobby=${lobby}`} />
-      <section className="max-w-5xl mx-auto mb-24">
-        <div className="flex justify-between mb-4">
+      <section className="mx-auto mb-24 px-2 max-w-5xl">
+        <div className="flex md:flex-row flex-col justify-between mb-4">
           <h1 className="text-4xl text-center">Agendamentos</h1>
-          <Search placeholder="Buscar..." pagination={false} classname="md:w-1/2 lg:w-4/12 items-center" />
+          <Search
+            placeholder="Buscar..."
+            pagination={false}
+            classname="md:w-1/2 lg:w-4/12 items-center"
+          />
         </div>
         <SchedulingTable lobby={lobby} />
-        <div className="mt-2 flex gap-4 items-center">
+        <div className="flex flex-wrap items-center gap-4 mt-2">
           <Link
             href={`scheduling/new?lobby=${lobby}`}
             className={buttonVariants({ variant: "default" })}
           >
-            <p className="flex gap-2 text-xl items-center">
+            <p className="flex items-center gap-2 text-xl">
               <FilePlus size={24} /> Agendar
             </p>
           </Link>
@@ -42,7 +46,7 @@ export default async function Scheduling({
             href={`access?lobby=${lobby}&c=${control}`}
             className={buttonVariants({ variant: "default" })}
           >
-            <p className="flex gap-2 text-xl items-center">
+            <p className="flex items-center gap-2 text-xl">
               <FileSearch size={24} /> Acessos
             </p>
           </Link>
@@ -50,7 +54,7 @@ export default async function Scheduling({
             href={`visitor?lobby=${lobby}&c=${control}`}
             className={buttonVariants({ variant: "default" })}
           >
-            <p className="flex gap-2 text-xl items-center">
+            <p className="flex items-center gap-2 text-xl">
               <FileSearch size={24} /> Visitantes
             </p>
           </Link>

@@ -237,7 +237,7 @@ export default function VisitorTable({ lobby }: { lobby: string }) {
               </TableBody>
             </Table>
           </div>
-          <div className="flex justify-between mr-4">
+          <div className="flex flex-wrap justify-between mr-4">
             {control === "S" && (
               <div className="flex items-center gap-2 mt-4 font-medium text-stone-400">
                 <div className="bg-red-400 rounded-full w-6 h-6"></div>:
