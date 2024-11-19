@@ -176,7 +176,7 @@ export function ResidentForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="px-4 w-full md:w-3/4 lg:w-1/2 2xl:w-1/3 space-y-6"
+        className="space-y-6 px-4 w-full md:w-3/4 lg:w-1/2 2xl:w-1/3"
       >
         <Image
           src="/photo-guide.jpeg"
@@ -190,7 +190,7 @@ export function ResidentForm() {
           Adicione uma foto 3x4, sem óculos e outros acessórios e com fundo
           neutro
         </p>
-        <InputImage control={form.control} name="profileUrl" />
+        <InputImage control={form.control} name="profileUrl" isFacial={true} />
         <DefaultInput
           control={form.control}
           name="name"
@@ -253,7 +253,7 @@ export function ResidentForm() {
           control={form.control}
           name="terms"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-4 border rounded-md">
               <FormControl>
                 <Checkbox
                   checked={field.value}
@@ -266,7 +266,7 @@ export function ResidentForm() {
                   <Link
                     href="/Politicas_privacidade_Star_Seg.pdf"
                     target="_blank"
-                    className="underline text-primary"
+                    className="text-primary underline"
                   >
                     políticas de privacidade
                   </Link>{" "}

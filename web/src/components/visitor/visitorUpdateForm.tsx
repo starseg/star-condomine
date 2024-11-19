@@ -145,8 +145,7 @@ export function VisitorUpdateForm({
     if (session)
       try {
         const response = await api.get(
-          `visitor/find/${visitor.visitorId}/base64photo`,
-
+          `visitor/find/${visitor.visitorId}/base64photo`
         );
         return response.data.base64;
       } catch (error) {
@@ -285,7 +284,11 @@ export function VisitorUpdateForm({
             </div>
           )}
           <div className="w-10/12">
-            <InputImage control={form.control} name="profileUrl" />
+            <InputImage
+              control={form.control}
+              name="profileUrl"
+              isFacial={true}
+            />
 
             <div className="flex items-center space-x-2 mt-2">
               <Checkbox

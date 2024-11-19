@@ -136,8 +136,7 @@ export function EmployeeUpdateForm({
     if (session)
       try {
         const response = await api.get(
-          `member/find/${member.memberId}/base64photo`,
-
+          `member/find/${member.memberId}/base64photo`
         );
         return response.data.base64;
       } catch (error) {
@@ -267,7 +266,11 @@ export function EmployeeUpdateForm({
             </div>
           )}
           <div className="w-10/12">
-            <InputImage control={form.control} name="profileUrl" />
+            <InputImage
+              control={form.control}
+              name="profileUrl"
+              isFacial={true}
+            />
             <div className="flex items-center space-x-2 mt-2">
               <Checkbox
                 id="check"

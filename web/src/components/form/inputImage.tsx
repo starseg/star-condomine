@@ -10,29 +10,76 @@ import { Input } from "@/components/ui/input";
 import { X } from "@phosphor-icons/react/dist/ssr";
 import { FolderCheck, Upload } from "lucide-react";
 import { ChangeEvent, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
 interface InputImageProps {
   control: any;
   name: string;
+  isFacial?: boolean;
 }
 
-export default function InputImage({ control, name }: InputImageProps) {
+export default function InputImage({
+  control,
+  name,
+  isFacial = false,
+}: InputImageProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setFileName(file.name);
+    const file = e.target.files?.[0];
+    if (file) {
+      if (isFacial) {
+        const img = new Image();
+        const objectUrl = URL.createObjectURL(file);
 
-      const reader = new FileReader();
+        img.onload = () => {
+          const { width, height } = img;
+          const totalPixels = width * height;
 
-      reader.onloadend = () => {
-        setSelectedImage(reader.result as string);
-      };
+          // Regras de validação
+          if (width < 160 || height < 160) {
+            toast.error(
+              "A resolução da imagem está muito baixa (Mín. 160x160 px)."
+            );
+            return;
+          } else if (totalPixels > 2073600) {
+            toast.error(
+              "A imagem excede o tamanho limite. Tente reduzir o tamanho (Máx. 1920x1080 px)."
+            );
+            return;
+          }
 
-      reader.readAsDataURL(file);
+          // Validação concluída com sucesso
+          setFileName(file.name);
+
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setSelectedImage(reader.result as string);
+          };
+          reader.readAsDataURL(file);
+
+          // Libera o objeto URL temporário após o uso
+          URL.revokeObjectURL(objectUrl);
+        };
+
+        img.onerror = () => {
+          console.error("Erro ao carregar a imagem.");
+          toast.error("Erro ao carregar a imagem.");
+          URL.revokeObjectURL(objectUrl);
+        };
+
+        img.src = objectUrl;
+      } else {
+        setFileName(file.name);
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setSelectedImage(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
     }
   };
 
