@@ -214,8 +214,7 @@ export function ResidentUpdateForm({
     if (session)
       try {
         const response = await api.get(
-          `member/find/${member.memberId}/base64photo`,
-
+          `member/find/${member.memberId}/base64photo`
         );
         return response.data.base64;
       } catch (error) {
@@ -294,13 +293,10 @@ export function ResidentUpdateForm({
           if (phoneNumber[0] != "") {
             try {
               for (let i = 0; i < phoneNumber.length; i++) {
-                await api.post(
-                  "telephone",
-                  {
-                    number: phoneNumber[i],
-                    memberId: response.data.memberId,
-                  }
-                );
+                await api.post("telephone", {
+                  number: phoneNumber[i],
+                  memberId: response.data.memberId,
+                });
               }
             } catch (error) {
               console.error(
@@ -374,7 +370,11 @@ export function ResidentUpdateForm({
             </div>
           )}
           <div className="w-10/12">
-            <InputImage control={form.control} name="profileUrl" />
+            <InputImage
+              control={form.control}
+              name="profileUrl"
+              isFacial={true}
+            />
 
             <div className="flex items-center space-x-2 mt-2">
               <Checkbox

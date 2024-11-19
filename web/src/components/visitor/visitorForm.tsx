@@ -235,7 +235,7 @@ export function VisitorForm() {
             operatorId: Number(operator),
             lobbyId: Number(lobby),
           };
-          await api.post("access", access,);
+          await api.post("access", access);
         } catch (error) {
           console.error("Erro ao enviar dados para a API:", error);
           throw error;
@@ -259,7 +259,7 @@ export function VisitorForm() {
           lobbyId: Number(lobby),
         };
         try {
-          await api.post("scheduling", info,);
+          await api.post("scheduling", info);
         } catch (error) {
           console.error("Erro ao enviar dados para a API:", error);
           throw error;
@@ -290,7 +290,11 @@ export function VisitorForm() {
         <div>
           <p className="mb-1 text-sm">Foto de perfil</p>
           <div className="flex gap-4">
-            <InputImage control={form.control} name="profileUrl" />
+            <InputImage
+              control={form.control}
+              name="profileUrl"
+              isFacial={true}
+            />
             {lobbyData && lobbyData.ControllerBrand.name === "Control iD" && (
               <TakeMemberPhoto savePhoto={handleSavePhoto} />
             )}
