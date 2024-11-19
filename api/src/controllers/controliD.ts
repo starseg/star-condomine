@@ -1,4 +1,5 @@
-import { Request, response, Response } from "express";
+import { set } from "date-fns";
+import { Request, Response } from "express";
 
 interface ActiveDeviceInterface {
   deviceId: string;
@@ -13,6 +14,20 @@ let commandQueue: {
 let activeDevices: ActiveDeviceInterface[] = [];
 let resultLog: any[] = [];
 let currentTimestamp = new Date().getTime();
+
+// Remove devices that have not sent a request in the last 10 seconds
+setInterval(() => {
+  if (activeDevices.length > 0) {
+    activeDevices.forEach((device) => {
+      currentTimestamp = new Date().getTime();
+      if (currentTimestamp - device.timestamp > 10000) {
+        activeDevices = activeDevices.filter((item) => item.deviceId !== device.deviceId);
+      }
+    })
+  }
+
+  console.log("Active Devices: ", activeDevices);
+}, 10000);
 
 export const addCommand = async (
   req: Request,
