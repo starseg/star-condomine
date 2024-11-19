@@ -183,6 +183,11 @@ export function VisitorForm() {
     // FAZ O UPLOAD DA FOTO
     let file;
     if (data.profileUrl instanceof File && data.profileUrl.size > 0) {
+      if (!data.profileUrl.type.includes("image")) {
+        toast.error("O arquivo de foto do usuário precisa ser uma imagem.")
+        setIsSendind(false)
+        return
+      }
       const timestamp = new Date().toISOString();
       const fileExtension = data.profileUrl.name.split(".").pop();
 
