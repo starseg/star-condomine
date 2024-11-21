@@ -6,7 +6,7 @@ import {
   result,
   results,
   getActiveDevices
-} from "../controllers/controliD";
+} from "../controllers/controliD-controller";
 
 const controliDRouter = express.Router();
 

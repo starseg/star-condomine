@@ -1,4 +1,3 @@
-import { set } from "date-fns";
 import { Request, Response } from "express";
 
 interface ActiveDeviceInterface {
