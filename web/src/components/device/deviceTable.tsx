@@ -66,9 +66,11 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
       }
     };
 
-    setInterval(() => {
+    const intervalId = setInterval(() => {
       testConnection();
     }, 5000)
+
+    return () => clearInterval(intervalId);
   }, [devices, session]);
 
   useEffect(() => {
