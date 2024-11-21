@@ -118,7 +118,7 @@ export default function AccessTable({ lobby }: { lobby: string }) {
       if (
         !oldestEntries[entry.visitorId] ||
         new Date(entry.startTime) <
-        new Date(oldestEntries[entry.visitorId].startTime)
+          new Date(oldestEntries[entry.visitorId].startTime)
       ) {
         oldestEntries[entry.visitorId] = entry;
       }
@@ -159,7 +159,11 @@ export default function AccessTable({ lobby }: { lobby: string }) {
                             <p>
                               {item.visitor.name}
                               <span className="ml-1 text-xs">
-                                ({item.visitor.visitorType.description ? item.visitor.visitorType.description : ""})
+                                (
+                                {item.visitor.visitorType.description
+                                  ? item.visitor.visitorType.description
+                                  : ""}
+                                )
                               </span>
                             </p>
                           ) : (
@@ -224,8 +228,9 @@ export default function AccessTable({ lobby }: { lobby: string }) {
               </TableBody>
             </Table>
           </div>
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4 mt-4">
+          <div className="flex md:flex-row flex-col-reverse flex-wrap justify-between items-center">
+            {/* links */}
+            <div className="flex flex-wrap items-center gap-4 mt-4">
               <Link
                 href={`access/new?lobby=${lobby}&c=${control}`}
                 className={buttonVariants({ variant: "default" })}
@@ -251,6 +256,7 @@ export default function AccessTable({ lobby }: { lobby: string }) {
                 </p>
               </Link>
             </div>
+            {/* paginação */}
             <div className="flex items-center gap-4 mt-4 pr-4">
               <p className="bg-stone-800 p-2 rounded">
                 {access.length} registros

@@ -4,7 +4,9 @@ import {
   clearResults,
   push,
   result,
-} from "../controllers/controliD-controller";
+  results,
+  getActiveDevices
+} from "../controllers/controliD";
 
 const controliDRouter = express.Router();
 
@@ -13,5 +15,6 @@ controliDRouter.post("/result", result);
 
 controliDRouter.post("/add-command", addCommand);
 controliDRouter.get("/clearResults", clearResults);
+controliDRouter.get("/activeDevices", getActiveDevices);
 
 export default controliDRouter;

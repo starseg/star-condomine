@@ -212,7 +212,7 @@ export function SchedulingUpdateForm({
           label="Local da visita"
           placeholder="Para onde está indo? Casa, Salão de Festas..."
         />
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <FormField
             control={form.control}
             name="startDate"

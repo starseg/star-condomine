@@ -180,6 +180,11 @@ export function EmployeeForm() {
     // FAZ O UPLOAD DA FOTO
     let file;
     if (data.profileUrl instanceof File && data.profileUrl.size > 0) {
+      if (!data.profileUrl.type.includes("image")) {
+        toast.error("O arquivo deve ser uma imagem");
+        setIsSendind(false);
+        return;
+      }
       const timestamp = new Date().toISOString();
       const fileExtension = data.profileUrl.name.split(".").pop();
 
@@ -226,14 +231,11 @@ export function EmployeeForm() {
       if (tagNumber[0] != "") {
         try {
           for (let i = 0; i < tagNumber.length; i++) {
-            await api.post(
-              "tag",
-              {
-                value: tagNumber[i],
-                tagTypeId: tag,
-                memberId: response.data.memberId,
-              }
-            );
+            await api.post("tag", {
+              value: tagNumber[i],
+              tagTypeId: tag,
+              memberId: response.data.memberId,
+            });
           }
         } catch (error) {
           console.error("(Tag) Erro ao enviar dados para a API:", error);
@@ -244,14 +246,11 @@ export function EmployeeForm() {
       if (cardNumber[0] != "") {
         try {
           for (let i = 0; i < cardNumber.length; i++) {
-            await api.post(
-              "tag",
-              {
-                value: cardNumber[i],
-                tagTypeId: card,
-                memberId: response.data.memberId,
-              }
-            );
+            await api.post("tag", {
+              value: cardNumber[i],
+              tagTypeId: card,
+              memberId: response.data.memberId,
+            });
           }
         } catch (error) {
           console.error("(Cartão) Erro ao enviar dados para a API:", error);
@@ -269,7 +268,7 @@ export function EmployeeForm() {
             memberId: response.data.memberId,
             groupId: data.groupId,
           };
-          await api.post(`memberGroup`, info,);
+          await api.post(`memberGroup`, info);
           await sendControliDCommand(
             createUserGroupRelationCommand(response.data.memberId, data.groupId)
           );
@@ -301,7 +300,11 @@ export function EmployeeForm() {
         <div>
           <p className="mb-1 text-sm">Foto de perfil</p>
           <div className="flex gap-4">
-            <InputImage control={form.control} name="profileUrl" />
+            <InputImage
+              control={form.control}
+              name="profileUrl"
+              isFacial={true}
+            />
             {lobbyData && lobbyData.ControllerBrand.name === "Control iD" && (
               <TakeMemberPhoto savePhoto={handleSavePhoto} />
             )}

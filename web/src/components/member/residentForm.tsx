@@ -27,6 +27,7 @@ import DefaultCombobox from "../form/comboboxDefault";
 import DefaultCheckbox from "../form/checkboxDefault";
 import DefaultTextarea from "../form/textareaDefault";
 import { resizeImage } from "../form/resizeImage";
+import { toast } from "react-toastify";
 
 const FormSchema = z.object({
   profileUrl: z.instanceof(File),
@@ -82,7 +83,7 @@ export function ResidentForm() {
     const fetchData = async () => {
       if (session)
         try {
-          const response = await api.get("member/address",);
+          const response = await api.get("member/address");
           setAddressType(response.data);
         } catch (error) {
           console.error("Erro ao obter dados:", error);
@@ -173,6 +174,11 @@ export function ResidentForm() {
     // FAZ O UPLOAD DA FOTO
     let file;
     if (data.profileUrl instanceof File && data.profileUrl.size > 0) {
+      if (!data.profileUrl.type.includes("image")) {
+        toast.error("O arquivo deve ser uma imagem.");
+        setIsSendind(false);
+        return;
+      }
       const timestamp = new Date().toISOString();
       const fileExtension = data.profileUrl.name.split(".").pop();
 
@@ -220,13 +226,10 @@ export function ResidentForm() {
       if (phoneNumber[0] != "") {
         try {
           for (let i = 0; i < phoneNumber.length; i++) {
-            await api.post(
-              "telephone",
-              {
-                number: phoneNumber[i],
-                memberId: response.data.memberId,
-              }
-            );
+            await api.post("telephone", {
+              number: phoneNumber[i],
+              memberId: response.data.memberId,
+            });
           }
         } catch (error) {
           console.error("(Telefone) Erro ao enviar dados para a API:", error);
@@ -238,14 +241,11 @@ export function ResidentForm() {
       if (tagNumber[0] != "") {
         try {
           for (let i = 0; i < tagNumber.length; i++) {
-            await api.post(
-              "tag",
-              {
-                value: tagNumber[i],
-                tagTypeId: tag,
-                memberId: response.data.memberId,
-              }
-            );
+            await api.post("tag", {
+              value: tagNumber[i],
+              tagTypeId: tag,
+              memberId: response.data.memberId,
+            });
           }
         } catch (error) {
           console.error("(Tag) Erro ao enviar dados para a API:", error);
@@ -257,14 +257,11 @@ export function ResidentForm() {
       if (cardNumber[0] != "") {
         try {
           for (let i = 0; i < cardNumber.length; i++) {
-            await api.post(
-              "tag",
-              {
-                value: cardNumber[i],
-                tagTypeId: card,
-                memberId: response.data.memberId,
-              }
-            );
+            await api.post("tag", {
+              value: cardNumber[i],
+              tagTypeId: card,
+              memberId: response.data.memberId,
+            });
           }
         } catch (error) {
           console.error("(Cartão) Erro ao enviar dados para a API:", error);
@@ -289,7 +286,11 @@ export function ResidentForm() {
       >
         <div>
           <p className="mb-1 text-sm">Foto de perfil</p>
-          <InputImage control={form.control} name="profileUrl" />
+          <InputImage
+            control={form.control}
+            name="profileUrl"
+            isFacial={true}
+          />
         </div>
 
         <DefaultInput

@@ -4,15 +4,19 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import LoadingIcon from "../loadingIcon";
 import Card from "./card";
-import { ProblemChart } from "./charts/problemChart";
 import { AccessesByLobbyChart } from "./charts/accessesByLobbyChart";
-import { ProblemsByLobbyChart } from "./charts/problemsByLobbyChart";
 import { AccessesByOperatorChart } from "./charts/accessesByOperatorChart";
+import { AccessesByVisitorTypeChart } from "./charts/accessesByVisitorTypeChart";
 import { AccessesPerHourChart } from "./charts/accessesPerHourChart";
 import { ExitsPerHourChart } from "./charts/exitsPerHourChart";
-import { SchedulingsByLobbyChart } from "./charts/schedulingsByLobbyChart";
-import { AccessesByVisitorTypeChart } from "./charts/accessesByVisitorTypeChart";
 import { LogsByOperatorChart } from "./charts/logsByOperatorChart";
+import { ProblemChart } from "./charts/problemChart";
+import { ProblemsByLobbyChart } from "./charts/problemsByLobbyChart";
+import { SchedulingsByLobbyChart } from "./charts/schedulingsByLobbyChart";
+import { SelectDateRange } from "./selectDateRange";
+import { useSearchParams } from "next/navigation";
+import { Button } from "../ui/button";
+import { generatePDF } from "./generatePDF";
 
 export default function ManagementPanel() {
   const [counts, setCounts] = useState<GeneralCounts>();
@@ -39,9 +43,20 @@ export default function ManagementPanel() {
   >([]);
   const { data: session } = useSession();
 
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams.toString());
+  const from = params.get("from");
+  const to = params.get("to");
+
   useEffect(() => {
     const fetchData = async () => {
       try {
+        let date = "";
+        if (!from || !to) {
+          date = "";
+        } else {
+          date = `?from=${from}&to=${to}`;
+        }
         const [
           countResponse,
           accessesByLobbyResponse,
@@ -53,15 +68,15 @@ export default function ManagementPanel() {
           accessesByVisitorTypeResponse,
           logsByOperatorResponse,
         ] = await Promise.all([
-          api.get("generalData/count"),
-          api.get("generalData/accessesByLobby"),
-          api.get("generalData/accessesByOperator"),
-          api.get("generalData/problemsByLobby"),
-          api.get("generalData/countAccessesPerHour"),
-          api.get("generalData/countExitsPerHour"),
-          api.get("generalData/schedulingsByLobby"),
-          api.get("generalData/accessesByVisitorType"),
-          api.get("generalData/logsByOperator"),
+          api.get("generalData/count" + date),
+          api.get("generalData/accessesByLobby" + date),
+          api.get("generalData/accessesByOperator" + date),
+          api.get("generalData/problemsByLobby" + date),
+          api.get("generalData/countAccessesPerHour" + date),
+          api.get("generalData/countExitsPerHour" + date),
+          api.get("generalData/schedulingsByLobby" + date),
+          api.get("generalData/accessesByVisitorType" + date),
+          api.get("generalData/logsByOperator" + date),
         ]);
 
         // Definindo os estados após as respostas
@@ -80,10 +95,10 @@ export default function ManagementPanel() {
     };
     // Chama a função fetchData quando a sessão muda
     fetchData();
-  }, [session]);
+  }, [session, from, to]);
 
   return (
-    <div className="mt-8">
+    <div className="mt-8" id="dashboard">
       {counts &&
       problemsByLobby &&
       accessesByLobby &&
@@ -93,6 +108,7 @@ export default function ManagementPanel() {
       accessesPerHour &&
       exitsPerHour ? (
         <>
+          <SelectDateRange />
           {/* COUNTS */}
           <div className="flex flex-wrap justify-center items-center gap-4">
             <Card title="Portarias" content={counts.lobbies} />
@@ -120,6 +136,7 @@ export default function ManagementPanel() {
             <SchedulingsByLobbyChart {...schedulingsByLobby} />
             <AccessesByVisitorTypeChart {...accessesByVisitorType} />
             <LogsByOperatorChart {...logsByOperator} />
+            {/* <Button onClick={generatePDF}>Baixar PDF</Button> */}
           </div>
         </>
       ) : (

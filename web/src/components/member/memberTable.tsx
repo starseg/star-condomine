@@ -191,8 +191,8 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                         {type === "resident"
                           ? member.address
                             ? member.addressType.description +
-                            " " +
-                            member.address
+                              " " +
+                              member.address
                             : "Endereço não cadastrado"
                           : member.rg}
                       </TableCell>
@@ -202,8 +202,8 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                             ? member.telephone[0].number
                             : "Nenhum telefone cadastrado"
                           : member.position
-                            ? member.position
-                            : "Cargo não cadastrado"}
+                          ? member.position
+                          : "Cargo não cadastrado"}
                       </TableCell>
                       {brand === "Control-iD" && (
                         <TableCell>
@@ -283,7 +283,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
               </TableBody>
             </Table>
           </div>
-          <div className="flex justify-between mr-4">
+          <div className="flex flex-wrap justify-between mr-4">
             <div className="flex items-center gap-2 mt-4 font-medium text-stone-400">
               <div className="bg-amber-400 rounded-full w-6 h-6"></div>: membros
               com observações registradas

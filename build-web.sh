@@ -16,7 +16,7 @@ echo ""
 echo "Iniciando build da Aplicação Web... 🚀"
 
 ## Build do WEB
-executar_comando "Navegando para o diretório do Projeto" "cd /home/starmasterapi/htdocs/star-condomine"
+executar_comando "Navegando para o diretório do Projeto" "cd /home/starmaster/htdocs/star-condomine"
 executar_comando "Atualizando repositório" "git pull"
 executar_comando "Navegando para o diretório da aplicação web" "cd web/"
 executar_comando "Instalando dependências" "pnpm install"

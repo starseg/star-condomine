@@ -67,7 +67,7 @@ export default function VehicleTable({ lobby }: { lobby: string }) {
       ) : (
         <>
           <div className="max-h-[60vh] overflow-x-auto">
-            <Table className="border border-stone-800">
+            <Table className="border-stone-800 border">
               <TableHeader className="bg-stone-800 font-semibold">
                 <TableRow>
                   <TableHead>Tipo</TableHead>
@@ -94,13 +94,13 @@ export default function VehicleTable({ lobby }: { lobby: string }) {
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <button className="max-w-[15ch] text-ellipsis overflow-hidden whitespace-nowrap">
+                              <button className="max-w-[15ch] text-ellipsis whitespace-nowrap overflow-hidden">
                                 {vehicle.comments
                                   ? vehicle.comments
                                   : "Nenhuma"}
                               </button>
                             </TooltipTrigger>
-                            <TooltipContent className="max-w-[300px] border-primary bg-stone-800 p-4 break-words">
+                            <TooltipContent className="border-primary bg-stone-800 p-4 max-w-[300px] break-words">
                               <p>
                                 {vehicle.comments
                                   ? vehicle.comments
@@ -136,12 +136,12 @@ export default function VehicleTable({ lobby }: { lobby: string }) {
               </TableFooter>
             </Table>
           </div>
-          <div className="mt-6 flex gap-4 items-center">
+          <div className="flex flex-wrap items-center gap-4 mt-6">
             <Link
               href={`vehicle/new?lobby=${lobby}`}
               className={buttonVariants({ variant: "default" })}
             >
-              <p className="flex gap-2 text-xl items-center">
+              <p className="flex items-center gap-2 text-xl">
                 <FilePlus size={24} /> Registrar veículo
               </p>
             </Link>
@@ -149,7 +149,7 @@ export default function VehicleTable({ lobby }: { lobby: string }) {
               href={`resident?lobby=${lobby}`}
               className={buttonVariants({ variant: "default" })}
             >
-              <p className="flex gap-2 text-xl items-center">
+              <p className="flex items-center gap-2 text-xl">
                 <FileSearch size={24} /> Moradores
               </p>
             </Link>

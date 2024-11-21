@@ -121,7 +121,7 @@ export function TakeMemberPhoto({ savePhoto }: TakeMemberPhotoProps) {
       if (result.data.length > 0) {
         const image = JSON.parse(response);
         const timestamp = new Date().toISOString().replace(" ", "_");
-        setUserFile(base64ToFile(image.user_image, `user_photo_${timestamp}`));
+        setUserFile(base64ToFile(image.user_image, `user_photo_${timestamp}.jpg`));
 
         setUserImage(image.user_image);
 

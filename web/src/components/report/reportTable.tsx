@@ -204,7 +204,7 @@ export default function ReportTable({ lobby }: { lobby: string }) {
               </TableBody>
             </Table>
           </div>
-          <div className="flex justify-between items-center gap-4 mt-4">
+          <div className="flex flex-wrap justify-between items-center gap-4 mt-4">
             <div className="flex justify-center items-center gap-2">
               <Funnel size={40} />
               <Input
@@ -223,7 +223,7 @@ export default function ReportTable({ lobby }: { lobby: string }) {
                 <MagnifyingGlass size={20} />
               </Button>
             </div>
-            <div className="flex justify-center items-center gap-2 mr-4">
+            <div className="flex flex-wrap justify-center items-center gap-2 mr-4">
               <div className="flex items-center gap-4 pr-4">
                 <p className="bg-stone-800 p-2 rounded">
                   {filteredAccess.length} registros

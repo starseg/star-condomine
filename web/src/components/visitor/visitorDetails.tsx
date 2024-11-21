@@ -99,7 +99,7 @@ export default function VisitorDetails({ id }: { id: number }) {
       const response = await api.get("/control-id/results");
       const data: PushResponse[] = response.data;
       if (lobbyData && data.length > 0) {
-        const latest = await fetchLatestResults(lobbyData)
+        const latest = await fetchLatestResults(lobbyData);
         latest.map((result) => {
           const users: { users: User[] | [] } = JSON.parse(
             result.body.response
@@ -136,7 +136,7 @@ export default function VisitorDetails({ id }: { id: number }) {
     <div>
       {visitor ? (
         <>
-          <div className="border-primary mx-auto mt-4 px-12 py-4 border rounded-md max-w-2xl">
+          <div className="md:border-primary mx-auto mt-4 px-12 py-4 md:border rounded-md max-w-2xl">
             <div className="flex justify-center items-center gap-4 w-full">
               {visitor.profileUrl.length > 0 ? (
                 <img

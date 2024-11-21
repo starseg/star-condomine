@@ -1,4 +1,5 @@
 "use client";
+import { AccessLogsLive } from "@/components/control-id/access-logs/accessLogsLive";
 import { OpenDoorButton } from "@/components/control-id/device/openDoorButton";
 import LoadingIcon from "@/components/loadingIcon";
 import { Menu } from "@/components/menu";
@@ -82,9 +83,10 @@ export default function LobbyDetails() {
       {lobby ? (
         <section className="mx-auto mb-24 max-w-5xl">
           <div>
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-start md:items-center">
               <h1 className="mt-2 mb-2 ml-10 text-4xl text-primary">
-                Portaria: {lobby ? lobby.name : "Desconhecida"}
+                Portaria: <br className="md:hidden" />{" "}
+                {lobby ? lobby.name : "Desconhecida"}
               </h1>
               <Link
                 href={`actions/details?lobby=${id}`}
@@ -181,8 +183,8 @@ export default function LobbyDetails() {
               Relatórios
             </Link>
             {brand === "Control-iD" && (
-              <div className="flex justify-between px-10 w-full">
-                <div className="flex gap-6">
+              <div className="flex flex-wrap justify-center lg:justify-between items-center gap-4 px-10 w-full">
+                <div className="flex flex-wrap justify-center items-center gap-6">
                   <Link
                     href={`actions/control-id?lobby=${id}&brand=${brand}`}
                     className="flex justify-center items-center gap-2 border-stone-50 hover:bg-stone-850 p-4 border rounded-md w-[300px] text-3xl transition-colors"
@@ -202,6 +204,7 @@ export default function LobbyDetails() {
                   )}
                 </div>
                 <OpenDoorButton />
+                <AccessLogsLive />
               </div>
             )}
           </div>

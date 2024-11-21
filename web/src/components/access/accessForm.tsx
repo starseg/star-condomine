@@ -14,6 +14,7 @@ import DefaultCheckbox from "../form/checkboxDefault";
 import DefaultCombobox from "../form/comboboxDefault";
 import DefaultInput from "../form/inputDefault";
 import DefaultTextarea from "../form/textareaDefault";
+import { useMediaQuery } from "react-responsive";
 import { toast } from "react-toastify";
 
 const FormSchema = z.object({
@@ -153,6 +154,8 @@ export function AccessForm() {
     }
   };
 
+  const isMobile = useMediaQuery({ query: "(max-width: 480px)" });
+
   return (
     <Form {...form}>
       <form
@@ -164,7 +167,11 @@ export function AccessForm() {
           name="visitor"
           label="Visitante"
           object={visitorItems}
-          selectLabel="Selecione o visitante que está acessando"
+          selectLabel={
+            isMobile
+              ? "Selecione o visitante..."
+              : "Selecione o visitante que está acessando"
+          }
           searchLabel="Buscar visitante..."
           onSelect={(value: number) => {
             form.setValue("visitor", value);
@@ -176,7 +183,11 @@ export function AccessForm() {
           name="member"
           label="Morador visitado / colaborador acionado"
           object={memberItems}
-          selectLabel="Selecione quem está sendo visitado"
+          selectLabel={
+            isMobile
+              ? "Selecione o visitado..."
+              : "Selecione quem está sendo visitado"
+          }
           searchLabel="Buscar pessoa..."
           onSelect={(value: number) => {
             form.setValue("member", value);

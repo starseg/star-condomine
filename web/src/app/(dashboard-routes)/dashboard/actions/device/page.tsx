@@ -24,27 +24,33 @@ export default async function Device({
   return (
     <>
       <Menu url={`/dashboard/actions?lobby=${lobby}`} />
-      <section className="max-w-5xl mx-auto mb-24 mt-4">
-        <div className="flex justify-between mb-4">
-          <h1 className="text-4xl text-center mb-2">Dispositivos</h1>
-          <div className="flex gap-2 w-1/2">
+      <section className="mx-auto mt-4 mb-24 px-2 max-w-5xl">
+        <div className="flex md:flex-row flex-col justify-between mb-4">
+          <h1 className="mb-2 text-4xl text-center">Dispositivos</h1>
+          <div className="flex gap-2 md:w-1/2">
             <Search placeholder="Buscar..." pagination={false} />
-            <SelectFilter defaultValue={"Todos"} values={[
-              { label: "Todos", value: "Todos" },
-              { label: "Ativos", value: "ACTIVE" },
-              { label: "Inativos", value: "INACTIVE" },
-            ]} label="Status" pagination={false} classname="w-1/4" />
+            <SelectFilter
+              defaultValue={"Todos"}
+              values={[
+                { label: "Todos", value: "Todos" },
+                { label: "Ativos", value: "ACTIVE" },
+                { label: "Inativos", value: "INACTIVE" },
+              ]}
+              label="Status"
+              pagination={false}
+              classname="w-1/4"
+            />
           </div>
         </div>
         <div className="max-h-[60vh] overflow-x-auto">
           <DeviceTable lobby={lobby} />
         </div>
-        <div className="mt-6 flex gap-4 items-center">
+        <div className="flex flex-wrap items-center gap-4 mt-6">
           <Link
             href={`device/new?lobby=${lobby}`}
             className={buttonVariants({ variant: "default" })}
           >
-            <p className="flex gap-2 text-xl items-center">
+            <p className="flex items-center gap-2 text-xl">
               <FilePlus size={24} /> Registrar dispositivo
             </p>
           </Link>
@@ -52,7 +58,7 @@ export default async function Device({
             href="/deviceModel"
             className={buttonVariants({ variant: "default" })}
           >
-            <p className="flex gap-2 text-xl items-center">
+            <p className="flex items-center gap-2 text-xl">
               <DeviceMobile size={24} /> Modelos de dispositivo
             </p>
           </Link>

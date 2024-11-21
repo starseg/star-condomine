@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import api from "@/lib/axios";
-import { PencilLine, Trash } from "@phosphor-icons/react/dist/ssr";
+import { CheckCircle, PencilLine, Trash, XCircle } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -20,9 +20,11 @@ import { deleteAction } from "@/lib/delete-action";
 export default function DeviceTable({ lobby }: { lobby: string }) {
   const [isLoading, setIsLoading] = useState(true);
   const [devices, setDevices] = useState<Device[]>([]);
+  const [isConnected, setIsConnected] = useState<{ [key: string]: boolean }>({});
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams.toString());
+
   const fetchData = async () => {
     if (session)
       try {
@@ -45,13 +47,36 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
         console.error("Erro ao obter dados:", error);
       }
   };
-  useEffect(() => {
-    fetchData();
-  }, [session, searchParams]);
 
   const deleteDevice = async (id: number) => {
     deleteAction(session, "dispositivo", `device/${id}`, fetchData);
   };
+
+  useEffect(() => {
+    const testConnection = async () => {
+      if (session) {
+        try {
+          const response = await api.get("control-id/activeDevices") as { data: { devices: string[] } };
+          const connectedDevices = response.data.devices;
+          const devicesNames = devices.map(device => device.name);
+          devicesNames.forEach(deviceName => {
+            setIsConnected((prev) => ({ ...prev, [deviceName]: connectedDevices.includes(deviceName) }));
+          })
+          console.log("Conexões ativas:", connectedDevices);
+        } catch (error) {
+          console.error("Erro ao obter dados:", error);
+        }
+      }
+    };
+
+    setInterval(() => {
+      testConnection();
+    }, 5000)
+  }, [devices, session]);
+
+  useEffect(() => {
+    fetchData();
+  }, [session, searchParams]);
 
   return (
     <>
@@ -69,6 +94,7 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
               <TableHead>Login</TableHead>
               <TableHead>Senha</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Conexão</TableHead>
               <TableHead>Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -89,7 +115,16 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
                     <TableCell className="text-red-500">Inativo</TableCell>
                   )
                 }
-                <TableCell className="flex gap-4 text-2xl">
+                <TableCell>
+                  {
+                    isConnected[device.name] ? (
+                      <CheckCircle className="text-green-500" size={24} />
+                    ) : (
+                      <XCircle className="text-red-500" size={24} />
+                    )
+                  }
+                </TableCell>
+                <TableCell className="flex gap-4 text-2xl justify-center items-center">
                   <Link
                     href={`device/update?lobby=${device.lobbyId}&id=${device.deviceId}`}
                   >
@@ -107,7 +142,7 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell className="text-right" colSpan={9}>
+              <TableCell className="text-right" colSpan={10}>
                 Total de registros: {devices.length}
               </TableCell>
             </TableRow>

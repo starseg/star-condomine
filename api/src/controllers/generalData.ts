@@ -52,9 +52,23 @@ export const accessesByLobby = async (
   res: Response
 ): Promise<void> => {
   try {
+    const startTime = new Date(req.query.from as string) || undefined;
+    const endTime = new Date(req.query.to as string) || undefined;
+
+    const whereCondition =
+      req.query.from && req.query.to
+        ? {
+            startTime: {
+              gte: startTime,
+              lte: endTime,
+            },
+          }
+        : {};
+
     const count = await prisma.access.groupBy({
       by: ["lobbyId"],
       _count: true,
+      where: whereCondition,
     });
 
     const lobbies = await prisma.lobby.findMany({
@@ -86,9 +100,23 @@ export const problemsByLobby = async (
   res: Response
 ): Promise<void> => {
   try {
+    const startTime = new Date(req.query.from as string) || undefined;
+    const endTime = new Date(req.query.to as string) || undefined;
+
+    const whereCondition =
+      req.query.from && req.query.to
+        ? {
+            date: {
+              gte: startTime,
+              lte: endTime,
+            },
+          }
+        : {};
+
     const count = await prisma.lobbyProblem.groupBy({
       by: ["lobbyId"],
       _count: true,
+      where: whereCondition,
     });
 
     const lobbies = await prisma.lobby.findMany({
@@ -120,9 +148,22 @@ export const accessesByOperator = async (
   res: Response
 ): Promise<void> => {
   try {
+    const startTime = new Date(req.query.from as string) || undefined;
+    const endTime = new Date(req.query.to as string) || undefined;
+
+    const whereCondition =
+      req.query.from && req.query.to
+        ? {
+            startTime: {
+              gte: startTime,
+              lte: endTime,
+            },
+          }
+        : {};
     const count = await prisma.access.groupBy({
       by: ["operatorId"],
       _count: true,
+      where: whereCondition,
     });
 
     const operators = await prisma.operator.findMany({
@@ -154,37 +195,47 @@ export const countAccessesPerHour = async (
   res: Response
 ): Promise<void> => {
   try {
-    // Ajustar o fuso horário (UTC -3)
+    // Validar e definir `from` e `to`
+    const fromDate = req.query.from
+      ? new Date(req.query.from as string)
+      : undefined;
+    const toDate = req.query.to ? new Date(req.query.to as string) : undefined;
+
+    // Ajustar o fuso horário (UTC -3) e definir o campo de data
     const adjustedTimeQuery = Prisma.sql`DATE_SUB(startTime, INTERVAL 3 HOUR)`;
 
-    // Agrupar por hora e contar acessos
+    // Construir a query SQL com o `WHERE` condicional para `fromDate` e `toDate`
     const results = await prisma.$queryRaw<
       { hour: number; count: bigint }[]
     >(Prisma.sql`
       SELECT 
-        EXTRACT(HOUR FROM ${adjustedTimeQuery}) as hour, 
-        COUNT(*) as count
+        EXTRACT(HOUR FROM ${adjustedTimeQuery}) AS hour, 
+        COUNT(*) AS count
       FROM Access
+      ${
+        fromDate && toDate
+          ? Prisma.sql`
+        WHERE startTime BETWEEN ${fromDate} AND ${toDate}
+      `
+          : Prisma.sql``
+      }
       GROUP BY EXTRACT(HOUR FROM ${adjustedTimeQuery})
       ORDER BY hour
     `);
 
-    if (!results) {
+    if (!results || results.length === 0) {
       res.status(404).json({ error: "Nenhum acesso encontrado" });
       return;
     }
 
-    // Converting BigInt counts to number
-    const hourlyCounts = results.map((result) => {
-      return {
-        ...result,
-        hour: Number(result.hour),
-        count: Number(result.count),
-      };
-    });
+    // Converter `BigInt` para `number` e calcular a média de acessos por hora
+    const hourlyCounts = results.map((result) => ({
+      hour: Number(result.hour),
+      count: Number(result.count),
+    }));
 
     const totalAccesses = hourlyCounts.reduce(
-      (sum, record) => sum + Number(record.count),
+      (sum, record) => sum + record.count,
       0
     );
 
@@ -209,39 +260,55 @@ export const countExitsPerHour = async (
   res: Response
 ): Promise<void> => {
   try {
-    // Ajustar o fuso horário (UTC -3)
+    // Validar e definir `from` e `to`
+    const fromDate = req.query.from ? new Date(req.query.from as string) : null;
+    const toDate = req.query.to ? new Date(req.query.to as string) : null;
+
+    // Ajustar o fuso horário (UTC -3) e definir o campo de data
     const adjustedTimeQuery = Prisma.sql`DATE_SUB(endTime, INTERVAL 3 HOUR)`;
 
-    // Agrupar por hora e contar acessos
+    // Construir a query SQL com `WHERE` condicional para `fromDate`, `toDate`, e `endTime IS NOT NULL`
     const results = await prisma.$queryRaw<
       { hour: number; count: bigint }[]
     >(Prisma.sql`
       SELECT 
-        EXTRACT(HOUR FROM ${adjustedTimeQuery}) as hour, 
-        COUNT(*) as count
+        EXTRACT(HOUR FROM ${adjustedTimeQuery}) AS hour, 
+        COUNT(*) AS count
       FROM Access
       WHERE endTime IS NOT NULL
+      ${
+        fromDate && toDate
+          ? Prisma.sql`AND startTime BETWEEN ${fromDate} AND ${toDate}`
+          : Prisma.sql``
+      }
       GROUP BY EXTRACT(HOUR FROM ${adjustedTimeQuery})
       ORDER BY hour
     `);
 
-    // Converting BigInt counts to number
-    const totalAccesses = results.reduce(
-      (sum, record) => sum + Number(record.count),
+    if (!results || results.length === 0) {
+      res.status(404).json({ error: "Nenhuma saída encontrada" });
+      return;
+    }
+
+    // Converter `BigInt` para `number` e calcular a média de saídas por hora
+    const hourlyCounts = results.map((result) => ({
+      hour: Number(result.hour),
+      count: Number(result.count),
+    }));
+
+    const totalExits = hourlyCounts.reduce(
+      (sum, record) => sum + record.count,
       0
     );
+
     const numberOfHours = results.length;
-    const averageAccessesPerHour =
-      numberOfHours > 0 ? totalAccesses / numberOfHours : 0;
+    const averageExitsPerHour =
+      numberOfHours > 0 ? totalExits / numberOfHours : 0;
 
     // Enviar resposta
     res.json({
-      averageAccessesPerHour,
-      hourlyCounts: results.map((result) => ({
-        ...result,
-        count: Number(result.count),
-        hour: Number(result.hour),
-      })),
+      averageExitsPerHour: parseFloat(averageExitsPerHour.toFixed(2)),
+      hourlyCounts,
     });
   } catch (error) {
     console.error(error);
@@ -254,9 +321,22 @@ export const schedulingsByLobby = async (
   res: Response
 ): Promise<void> => {
   try {
+    const startTime = new Date(req.query.from as string) || undefined;
+    const endTime = new Date(req.query.to as string) || undefined;
+
+    const whereCondition =
+      req.query.from && req.query.to
+        ? {
+            startDate: {
+              gte: startTime,
+              lte: endTime,
+            },
+          }
+        : {};
     const count = await prisma.scheduling.groupBy({
       by: ["lobbyId"],
       _count: true,
+      where: whereCondition,
     });
 
     const lobbies = await prisma.lobby.findMany({
@@ -288,6 +368,8 @@ export const accessesByVisitorType = async (
   res: Response
 ): Promise<void> => {
   try {
+    const startTime = new Date(req.query.from as string) || undefined;
+    const endTime = new Date(req.query.to as string) || undefined;
     // Consulta para agrupar acessos por tipo de visitante
     const results = await prisma.$queryRaw<
       { visitorType: string; count: bigint }[]
@@ -298,6 +380,13 @@ export const accessesByVisitorType = async (
         FROM Access a
         JOIN Visitor v ON v.visitorId = a.visitorId
         JOIN VisitorType vt ON vt.visitorTypeId = v.visitorTypeId
+        ${
+          req.query.from && req.query.to
+            ? Prisma.sql`
+          WHERE startTime BETWEEN ${startTime} AND ${endTime}
+        `
+            : Prisma.sql``
+        }
         GROUP BY vt.description
         `);
 

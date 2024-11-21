@@ -156,7 +156,7 @@ export function VisitorForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
+        className="space-y-6 w-3/4 lg:w-[40%] 2xl:w-1/3"
       >
         <Image
           src="/photo-guide.jpeg"
@@ -170,7 +170,7 @@ export function VisitorForm() {
           Adicione uma foto 3x4, sem óculos e outros acessórios e com fundo
           neutro
         </p>
-        <InputImage control={form.control} name="profileUrl" />
+        <InputImage control={form.control} name="profileUrl" isFacial={true} />
         <DefaultInput
           control={form.control}
           name="name"
@@ -234,7 +234,7 @@ export function VisitorForm() {
           control={form.control}
           name="facial"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-4 border rounded-md">
               <FormControl>
                 <Checkbox
                   checked={field.value}
@@ -247,7 +247,7 @@ export function VisitorForm() {
                   <Link
                     href="/Termo_de_responsabilidade_de_cadastro_de_visitante.pdf"
                     target="_blank"
-                    className="underline text-primary"
+                    className="text-primary underline"
                   >
                     termo de responsabilidade
                   </Link>
@@ -261,7 +261,7 @@ export function VisitorForm() {
           control={form.control}
           name="terms"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-4 border rounded-md">
               <FormControl>
                 <Checkbox
                   checked={field.value}
@@ -274,7 +274,7 @@ export function VisitorForm() {
                   <Link
                     href="/Politicas_privacidade_Star_Seg.pdf"
                     target="_blank"
-                    className="underline text-primary"
+                    className="text-primary underline"
                   >
                     políticas de privacidade
                   </Link>{" "}

@@ -26,15 +26,15 @@ export default async function Report({
     headers: {
       Authorization: `Bearer ${session?.token.user.token}`,
     },
-  })
+  });
 
   const lobby: Lobby = response.data;
   const brand = lobby.ControllerBrand.name.replace(" ", "-");
   return (
     <>
       <Menu url={`/dashboard/actions?lobby=${lobbyId}`} />
-      <section className="mx-auto mb-24 max-w-5xl">
-        <div className="flex justify-between mb-4">
+      <section className="mx-auto mb-24 px-2 max-w-5xl">
+        <div className="flex flex-wrap justify-between mb-4">
           <h1 className="text-4xl text-center">Relatório</h1>
           <DatePickerWithRange />
         </div>

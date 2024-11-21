@@ -14,17 +14,21 @@ export default function SchedulingList() {
   return (
     <>
       <Menu url={`/dashboard`} />
-      <section className="max-w-5xl mx-auto mb-24">
-        <div className="flex justify-between mb-2">
-          <h1 className="text-4xl text-center mb-2">Listas de agendamentos</h1>
-          <Search placeholder="Buscar..." pagination={false} classname="md:w-1/2 lg:w-4/12 items-center" />
+      <section className="mx-auto mb-24 px-2 max-w-5xl">
+        <div className="flex md:flex-row flex-col justify-between mb-2">
+          <h1 className="mb-2 text-4xl text-center">Listas de agendamentos</h1>
+          <Search
+            placeholder="Buscar..."
+            pagination={false}
+            classname="md:w-1/2 lg:w-4/12 items-center"
+          />
         </div>
         <div className="max-h-[60vh] overflow-x-auto">
           <SchedulingListItems />
         </div>
-        <div className="mt-4 flex gap-4 items-center">
+        <div className="flex items-center gap-4 mt-4">
           <Link href={"schedulingList/new"}>
-            <Button className="self-end text-lg flex gap-2">
+            <Button className="flex gap-2 text-lg self-end">
               <FilePlus size={24} />
               Criar lista
             </Button>

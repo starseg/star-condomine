@@ -1,3 +1,4 @@
+import { set } from "date-fns";
 import { Request, Response } from "express";
 
 interface ActiveDeviceInterface {
@@ -14,30 +15,19 @@ let activeDevices: ActiveDeviceInterface[] = [];
 let resultLog: any[] = [];
 let currentTimestamp = new Date().getTime();
 
-export const clearResults = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  resultLog = [];
-  console.log("cleared!", resultLog);
-  res.json(resultLog);
-};
-
-function setActiveDevices(deviceId: string) {
-  currentTimestamp = new Date().getTime();
-
-  if (activeDevices.some((device) => device.deviceId === deviceId)) {
-    activeDevices = activeDevices.map((device) =>
-      device.deviceId === deviceId ? { deviceId, timestamp: currentTimestamp } : device
-    );
-  } else {
-    activeDevices.push({ deviceId, timestamp: currentTimestamp });
+// Remove devices that have not sent a request in the last 10 seconds
+setInterval(() => {
+  if (activeDevices.length > 0) {
+    activeDevices.forEach((device) => {
+      currentTimestamp = new Date().getTime();
+      if (currentTimestamp - device.timestamp > 10000) {
+        activeDevices = activeDevices.filter((item) => item.deviceId !== device.deviceId);
+      }
+    })
   }
 
-  activeDevices = activeDevices.filter(
-    (device) => currentTimestamp - device.timestamp < 10000
-  );
-}
+  console.log("Active Devices: ", activeDevices);
+}, 10000);
 
 export const addCommand = async (
   req: Request,
@@ -49,7 +39,7 @@ export const addCommand = async (
     id,
     content,
   };
-  console.log(command.content);
+  // console.log(command.content);
   commandQueue.push(command);
   res.json({ message: "Command added successfully" });
 };
@@ -57,8 +47,8 @@ export const addCommand = async (
 export const push = async (req: Request, res: Response): Promise<void> => {
   const deviceId = req.query.deviceId;
 
-  console.log("Device ID: ", deviceId);
-  console.log("commandQueue: ", commandQueue);
+  // console.log("Device ID: ", deviceId);
+  // console.log("commandQueue: ", commandQueue);
   //console.log("activeDevices: ", activeDevices)
   //console.log(deviceId, commandQueue[0] ? commandQueue[0].id : "empty");
   //console.log("Query: ", req.query);
@@ -112,3 +102,43 @@ export const result = async (req: Request, res: Response): Promise<void> => {
   }
   res.json(response);
 };
+
+export const results = async (req: Request, res: Response): Promise<void> => {
+  // console.log("resultLog");
+  // console.log(resultLog);
+  res.json(resultLog);
+};
+
+export const clearResults = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  resultLog = [];
+  console.log("cleared!", resultLog);
+  res.json(resultLog);
+};
+
+function setActiveDevices(deviceId: string) {
+  currentTimestamp = new Date().getTime();
+
+  if (activeDevices.some((device) => device.deviceId === deviceId)) {
+    activeDevices = activeDevices.map((device) =>
+      device.deviceId === deviceId
+        ? { deviceId, timestamp: currentTimestamp }
+        : device
+    );
+  } else {
+    activeDevices.push({ deviceId, timestamp: currentTimestamp });
+  }
+
+  activeDevices = activeDevices.filter(
+    (device) => currentTimestamp - device.timestamp < 10000
+  );
+}
+
+export function getActiveDevices(res: Request, req: Response) {
+  return req.json({
+    devices: activeDevices.map((device) => device.deviceId),
+  })
+}
+

@@ -21,20 +21,24 @@ export default async function Calendar({
   return (
     <>
       <Menu url={`/dashboard/actions?lobby=${lobby}`} />
-      <section className="max-w-5xl mx-auto mb-24">
-        <div className="flex justify-between mb-4">
-          <h1 className="text-4xl text-center mb-2">Calendário de feriados</h1>
-          <Search placeholder="Buscar..." pagination={false} classname="md:w-1/2 lg:w-4/12 items-center" />
+      <section className="mx-auto mb-24 px-2 max-w-5xl">
+        <div className="flex md:flex-row flex-col justify-between mb-4">
+          <h1 className="mb-2 text-4xl text-center">Calendário de feriados</h1>
+          <Search
+            placeholder="Buscar..."
+            pagination={false}
+            classname="md:w-1/2 lg:w-4/12 items-center"
+          />
         </div>
         <div className="max-h-[60vh] overflow-x-auto">
           <CalendarTable lobby={lobby} />
         </div>
-        <div className="mt-6 flex gap-4 items-center">
+        <div className="flex items-center gap-4 mt-6">
           <Link
             href={`calendar/new?lobby=${lobby}`}
             className={buttonVariants({ variant: "default" })}
           >
-            <p className="flex gap-2 text-xl items-center">
+            <p className="flex items-center gap-2 text-xl">
               <FilePlus size={24} /> Registrar data
             </p>
           </Link>

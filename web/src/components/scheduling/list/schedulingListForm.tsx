@@ -1,34 +1,19 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import api from "@/lib/axios";
-import { useEffect, useState } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
-import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown } from "lucide-react";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "../../ui/command";
-import { handleFileUpload } from "@/lib/firebase-upload";
-import DefaultTextarea from "@/components/form/textareaDefault";
+import DefaultCombobox from "@/components/form/comboboxDefault";
 import InputFile from "@/components/form/inputFile";
+import DefaultTextarea from "@/components/form/textareaDefault";
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import api from "@/lib/axios";
+import { handleFileUpload } from "@/lib/firebase-upload";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useMediaQuery } from "react-responsive";
+import * as z from "zod";
 
 const FormSchema = z.object({
   lobby: z.number(),
@@ -164,128 +149,41 @@ export function SchedulingListForm() {
     }
   };
 
+  const isMobile = useMediaQuery({ query: "(max-width: 480px)" });
+
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-3/4 lg:w-[40%] 2xl:w-1/3 space-y-6"
+        className="space-y-6 mt-4 w-3/4 lg:w-[40%] 2xl:w-1/3"
       >
-        <FormField
+        <DefaultCombobox
           control={form.control}
           name="lobby"
-          render={({ field }) => (
-            <FormItem className="flex flex-col mt-4">
-              <FormLabel>Portaria</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        "justify-between",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value
-                        ? lobbyItems.find((item) => item.value === field.value)
-                          ?.label
-                        : "Selecione a portaria"}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="p-0 max-h-[60vh] overflow-x-auto">
-                  <Command className="w-full">
-                    <CommandInput placeholder="Buscar portaria..." />
-                    <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
-                    <CommandGroup>
-                      {lobbyItems.map((item) => (
-                        <CommandItem
-                          value={item.label}
-                          key={item.value}
-                          onSelect={() => {
-                            form.setValue("lobby", item.value);
-                            setLobbyField(item.value);
-                          }}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              item.value === field.value
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                          {item.label}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Portaria"
+          object={lobbyItems}
+          selectLabel="Selecione a portaria"
+          searchLabel="Buscar portaria..."
+          onSelect={(value: number) => {
+            form.setValue("lobby", value);
+            setLobbyField(value);
+          }}
         />
 
-        <FormField
+        <DefaultCombobox
           control={form.control}
           name="member"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Visitado / Responsável</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        "justify-between",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value
-                        ? filteredMemberItems.find(
-                          (item) => item.value === field.value
-                        )?.label
-                        : "Selecione para quem é o agendamento"}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="p-0 max-h-[60vh] overflow-x-auto">
-                  <Command className="w-full">
-                    <CommandInput placeholder="Buscar pessoa..." />
-                    <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
-                    <CommandGroup>
-                      {filteredMemberItems.map((item) => (
-                        <CommandItem
-                          value={item.label}
-                          key={item.value}
-                          onSelect={() => {
-                            form.setValue("member", item.value);
-                          }}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              item.value === field.value
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                          {item.label}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Visitado / Responsável"
+          object={filteredMemberItems}
+          selectLabel={
+            isMobile
+              ? "Para quem é o agendamento?"
+              : "Selecione para quem é o agendamento"
+          }
+          searchLabel="Buscar pessoa..."
+          onSelect={(value: number) => {
+            form.setValue("member", value);
+          }}
         />
 
         <DefaultTextarea

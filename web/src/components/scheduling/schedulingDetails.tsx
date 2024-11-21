@@ -26,7 +26,7 @@ export default function SchedulingDetails({ id }: { id: number }) {
     <div>
       {scheduling ? (
         <>
-          <div className="border-primary mx-auto mt-4 px-12 py-4 border rounded-md max-w-2xl">
+          <div className="md:border-primary mx-auto mt-4 px-12 py-4 md:border rounded-md max-w-2xl">
             <DetailItem
               label="Visitante"
               content={`${scheduling.visitor.name} - ${scheduling.visitor.visitorType.description}`}
