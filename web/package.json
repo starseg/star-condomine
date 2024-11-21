@@ -40,7 +40,7 @@
     "jspdf-autotable": "^3.8.1",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.292.0",
-    "next": "14.0.3",
+    "next": "14.2.10",
     "next-auth": "^4.24.5",
     "next-pwa": "^5.6.0",
     "react": "^18",
