@@ -10,7 +10,7 @@ const accessSchema = z.object({
   local: z.string().nullable().optional(),
   reason: z.string().nullable().optional(),
   comments: z.string().nullable().optional(),
-  status: z.enum(["ACTIVE", "INACTIVE"]),
+  status: z.enum(["ACTIVE", "INACTIVE"]).default("ACTIVE"),
   memberId: z.coerce.number(),
   lobbyId: z.coerce.number(),
   visitorId: z.coerce.number(),

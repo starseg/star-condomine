@@ -25,7 +25,6 @@ setInterval(() => {
     })
   }
 
-  console.log("Active Devices: ", activeDevices);
 }, 10000);
 
 export const addCommand = async (
