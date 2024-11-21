@@ -59,14 +59,14 @@ export default function SchedulingListItems() {
           {schedulingList.map((item) => (
             <div
               key={item.schedulingListId}
-              className="bg-stone-850 border border-primary rounded-md p-4 flex flex-col gap-2 w-[49%]"
+              className="flex flex-col gap-2 border-primary bg-stone-850 p-4 border rounded-md w-full lg:w-[49%]"
             >
               <div className="flex justify-between gap-4">
                 <p className="font-bold text-lg">Portaria: {item.lobby.name}</p>
                 {item.status === "ACTIVE" ? (
-                  <p className="text-red-400 font-semibold">Pendente</p>
+                  <p className="font-semibold text-red-400">Pendente</p>
                 ) : (
-                  <p className="text-green-400 font-semibold">Agendada</p>
+                  <p className="font-semibold text-green-400">Agendada</p>
                 )}
               </div>
               <p>
@@ -76,11 +76,11 @@ export default function SchedulingListItems() {
               <span className="font-bold">Lista: </span>
               <Textarea
                 disabled
-                className="disabled:cursor-text disabled:opacity-100"
+                className="disabled:opacity-100 disabled:cursor-text"
                 value={item.description}
               ></Textarea>
               <div className="flex justify-between items-center">
-                <p className="text-primary font-semibold">
+                <p className="font-semibold text-primary">
                   {formatDate(item.createdAt)} - por{" "}
                   {item.operator.name.split(" ")[0]}
                 </p>

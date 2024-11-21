@@ -39,11 +39,7 @@ export default function FeedbackList() {
       });
     } else {
       try {
-        await api.put(
-          "feedback/" + id,
-          { status: "INACTIVE" },
-
-        );
+        await api.put("feedback/" + id, { status: "INACTIVE" });
         fetchData();
         Swal.fire({
           title: "Sucesso!",
@@ -60,12 +56,12 @@ export default function FeedbackList() {
       {isLoading ? (
         <SkeletonCard />
       ) : (
-        <section className="flex justify-center flex-wrap gap-4">
+        <section className="flex flex-wrap justify-center gap-4">
           {feedbacks.length > 0 ? (
             feedbacks.map((item) => (
               <div
                 key={item.feedbackId}
-                className="w-[45%] flex justify-between p-4 border border-primary rounded-md"
+                className="flex justify-between border-primary p-4 border rounded-md md:w-[45%]"
               >
                 <div className="w-[90%]">
                   {item.status === "ACTIVE" ? (
@@ -104,7 +100,7 @@ export default function FeedbackList() {
               </div>
             ))
           ) : (
-            <div className="flex flex-col items-center justify-center p-4 space-y-2">
+            <div className="flex flex-col justify-center items-center space-y-2 p-4">
               <img
                 className="w-64"
                 src="undraw_location_search.svg"

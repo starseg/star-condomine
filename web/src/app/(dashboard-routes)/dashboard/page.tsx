@@ -17,42 +17,46 @@ export default async function Dashboard() {
   return (
     <>
       <Menu url="bell" />
-      <section className="max-w-5xl mx-auto mb-12">
+      <section className="mx-auto mb-12 px-2 max-w-5xl">
         <UserData />
-        <div className="flex items-center justify-between mb-2 flex-wrap flex-col md:flex-row w-[95%] ml-[5%]">
-          <h1 className="flex gap-2 items-center text-stone-50 text-4xl">
+        <div className="flex md:flex-row flex-col flex-wrap justify-between items-center mb-2 md:ml-[5%] md:w-[95%]">
+          <h1 className="flex items-center gap-2 mb-2 md:mb-0 text-4xl text-stone-50">
             <DoorOpen /> Portarias
           </h1>
-          <Search placeholder="Buscar..." pagination={false} classname="md:w-1/2 lg:w-4/12 items-center" />
+          <Search
+            placeholder="Buscar..."
+            pagination={false}
+            classname="md:w-1/2 lg:w-4/12 items-center"
+          />
         </div>
         <List />
-        <div className="flex items-start justify-between flex-wrap gap-4">
+        <div className="flex flex-wrap justify-between items-start gap-4">
           <NewLobbyButton />
-          <div className="bg-stone-900 px-4 py-2 rounded-md flex items-center justify-center gap-4">
+          <div className="flex justify-center items-center gap-4 bg-stone-900 px-4 py-2 rounded-md">
             <Smiley weight="fill" size={32} className="text-green-500" />
             <p>Funcionando</p>
             <SmileySad weight="fill" size={32} className="text-red-500" />
             <p>Com problemas</p>
           </div>
         </div>
-        <h3 className="text-xl p-4">
+        {/* <h3 className="p-4 text-xl">
           Configurações dos dispositivos de acesso
-        </h3>
-        <div className="px-4 flex gap-4">
+        </h3> */}
+        <div className="flex justify-center md:justify-start gap-4 mt-2 px-4">
           <Link href="controllers-config">
             <Button
               title="Configurações"
-              className="flex gap-2 font-semibold border-primary"
+              className="flex gap-2 border-primary/80 font-semibold"
               variant={"outline"}
             >
-              <Gear size={24} /> Geral
+              <Gear size={24} /> Configurações das leitoras
             </Button>
           </Link>
 
-          <Link href="control-id">
+          {/* <Link href="control-id">
             <Button
               title="Configurações"
-              className="flex gap-2 font-semibold border-red-500"
+              className="flex gap-2 border-red-500 font-semibold"
               variant={"outline"}
             >
               <Gear size={24} /> Control iD
@@ -62,12 +66,12 @@ export default async function Dashboard() {
           <Link href="intelbras">
             <Button
               title="Configurações"
-              className="flex gap-2 font-semibold border-green-500"
+              className="flex gap-2 border-green-500 font-semibold"
               variant={"outline"}
             >
               <Gear size={24} /> Intelbras
             </Button>
-          </Link>
+          </Link> */}
         </div>
         <FeedbackButton />
       </section>

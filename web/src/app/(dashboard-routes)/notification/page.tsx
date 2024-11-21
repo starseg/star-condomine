@@ -13,15 +13,15 @@ export default function Feedbacks() {
   return (
     <>
       <Menu url={`/dashboard`} />
-      <section className="max-w-5xl mx-auto mb-24">
-        <h1 className="text-4xl text-center mb-2">Notificações</h1>
+      <section className="mx-auto mb-24 px-2 max-w-5xl">
+        <h1 className="mb-2 text-4xl text-center">Notificações</h1>
         <NotificationTable />
-        <div className="mt-4 flex gap-4 items-center">
+        <div className="flex items-center gap-4 mt-4">
           <Link
             href={`notification/new`}
             className={buttonVariants({ variant: "default" })}
           >
-            <p className="flex gap-2 text-xl items-center">
+            <p className="flex items-center gap-2 text-xl">
               <FilePlus size={24} /> Criar nova
             </p>
           </Link>

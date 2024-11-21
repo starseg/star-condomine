@@ -214,13 +214,13 @@ export function AccessLogs() {
 
   return (
     <div className="flex flex-col justify-between gap-6 mt-2 w-full">
-      <div className="flex justify-between items-center w-full">
+      <div className="flex flex-wrap justify-between items-center w-full">
         <h2 className="text-3xl">Registros das leitoras</h2>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-3">
           <Input
             type="text"
             placeholder="Filtrar por nome"
-            className="flex-1"
+            className="flex-1 min-w-20"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
           />

@@ -32,12 +32,16 @@ export default async function Member({
     <>
       <Menu url={`/dashboard/actions?lobby=${lobby}`} />
       <section className="mx-auto mb-24 max-w-5xl">
-        <div className="flex justify-between mb-4">
+        <div className="flex md:flex-row flex-col justify-between mb-4 px-2">
           <h1 className="text-4xl text-center">Funcionários</h1>
-          <Search placeholder="Buscar..." pagination={false} classname="md:w-1/2 lg:w-4/12 items-center" />
+          <Search
+            placeholder="Buscar..."
+            pagination={false}
+            classname="md:w-1/2 lg:w-4/12 items-center"
+          />
         </div>
         <MemberTable lobby={lobby} />
-        <div className="flex items-center gap-4 mt-6">
+        <div className="flex flex-wrap items-center gap-4 mt-6">
           <Link
             href={`employee/new?lobby=${lobby}&c=${control}`}
             className={buttonVariants({ variant: "default" })}
