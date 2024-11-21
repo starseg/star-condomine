@@ -53,7 +53,7 @@ export async function createDeviceBrand(req: Request, res: Response) {
 export async function updateDeviceBrand(req: Request, res: Response) {
   try {
     const id = z.coerce.number().parse(req.params.id)
-    const { name, iconUrl } = deviceBrandSchema.parse(req.body)
+    const { name, iconUrl } = deviceBrandSchema.partial().parse(req.body)
     const deviceBrand = await deviceBrandService.updateBrand(id, { name, iconUrl })
     res.status(200).json(deviceBrand)
   } catch (error) {

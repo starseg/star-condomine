@@ -6,7 +6,7 @@ import {
   updateFeedback,
   deleteFeedback,
   countNewFeedbacks,
-} from "../controllers/feedback";
+} from "../controllers/feedback-controller";
 import { checkAdminPermission } from "../middlewares/permissions";
 
 const feedbackRouter = express.Router();
