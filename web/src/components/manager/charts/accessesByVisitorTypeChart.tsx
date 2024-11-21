@@ -29,6 +29,8 @@ export function AccessesByVisitorTypeChart(
     },
   } satisfies ChartConfig;
 
+  const maxValue = Math.max(...chartData.map((item: any) => item.acessos));
+
   return (
     <Card className="w-[900px]">
       <CardHeader>
@@ -57,7 +59,7 @@ export function AccessesByVisitorTypeChart(
               cursor={false}
               content={<ChartTooltipContent includeHidden />}
             />
-            <XAxis dataKey="acessos" type="number" domain={[0, 'dataMax + 5000']} />
+            <XAxis dataKey="acessos" type="number" domain={[0, Math.floor(maxValue * 2.5 / 2)]} />
             <Bar dataKey="acessos" fill="#a855f7" radius={5}>
               <LabelList
                 dataKey="acessos"

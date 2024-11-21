@@ -28,6 +28,8 @@ export function AccessesByLobbyChart(data: AccessByLobbyChartProps[]) {
     },
   } satisfies ChartConfig;
 
+  const maxValue = Math.max(...chartData.map((item: any) => item.acessos));
+
   return (
     <Card className="w-[900px]">
       <CardHeader>
@@ -64,7 +66,7 @@ export function AccessesByLobbyChart(data: AccessByLobbyChartProps[]) {
               cursor={false}
               content={<ChartTooltipContent includeHidden />}
             />
-            <XAxis dataKey="acessos" type="number" padding={{ left: 30 }} />
+            <XAxis dataKey="acessos" type="number" padding={{ left: 30 }} domain={[0, Math.floor(maxValue * 2.5 / 2)]} />
             <Bar dataKey="acessos" fill="#FFA500" radius={5}>
               <LabelList
                 dataKey="acessos"

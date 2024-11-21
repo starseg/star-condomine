@@ -14,6 +14,7 @@ import {
 } from "../../ui/card";
 export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
   const chartData: any = [];
+
   for (let i = 0; i < Object.keys(data).length; i++) {
     const operatorName = data[i].operator.split(" ");
     const operator =
@@ -31,6 +32,8 @@ export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
       label: "Acessos",
     },
   } satisfies ChartConfig;
+
+  const maxValue = Math.max(...chartData.map((item: any) => item.acessos));
 
   return (
     <Card className="w-[900px]">
@@ -58,7 +61,7 @@ export function AccessesByOperatorChart(data: AccessByOperatorChartProps[]) {
               cursor={false}
               content={<ChartTooltipContent includeHidden />}
             />
-            <XAxis dataKey="acessos" type="number" padding={{ left: 30 }} />
+            <XAxis dataKey="acessos" type="number" padding={{ left: 30 }} domain={[0, Math.floor(maxValue * 2.5 / 2)]} />
             <Bar dataKey="acessos" fill="#db2777" radius={5}>
               <LabelList
                 dataKey="acessos"
