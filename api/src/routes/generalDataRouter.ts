@@ -1,26 +1,26 @@
 import express from "express";
 import {
-  count,
-  accessesByLobby,
-  problemsByLobby,
-  accessesByOperator,
-  countAccessesPerHour,
-  countExitsPerHour,
-  schedulingsByLobby,
-  accessesByVisitorType,
-  logsByOperator,
-} from "../controllers/generalData";
+  getCardsCountData,
+  getAccessesByLobby,
+  getProblemsByLobby,
+  getAccessesByOperator,
+  getCountAccessesPerHour,
+  getCountExitsPerHour,
+  getSchedulingByLobby,
+  getAccessesByVisitorType,
+  getLogsByOperator,
+} from "../controllers/general-data-controller";
 
 const generalDataRouter = express.Router();
 
-generalDataRouter.get("/count", count);
-generalDataRouter.get("/accessesByLobby", accessesByLobby);
-generalDataRouter.get("/problemsByLobby", problemsByLobby);
-generalDataRouter.get("/accessesByOperator", accessesByOperator);
-generalDataRouter.get("/countAccessesPerHour", countAccessesPerHour);
-generalDataRouter.get("/countExitsPerHour", countExitsPerHour);
-generalDataRouter.get("/schedulingsByLobby", schedulingsByLobby);
-generalDataRouter.get("/accessesByVisitorType", accessesByVisitorType);
-generalDataRouter.get("/logsByOperator", logsByOperator);
+generalDataRouter.get("/count", getCardsCountData);
+generalDataRouter.get("/accessesByLobby", getAccessesByLobby);
+generalDataRouter.get("/problemsByLobby", getProblemsByLobby);
+generalDataRouter.get("/accessesByOperator", getAccessesByOperator);
+generalDataRouter.get("/countAccessesPerHour", getCountAccessesPerHour);
+generalDataRouter.get("/countExitsPerHour", getCountExitsPerHour);
+generalDataRouter.get("/schedulingsByLobby", getSchedulingByLobby);
+generalDataRouter.get("/accessesByVisitorType", getAccessesByVisitorType);
+generalDataRouter.get("/logsByOperator", getLogsByOperator);
 
 export default generalDataRouter;
