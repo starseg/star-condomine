@@ -9,7 +9,9 @@ export const getAllOperators = async (
   res: Response
 ): Promise<void> => {
   try {
-    const operator = await prisma.operator.findMany();
+    const operator = await prisma.operator.findMany({
+      orderBy: [{ status: "asc" }, { type: "desc" }, { name: "asc" }],
+    });
     res.json(operator);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar os operadores" });
