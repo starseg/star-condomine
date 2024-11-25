@@ -32,6 +32,8 @@ export function LogsByOperatorChart(data: LogsByOperatorChartProps[]) {
     },
   } satisfies ChartConfig;
 
+  const maxValue = Math.max(...chartData.map((item: any) => item.logs));
+
   return (
     <Card className="w-[900px]">
       <CardHeader>
@@ -61,7 +63,7 @@ export function LogsByOperatorChart(data: LogsByOperatorChartProps[]) {
               cursor={false}
               content={<ChartTooltipContent includeHidden />}
             />
-            <XAxis dataKey="logs" type="number" />
+            <XAxis dataKey="logs" type="number" domain={[0, Math.floor(maxValue * 2.5 / 2)]} />
             <Bar dataKey="logs" fill="#db2777" radius={5}>
               <LabelList
                 dataKey="logs"

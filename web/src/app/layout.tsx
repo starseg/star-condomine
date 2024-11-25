@@ -5,6 +5,7 @@ import NextAuthSessionProvider from "@/providers/sessionProvider";
 import { Nunito } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ControliDUpdateProvider } from "@/contexts/control-id-update-context";
 
 const nunito = Nunito({
   weight: ["400", "600", "700"],
@@ -33,12 +34,14 @@ export default function RootLayout({
       </head>
       <body className={cn(nunito.className, "dark")}>
         <NextAuthSessionProvider>
-          {children}
-          <ToastContainer
-            position="bottom-right"
-            autoClose={2500}
-            theme="colored"
-          />
+          <ControliDUpdateProvider>
+            {children}
+            <ToastContainer
+              position="bottom-right"
+              autoClose={2500}
+              theme="colored"
+            />
+          </ControliDUpdateProvider>
         </NextAuthSessionProvider>
       </body>
     </html>

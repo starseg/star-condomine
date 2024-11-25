@@ -16,14 +16,15 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SkeletonTable } from "../_skeletons/skeleton-table";
 import { deleteAction } from "@/lib/delete-action";
+import { useControliDUpdate } from "@/contexts/control-id-update-context";
 
 export default function DeviceTable({ lobby }: { lobby: string }) {
   const [isLoading, setIsLoading] = useState(true);
   const [devices, setDevices] = useState<Device[]>([]);
-  const [isConnected, setIsConnected] = useState<{ [key: string]: boolean }>({});
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams.toString());
+  const { activeDevices, updateActiveDevices } = useControliDUpdate();
 
   const fetchData = async () => {
     if (session)
@@ -58,20 +59,18 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
         try {
           const response = await api.get("control-id/activeDevices") as { data: { devices: string[] } };
           const connectedDevices = response.data.devices;
-          const devicesNames = devices.map(device => device.name);
-          devicesNames.forEach(deviceName => {
-            setIsConnected((prev) => ({ ...prev, [deviceName]: connectedDevices.includes(deviceName) }));
-          })
-          console.log("Conexões ativas:", connectedDevices);
+          updateActiveDevices(connectedDevices);
         } catch (error) {
           console.error("Erro ao obter dados:", error);
         }
       }
     };
 
-    setInterval(() => {
+    const intervalId = setInterval(() => {
       testConnection();
     }, 5000)
+
+    return () => clearInterval(intervalId);
   }, [devices, session]);
 
   useEffect(() => {
@@ -117,7 +116,7 @@ export default function DeviceTable({ lobby }: { lobby: string }) {
                 }
                 <TableCell>
                   {
-                    isConnected[device.name] ? (
+                    activeDevices.includes(device.name.toString()) ? (
                       <CheckCircle className="text-green-500" size={24} />
                     ) : (
                       <XCircle className="text-red-500" size={24} />

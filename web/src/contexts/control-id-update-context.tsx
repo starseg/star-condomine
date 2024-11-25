@@ -5,6 +5,8 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 interface ControliDUpdateContextType {
   update: boolean;
   triggerUpdate: () => void;
+  activeDevices: string[];
+  updateActiveDevices: (devices: string[]) => void;
 }
 
 // Crie o contexto com um valor padrão
@@ -21,11 +23,13 @@ export function ControliDUpdateProvider({
   children,
 }: ControliDUpdateProviderProps) {
   const [update, setUpdate] = useState(false);
+  const [activeDevices, setActiveDevices] = useState<string[]>([]);
 
+  const updateActiveDevices = (devices: string[]) => setActiveDevices(devices);
   const triggerUpdate = () => setUpdate((prev) => !prev);
 
   return (
-    <ControliDUpdateContext.Provider value={{ update, triggerUpdate }}>
+    <ControliDUpdateContext.Provider value={{ update, triggerUpdate, activeDevices, updateActiveDevices }}>
       {children}
     </ControliDUpdateContext.Provider>
   );

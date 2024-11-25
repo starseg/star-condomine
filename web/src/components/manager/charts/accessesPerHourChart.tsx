@@ -26,6 +26,8 @@ export function AccessesPerHourChart(data: AccessPerHourChartProps) {
     },
   } satisfies ChartConfig;
 
+  const maxValue = Math.max(...chartData.map((item: any) => item.acessos));
+
   return (
     <Card className="w-[900px]">
       <CardHeader>
@@ -52,7 +54,7 @@ export function AccessesPerHourChart(data: AccessPerHourChartProps) {
               cursor={false}
               content={<ChartTooltipContent includeHidden />}
             />
-            <XAxis dataKey="acessos" type="number" />
+            <XAxis dataKey="acessos" type="number" domain={[0, Math.floor(maxValue * 2.5 / 2)]} />
             <Bar dataKey="acessos" fill="#60a5fa" radius={5}>
               <LabelList
                 dataKey="acessos"

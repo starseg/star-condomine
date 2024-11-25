@@ -27,6 +27,8 @@ export function SchedulingsByLobbyChart(data: AccessByLobbyChartProps[]) {
     },
   } satisfies ChartConfig;
 
+  const maxValue = Math.max(...chartData.map((item: any) => item.agendamentos));
+
   return (
     <Card className="w-[900px]">
       <CardHeader>
@@ -60,6 +62,7 @@ export function SchedulingsByLobbyChart(data: AccessByLobbyChartProps[]) {
               dataKey="agendamentos"
               type="number"
               padding={{ left: 10 }}
+              domain={[0, Math.floor(maxValue * 2.5 / 2)]}
             />
             <Bar dataKey="agendamentos" fill="#10b981" radius={5}>
               <LabelList
