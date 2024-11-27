@@ -137,7 +137,6 @@ export default function InputImage({
         name={name}
         render={({ field }) => (
           <>
-            {console.log(field)}
             <>
               {selectedImage ? (
                 <div className="relative">
