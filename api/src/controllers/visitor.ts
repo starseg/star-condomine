@@ -209,7 +209,7 @@ export const getVisitorsByLobby = async (
 ): Promise<void> => {
   try {
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    today.setUTCHours(0, 0, 0, 0);
 
     const lobby = parseInt(req.params.lobby, 10);
     const visitor = await prisma.visitor.findMany({
@@ -235,10 +235,10 @@ export const getVisitorsByLobby = async (
           where: {
             status: "ACTIVE",
             startDate: {
-              lte: new Date(),
+              lte: new Date().toISOString(),
             },
             endDate: {
-              gte: today,
+              gte: today.toISOString(),
             },
           },
         },
@@ -261,7 +261,7 @@ export const getFilteredVisitors = async (
     const { query } = req.query;
 
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    today.setUTCHours(0, 0, 0, 0);
 
     const whereCondition = query
       ? {
@@ -297,10 +297,10 @@ export const getFilteredVisitors = async (
           where: {
             status: "ACTIVE",
             startDate: {
-              lte: new Date(),
+              lte: new Date().toISOString(),
             },
             endDate: {
-              gte: today,
+              gte: today.toISOString(),
             },
           },
         },
