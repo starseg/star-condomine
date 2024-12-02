@@ -208,8 +208,10 @@ export const getVisitorsByLobby = async (
   res: Response
 ): Promise<void> => {
   try {
-    const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
+    const beginOfToday = new Date();
+    beginOfToday.setUTCHours(0, 0, 0, 0);
+    const endOfToday = new Date();
+    endOfToday.setUTCHours(23, 59, 59, 0);
 
     const lobby = parseInt(req.params.lobby, 10);
     const visitor = await prisma.visitor.findMany({
@@ -235,10 +237,10 @@ export const getVisitorsByLobby = async (
           where: {
             status: "ACTIVE",
             startDate: {
-              lte: new Date().toISOString(),
+              lte: endOfToday.toISOString(),
             },
             endDate: {
-              gte: today.toISOString(),
+              gte: beginOfToday.toISOString(),
             },
           },
         },
@@ -260,8 +262,10 @@ export const getFilteredVisitors = async (
     const lobby = parseInt(req.params.lobby, 10);
     const { query } = req.query;
 
-    const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
+    const beginOfToday = new Date();
+    beginOfToday.setUTCHours(0, 0, 0, 0);
+    const endOfToday = new Date();
+    endOfToday.setUTCHours(23, 59, 59, 0);
 
     const whereCondition = query
       ? {
@@ -297,10 +301,10 @@ export const getFilteredVisitors = async (
           where: {
             status: "ACTIVE",
             startDate: {
-              lte: new Date().toISOString(),
+              lte: endOfToday.toISOString(),
             },
             endDate: {
-              gte: today.toISOString(),
+              gte: beginOfToday.toISOString(),
             },
           },
         },

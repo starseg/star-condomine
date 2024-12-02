@@ -277,7 +277,10 @@ export function SchedulingForm() {
                       onValueChange={(value) =>
                         form.setValue(
                           "endDate",
-                          addDays(new Date(), parseInt(value))
+                          addDays(
+                            new Date().setHours(0, 0, 0, 0),
+                            parseInt(value)
+                          )
                         )
                       }
                     >
