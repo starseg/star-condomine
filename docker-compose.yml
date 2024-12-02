@@ -1,34 +1,69 @@
 services:
   db:
-    image: mysql/mysql-server:latest
-    container_name: my-mysql
+    image: mysql:latest
+    container_name: mysql-db
     restart: always
     environment:
-      - MYSQL_DATABASE=starseg
-      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     ports:
-      - '3306:3306'
+      - "${DB_PORT}:3306"
     volumes:
-      - mysql-volume:/var/lib/mysql
+      - db_data:/var/lib/mysql
     networks:
-      - mysql-phpmyadmin
+      - backend-network
 
-  phpmyadmin:
+  api:
+    build:
+      context: ./api
+    container_name: api
+    restart: always
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - "${API_PORT}:3333"
     depends_on:
       - db
-    image: phpmyadmin
+    networks:
+      - backend-network
+
+  web:
+    build:
+      context: ./web
+    container_name: web
     restart: always
     ports:
-      - "8080:80"
+      - "${WEB_PORT}:3000"
+    depends_on:
+      - api
+    environment:
+      - NEXT_PUBLIC_API_URL=${SERVER_URL}:${API_PORT}
+    networks:
+      - backend-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: my-phpmyadmin
+    restart: always
     environment:
       PMA_HOST: db
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
     networks:
-      - mysql-phpmyadmin
+      - backend-network
 
 volumes:
-  mysql-volume:
+  db_data:
     driver: local
 
 networks:
-  mysql-phpmyadmin:
+  backend-network:

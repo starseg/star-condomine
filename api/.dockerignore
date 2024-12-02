@@ -1,0 +1,12 @@
+node_modules
+dist
+coverage
+npm - debug.log
+yarn.lock
+  *.env
+    .DS_Store
+    .idea
+    .vscode
+    .git
+  *.log
+tmp
