@@ -208,8 +208,15 @@ export const getVisitorsByLobby = async (
   res: Response
 ): Promise<void> => {
   try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const now = new Date();
+    const adjustedNow = new Date(now);
+    adjustedNow.setHours(now.getHours() - 3);
+
+    const beginOfToday = new Date(adjustedNow);
+    beginOfToday.setHours(0, 0, 0, 0); // Início do dia em UTC-3
+
+    const endOfToday = new Date(adjustedNow);
+    endOfToday.setHours(23, 59, 59, 999); // Fim do dia em UTC-3
 
     const lobby = parseInt(req.params.lobby, 10);
     const visitor = await prisma.visitor.findMany({
@@ -235,10 +242,10 @@ export const getVisitorsByLobby = async (
           where: {
             status: "ACTIVE",
             startDate: {
-              lte: new Date(),
+              lte: endOfToday.toISOString(),
             },
             endDate: {
-              gte: today,
+              gte: beginOfToday.toISOString(),
             },
           },
         },
@@ -260,8 +267,15 @@ export const getFilteredVisitors = async (
     const lobby = parseInt(req.params.lobby, 10);
     const { query } = req.query;
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const now = new Date();
+    const adjustedNow = new Date(now);
+    adjustedNow.setHours(now.getHours() - 3);
+
+    const beginOfToday = new Date(adjustedNow);
+    beginOfToday.setHours(0, 0, 0, 0); // Início do dia em UTC-3
+
+    const endOfToday = new Date(adjustedNow);
+    endOfToday.setHours(23, 59, 59, 999); // Fim do dia em UTC-3
 
     const whereCondition = query
       ? {
@@ -297,10 +311,10 @@ export const getFilteredVisitors = async (
           where: {
             status: "ACTIVE",
             startDate: {
-              lte: new Date(),
+              lte: endOfToday.toISOString(),
             },
             endDate: {
-              gte: today,
+              gte: beginOfToday.toISOString(),
             },
           },
         },

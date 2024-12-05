@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useRouter, useSearchParams } from "next/navigation";
-import api from "@/lib/axios";;
+import api from "@/lib/axios";
 import { useState, useEffect } from "react";
 import { InputPassword } from "../input-password";
 import DefaultInput from "../form/inputDefault";
@@ -32,7 +32,8 @@ const FormSchema = z.object({
     message: "O nome deve ter no mínimo 5 caracteres",
   }),
   password: z.string().min(8, {
-    message: "A senha deve ter no mínimo 8 caracteres",
+    message:
+      "A senha deve ter no mínimo 8 caracteres, definir '12345678' caso for desativar o operador",
   }),
   status: z.enum(["ACTIVE", "INACTIVE"]),
 });
@@ -46,15 +47,18 @@ interface Values {
   status: "ACTIVE" | "INACTIVE" | undefined;
 }
 
-export function OperatorUpdateForm({ preloadedValues }: { preloadedValues: Values }) {
-
+export function OperatorUpdateForm({
+  preloadedValues,
+}: {
+  preloadedValues: Values;
+}) {
   const { data: session } = useSession();
   const [lobbies, setLobbies] = useState<Lobby[]>([]);
   useEffect(() => {
     const fetchData = async () => {
       if (session)
         try {
-          const response = await api.get("lobby",);
+          const response = await api.get("lobby");
           setLobbies(response.data);
         } catch (error) {
           console.error("Erro ao obter dados:", error);
@@ -74,6 +78,17 @@ export function OperatorUpdateForm({ preloadedValues }: { preloadedValues: Value
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams.toString());
   const router = useRouter();
+
+  const status = [
+    {
+      value: "ACTIVE",
+      label: "Ativo",
+    },
+    {
+      value: "INACTIVE",
+      label: "Inativo",
+    },
+  ];
 
   const [isSending, setIsSendind] = useState(false);
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
@@ -181,6 +196,14 @@ export function OperatorUpdateForm({ preloadedValues }: { preloadedValues: Value
               <FormMessage />
             </FormItem>
           )}
+        />
+        <RadioInput
+          control={form.control}
+          name="status"
+          label="Status"
+          object={status}
+          idExtractor={(item) => item.value}
+          descriptionExtractor={(item) => item.label}
         />
         <Button type="submit" className="w-full text-lg" disabled={isSending}>
           Atualizar
