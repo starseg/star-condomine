@@ -18,6 +18,7 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import { GetUserByIdCommand } from "../control-id/device/commands";
 import { fetchLatestResults } from "../control-id/device/search";
+import CopyMemberToOtherLobby from "./copyMemberToOtherLobby";
 
 interface User {
   id: number;
@@ -99,7 +100,7 @@ export default function residentDetails({ id }: { id: number }) {
       const response = await api.get("/control-id/results");
       const data: PushResponse[] = response.data;
       if (lobbyData && data.length > 0) {
-        const latest = await fetchLatestResults(lobbyData)
+        const latest = await fetchLatestResults(lobbyData);
         latest.map((result) => {
           const users: { users: User[] | [] } = JSON.parse(
             result.body.response
@@ -194,13 +195,13 @@ export default function residentDetails({ id }: { id: number }) {
               {member.telephone
                 ? member.telephone.length > 0
                   ? member.telephone.map((telephone) => (
-                    <p
-                      key={telephone.telephoneId}
-                      className="bg-muted px-4 py-1 rounded-md text-muted-foreground"
-                    >
-                      {telephone.number}
-                    </p>
-                  ))
+                      <p
+                        key={telephone.telephoneId}
+                        className="bg-muted px-4 py-1 rounded-md text-muted-foreground"
+                      >
+                        {telephone.number}
+                      </p>
+                    ))
                   : "Nenhum telefone cadastrado"
                 : "Sem telefone"}
             </div>
@@ -272,6 +273,7 @@ export default function residentDetails({ id }: { id: number }) {
               label="Última atualização"
               content={formatDate(member.updatedAt)}
             />
+            <CopyMemberToOtherLobby member={member} />
           </div>
           {member.access && (
             <MiniTable title="Acessos" cols={["Entrada", "Saída", "Visitante"]}>

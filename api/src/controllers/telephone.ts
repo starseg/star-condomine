@@ -43,7 +43,7 @@ export const createTelephone = async (
     });
     res.status(201).json(telephone);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao criar o telefone" });
+    res.status(500).json({ message: "Erro ao criar o telefone", error: error });
   }
 };
 

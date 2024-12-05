@@ -18,6 +18,7 @@ import { deleteAction } from "@/lib/delete-action";
 import { Button } from "../ui/button";
 import { GetUserByIdCommand } from "../control-id/device/commands";
 import { fetchLatestResults } from "../control-id/device/search";
+import CopyMemberToOtherLobby from "./copyMemberToOtherLobby";
 
 interface User {
   id: number;
@@ -102,7 +103,7 @@ export default function EmployeeDetails({ id }: { id: number }) {
       const response = await api.get("/control-id/results");
       const data: PushResponse[] = response.data;
       if (lobbyData && data.length > 0) {
-        const latest = await fetchLatestResults(lobbyData)
+        const latest = await fetchLatestResults(lobbyData);
         latest.map((result) => {
           const users: { users: User[] | [] } = JSON.parse(
             result.body.response
@@ -254,6 +255,7 @@ export default function EmployeeDetails({ id }: { id: number }) {
               label="Última atualização"
               content={formatDate(member.updatedAt)}
             />
+            <CopyMemberToOtherLobby member={member} />
           </div>
           {member.access && (
             <MiniTable title="Acessos" cols={["Entrada", "Saída", "Visitante"]}>
