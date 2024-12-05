@@ -7,7 +7,8 @@
     "dev": "tsx watch src/app.ts",
     "build": "tsup src --format esm",
     "start": "node dist/app.mjs",
-    "swagger": "tsx src/swagger.ts"
+    "swagger": "tsx src/swagger.ts",
+    "studio": "npx prisma studio"
   },
   "keywords": [
     "Controle de acesso",
