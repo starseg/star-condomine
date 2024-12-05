@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/app.js",
+  "packageManager": "pnpm@9.14.4",
   "scripts": {
     "dev": "tsx watch src/app.ts",
     "build": "tsup src --format esm",

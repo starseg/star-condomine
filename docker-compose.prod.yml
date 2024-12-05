@@ -1,0 +1,43 @@
+services:
+  api:
+    build:
+      context: ./api
+    container_name: api
+    restart: always
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SECRET_KEY=${SECRET_KEY}
+      - LOBBY_CODE_KEY_1=${LOBBY_CODE_KEY_1}
+      - LOBBY_CODE_KEY_2=${LOBBY_CODE_KEY_2}
+    ports:
+      - "3333:3333"
+    networks:
+      backend-network:
+
+  web:
+    build:
+      context: ./web
+    container_name: web
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    environment:
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - FIREBASE_API_KEY=${FIREBASE_API_KEY}
+      - FIREBASE_APP_ID=${FIREBASE_APP_ID}
+      - FIREBASE_MESSAGING_SENDER_ID=${FIREBASE_MESSAGING_SENDER_ID}
+      - FIREBASE_MEASUREMENT_ID=${FIREBASE_MEASUREMENT_ID}
+      - API_URL_SERVER=${API_URL_SERVER}
+      - API_URL=${API_URL}
+      - NEXT_PUBLIC_CRYPTO_KEY=${NEXT_PUBLIC_CRYPTO_KEY}
+      - NEXT_PUBLIC_LOBBY_CODE_KEY_1=${NEXT_PUBLIC_LOBBY_CODE_KEY_1}
+      - NEXT_PUBLIC_LOBBY_CODE_KEY_2=${NEXT_PUBLIC_LOBBY_CODE_KEY_2}
+    networks:
+      backend-network:
+      
+networks:
+  backend-network:
+    driver: bridge
