@@ -196,7 +196,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                             : "Endereço não cadastrado"
                           : member.rg}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className={member.position && "break-all"}>
                         {type === "resident"
                           ? member.telephone.length > 0
                             ? member.telephone[0].number
@@ -217,10 +217,13 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                         </TableCell>
                       )}
                       <TableCell>
-                        <div className="flex gap-2">
+                        <div className="flex">
                           <Link
                             href={`${type}/vehicles?id=${member.memberId}&lobby=${member.lobbyId}`}
-                            className="flex justify-center items-center hover:border-stone-50 px-3 p-1 border rounded-md text-2xl transition-all"
+                            className={cn(
+                              buttonVariants({ variant: "ghost" }),
+                              "p-1 text-2xl aspect-square"
+                            )}
                           >
                             <button title="Veículos">
                               <Car />
@@ -228,7 +231,10 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                           </Link>
                           <Link
                             href={`${type}/credentials/details?id=${member.memberId}`}
-                            className="flex justify-center items-center hover:border-stone-50 px-3 py-1 border rounded-md text-2xl transition-all"
+                            className={cn(
+                              buttonVariants({ variant: "ghost" }),
+                              "p-1 text-2xl aspect-square"
+                            )}
                           >
                             <button title="Credenciais">
                               <Tag />
@@ -237,7 +243,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center">
                           <Link
                             className={cn(
                               buttonVariants({ variant: "ghost" }),

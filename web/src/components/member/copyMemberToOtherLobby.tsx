@@ -34,18 +34,32 @@ export default function CopyMemberToOtherLobby({ member }: { member: Member }) {
   const [selectedLobbyName, setSelectedLobbyName] = useState("");
   const [lobbies, setLobbies] = useState<Lobby[]>([]);
 
+  const fetchData = async () => {
+    if (session)
+      try {
+        const response = await api.get("lobby");
+        setLobbies(response.data);
+      } catch (error) {
+        console.error("Erro ao obter dados:", error);
+      }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      if (session)
-        try {
-          const response = await api.get("lobby");
-          setLobbies(response.data);
-        } catch (error) {
-          console.error("Erro ao obter dados:", error);
-        }
-    };
     fetchData();
   }, [session]);
+
+  interface item {
+    value: string;
+    label: string;
+  }
+  let items: item[] = [];
+
+  lobbies.map((lobby) =>
+    items.push({
+      value: lobby.lobbyId.toString(),
+      label: lobby.name,
+    })
+  );
 
   async function sendData() {
     if (!value) {
@@ -129,34 +143,31 @@ export default function CopyMemberToOtherLobby({ member }: { member: Member }) {
           <PopoverContent className="p-0">
             <Command>
               <CommandInput placeholder="Buscar portaria..." />
+
               <CommandList>
                 <CommandEmpty>Nenhuma portaria encontrada.</CommandEmpty>
                 <CommandGroup>
-                  {lobbies.map((lobby) => {
-                    if (lobby.lobbyId !== member.lobbyId)
+                  {items.map((item) => {
+                    if (item.value !== member.lobbyId.toString())
                       return (
                         <CommandItem
-                          key={lobby.lobbyId}
-                          value={lobby.lobbyId.toString()}
-                          onSelect={(currentValue) => {
-                            setValue(
-                              currentValue === value ? "" : currentValue
-                            );
-                            setSelectedLobbyName(
-                              currentValue === value ? "" : lobby.name
-                            );
+                          value={item.label}
+                          key={item.value}
+                          onSelect={() => {
+                            setValue(item.value);
+                            setSelectedLobbyName(item.label);
                             setOpen(false);
                           }}
                         >
                           <Check
                             className={cn(
                               "mr-2 h-4 w-4",
-                              value === lobby.lobbyId.toString()
+                              value === item.value.toString()
                                 ? "opacity-100"
                                 : "opacity-0"
                             )}
                           />
-                          {lobby.name}
+                          {item.label}
                         </CommandItem>
                       );
                   })}
