@@ -1,33 +1,43 @@
+# syntax=docker.io/docker/dockerfile:1
+
 # Base image com pnpm habilitado
-FROM node:20-slim AS base
+FROM node:20-alpine AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
-COPY . .
 
-# Instalação apenas das dependências de produção
-FROM base AS prod-deps
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+# Instalação de dependências com cache
+FROM base AS deps
+COPY package.json pnpm-lock.yaml ./
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm install --frozen-lockfile
 
 # Build da aplicação Next.js
-FROM base AS build
+FROM base AS builder
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
 COPY .env.build .env
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-ENV NODE_OPTIONS="--max-old-space-size=4096"
-RUN pnpm build
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm run build
 RUN rm -rf .env
 
 # Imagem final para produção
-FROM node:20-slim
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+FROM base AS runner
 WORKDIR /app
-COPY --from=prod-deps /app/node_modules /app/node_modules
-COPY --from=build /app/.next /app/.next
-COPY --from=build /app/public /app/public
-COPY --from=base /app/package.json /app/package.json
-COPY --from=base /app/pnpm-lock.yaml /app/pnpm-lock.yaml
+
+ENV NODE_ENV=production
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copia os arquivos necessários para produção
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY package.json pnpm-lock.yaml ./
+
+USER nextjs
+
 EXPOSE 3000
-CMD ["pnpm", "start"]
+ENV PORT=3000
+CMD ["node", "server.js"]

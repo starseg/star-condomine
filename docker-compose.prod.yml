@@ -3,7 +3,7 @@ services:
     build:
       context: ./api
     container_name: api
-    restart: always
+    restart: unless-stopped
     env_file:
       - .env.api
     ports:
@@ -15,7 +15,7 @@ services:
     build:
       context: ./web
     container_name: web
-    restart: always
+    restart: unless-stopped
     ports:
       - "3000:3000"
     depends_on:

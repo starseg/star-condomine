@@ -2,7 +2,7 @@ services:
   db:
     image: mysql:latest
     container_name: mysql-db
-    restart: always
+    restart: unless-stopped
     environment:
       - MYSQL_DATABASE=starseg
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
@@ -17,7 +17,7 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     container_name: my-phpmyadmin
-    restart: always
+    restart: unless-stopped
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
