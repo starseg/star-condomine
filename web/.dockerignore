@@ -1,13 +1,13 @@
 node_modules
-  .next
+.next
 out
 coverage
 npm - debug.log
 yarn.lock
-  *.env
-    .DS_Store
-    .idea
-    .vscode
-    .git
-  *.log
+*.env
+.DS_Store
+.idea
+.vscode
+.git
+*.log
 tmp

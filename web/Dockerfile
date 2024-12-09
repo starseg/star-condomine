@@ -12,9 +12,11 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-l
 
 # Build da aplicação Next.js
 FROM base AS build
+COPY .env.build .env
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN pnpm build
+RUN rm -rf .env
 
 # Imagem final para produção
 FROM node:20-slim
