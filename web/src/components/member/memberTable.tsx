@@ -22,7 +22,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { SkeletonTable } from "../_skeletons/skeleton-table";
-import { deleteAction } from "@/lib/delete-action";
 import { deleteFile } from "@/lib/firebase-upload";
 import { Button, buttonVariants } from "../ui/button";
 import { cn } from "@/lib/utils";
@@ -30,6 +29,7 @@ import { SyncMember } from "../control-id/device/syncMember";
 import { DeleteDialog } from "../deleteDialog";
 import { destroyObjectCommand } from "../control-id/device/commands";
 import { toast } from "react-toastify";
+import { MemberPDF } from "./memberPDF";
 
 export default function MemberTable({ lobby }: { lobby: string }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -43,6 +43,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
   const control = params.get("c");
   const brand = params.get("brand");
   const itemsPerPage = 10;
+
   const fetchData = async () => {
     if (session)
       try {
@@ -60,6 +61,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
         console.error("Erro ao obter dados:", error);
       }
   };
+
   async function fetchDevices() {
     if (session)
       try {
@@ -69,6 +71,7 @@ export default function MemberTable({ lobby }: { lobby: string }) {
         console.error("Erro ao obter dados:", error);
       }
   }
+
   useEffect(() => {
     fetchDevices();
   }, [session]);
@@ -191,8 +194,8 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                         {type === "resident"
                           ? member.address
                             ? member.addressType.description +
-                              " " +
-                              member.address
+                            " " +
+                            member.address
                             : "Endereço não cadastrado"
                           : member.rg}
                       </TableCell>
@@ -202,8 +205,8 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                             ? member.telephone[0].number
                             : "Nenhum telefone cadastrado"
                           : member.position
-                          ? member.position
-                          : "Cargo não cadastrado"}
+                            ? member.position
+                            : "Cargo não cadastrado"}
                       </TableCell>
                       {brand === "Control-iD" && (
                         <TableCell>
@@ -290,11 +293,12 @@ export default function MemberTable({ lobby }: { lobby: string }) {
             </Table>
           </div>
           <div className="flex flex-wrap justify-between mr-4">
-            <div className="flex items-center gap-2 mt-4 font-medium text-stone-400">
+            <div className="flex items-center gap-2 mt-1 font-medium text-stone-400">
               <div className="bg-amber-400 rounded-full w-6 h-6"></div>: membros
               com observações registradas
             </div>
             <div className="flex items-center gap-4 mt-2 pr-4">
+              <MemberPDF data={members} lobbyId={Number(lobby)} />
               <p className="bg-stone-800 p-2 rounded">
                 {members.length} registros
               </p>
@@ -322,6 +326,9 @@ export default function MemberTable({ lobby }: { lobby: string }) {
                 </Button>
               </div>
             </div>
+          </div>
+          <div className="w-full mt-2">
+
           </div>
         </>
       )}

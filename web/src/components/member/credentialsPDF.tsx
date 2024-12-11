@@ -30,7 +30,7 @@ export const CredentialsPDF = ({ data }: { data: Tags[] }) => {
       [
         row.member.cpf + "\n" + row.member.name,
         data[0].member.address &&
-          row.member.addressType.description + " " + row.member.address,
+        row.member.addressType.description + " " + row.member.address,
         row.type,
         row.value,
         row.comments ? row.comments : "Nenhuma",
