@@ -7,4 +7,17 @@ const withPWA = require("next-pwa")({
 module.exports = withPWA({
   // Outras configurações do Next.js
   reactStrictMode: true,
+  experimental: {
+    turbo: {
+      resolveExtensions: [
+        '.mdx',
+        '.tsx',
+        '.ts',
+        '.jsx',
+        '.js',
+        '.mjs',
+        '.json',
+      ],
+    }
+  }
 });
